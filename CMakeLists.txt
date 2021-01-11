@@ -9,7 +9,7 @@ set(SourceFilesCore
 "Core/Main.cpp"
 "Core/System/Object.cpp"
 "Core/System/Exception.cpp"
-"Core/System/Console.cpp"
+"Core/OS/Console.cpp"
 "Core/System/String.cpp"
 "Core/Math/Math.cpp"
 "Core/Math/Vector2.cpp"

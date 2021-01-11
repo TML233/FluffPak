@@ -2,24 +2,30 @@
 #define HEADER_CORE_SYSTEM_STRING
 
 #include "Core/System/Object.h"
-#include <string>
 #include "Thirdparty/fmt/include/fmt/core.h"
 #include "Thirdparty/fmt/include/fmt/format.h"
 
 namespace Core {
 	template<typename T>
-	class Iterator;
+	class ReadonlyIterator;
 	template<typename T>
 	class List;
 
+	struct StringData final {
+		explicit StringData(const Char* data);
+		~StringData();
+
+		Char* data = nullptr;
+		int length = 0;
+
+		static std::shared_ptr<StringData> empty;
+	};
+
 	class String final :public Object {
 	public:
-		String(Char* string = "");
-		String(const String& string);
+		String(const Char* string = "");
 		String(const std::string& string);
-		String& operator=(const String& string);
-		String& operator=(Char* string);
-		~String();
+		String& operator=(const Char* string);
 
 		// Get byte length. NULL is not included.
 		Int GetLength() const;
@@ -27,22 +33,19 @@ namespace Core {
 		// Get internal C-style char array.
 		const Char* GetRawArray() const;
 
-		Iterator<Char> operator[](Int index) const;
+		ReadonlyIterator<Char> operator[](Int index) const;
 
 		template<typename ... Ts>
 		static String Format(const String& format, const Ts& ... args);
-
 		template<typename ... Ts>
-		static String Format(const char* format, const Ts& ... args);
+		static String Format(const Char* format, const Ts& ... args);
 
 		String ToString() const override;
 
 	private:
 		friend String operator+(const String& left, const String& right);
-
-		void ReplaceWithRawArray(const Char* string);
-
-		List<Char>* chars;
+		void Prepare(const Char* string);
+		std::shared_ptr<StringData> data;
 	};
 
 	template<typename ... Ts>
@@ -51,11 +54,21 @@ namespace Core {
 	}
 
 	template<typename ... Ts>
-	static String String::Format(const char* format, const Ts& ... args) {
+	static String String::Format(const Char* format, const Ts& ... args) {
 		return fmt::format(format, args...);
 	}
 
 	String operator+(const String& left, const String& right);
+}
+
+namespace fmt {
+	template<>
+	struct formatter<Core::String> : formatter<string_view> {
+		template <typename FormatContext>
+		auto format(const Core::String& c, FormatContext& ctx) {
+			return formatter<string_view>::format(c.GetRawArray(), ctx);
+		}
+	};
 }
 
 #endif

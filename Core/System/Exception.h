@@ -18,7 +18,7 @@ namespace Core {
 		String* message;
 	};
 
-	class ArgumentException:public Exception {
+	class ArgumentException :public Exception {
 	public:
 		ArgumentException(const String& argumentName, const String& message);
 	};
@@ -26,6 +26,11 @@ namespace Core {
 	class ArgumentOutOfRangeException :public ArgumentException {
 	public:
 		ArgumentOutOfRangeException(const String& argumentName, const String& message);
+	};
+
+	class NotImplementedException :public Exception {
+	public:
+		NotImplementedException(const String& methodName, const String& message);
 	};
 }
 

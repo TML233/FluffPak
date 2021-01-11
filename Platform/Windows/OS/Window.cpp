@@ -22,7 +22,7 @@ namespace Core {
 		}
 	}
 	std::shared_ptr<Window> Window::Create(const String& title, const Vector2& position, const Vector2& size) {
-		std::shared_ptr<Window> window = std::make_shared<Window>(new Platform::Window);
+		std::shared_ptr<Window> window = std::make_shared<Platform::Window>();
 		window->SetTitle(title);
 		window->SetPosition(position);
 		window->SetSize(size);

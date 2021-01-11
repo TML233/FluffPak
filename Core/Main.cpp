@@ -1,16 +1,17 @@
 ﻿#include "Core/Definition.h"
-#include "Core/System/Console.h"
+#include "Core/OS/Console.h"
 #include "Core/Template/List.h"
 #include "Core/Math/Vector2.h"
 #include "Core/System/String.h"
 using namespace Core;
 
 int main() {
-	String str = "a";
-	String str2 = str+"baa";
-	Console::PrintLine(str2);
-	Console::PrintLine(str);
-	List<int> a;
-	Console::PrintLine(String::Format("Test{0}",1,2));
+	String str1 = "a";
+	String str2 = str1;
+	Console::PrintLine(Object::ToString(str1.GetRawArray() == str2.GetRawArray()));
+
+	String empty1 = "";
+	String empty2 = "";
+	Console::PrintLine(Object::ToString(empty1.GetRawArray() == empty2.GetRawArray()));
 	return 0;
 }

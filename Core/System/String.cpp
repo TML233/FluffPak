@@ -1,70 +1,61 @@
 #include "Core/Definition.h"
 #include "Core/System/String.h"
-#include "Core/Template/List.h"
-
+#include "Core/Template/Iterator.h"
+#include <string>
 #include <cstring>
 
 namespace Core {
-	void String::ReplaceWithRawArray(const Char* string) {
-		Int size = std::strlen(string) + 1;
-		chars->Clear();
-		if (chars->GetCapacity() < size) {
-			chars->SetCapacity(size);
-		}
-		for (Int i = 0; i < size; i += 1) {
-			chars->Add(string[i]);
+	StringData::StringData(const Char* data) {
+		Int len = strlen(data) + 1;
+		length = len;
+		this->data = new Char[len];
+		for (Int i = 0; i < len; i += 1) {
+			this->data[i] = data[i];
 		}
 	}
+	StringData::~StringData() {
+		delete[] data;
+	}
+	std::shared_ptr<StringData> StringData::empty = std::make_shared<StringData>("");
 
-	String::String(Char* string) {
-		chars = new List<Char>;
-		ReplaceWithRawArray(string);
-	}
-	String::String(const String& string) {
-		chars = new List<Char>;
-		ReplaceWithRawArray(string.GetRawArray());
+	String::String(const Char* string) {
+		Prepare(string);
 	}
 	String::String(const std::string& string) {
-		chars = new List<Char>;
-		ReplaceWithRawArray(string.c_str());
+		Prepare(string.c_str());
 	}
-
-	String::~String() {
-		delete chars;
-	}
-
-	String& String::operator=(const String& string) {
-		ReplaceWithRawArray(string.GetRawArray());
-		return *this;
-	}
-	String& String::operator=(Char* string) {
-		ReplaceWithRawArray(string);
+	String& String::operator=(const Char* string) {
+		Prepare(string);
 		return *this;
 	}
 
-	Iterator<Char> String::operator[](Int index) const {
-		return Iterator<Char>((*chars)[index]);
+	ReadonlyIterator<Char> String::operator[](Int index) const {
+		return ReadonlyIterator<Char>(&(data->data[index]));
 	}
 
 	Int String::GetLength() const {
-		return chars->GetCount() - 1;
+		return data->length - 1;
 	}
 
 	const Char* String::GetRawArray() const {
-		return chars->GetRawArray();
+		return data->data;
 	}
 
 	String String::ToString() const {
 		return *this;
 	}
 
-	String operator+(const String& left,const String& right) {
-		String str = left;
-		str.chars->PrepareCapacity(left.GetLength() + right.GetLength() + 1);
-		str.chars->RemoveAt(str.chars->GetCount() - 1);
-		for (Char& c : *(right.chars)) {
-			str.chars->Add(c);
+	void String::Prepare(const Char* string) {
+		Int len = strlen(string) + 1;
+		// Use public empty string.
+		if (len <= 1) {
+			data = StringData::empty;
+			return;
 		}
-		return str;
+		data = std::make_shared<StringData>(string);
+	}
+
+	String operator+(const String& left,const String& right) {
+		return String::Format("{0}{1}", left, right);
 	}
 }
