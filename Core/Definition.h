@@ -4,6 +4,10 @@
 #pragma once
 #include <cstdint>
 
+#ifndef ENGINE_API
+#define ENGINE_API
+#endif
+
 namespace Core {
 	// Represents a 1-bit value.
 	using Bool = bool;

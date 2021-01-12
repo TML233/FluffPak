@@ -4,13 +4,14 @@
 #include "Platform/Windows/Include.h"
 #include "Core/System/String.h"
 #include "Core/System/Exception.h"
+#include "Core/Template/UniquePtr.h"
 
 using namespace Core;
 
 namespace Platform {
 	class UnicodeHelper final{
 	public:
-		static std::unique_ptr<WCHAR[]> UTF8ToUnicode(const String& string);
+		static UniquePtr<WCHAR[]> UTF8ToUnicode(const String& string);
 		static String UnicodeToUTF8(WCHAR* unicode);
 	};
 }
