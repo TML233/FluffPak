@@ -3,6 +3,7 @@
 #include "Core/Template/List.h"
 #include "Core/Math/Vector2.h"
 #include "Core/System/String.h"
+#include "Core/Template/UniquePtr.h"
 using namespace Core;
 
 int main() {
@@ -13,5 +14,8 @@ int main() {
 	String empty1 = "";
 	String empty2 = "";
 	Console::PrintLine(Object::ToString(empty1.GetRawArray() == empty2.GetRawArray()));
+
+	UniquePtr<int> uptr(new int());
+	UniquePtr<int[]> uptr2(new int[3]());
 	return 0;
 }
