@@ -9,13 +9,13 @@ set(SourceFilesCore
 "Core/Main.cpp"
 "Core/System/Object.cpp"
 "Core/System/Exception.cpp"
-"Core/OS/Console.cpp"
 "Core/System/String.cpp"
+"Core/System/Console.cpp"
 "Core/Math/Math.cpp"
 "Core/Math/Vector2.cpp"
 "Core/Math/Vector3.cpp"
-"Core/OS/Window.cpp"
-)
+"Core/Engine/AppLoop.cpp"
+"Core/Engine/Engine.cpp")
 
 
 # Add thirdparty include paths.
