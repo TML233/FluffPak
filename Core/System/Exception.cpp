@@ -1,5 +1,4 @@
 #include "Core/System/Exception.h"
-#include <iostream>
 #include "Core/System/String.h"
 
 namespace Core {

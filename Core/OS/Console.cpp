@@ -3,20 +3,24 @@
 #include "Core/System/String.h"
 
 namespace Core {
-	void Console::Initialize(){
+	Console::Console(){
 #ifdef OS_WINDOWS
 		// Set code page to CP_UTF8 (65001)
 		SetConsoleOutputCP(65001);
 		setvbuf(stdout, nullptr, _IOFBF, 1000);
 #endif
 	}
-	void Console::Print(const String& text) {
-		std::cout << text.GetRawArray();
+
+	void Console::Print(Char* text)const {
+		std::printf(text);
 	}
-	void Console::PrintLine() {
-		std::cout << std::endl;
+	void Console::Print(const String& text) const {
+		Print(text.GetRawArray());
 	}
-	void Console::PrintLine(const String& text){
+	void Console::PrintLine() const {
+		Print("\n");
+	}
+	void Console::PrintLine(const String& text) const {
 		Print(text);
 		PrintLine();
 	}

@@ -36,6 +36,7 @@ namespace Core {
 		UniquePtr& operator=(const UniquePtr<T> obj) = delete;
 		T* GetRaw() const;
 		T* Release();
+		void Reset(T* ptr = nullptr);
 		T& operator*() const;
 		T* operator->() const;
 	private:
@@ -51,13 +52,20 @@ namespace Core {
 	}
 	template<typename T>
 	UniquePtr<T>::~UniquePtr() {
-		deleter(ptr);
+		Reset();
 	}
 	template<typename T>
 	T* UniquePtr<T>::Release() {
 		T* ptr = this->ptr;
 		this->ptr = nullptr;
 		return ptr;
+	}
+	template<typename T>
+	void Reset(T* ptr) {
+		if (this->ptr != nullptr) {
+			deleter(this->ptr);
+		}
+		this->ptr = ptr;
 	}
 	template<typename T>
 	T& UniquePtr<T>::operator*() const {

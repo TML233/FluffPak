@@ -5,7 +5,7 @@
 #include "Core/System/Object.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Template/Dictionary.h"
-#include <iostream>
+#include <memory>
 
 namespace Core {
 	class Window :public Object {
