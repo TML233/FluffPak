@@ -6,10 +6,10 @@
 #include "Core/Engine/AppLoop.h"
 
 namespace Core {
-	class Engine final{
+	class Engine final :public Object {
 	public:
 		static Engine& GetInstance();
-		
+
 		Engine();
 		~Engine();
 		Engine(const Engine& obj) = delete;

@@ -15,7 +15,8 @@ set(SourceFilesCore
 "Core/Math/Vector2.cpp"
 "Core/Math/Vector3.cpp"
 "Core/Engine/AppLoop.cpp"
-"Core/Engine/Engine.cpp")
+"Core/Engine/Engine.cpp"
+)
 
 
 # Add thirdparty include paths.

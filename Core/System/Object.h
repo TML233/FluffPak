@@ -8,7 +8,10 @@ namespace Core {
 	public:
 		virtual ~Object();
 		virtual String ToString() const;
-		//virtual Int GetHashCode() const;
+
+		// Get hash code. Hash code is not used to identify objects!
+		// Override this if the object indicates value.
+		virtual Int GetHashCode() const;
 
 		static String ToString(const Object& obj);
 		static String ToString(Bool obj);
@@ -23,6 +26,18 @@ namespace Core {
 		static String ToString(Float obj);
 		static String ToString(Double obj);
 
+		static Int GetHashCode(const Object& obj);
+		static Int GetHashCode(Bool obj);
+		static Int GetHashCode(Byte obj);
+		static Int GetHashCode(SByte obj);
+		static Int GetHashCode(Short obj);
+		static Int GetHashCode(UShort obj);
+		static Int GetHashCode(Int obj);
+		static Int GetHashCode(UInt obj);
+		static Int GetHashCode(Long obj);
+		static Int GetHashCode(ULong obj);
+		static Int GetHashCode(Float obj);
+		static Int GetHashCode(Double obj);
 	};
 }
 

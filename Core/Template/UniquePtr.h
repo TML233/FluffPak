@@ -46,7 +46,7 @@ namespace Core {
 	};
 
 	template<typename T>
-	UniquePtr<T>::UniquePtr(T* ptr, const Deleter<T>& deleter = Deleter<T>()) :ptr(ptr), deleter(deleter) {}
+	UniquePtr<T>::UniquePtr(T* ptr, const Deleter<T>& deleter) :ptr(ptr), deleter(deleter) {}
 	template<typename T>
 	T* UniquePtr<T>::GetRaw() const {
 		return ptr;
@@ -98,7 +98,7 @@ namespace Core {
 		Deleter<T[]> deleter;
 	};
 	template<typename T>
-	UniquePtr<T[]>::UniquePtr(T* ptr, const Deleter<T[]>& deleter = Deleter<T[]>()) :ptr(ptr), deleter(deleter) {}
+	UniquePtr<T[]>::UniquePtr(T* ptr, const Deleter<T[]>& deleter) :ptr(ptr), deleter(deleter) {}
 	template<typename T>
 	T* UniquePtr<T[]>::GetRaw() const {
 		return ptr;

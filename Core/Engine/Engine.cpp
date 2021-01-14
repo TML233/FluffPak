@@ -1,5 +1,6 @@
 #include "Core/Engine/Engine.h"
 #include "Core/System/String.h"
+#include "Core/System/Console.h"
 
 namespace Core {
 	Engine& Engine::GetInstance() {

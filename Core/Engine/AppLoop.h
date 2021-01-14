@@ -4,7 +4,7 @@
 #include "Core/Definition.h"
 #include "Core/Template/UniquePtr.h"
 namespace Core {
-	class AppLoop {
+	class AppLoop :public Object {
 	public:
 		virtual ~AppLoop();
 		virtual Bool IsWorking() const;

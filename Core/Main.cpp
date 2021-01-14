@@ -4,10 +4,13 @@
 #include "Core/Math/Vector2.h"
 #include "Core/System/String.h"
 #include "Core/Template/UniquePtr.h"
+#include "Core/Engine/Engine.h"
 using namespace Core;
 
 int main() {
 	Console::Initialize();
-	Console::PrintLine(u8"Test, 测试, 曰你妈Windows");
+
+	Object obj{};
+	Console::PrintLine(Object::ToString(obj.GetHashCode()));
 	return 0;
 }

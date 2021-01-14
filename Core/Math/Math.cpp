@@ -2,7 +2,7 @@
 #include "Core/Math/Math.h"
 
 namespace Core {
-	const Float Math::PI = 3.14159274;
+	const Float Math::PI = 3.14159265358f;
 	const Float Math::Deg2Rad = Math::PI / 180;
 	const Float Math::Rad2Deg = 180 / Math::PI;
 
