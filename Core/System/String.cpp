@@ -1,6 +1,6 @@
 #include "Core/Definition.h"
 #include "Core/System/String.h"
-#include "Core/Template/Iterator.h"
+#include "Core/Collection/Iterator.h"
 #include <string>
 #include <cstring>
 

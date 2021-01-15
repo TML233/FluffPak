@@ -1,9 +1,9 @@
 ﻿#include "Core/Definition.h"
 #include "Core/System/Console.h"
-#include "Core/Template/List.h"
+#include "Core/Collection/List.h"
 #include "Core/Math/Vector2.h"
 #include "Core/System/String.h"
-#include "Core/Template/UniquePtr.h"
+#include "Core/System/UniquePtr.h"
 #include "Core/Engine/Engine.h"
 using namespace Core;
 

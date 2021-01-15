@@ -2,7 +2,7 @@
 #define HEADER_CORE_ENGINE_ENGINE
 
 #include "Core/Definition.h"
-#include "Core/Template/UniquePtr.h"
+#include "Core/System/UniquePtr.h"
 #include "Core/Engine/AppLoop.h"
 
 namespace Core {

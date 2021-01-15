@@ -1,5 +1,5 @@
 #include "Platform/Windows/UnicodeHelper.h"
-#include "Core/Template/UniquePtr.h"
+#include "Core/System/UniquePtr.h"
 
 using namespace Core;
 namespace Platform {

@@ -16,7 +16,7 @@ set(SourceFilesCore
 "Core/Math/Vector3.cpp"
 "Core/Engine/AppLoop.cpp"
 "Core/Engine/Engine.cpp"
-)
+"Core/Collection/HashHelper.cpp")
 
 
 # Add thirdparty include paths.

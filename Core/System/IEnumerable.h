@@ -1,7 +1,7 @@
 #ifndef HEADER_CORE_SYSTEM_IENUMERABLE
 #define HEADER_CORE_SYSTEM_IENUMERABLE
 
-#include "Core/Template/Iterator.h"
+#include "Core/Collection/Iterator.h"
 
 namespace Core {
 	template<typename T>

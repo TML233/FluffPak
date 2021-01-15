@@ -4,7 +4,7 @@
 #include "Platform/Windows/Include.h"
 #include "Core/System/String.h"
 #include "Core/System/Exception.h"
-#include "Core/Template/UniquePtr.h"
+#include "Core/System/UniquePtr.h"
 
 using namespace Core;
 

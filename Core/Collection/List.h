@@ -1,12 +1,12 @@
-#ifndef HEADER_CORE_TEMPLATES_LIST
-#define HEADER_CORE_TEMPLATES_LIST
+#ifndef HEADER_CORE_COLLECTION_LIST
+#define HEADER_CORE_COLLECTION_LIST
 
 #include <initializer_list>
 #include "Core/Definition.h"
 #include "Core/System/Exception.h"
 #include "Core/System/Object.h"
 #include "Core/System/IEnumerable.h"
-#include "Core/Template/Iterator.h"
+#include "Core/Collection/Iterator.h"
 
 namespace Core {
 	// A list that expands the internal array when exceeding capacity.

@@ -1,21 +1,17 @@
-#ifndef HEADER_CORE_TEMPLATE_DICTIONARY
-#define HEADER_CORE_TEMPLATE_DICTIONARY
+#ifndef HEADER_CORE_COLLECTION_DICTIONARY
+#define HEADER_CORE_COLLECTION_DICTIONARY
 
 #include "Core/System/Object.h"
 #include "Core/System/String.h"
 
 namespace Core {
 	template<typename TKey, typename TValue>
-	struct KeyValuePair final:public Object {
+	struct KeyValuePair final {
 		TKey key;
 		TValue value;
-		const String ToString() const override;
 	};
-	template<typename TKey, typename TValue>
-	const String KeyValuePair<TKey, TValue>::ToString() const {
-		return String::Format("(Key: {0}, Value: {1})", Object::ToString(key), Objecte::ToString(value));
-	}
 
+	// Referenced .NET 5 standard library: https://source.dot.net
 	template<typename TKey, typename TValue>
 	class Dictionary final:public Object {
 	public:
