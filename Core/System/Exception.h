@@ -32,6 +32,11 @@ namespace Core {
 	public:
 		NotImplementedException(const String& methodName, const String& message);
 	};
+
+	class KeyNotFoundException :public Exception {
+	public:
+		KeyNotFoundException(const String& keyName);
+	};
 }
 
 #endif
