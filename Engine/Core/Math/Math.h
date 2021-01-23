@@ -1,7 +1,7 @@
 #ifndef HEADER_CORE_MATH_MATH
 #define HEADER_CORE_MATH_MATH
 
-#include "Core/Definition.h"
+#include "Core/System/Definition.h"
 
 namespace Core {
 	class Math final {

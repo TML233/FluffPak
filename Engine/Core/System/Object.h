@@ -1,7 +1,7 @@
 #ifndef HEADER_CORE_SYSTEM_OBJECT
 #define HEADER_CORE_SYSTEM_OBJECT
 
-#include "Core/Definition.h"
+#include "Core/System/Definition.h"
 
 namespace Core {
 	class Object {

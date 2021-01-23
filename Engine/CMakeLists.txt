@@ -1,11 +1,15 @@
 ﻿cmake_minimum_required(VERSION 3.8)
-project("Engine")
+project("Engine" LANGUAGES CXX)
 
-include_directories("./")
+# Add thirdparty library projects
+add_subdirectory("Thirdparty/fmt/")
 
+add_library(Engine STATIC)
+target_include_directories(Engine PUBLIC "./")
+target_link_libraries(Engine PRIVATE fmt)
 
-# Add common source files.
-set(SourceFilesCore
+# Add common source/header files.
+set(SourceFileCore
 	"Core/System/Object.cpp"
 	"Core/System/Exception.cpp"
 	"Core/System/String.cpp"
@@ -17,32 +21,17 @@ set(SourceFilesCore
 	"Core/Engine/Engine.cpp"
 	"Core/Collection/HashHelper.cpp"
 )
-
-
-# Add thirdparty include paths.
-include_directories("Thirdparty/fmt/include/")
-
-# Add thirdparty source files.
-set(SourceFilesThirdparty
-	"Thirdparty/fmt/src/format.cc"
-)
-
+set(HeaderFileCore "")
 
 # Add platform-depended source files.
-set(SourceFilesPlatform "")
-
 if(WIN32)
-	set(SourceFilesPlatform
-	#"Platform/Windows/OS/Window.cpp"
-	#"Platform/Windows/UnicodeHelper.cpp"
-	)
 	# Use Windows Unicode
-	add_definitions(-DUNICODE -D_UNICODE)
+	target_compile_options(Engine PUBLIC "-DUNICODE -D_UNICODE")
 elseif(__LINUX__)
-	set(SourceFilesPlatform "")
+
 endif()
 
-
-add_library(Engine STATIC ${SourceFilesThirdparty} ${SourceFilesCore} ${SourceFilesPlatform})
-
-target_compile_features(Engine PRIVATE cxx_std_17)
+target_sources(Engine
+	PUBLIC ${HeaderFileCore} ${HeaderFilePlatform}
+	PRIVATE ${SourceFileCore} ${SourceFilePlatform}
+)

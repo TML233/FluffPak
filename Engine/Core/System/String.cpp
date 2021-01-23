@@ -1,4 +1,4 @@
-#include "Core/Definition.h"
+#include "Core/System/Definition.h"
 #include "Core/System/String.h"
 #include "Core/Collection/Iterator.h"
 #include <string>

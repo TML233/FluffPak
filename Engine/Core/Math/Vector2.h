@@ -1,7 +1,7 @@
 #ifndef HEADER_CORE_MATH_VECTOR2
 #define HEADER_CORE_MATH_VECTOR2
 
-#include "Core/Definition.h"
+#include "Core/System/Definition.h"
 #include "Core/System/Object.h"
 
 namespace Core {

@@ -1,7 +1,7 @@
 #ifndef HEADER_CORE_ENGINE_APPLOOP
 #define HEADER_CORE_ENGINE_APPLOOP
 
-#include "Core/Definition.h"
+#include "Core/System/Definition.h"
 #include "Core/System/UniquePtr.h"
 namespace Core {
 	class AppLoop :public Object {

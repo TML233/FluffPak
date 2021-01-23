@@ -2,7 +2,7 @@
 #define HEADER_CORE_COLLECTION_LIST
 
 #include <initializer_list>
-#include "Core/Definition.h"
+#include "Core/System/Definition.h"
 #include "Core/System/Exception.h"
 #include "Core/System/Object.h"
 #include "Core/System/IEnumerable.h"

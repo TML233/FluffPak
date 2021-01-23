@@ -1,7 +1,7 @@
 #ifndef HEADER_CORE_COLLECTION_ITERATOR
 #define HEADER_CORE_COLLECTION_ITERATOR
 
-#include "Core/Definition.h"
+#include "Core/System/Definition.h"
 
 namespace Core {
 	template<typename T>

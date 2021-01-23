@@ -1,7 +1,7 @@
 #ifndef HEADER_CORE_SYSTEM_EXCEPTIONS
 #define HEADER_CORE_SYSTEM_EXCEPTIONS
 
-#include "Core/Definition.h"
+#include "Core/System/Definition.h"
 #include "Core/System/Object.h"
 
 namespace Core {
