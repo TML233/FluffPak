@@ -6,31 +6,31 @@
 namespace Core {
 	// Default deleter which calls delete
 	template<typename T>
-	class Deleter {
+	class DefaultDeleter {
 	public:
-		virtual void operator()(T* ptr);
+		void operator()(T* ptr);
 	};
 	template<typename T>
-	void Deleter<T>::operator()(T* ptr) {
+	void DefaultDeleter<T>::operator()(T* ptr) {
 		delete ptr;
 	}
 
 	// Default deleter for arrays which calls delete[]
 	template<typename T>
-	class Deleter<T[]> {
+	class DefaultDeleter<T[]> {
 	public:
-		virtual void operator()(T* ptr);
+		void operator()(T* ptr);
 	};
 	template<typename T>
-	void Deleter<T[]>::operator()(T* ptr) {
+	void DefaultDeleter<T[]>::operator()(T* ptr) {
 		delete[] ptr;
 	}
 
 	// UniquePtr
-	template<typename T>
+	template<typename T,typename TDeleter=DefaultDeleter<T>>
 	class UniquePtr final {
 	public:
-		explicit UniquePtr(T* ptr = nullptr, const Deleter<T>& deleter = Deleter<T>());
+		explicit UniquePtr(T* ptr = nullptr);
 		~UniquePtr();
 		UniquePtr(const UniquePtr<T>& obj) = delete;
 		UniquePtr& operator=(const UniquePtr<T> obj) = delete;
@@ -42,50 +42,50 @@ namespace Core {
 		operator bool();
 	private:
 		T* ptr = nullptr;
-		Deleter<T> deleter;
+		TDeleter deleter;
 	};
 
-	template<typename T>
-	UniquePtr<T>::UniquePtr(T* ptr, const Deleter<T>& deleter) :ptr(ptr), deleter(deleter) {}
-	template<typename T>
-	T* UniquePtr<T>::GetRaw() const {
+	template<typename T, typename TDeleter>
+	UniquePtr<T,TDeleter>::UniquePtr(T* ptr) :ptr(ptr) {}
+	template<typename T, typename TDeleter>
+	T* UniquePtr<T, TDeleter>::GetRaw() const {
 		return ptr;
 	}
-	template<typename T>
-	UniquePtr<T>::~UniquePtr() {
+	template<typename T, typename TDeleter>
+	UniquePtr<T, TDeleter>::~UniquePtr() {
 		Reset();
 	}
-	template<typename T>
-	T* UniquePtr<T>::Release() {
+	template<typename T, typename TDeleter>
+	T* UniquePtr<T, TDeleter>::Release() {
 		T* ptr = this->ptr;
 		this->ptr = nullptr;
 		return ptr;
 	}
-	template<typename T>
-	void UniquePtr<T>::Reset(T* ptr) {
+	template<typename T, typename TDeleter>
+	void UniquePtr<T, TDeleter>::Reset(T* ptr) {
 		if (this->ptr != nullptr) {
 			deleter(this->ptr);
 		}
 		this->ptr = ptr;
 	}
-	template<typename T>
-	T& UniquePtr<T>::operator*() const {
+	template<typename T, typename TDeleter>
+	T& UniquePtr<T, TDeleter>::operator*() const {
 		return *ptr;
 	}
-	template<typename T>
-	T* UniquePtr<T>::operator->() const {
+	template<typename T, typename TDeleter>
+	T* UniquePtr<T, TDeleter>::operator->() const {
 		return ptr;
 	}
-	template<typename T>
-	UniquePtr<T>::operator bool() {
+	template<typename T, typename TDeleter>
+	UniquePtr<T, TDeleter>::operator bool() {
 		return ptr != nullptr;
 	}
 
 	// UniquePtr for arrays
-	template<typename T>
-	class UniquePtr<T[]> {
+	template<typename T, typename TDeleter>
+	class UniquePtr<T[],TDeleter> {
 	public:
-		explicit UniquePtr(T* ptr = nullptr, const Deleter<T[]>& deleter = Deleter<T[]>());
+		explicit UniquePtr(T* ptr = nullptr);
 		~UniquePtr();
 		UniquePtr(const UniquePtr<T[]>& obj) = delete;
 		UniquePtr& operator=(const UniquePtr<T[]> obj) = delete;
@@ -95,33 +95,33 @@ namespace Core {
 		operator bool();
 	private:
 		T* ptr = nullptr;
-		Deleter<T[]> deleter;
+		TDeleter deleter;
 	};
-	template<typename T>
-	UniquePtr<T[]>::UniquePtr(T* ptr, const Deleter<T[]>& deleter) :ptr(ptr), deleter(deleter) {}
-	template<typename T>
-	T* UniquePtr<T[]>::GetRaw() const {
+	template<typename T, typename TDeleter>
+	UniquePtr<T[], TDeleter>::UniquePtr(T* ptr) :ptr(ptr) {}
+	template<typename T, typename TDeleter>
+	T* UniquePtr<T[], TDeleter>::GetRaw() const {
 		return ptr;
 	}
-	template<typename T>
-	UniquePtr<T[]>::~UniquePtr() {
+	template<typename T, typename TDeleter>
+	UniquePtr<T[], TDeleter>::~UniquePtr() {
 		deleter(ptr);
 	}
-	template<typename T>
-	T* UniquePtr<T[]>::Release() {
+	template<typename T, typename TDeleter>
+	T* UniquePtr<T[], TDeleter>::Release() {
 		T* ptr = this->ptr;
 		this->ptr = nullptr;
 		return ptr;
 	}
-	template<typename T>
-	void UniquePtr<T[]>::Reset(T* ptr) {
+	template<typename T, typename TDeleter>
+	void UniquePtr<T[], TDeleter>::Reset(T* ptr) {
 		if (this->ptr != nullptr) {
 			deleter(this->ptr);
 		}
 		this->ptr = ptr;
 	}
-	template<typename T>
-	UniquePtr<T[]>::operator bool() {
+	template<typename T, typename TDeleter>
+	UniquePtr<T[], TDeleter>::operator bool() {
 		return ptr != nullptr;
 	}
 }
