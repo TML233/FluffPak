@@ -26,7 +26,7 @@ set(HeaderFileCore "")
 # Add platform-depended source files.
 if(WIN32)
 	# Use Windows Unicode
-	target_compile_options(Engine PUBLIC "-DUNICODE -D_UNICODE")
+	target_compile_options(Engine PUBLIC -DUNICODE -D_UNICODE)
 elseif(__LINUX__)
 
 endif()
