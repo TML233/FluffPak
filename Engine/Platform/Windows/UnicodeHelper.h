@@ -2,11 +2,11 @@
 #define HEADER_PLATFORM_WINDOWS_UNICODEHELPER
 
 #include "Platform/Windows/Include.h"
-#include "Core/System/String.h"
-#include "Core/System/Exception.h"
-#include "Core/System/UniquePtr.h"
+#include "Engine/System/String.h"
+#include "Engine/System/Exception.h"
+#include "Engine/System/UniquePtr.h"
 
-using namespace Core;
+using namespace Engine;
 
 namespace Platform {
 	class UnicodeHelper final{

@@ -1,7 +1,7 @@
 #include "Platform/Windows/UnicodeHelper.h"
-#include "Core/System/UniquePtr.h"
+#include "Engine/System/UniquePtr.h"
 
-using namespace Core;
+using namespace Engine;
 namespace Platform {
 	UniquePtr<WCHAR[]> UnicodeHelper::UTF8ToUnicode(const String& string) {
 		Int len = MultiByteToWideChar(CP_UTF8, NULL, string.GetRawArray(), -1, NULL, 0);
