@@ -3,7 +3,7 @@
 
 using namespace Engine;
 
-TEST_CASE("Testing Allocator") {
+TEST_CASE("Allocator") {
 	Allocator<int> allo{};
 	int* ptr = allo.Allocate(2);
 	allo.Construct(ptr);
