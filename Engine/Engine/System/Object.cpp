@@ -89,7 +89,8 @@ namespace Engine {
 	}
 	// Referenced .NET 5 standard library: https://source.dot.net
 	Int Object::GetHashCode(Float obj) {
-		Int bits = reinterpret_cast<Int>(&obj);
+		Int bits = 0;
+		std::memcpy(&bits, &obj, sizeof(bits));
 		// NaN and zero will have the same hash code.
 		if (((bits - 1) & 0x7FFFFFFF) >= 0x7F800000) {
 			bits &= 0x7F800000;
@@ -97,7 +98,8 @@ namespace Engine {
 		return bits;
 	}
 	Int Object::GetHashCode(Double obj) {
-		Long bits = reinterpret_cast<Long>(&obj);
+		Long bits = 0;
+		std::memcpy(&bits, &obj, sizeof(bits));
 		// NaN and zero will have the same hash code.
 		if (((bits - 1) & 0x7FFFFFFFFFFFFFFF) >= 0x7FF0000000000000) {
 			bits &= 0x7FF0000000000000;
