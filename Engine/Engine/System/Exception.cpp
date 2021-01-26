@@ -27,4 +27,5 @@ namespace Engine {
 	ArgumentOutOfRangeException::ArgumentOutOfRangeException(const String& argumentName, const String& message) : ArgumentException(argumentName, message) {}
 	NotImplementedException::NotImplementedException(const String& methodName, const String& message) : Exception(String::Format("Method {0} is not implemented: {1}", methodName, message)) {}
 	KeyNotFoundException::KeyNotFoundException(const String& keyName) : Exception(String::Format("Key not found: {0}", keyName)) {}
+	OverflowException::OverflowException(const String& message) : Exception(message) {}
 }

@@ -37,6 +37,11 @@ namespace Engine {
 	public:
 		KeyNotFoundException(const String& keyName);
 	};
+
+	class OverflowException :public Exception {
+	public:
+		OverflowException(const String& message);
+	};
 }
 
 #endif
