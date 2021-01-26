@@ -6,6 +6,7 @@
 #include "Engine/System/Exception.h"
 #include "Engine/System/Object.h"
 #include "Engine/System/IEnumerable.h"
+#include "Engine/System/String.h"
 #include "Engine/Collection/Iterator.h"
 
 namespace Engine {

@@ -2,6 +2,7 @@
 #define HEADER_CORE_SYSTEM_STRING
 
 #include "Engine/System/Object.h"
+#include <memory>
 #include "fmt/core.h"
 #include "fmt/format.h"
 

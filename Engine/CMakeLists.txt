@@ -5,7 +5,7 @@ project("Engine" LANGUAGES CXX)
 add_library(Engine STATIC)
 target_include_directories(Engine PUBLIC "./")
 # Link thirdparty libraries
-target_link_libraries(Engine PRIVATE fmt)
+target_link_libraries(Engine PUBLIC fmt)
 
 # Add common source/header files.
 set(SourceFileCore
