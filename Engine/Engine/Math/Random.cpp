@@ -1,11 +1,15 @@
 #include "Engine/Math/Random.h"
 #include "Engine/System/Exception.h"
 #include "Engine/System/String.h"
+#include <chrono>
 
 namespace Engine {
 	Random::Random() {
-		// TODO: Uncomment after DateTime system is done.
-		// SetSeed(DateTime::GetCurrent());
+		// TODO: Change this to DateTime calls.
+		Int time = (Int)std::chrono::high_resolution_clock::now().time_since_epoch().count();
+		UInt seed = 0;
+		std::memcpy(&seed, &time, sizeof(Int));
+		SetSeed(seed);
 	}
 	Random::Random(UInt seed) {
 		SetSeed(seed);
