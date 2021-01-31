@@ -5,12 +5,6 @@
 namespace Engine {
 	TimeSpan::TimeSpan(Long ticks) :ticks(ticks) {}
 
-	const Long TimeSpan::TicksPerMillisecond = 10000;
-	const Long TimeSpan::TicksPerSecond = TicksPerMillisecond * 1000;
-	const Long TimeSpan::TicksPerMinute = TicksPerSecond * 60;
-	const Long TimeSpan::TicksPerHour = TicksPerMinute * 60;
-	const Long TimeSpan::TicksPerDay = TicksPerHour * 24;
-
 	Long TimeSpan::GetTicks() const {
 		return ticks;
 	}

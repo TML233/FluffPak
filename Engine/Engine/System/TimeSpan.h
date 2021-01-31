@@ -7,11 +7,11 @@ namespace Engine {
 	struct TimeSpan {
 		TimeSpan(Long ticks);
 
-		static const Long TicksPerMillisecond;
-		static const Long TicksPerSecond;
-		static const Long TicksPerMinute;
-		static const Long TicksPerHour;
-		static const Long TicksPerDay;
+		static constexpr Long TicksPerMillisecond = 10000;
+		static constexpr Long TicksPerSecond = TicksPerMillisecond * 1000;
+		static constexpr Long TicksPerMinute = TicksPerSecond * 60;
+		static constexpr Long TicksPerHour = TicksPerMinute * 60;
+		static constexpr Long TicksPerDay = TicksPerHour * 24;
 
 		Long GetTicks() const;
 		void SetTicks(Long ticks);
