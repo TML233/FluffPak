@@ -3,24 +3,24 @@
 #include "Engine/System/String.h"
 
 namespace Engine {
-	Vector2::Vector2(Float x, Float y) {
+	Vector2::Vector2(float x, float y) {
 		this->x = x;
 		this->y = y;
 	}
 
-	Float Vector2::GetLength() const {
+	float Vector2::GetLength() const {
 		return Math::Sqrt(GetLengthSquared());
 	}
-	Float Vector2::GetLengthSquared() const {
+	float Vector2::GetLengthSquared() const {
 		return x * x + y * y;
 	}
 
 	Vector2 Vector2::GetNormalized() const {
-		Float len = GetLength();
+		float len = GetLength();
 		return Vector2(x / len, y / len);
 	}
 	void Vector2::Normalize() {
-		Float len = GetLength();
+		float len = GetLength();
 		x = x / len;
 		y = y / len;
 	}
@@ -31,10 +31,10 @@ namespace Engine {
 	Vector2 Vector2::operator-(const Vector2& value) {
 		return Vector2(x - value.x, y - value.y);
 	}
-	Vector2 Vector2::operator*(Float value) {
+	Vector2 Vector2::operator*(float value) {
 		return Vector2(x * value, y * value);
 	}
-	Vector2 Vector2::operator/(Float value) {
+	Vector2 Vector2::operator/(float value) {
 		return Vector2(x / value, y / value);
 	}
 
@@ -49,13 +49,13 @@ namespace Engine {
 	const Vector2 Vector2::one(1, 1);
 	const Vector2 Vector2::zero(0, 0);
 
-	Vector2 Vector2::Lerp(const Vector2& a, const Vector2& b, Float time) {
+	Vector2 Vector2::Lerp(const Vector2& a, const Vector2& b, float time) {
 		return Vector2(Math::Lerp(a.x, b.x, time), Math::Lerp(a.y, b.y, time));
 	}
-	Float Vector2::Dot(const Vector2& a, const Vector2& b) {
+	float Vector2::Dot(const Vector2& a, const Vector2& b) {
 		return (a.x * b.x + a.y * b.y);
 	}
-	Float Vector2::Cross(const Vector2& a, const Vector2& b) {
+	float Vector2::Cross(const Vector2& a, const Vector2& b) {
 		return (a.x * b.y - a.y * b.x);
 	}
 }

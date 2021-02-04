@@ -10,15 +10,15 @@ namespace Engine {
 		// Initializes a random number generator with the current timestamp as seed.
 		Random();
 		// Initializes a random number generator with the given seed.
-		Random(UInt seed);
+		Random(uint32 seed);
 		// Generates a integer which is [min, max).
-		Int Next(Int min, Int max);
+		int32 Next(int32 min, int32 max);
 		// Generates a float which is [min, max).
-		Float NextFloat(Float min=0, Float max=1);
+		float NextFloat(float min=0, float max=1);
 		// Generates a double which is [min, max).
-		Double NextDouble(Double min=0, Double max=1);
+		double NextDouble(double min=0, double max=1);
 		// Set the seed of the random number generator.
-		void SetSeed(UInt seed);
+		void SetSeed(uint32 seed);
 	private:
 		std::default_random_engine engine;
 	};

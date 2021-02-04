@@ -6,25 +6,25 @@
 namespace Engine {
 	class Math final {
 	public:
-		static const Float PI;
-		static const Float Deg2Rad;
-		static const Float Rad2Deg;
+		static const float PI;
+		static const float Deg2Rad;
+		static const float Rad2Deg;
 
-		static Float Clamp(Float value, Float min = 0.0f, Float max = 1.0f);
-		static Float Lerp(Float a, Float b, Float time);
+		static float Clamp(float value, float min = 0.0f, float max = 1.0f);
+		static float Lerp(float a, float b, float time);
 
-		static Float Sin(Float time);
-		static Float Cos(Float time);
+		static float Sin(float time);
+		static float Cos(float time);
 
-		static Float Sign(Float value);
-		static Float Abs(Float value);
+		static float Sign(float value);
+		static float Abs(float value);
 
-		static Float Round(Float value);
-		static Float Floor(Float value);
-		static Float Ceil(Float value);
+		static float Round(float value);
+		static float Floor(float value);
+		static float Ceil(float value);
 
-		static Float Pow(Float base, Float power);
-		static Float Sqrt(Float value);
+		static float Pow(float base, float power);
+		static float Sqrt(float value);
 	};
 }
 

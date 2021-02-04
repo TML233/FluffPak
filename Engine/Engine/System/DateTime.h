@@ -11,8 +11,8 @@ namespace Engine {
 		static DateTime GetNowUtc();
 		
 	private:
-		ULong time;
-		Short offsetMinutes;
+		uint64 time;
+		int16 offsetMinutes;
 	};
 }
 

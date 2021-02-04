@@ -5,33 +5,33 @@
 
 namespace Engine {
 	struct TimeSpan {
-		TimeSpan(Long ticks);
+		TimeSpan(int64 ticks);
 
-		static constexpr Long TicksPerMillisecond = 10000;
-		static constexpr Long TicksPerSecond = TicksPerMillisecond * 1000;
-		static constexpr Long TicksPerMinute = TicksPerSecond * 60;
-		static constexpr Long TicksPerHour = TicksPerMinute * 60;
-		static constexpr Long TicksPerDay = TicksPerHour * 24;
+		static constexpr int64 TicksPerMillisecond = 10000;
+		static constexpr int64 TicksPerSecond = TicksPerMillisecond * 1000;
+		static constexpr int64 TicksPerMinute = TicksPerSecond * 60;
+		static constexpr int64 TicksPerHour = TicksPerMinute * 60;
+		static constexpr int64 TicksPerDay = TicksPerHour * 24;
 
-		Long GetTicks() const;
-		void SetTicks(Long ticks);
+		int64 GetTicks() const;
+		void SetTicks(int64 ticks);
 
-		Int GetMilliseconds() const;
-		Int GetSeconds() const;
-		Int GetMinutes() const;
-		Int GetHours() const;
-		Int GetDays() const;
+		int32 GetMilliseconds() const;
+		int32 GetSeconds() const;
+		int32 GetMinutes() const;
+		int32 GetHours() const;
+		int32 GetDays() const;
 		
-		Double GetTotalMilliseconds() const;
-		Double GetTotalSeconds() const;
-		Double GetTotalMinutes() const;
-		Double GetTotalHours() const;
-		Double GetTotalDays() const;
+		double GetTotalMilliseconds() const;
+		double GetTotalSeconds() const;
+		double GetTotalMinutes() const;
+		double GetTotalHours() const;
+		double GetTotalDays() const;
 
 		TimeSpan operator+(const TimeSpan& obj) const;
 		TimeSpan operator-(const TimeSpan& obj) const;
 	private:
-		Long ticks = 0;
+		int64 ticks = 0;
 	};
 }
 

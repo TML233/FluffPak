@@ -6,22 +6,22 @@
 
 namespace Engine {
 	struct Vector3 final:public Object {
-		Vector3(Float x, Float y, Float z);
+		Vector3(float x, float y, float z);
 
-		Float x;
-		Float y;
-		Float z;
+		float x;
+		float y;
+		float z;
 
-		Float GetLength() const;
-		Float GetLengthSquared() const;
+		float GetLength() const;
+		float GetLengthSquared() const;
 
 		Vector3 GetNormalized() const;
 		void Normalize();
 
 		Vector3 operator+(const Vector3& value);
 		Vector3 operator-(const Vector3& value);
-		Vector3 operator*(Float value);
-		Vector3 operator/(Float value);
+		Vector3 operator*(float value);
+		Vector3 operator/(float value);
 
 		String ToString() const override;
 
@@ -34,8 +34,8 @@ namespace Engine {
 		static const Vector3 one;
 		static const Vector3 zero;
 
-		static Vector3 Lerp(const Vector3& a, const Vector3& b, Float time);
-		static Float Dot(const Vector3& a, const Vector3& b);
+		static Vector3 Lerp(const Vector3& a, const Vector3& b, float time);
+		static float Dot(const Vector3& a, const Vector3& b);
 		static Vector3 Cross(const Vector3& a, const Vector3& b);
 	};
 }

@@ -7,10 +7,10 @@ namespace Engine {
 	class AppLoop :public Object {
 	public:
 		virtual ~AppLoop();
-		virtual Bool IsWorking() const;
-		virtual void Update(Float deltatime) = 0;
+		virtual bool IsWorking() const;
+		virtual void Update(float deltatime) = 0;
 	private:
-		Bool working = true;
+		bool working = true;
 	};
 }
 

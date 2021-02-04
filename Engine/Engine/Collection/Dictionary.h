@@ -24,7 +24,7 @@ namespace Engine {
 		};
 		void Add(const TKey& key, const TValue& value);
 		bool Remove(const TKey& key);
-		Bool ContainsKey(const TKey& key) const;
+		bool ContainsKey(const TKey& key) const;
 		TValue operator[](const TKey& key) const;
 
 	private:

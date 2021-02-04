@@ -2,11 +2,11 @@
 #include "Engine/Math/Math.h"
 
 namespace Engine {
-	const Float Math::PI = 3.14159265358f;
-	const Float Math::Deg2Rad = Math::PI / 180;
-	const Float Math::Rad2Deg = 180 / Math::PI;
+	const float Math::PI = 3.14159265358f;
+	const float Math::Deg2Rad = Math::PI / 180;
+	const float Math::Rad2Deg = 180 / Math::PI;
 
-	Float Math::Clamp(Float value, Float min, Float max) {
+	float Math::Clamp(float value, float min, float max) {
 		if (value < min) {
 			return min;
 		}
@@ -15,18 +15,18 @@ namespace Engine {
 		}
 		return value;
 	}
-	Float Math::Lerp(Float a, Float b, Float time) {
+	float Math::Lerp(float a, float b, float time) {
 		return (b - a) * time + a;
 	}
 
-	Float Math::Sin(Float time) {
+	float Math::Sin(float time) {
 		return sinf(time);
 	}
-	Float Math::Cos(Float time) {
+	float Math::Cos(float time) {
 		return cosf(time);
 	}
 
-	Float Math::Sign(Float value) {
+	float Math::Sign(float value) {
 		if (value < 0) {
 			return -1;
 		}
@@ -35,24 +35,24 @@ namespace Engine {
 		}
 		return 0;
 	}
-	Float Math::Abs(Float value) {
+	float Math::Abs(float value) {
 		return (value < 0 ? -value : value);
 	}
 
-	Float Math::Round(Float value) {
+	float Math::Round(float value) {
 		return roundf(value);
 	}
-	Float Math::Floor(Float value) {
+	float Math::Floor(float value) {
 		return floorf(value);
 	}
-	Float Math::Ceil(Float value) {
+	float Math::Ceil(float value) {
 		return ceilf(value);
 	}
 
-	Float Math::Pow(Float base, Float power) {
+	float Math::Pow(float base, float power) {
 		return powf(base, power);
 	}
-	Float Math::Sqrt(Float value) {
+	float Math::Sqrt(float value) {
 		return sqrtf(value);
 	}
 }

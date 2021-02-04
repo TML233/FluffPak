@@ -6,36 +6,36 @@
 namespace Engine {
 	Random::Random() {
 		// TODO: Change this to DateTime calls.
-		Int time = (Int)std::chrono::high_resolution_clock::now().time_since_epoch().count();
-		UInt seed = 0;
-		std::memcpy(&seed, &time, sizeof(Int));
+		int32 time = (int32)std::chrono::high_resolution_clock::now().time_since_epoch().count();
+		uint32 seed = 0;
+		std::memcpy(&seed, &time, sizeof(int32));
 		SetSeed(seed);
 	}
-	Random::Random(UInt seed) {
+	Random::Random(uint32 seed) {
 		SetSeed(seed);
 	}
-	Int Random::Next(Int min, Int max) {
+	int32 Random::Next(int32 min, int32 max) {
 		if (min > max) {
 			throw ArgumentOutOfRangeException("min", "min cannot be greater than max.");
 		}
 		if (min == max) {
 			return min;
 		}
-		return std::uniform_int_distribution<Int>(min, max - 1)(engine);
+		return std::uniform_int_distribution<int32>(min, max - 1)(engine);
 	}
-	Float Random::NextFloat(Float min, Float max) {
+	float Random::NextFloat(float min, float max) {
 		if (min > max) {
 			throw ArgumentOutOfRangeException("min", "min cannot be greater than max.");
 		}
-		return std::uniform_real_distribution<Float>(min, max)(engine);
+		return std::uniform_real_distribution<float>(min, max)(engine);
 	}
-	Double Random::NextDouble(Double min, Double max) {
+	double Random::NextDouble(double min, double max) {
 		if (min > max) {
 			throw ArgumentOutOfRangeException("min", "min cannot be greater than max.");
 		}
-		return std::uniform_real_distribution<Double>(min, max)(engine);
+		return std::uniform_real_distribution<double>(min, max)(engine);
 	}
-	void Random::SetSeed(UInt seed) {
+	void Random::SetSeed(uint32 seed) {
 		engine.seed(seed);
 	}
 }

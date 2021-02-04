@@ -5,34 +5,22 @@
 #include <cstdint>
 
 namespace Engine {
-	// Represents a 1-bit value.
-	using Bool = bool;
 	// Represents a signed 8-bit integer.
-	using SByte = std::int8_t;
+	using sbyte = std::int8_t;
 	// Represents an unsigned 8-bit integer.
-	using Byte = std::uint8_t;
+	using byte = std::uint8_t;
 	// Represents a signed 16-bit integer.
-	using Int16 = std::int16_t;
+	using int16 = std::int16_t;
 	// Represents an unsigned 16-bit integer.
-	using UInt16 = std::uint16_t;
+	using uint16 = std::uint16_t;
 	// Represents a signed 32-bit integer.
-	using Int32 = std::int32_t;
+	using int32 = std::int32_t;
 	// Represents an unsigned 32-bit integer.
-	using UInt32 = std::uint32_t;
+	using uint32 = std::uint32_t;
 	// Represents a signed 64-bit integer.
-	using Int64 = std::int64_t;
+	using int64 = std::int64_t;
 	// Represents an unsigned 64-bit integer.
-	using UInt64 = std::uint64_t;
-	// Represents a single float.
-	using Float = float;
-	// Represents a double float.
-	using Double = double;
-	// Represents a 8-bit character.
-	using Char8 = Byte;
-	// Represents a 16-bit character
-	using Char16 = UInt16;
-	// Represents a 32-bit character
-	using Char32 = UInt32;
+	using uint64 = std::uint64_t;
 	// String
 	class String;
 }

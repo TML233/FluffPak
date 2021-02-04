@@ -3,60 +3,60 @@
 #include "Engine/System/String.h"
 
 namespace Engine {
-	TimeSpan::TimeSpan(Long ticks) :ticks(ticks) {}
+	TimeSpan::TimeSpan(int64 ticks) :ticks(ticks) {}
 
-	Long TimeSpan::GetTicks() const {
+	int64 TimeSpan::GetTicks() const {
 		return ticks;
 	}
-	void TimeSpan::SetTicks(Long ticks) {
+	void TimeSpan::SetTicks(int64 ticks) {
 		this->ticks = ticks;
 	}
 
-	Int TimeSpan::GetMilliseconds() const {
-		return (Int)((ticks / TicksPerMillisecond) % 1000);
+	int32 TimeSpan::GetMilliseconds() const {
+		return (int32)((ticks / TicksPerMillisecond) % 1000);
 	}
-	Int TimeSpan::GetSeconds() const {
-		return (Int)((ticks / TicksPerSecond) % 60);
+	int32 TimeSpan::GetSeconds() const {
+		return (int32)((ticks / TicksPerSecond) % 60);
 	}
-	Int TimeSpan::GetMinutes() const {
-		return (Int)((ticks / TicksPerMinute) % 60);
+	int32 TimeSpan::GetMinutes() const {
+		return (int32)((ticks / TicksPerMinute) % 60);
 	}
-	Int TimeSpan::GetHours() const {
-		return (Int)((ticks / TicksPerHour) % 24);
+	int32 TimeSpan::GetHours() const {
+		return (int32)((ticks / TicksPerHour) % 24);
 	}
-	Int TimeSpan::GetDays() const {
-		return (Int)(ticks / TicksPerDay);
+	int32 TimeSpan::GetDays() const {
+		return (int32)(ticks / TicksPerDay);
 	}
 
-	Double TimeSpan::GetTotalMilliseconds() const {
-		return (Double)ticks / TicksPerMillisecond;
+	double TimeSpan::GetTotalMilliseconds() const {
+		return (double)ticks / TicksPerMillisecond;
 	}
-	Double TimeSpan::GetTotalSeconds() const {
-		return (Double)ticks / TicksPerSecond;
+	double TimeSpan::GetTotalSeconds() const {
+		return (double)ticks / TicksPerSecond;
 	}
-	Double TimeSpan::GetTotalMinutes() const {
-		return (Double)ticks / TicksPerMinute;
+	double TimeSpan::GetTotalMinutes() const {
+		return (double)ticks / TicksPerMinute;
 	}
-	Double TimeSpan::GetTotalHours() const {
-		return (Double)ticks / TicksPerHour;
+	double TimeSpan::GetTotalHours() const {
+		return (double)ticks / TicksPerHour;
 	}
-	Double TimeSpan::GetTotalDays() const {
-		return (Double)ticks / TicksPerDay;
+	double TimeSpan::GetTotalDays() const {
+		return (double)ticks / TicksPerDay;
 	}
 
 	TimeSpan TimeSpan::operator+(const TimeSpan& obj) const {
-		Long result = ticks + obj.ticks;
+		int64 result = ticks + obj.ticks;
 		// Check overflow: the sign bit flipped when doing the same operation
 		if ((ticks >> 63 == obj.ticks >> 63) && (ticks >> 63 != result >> 63)) {
-			throw OverflowException("Ticks operation: Int64 overflowed.");
+			throw OverflowException("Ticks operation: int64 overflowed.");
 		}
 		return TimeSpan(result);
 	}
 	TimeSpan TimeSpan::operator-(const TimeSpan& obj) const {
-		Long result = ticks - obj.ticks;
+		int64 result = ticks - obj.ticks;
 		// Check overflow: the sign bit flipped when doing the same operation
 		if ((ticks >> 63 == obj.ticks >> 63) && (ticks >> 63 != result >> 63)) {
-			throw OverflowException("Ticks operation: Int64 overflowed.");
+			throw OverflowException("Ticks operation: int64 overflowed.");
 		}
 		return TimeSpan(result);
 	}

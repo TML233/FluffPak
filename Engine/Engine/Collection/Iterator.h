@@ -15,7 +15,7 @@ namespace Engine {
 		// Iterator getter/dereference
 		T& operator*() const;
 		// Iterator !=
-		Bool operator!=(const ReadonlyIterator<T>& obj) const;
+		bool operator!=(const ReadonlyIterator<T>& obj) const;
 		// Iterator next
 		ReadonlyIterator<T>& operator++();
 
@@ -37,7 +37,7 @@ namespace Engine {
 	}
 
 	template<typename T>
-	Bool ReadonlyIterator<T>::operator!=(const ReadonlyIterator<T>& obj) const {
+	bool ReadonlyIterator<T>::operator!=(const ReadonlyIterator<T>& obj) const {
 		return target != obj.target;
 	}
 

@@ -15,21 +15,21 @@ namespace Engine {
 	template<typename T>
 	class List final :public Object, public IEnumerable<T> {
 	public:
-		List(Int capacity = 0);
+		List(int32 capacity = 0);
 		List(const std::initializer_list<T>& values);
 		List(const List<T>& list);
 		List<T>& operator=(const List<T>& list);
 		~List();
 
 		// Get item count.
-		Int GetCount() const;
+		int32 GetCount() const;
 
 		// Get capacity, the number of item the list can hold before expanding.
-		Int GetCapacity() const;
+		int32 GetCapacity() const;
 
 		// Set capacity.
 		// Throws ArgumentOutOfRangeException when the capacity is smaller than item count;
-		void SetCapacity(Int capacity);
+		void SetCapacity(int32 capacity);
 
 		// Set capacity to item count to save up some memory.
 		void TrimExcess();
@@ -43,11 +43,11 @@ namespace Engine {
 
 		// Insert an item to the specified position.
 		// Warning: might be slow if adding item to the position but the last one!
-		void Insert(Int index, const T& item);
+		void Insert(int32 index, const T& item);
 
 		// Remove the item at the specified position.
 		// Warning: might be slow if removing the item but the last one!
-		Bool RemoveAt(Int index);
+		bool RemoveAt(int32 index);
 
 		// Remove all the item in the list.
 		void Clear();
@@ -58,19 +58,19 @@ namespace Engine {
 
 		// Prepare the capacity.
 		// The capacity will be doubled each time the capacity needs to be increased.
-		void PrepareCapacity(Int target);
+		void PrepareCapacity(int32 target);
 
 		Iterator<T> begin() const override;
 		Iterator<T> end() const override;
 
 	private:
-		static const Int DefaultCapacity;
+		static const int32 DefaultCapacity;
 		void CopyFrom(const List<T>& list);
-		void MoveItems(Int from, Int to, Int dest);
+		void MoveItems(int32 from, int32 to, int32 dest);
 
 		T* items = nullptr;
-		Int capacity = 0;
-		Int count = 0;
+		int32 capacity = 0;
+		int32 count = 0;
 	};
 
 	template<typename T>
@@ -82,7 +82,7 @@ namespace Engine {
 	}
 
 	template<typename T>
-	const Int List<T>::DefaultCapacity = 4;
+	const int32 List<T>::DefaultCapacity = 4;
 
 	template<typename T>
 	Iterator<T> List<T>::begin() const {
@@ -100,7 +100,7 @@ namespace Engine {
 	}
 
 	template<typename T>
-	List<T>::List(Int capacity) {
+	List<T>::List(int32 capacity) {
 		SetCapacity(capacity);
 	}
 	template<typename T>
@@ -118,16 +118,16 @@ namespace Engine {
 	}
 
 	template<typename T>
-	Int List<T>::GetCount() const {
+	int32 List<T>::GetCount() const {
 		return count;
 	}
 
 	template<typename T>
-	Int List<T>::GetCapacity() const {
+	int32 List<T>::GetCapacity() const {
 		return capacity;
 	}
 	template<typename T>
-	void List<T>::SetCapacity(Int capacity) {
+	void List<T>::SetCapacity(int32 capacity) {
 		if (capacity < count) {
 			throw ArgumentOutOfRangeException(u8"capacity", u8"Specified capacity is lower than item count.");
 		}
@@ -140,7 +140,7 @@ namespace Engine {
 
 		T* newArr = new T[capacity];
 		if (items != nullptr && count > 0) {
-			for (Int i = 0; i < count; i += 1) {
+			for (int32 i = 0; i < count; i += 1) {
 				newArr[i] = items[i];
 			}
 			delete[] items;
@@ -167,7 +167,7 @@ namespace Engine {
 	}
 
 	template<typename T>
-	void List<T>::Insert(Int index, const T& item) {
+	void List<T>::Insert(int32 index, const T& item) {
 		if (index < 0 || index > count) {
 			throw ArgumentOutOfRangeException(u8"index", u8"Specified index is out of bounds.");
 		}
@@ -180,7 +180,7 @@ namespace Engine {
 	}
 
 	template<typename T>
-	Bool List<T>::RemoveAt(Int index) {
+	bool List<T>::RemoveAt(int32 index) {
 		if (index < 0 || index >= count) {
 			return false;
 		}
@@ -201,13 +201,13 @@ namespace Engine {
 			SetCapacity(list.capacity);
 		}
 		count = list.count;
-		for (Int i = 0; i < count; i += 1) {
+		for (int32 i = 0; i < count; i += 1) {
 			items[i] = list.items[i];
 		}
 	}
 
 	template<typename T>
-	void List<T>::PrepareCapacity(Int target) {
+	void List<T>::PrepareCapacity(int32 target) {
 		if (target <= capacity) {
 			return;
 		}
@@ -218,7 +218,7 @@ namespace Engine {
 			return;
 		}
 
-		Int ideal = capacity;
+		int32 ideal = capacity;
 		while (target > ideal) {
 			ideal *= 2;
 		}
@@ -226,7 +226,7 @@ namespace Engine {
 	}
 
 	template<typename T>
-	void List<T>::MoveItems(Int from, Int to, Int dest) {
+	void List<T>::MoveItems(int32 from, int32 to, int32 dest) {
 		if (from < 0 || to < 0 || from >= capacity || to >= capacity || dest < 0 || dest >= capacity) {
 			return;
 		}

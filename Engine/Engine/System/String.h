@@ -13,10 +13,10 @@ namespace Engine {
 	class List;
 
 	struct StringData final {
-		explicit StringData(const Char* data);
+		explicit StringData(const char* data);
 		~StringData();
 
-		Char* data = nullptr;
+		char* data = nullptr;
 		int length = 0;
 
 		static std::shared_ptr<StringData> empty;
@@ -24,28 +24,28 @@ namespace Engine {
 
 	class String final :public Object {
 	public:
-		String(const Char* string = "");
+		String(const char* string = "");
 		String(const std::string& string);
-		String& operator=(const Char* string);
+		String& operator=(const char* string);
 
 		// Get byte length. NULL is not included.
-		Int GetLength() const;
+		int32 GetLength() const;
 
 		// Get internal C-style char array.
-		const Char* GetRawArray() const;
+		const char* GetRawArray() const;
 
-		ReadonlyIterator<Char> operator[](Int index) const;
+		ReadonlyIterator<char> operator[](int32 index) const;
 
 		template<typename ... Ts>
 		static String Format(const String& format, const Ts& ... args);
 		template<typename ... Ts>
-		static String Format(const Char* format, const Ts& ... args);
+		static String Format(const char* format, const Ts& ... args);
 
 		String ToString() const override;
 
 	private:
 		friend String operator+(const String& left, const String& right);
-		void Prepare(const Char* string);
+		void Prepare(const char* string);
 		std::shared_ptr<StringData> data;
 	};
 
@@ -55,7 +55,7 @@ namespace Engine {
 	}
 
 	template<typename ... Ts>
-	static String String::Format(const Char* format, const Ts& ... args) {
+	static String String::Format(const char* format, const Ts& ... args) {
 		return fmt::format(format, args...);
 	}
 

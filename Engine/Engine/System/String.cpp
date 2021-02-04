@@ -5,11 +5,11 @@
 #include <cstring>
 
 namespace Engine {
-	StringData::StringData(const Char* data) {
-		Int32 len = strlen(data) + 1;
+	StringData::StringData(const char* data) {
+		int32 len = strlen(data) + 1;
 		length = len;
-		this->data = new Char[len];
-		for (Int32 i = 0; i < len; i += 1) {
+		this->data = new char[len];
+		for (int32 i = 0; i < len; i += 1) {
 			this->data[i] = data[i];
 		}
 	}
@@ -18,26 +18,26 @@ namespace Engine {
 	}
 	std::shared_ptr<StringData> StringData::empty = std::make_shared<StringData>("");
 
-	String::String(const Char* string) {
+	String::String(const char* string) {
 		Prepare(string);
 	}
 	String::String(const std::string& string) {
 		Prepare(string.c_str());
 	}
-	String& String::operator=(const Char* string) {
+	String& String::operator=(const char* string) {
 		Prepare(string);
 		return *this;
 	}
 
-	ReadonlyIterator<Char> String::operator[](Int32 index) const {
-		return ReadonlyIterator<Char>(&(data->data[index]));
+	ReadonlyIterator<char> String::operator[](int32 index) const {
+		return ReadonlyIterator<char>(&(data->data[index]));
 	}
 
-	Int32 String::GetLength() const {
+	int32 String::GetLength() const {
 		return data->length - 1;
 	}
 
-	const Char* String::GetRawArray() const {
+	const char* String::GetRawArray() const {
 		return data->data;
 	}
 
@@ -45,8 +45,8 @@ namespace Engine {
 		return *this;
 	}
 
-	void String::Prepare(const Char* string) {
-		Int32 len = strlen(string) + 1;
+	void String::Prepare(const char* string) {
+		int32 len = strlen(string) + 1;
 		// Use public empty string.
 		if (len <= 1) {
 			data = StringData::empty;
