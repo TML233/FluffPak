@@ -8,11 +8,11 @@ namespace Engine {
 	// Referenced .NET 5 standard library: https://source.dot.net
 	class HashHelper final {
 	public:
-		static Bool IsPrime(Int value);
-		static Int GetPrime(Int min);
+		static Bool IsPrime(Int32 value);
+		static Int32 GetPrime(Int32 min);
 	private:
-		static const Int hashPrime;
-		static const Int primes[];
+		static const Int32 hashPrime;
+		static const Int32 primes[];
 	};
 }
 

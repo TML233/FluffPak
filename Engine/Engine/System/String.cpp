@@ -6,10 +6,10 @@
 
 namespace Engine {
 	StringData::StringData(const Char* data) {
-		Int len = strlen(data) + 1;
+		Int32 len = strlen(data) + 1;
 		length = len;
 		this->data = new Char[len];
-		for (Int i = 0; i < len; i += 1) {
+		for (Int32 i = 0; i < len; i += 1) {
 			this->data[i] = data[i];
 		}
 	}
@@ -29,11 +29,11 @@ namespace Engine {
 		return *this;
 	}
 
-	ReadonlyIterator<Char> String::operator[](Int index) const {
+	ReadonlyIterator<Char> String::operator[](Int32 index) const {
 		return ReadonlyIterator<Char>(&(data->data[index]));
 	}
 
-	Int String::GetLength() const {
+	Int32 String::GetLength() const {
 		return data->length - 1;
 	}
 
@@ -46,7 +46,7 @@ namespace Engine {
 	}
 
 	void String::Prepare(const Char* string) {
-		Int len = strlen(string) + 1;
+		Int32 len = strlen(string) + 1;
 		// Use public empty string.
 		if (len <= 1) {
 			data = StringData::empty;

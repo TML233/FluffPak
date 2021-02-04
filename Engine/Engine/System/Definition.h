@@ -4,10 +4,6 @@
 #pragma once
 #include <cstdint>
 
-#ifndef ENGINE_API
-#define ENGINE_API
-#endif
-
 namespace Engine {
 	// Represents a 1-bit value.
 	using Bool = bool;
@@ -16,23 +12,27 @@ namespace Engine {
 	// Represents an unsigned 8-bit integer.
 	using Byte = std::uint8_t;
 	// Represents a signed 16-bit integer.
-	using Short = std::int16_t;
+	using Int16 = std::int16_t;
 	// Represents an unsigned 16-bit integer.
-	using UShort = std::uint16_t;
+	using UInt16 = std::uint16_t;
 	// Represents a signed 32-bit integer.
-	using Int = std::int32_t;
+	using Int32 = std::int32_t;
 	// Represents an unsigned 32-bit integer.
-	using UInt = std::uint32_t;
+	using UInt32 = std::uint32_t;
 	// Represents a signed 64-bit integer.
-	using Long = std::int64_t;
+	using Int64 = std::int64_t;
 	// Represents an unsigned 64-bit integer.
-	using ULong = std::uint64_t;
+	using UInt64 = std::uint64_t;
 	// Represents a single float.
 	using Float = float;
 	// Represents a double float.
 	using Double = double;
 	// Represents a 8-bit character.
-	using Char = char;
+	using Char8 = Byte;
+	// Represents a 16-bit character
+	using Char16 = UInt16;
+	// Represents a 32-bit character
+	using Char32 = UInt32;
 	// String
 	class String;
 }
