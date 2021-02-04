@@ -5,6 +5,7 @@
 #include <memory>
 #include "fmt/core.h"
 #include "fmt/format.h"
+#include "Engine/Algorithm/StringSearcherSunday.h"
 
 namespace Engine {
 	template<typename T>
@@ -16,7 +17,9 @@ namespace Engine {
 		explicit StringData(const char* data);
 		~StringData();
 
+		// Original data of the string.
 		char* data = nullptr;
+		// NULL included.
 		int length = 0;
 
 		static std::shared_ptr<StringData> empty;
@@ -28,13 +31,22 @@ namespace Engine {
 		String(const std::string& string);
 		String& operator=(const char* string);
 
-		// Get byte length. NULL is not included.
+		// Get byte length. NULL not included.
 		int32 GetLength() const;
 
 		// Get internal C-style char array.
+		// Do not store the pointer.
 		const char* GetRawArray() const;
 
 		ReadonlyIterator<char> operator[](int32 index) const;
+
+		// Find the position of the substring appearance in the current string.
+		// Return -1 if not found.
+		int32 Find(String pattern) const;
+		// Find the position of the substring appearance in the current string.
+		// Return -1 if not found.
+		int32 Find(const char* pattern) const;
+
 
 		template<typename ... Ts>
 		static String Format(const String& format, const Ts& ... args);
@@ -44,10 +56,13 @@ namespace Engine {
 		String ToString() const override;
 
 	private:
-		friend String operator+(const String& left, const String& right);
 		void Prepare(const char* string);
 		std::shared_ptr<StringData> data;
+
+		static StringSearcherSunday searcher;
 	};
+
+
 
 	template<typename ... Ts>
 	static String String::Format(const String& format, const Ts& ... args) {

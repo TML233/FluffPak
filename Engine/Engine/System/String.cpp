@@ -41,6 +41,13 @@ namespace Engine {
 		return data->data;
 	}
 
+	int32 String::Find(String pattern) const {
+		return Find(pattern.GetRawArray());
+	}
+	int32 String::Find(const char* pattern) const {
+		return searcher.Search(GetRawArray(), GetLength(), pattern, std::strlen(pattern));
+	}
+
 	String String::ToString() const {
 		return *this;
 	}
@@ -58,4 +65,6 @@ namespace Engine {
 	String operator+(const String& left,const String& right) {
 		return String::Format("{0}{1}", left, right);
 	}
+
+	StringSearcherSunday String::searcher{};
 }
