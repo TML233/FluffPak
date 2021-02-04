@@ -42,10 +42,17 @@ namespace Engine {
 	}
 
 	int32 String::Find(String pattern) const {
-		return Find(pattern.GetRawArray());
+		if (GetLength() < pattern.GetLength()) {
+			return -1;
+		}
+		return searcher.Search(GetRawArray(), GetLength(), pattern.GetRawArray(), pattern.GetLength());
 	}
 	int32 String::Find(const char* pattern) const {
-		return searcher.Search(GetRawArray(), GetLength(), pattern, std::strlen(pattern));
+		int32 len = std::strlen(pattern);
+		if (GetLength() < len) {
+			return -1;
+		}
+		return searcher.Search(GetRawArray(), GetLength(), pattern, len);
 	}
 
 	String String::ToString() const {
