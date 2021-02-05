@@ -1,13 +1,22 @@
 #include "doctest.h"
 #include "Engine/System/String.h"
 
-TEST_CASE("String.Find"){
+TEST_CASE("String::Find"){
 	String target = "This is a simple example.";
-	CHECK(target.Find("fuck") == -1);
-	CHECK(target.Find("this") == -1);
-	CHECK(target.Find("This") == 0);
-	CHECK(target.Find("simple") == 10);
-	CHECK(target.Find("is") == 2);
-	CHECK(target.Find(".") == 24);
-	CHECK(target.Find("example") == 17);
+	CHECK(target.IndexOf("fuck") == -1);
+	CHECK(target.IndexOf("this") == -1);
+	CHECK(target.IndexOf("This") == 0);
+	CHECK(target.IndexOf("simple") == 10);
+	CHECK(target.IndexOf("is") == 2);
+	CHECK(target.IndexOf(".") == 24);
+	CHECK(target.IndexOf("example") == 17);
+
+	String cn = u8"我是傻逼";
+	CHECK(cn.IndexOf(u8"傻逼") == sizeof(u8"我是") - 1);
+	CHECK(cn.IndexOf(u8"我是傻") == 0);
+	CHECK(cn.IndexOf(u8"🐴") == -1);
+
+	String emoji = u8"💉💧🐮🍺";
+	CHECK(emoji.IndexOf(u8"🐮") == sizeof(u8"💉💧") - 1);
+	CHECK(emoji.IndexOf(u8"🐴") == -1);
 }

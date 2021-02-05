@@ -6,7 +6,9 @@ namespace Engine {
 		//Prepare charPos
 		std::memset(charPos, -1, 256*sizeof(int32));
 		for (int32 i = 0; i < lenPattern; i += 1) {
-			charPos[pattern[i]] = i;
+			byte index = 0;
+			memcpy(&index, pattern + i, sizeof(byte));
+			charPos[index] = i;
 		}
 
 		int32 pos = 0;
@@ -21,10 +23,9 @@ namespace Engine {
 					// Not found
 					return -1;
 				} else {
-					char checking = target[checkpos];
-					byte uchecking = 0;
-					std::memcpy(&uchecking, &checking, sizeof(byte));
-					int32 cpos = charPos[uchecking];
+					byte checking = 0;
+					std::memcpy(&checking, target+checkpos, sizeof(byte));
+					int32 cpos = charPos[checking];
 					if (cpos < 0) {
 						pos += lenPattern+1;
 					} else {

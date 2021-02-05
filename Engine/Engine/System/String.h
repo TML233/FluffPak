@@ -19,7 +19,7 @@ namespace Engine {
 
 		// Original data of the string.
 		char* data = nullptr;
-		// NULL included.
+		// NULL not included.
 		int length = 0;
 
 		static std::shared_ptr<StringData> empty;
@@ -42,10 +42,10 @@ namespace Engine {
 
 		// Find the position of the substring appearance in the current string.
 		// Return -1 if not found.
-		int32 Find(String pattern) const;
-		// Find the position of the substring appearance in the current string.
-		// Return -1 if not found.
-		int32 Find(const char* pattern) const;
+		int32 IndexOf(String pattern,int32 from=0, int32 length=-1) const;
+
+		bool StartsWith(String pattern) const;
+		bool EndsWith(String pattern) const;
 
 
 		template<typename ... Ts>

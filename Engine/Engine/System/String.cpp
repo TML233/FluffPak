@@ -6,8 +6,10 @@
 
 namespace Engine {
 	StringData::StringData(const char* data) {
-		int32 len = strlen(data) + 1;
+		int32 len = strlen(data);
 		length = len;
+
+		len += 1;
 		this->data = new char[len];
 		for (int32 i = 0; i < len; i += 1) {
 			this->data[i] = data[i];
@@ -34,25 +36,18 @@ namespace Engine {
 	}
 
 	int32 String::GetLength() const {
-		return data->length - 1;
+		return data->length;
 	}
 
 	const char* String::GetRawArray() const {
 		return data->data;
 	}
 
-	int32 String::Find(String pattern) const {
+	int32 String::IndexOf(String pattern, int32 from, int32 length) const {
 		if (GetLength() < pattern.GetLength()) {
 			return -1;
 		}
 		return searcher.Search(GetRawArray(), GetLength(), pattern.GetRawArray(), pattern.GetLength());
-	}
-	int32 String::Find(const char* pattern) const {
-		int32 len = std::strlen(pattern);
-		if (GetLength() < len) {
-			return -1;
-		}
-		return searcher.Search(GetRawArray(), GetLength(), pattern, len);
 	}
 
 	String String::ToString() const {
@@ -60,9 +55,9 @@ namespace Engine {
 	}
 
 	void String::Prepare(const char* string) {
-		int32 len = strlen(string) + 1;
+		int32 len = strlen(string);
 		// Use public empty string.
-		if (len <= 1) {
+		if (len <= 0) {
 			data = StringData::empty;
 			return;
 		}
