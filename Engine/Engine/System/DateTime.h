@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_SYSTEM_DATETIME
-#define HEADER_CORE_SYSTEM_DATETIME
+#pragma once
 
 #include "Engine/System/Definition.h"
 #include "Engine/System/TimeSpan.h"
@@ -15,5 +14,3 @@ namespace Engine {
 		int16 offsetMinutes;
 	};
 }
-
-#endif

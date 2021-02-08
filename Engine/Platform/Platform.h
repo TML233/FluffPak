@@ -1,5 +1,4 @@
-#ifndef HEADER_PLATFORM_PLATFORM
-#define HEADER_PLATFORM_PLATFORM
+#pragma once
 
 //Platforms
 #ifdef WIN32
@@ -9,7 +8,5 @@
 
 #ifdef __linux__
 #define OS_LINUX
-
-#endif
 
 #endif

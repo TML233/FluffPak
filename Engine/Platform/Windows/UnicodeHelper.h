@@ -1,5 +1,4 @@
-#ifndef HEADER_PLATFORM_WINDOWS_UNICODEHELPER
-#define HEADER_PLATFORM_WINDOWS_UNICODEHELPER
+#pragma once
 
 #include "Platform/Windows/Include.h"
 #include "Engine/System/String.h"
@@ -15,5 +14,3 @@ namespace Platform {
 		static String UnicodeToUTF8(WCHAR* unicode);
 	};
 }
-
-#endif

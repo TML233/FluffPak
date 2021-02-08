@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_SYSTEM_IENUMERABLE
-#define HEADER_CORE_SYSTEM_IENUMERABLE
+#pragma once
 
 #include "Engine/Collection/Iterator.h"
 
@@ -10,5 +9,3 @@ namespace Engine {
 		virtual Iterator<T> end() const = 0;
 	};
 }
-
-#endif

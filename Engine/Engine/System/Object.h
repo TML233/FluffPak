@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_SYSTEM_OBJECT
-#define HEADER_CORE_SYSTEM_OBJECT
+#pragma once
 
 #include "Engine/System/Definition.h"
 
@@ -40,5 +39,3 @@ namespace Engine {
 		static int32 GetHashCode(double obj);
 	};
 }
-
-#endif

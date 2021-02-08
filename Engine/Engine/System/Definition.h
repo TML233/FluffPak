@@ -1,7 +1,5 @@
-#ifndef HEADER_CORE_DEFINITIONS
-#define HEADER_CORE_DEFINITIONS
-
 #pragma once
+
 #include <cstdint>
 
 namespace Engine {
@@ -24,5 +22,3 @@ namespace Engine {
 	// String
 	class String;
 }
-
-#endif

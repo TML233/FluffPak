@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_COLLECTION_HASHHELPER
-#define HEADER_CORE_COLLECTION_HASHHELPER
+#pragma once
 
 #include "Engine/System/Object.h"
 #include "Engine/System/String.h"
@@ -15,6 +14,3 @@ namespace Engine {
 		static const int32 primes[];
 	};
 }
-
-
-#endif

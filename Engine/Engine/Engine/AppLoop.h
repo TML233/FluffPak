@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_ENGINE_APPLOOP
-#define HEADER_CORE_ENGINE_APPLOOP
+#pragma once
 
 #include "Engine/System/Definition.h"
 #include "Engine/System/UniquePtr.h"
@@ -13,5 +12,3 @@ namespace Engine {
 		bool working = true;
 	};
 }
-
-#endif

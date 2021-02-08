@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_SYSTEM_UNIQUEPTR
-#define HEADER_CORE_SYSTEM_UNIQUEPTR
+#pragma once
 
 #include "Engine/System/Exception.h"
 
@@ -125,5 +124,3 @@ namespace Engine {
 		return ptr != nullptr;
 	}
 }
-
-#endif

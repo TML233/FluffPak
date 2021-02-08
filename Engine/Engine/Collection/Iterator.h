@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_COLLECTION_ITERATOR
-#define HEADER_CORE_COLLECTION_ITERATOR
+#pragma once
 
 #include "Engine/System/Definition.h"
 
@@ -64,5 +63,3 @@ namespace Engine {
 		return *this;
 	}
 }
-
-#endif

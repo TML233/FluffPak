@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_SYSTEM_EXCEPTIONS
-#define HEADER_CORE_SYSTEM_EXCEPTIONS
+#pragma once
 
 #include "Engine/System/Definition.h"
 #include "Engine/System/Object.h"
@@ -43,5 +42,3 @@ namespace Engine {
 		OverflowException(const String& message);
 	};
 }
-
-#endif

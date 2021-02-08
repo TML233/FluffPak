@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_MATH_MATH
-#define HEADER_CORE_MATH_MATH
+#pragma once
 
 #include "Engine/System/Definition.h"
 
@@ -27,5 +26,3 @@ namespace Engine {
 		static float Sqrt(float value);
 	};
 }
-
-#endif

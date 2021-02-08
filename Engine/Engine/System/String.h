@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_SYSTEM_STRING
-#define HEADER_CORE_SYSTEM_STRING
+#pragma once
 
 #include "Engine/System/Object.h"
 #include <memory>
@@ -98,5 +97,3 @@ namespace fmt {
 		}
 	};
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef HEADER_PLATFORM_WINDOWS_INCLUDE
-#define HEADER_PLATFORM_WINDOWS_INCLUDE
+#pragma once
 
 #define WINDOWS_LEAN_AND_MEAN
 #define NOMINMAX
@@ -10,5 +9,3 @@
 // Undefine Windows's shit
 #undef GetMessage
 #undef CreateWindow
-
-#endif

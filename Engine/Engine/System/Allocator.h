@@ -1,5 +1,5 @@
-#ifndef HEADER_CORE_SYSTEM_ALLOCATOR
-#define HEADER_CORE_SYSTEM_ALLOCATOR
+#pragma once
+
 #include "Engine/System/Definition.h"
 #include <memory>
 
@@ -34,5 +34,3 @@ namespace Engine {
 		allocator.destroy(ptr);
 	}
 }
-
-#endif

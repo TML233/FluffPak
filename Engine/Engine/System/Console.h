@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_SYSTEM_CONSOLE
-#define HEADER_CORE_SYSTEM_CONSOLE
+#pragma once
 
 #include "Engine/System/String.h"
 
@@ -17,5 +16,3 @@ namespace Engine {
 		static void PrintRaw(const char* text);
 	};
 }
-
-#endif

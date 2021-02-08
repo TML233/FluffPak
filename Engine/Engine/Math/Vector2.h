@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_MATH_VECTOR2
-#define HEADER_CORE_MATH_VECTOR2
+#pragma once
 
 #include "Engine/System/Definition.h"
 #include "Engine/System/Object.h"
@@ -36,5 +35,3 @@ namespace Engine {
 		static float Cross(const Vector2& a, const Vector2& b);
 	};
 }
-
-#endif

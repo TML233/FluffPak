@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_MATH_VECTOR3
-#define HEADER_CORE_MATH_VECTOR3
+#pragma once
 
 #include "Engine/System/Definition.h"
 #include "Engine/System/Object.h"
@@ -39,5 +38,3 @@ namespace Engine {
 		static Vector3 Cross(const Vector3& a, const Vector3& b);
 	};
 }
-
-#endif

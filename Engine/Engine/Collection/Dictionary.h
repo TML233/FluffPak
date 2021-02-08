@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_COLLECTION_DICTIONARY
-#define HEADER_CORE_COLLECTION_DICTIONARY
+#pragma once
 
 #include "Engine/System/Object.h"
 #include "Engine/System/String.h"
@@ -56,6 +55,3 @@ namespace Engine {
 		entries = newEntries;
 	}
 }
-
-
-#endif

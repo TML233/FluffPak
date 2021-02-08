@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_ALGOORITHM_STRINGSEARCHERSUNDAY
-#define HEADER_CORE_ALGOORITHM_STRINGSEARCHERSUNDAY
+#pragma once
 
 #include "Engine/System/Definition.h"
 
@@ -11,5 +10,3 @@ namespace Engine {
 		int32 charPos[256] = { -1 };
 	};
 }
-
-#endif

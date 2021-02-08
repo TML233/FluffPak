@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_COLLECTION_LIST
-#define HEADER_CORE_COLLECTION_LIST
+#pragma once
 
 #include <initializer_list>
 #include "Engine/System/Definition.h"
@@ -244,5 +243,3 @@ namespace Engine {
 		}
 	}
 }
-
-#endif

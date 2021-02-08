@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_MATH_RANDOM
-#define HEADER_CORE_MATH_RANDOM
+#pragma once
 
 #include "Engine/System/Definition.h"
 #include <random>
@@ -23,5 +22,3 @@ namespace Engine {
 		std::default_random_engine engine;
 	};
 }
-
-#endif

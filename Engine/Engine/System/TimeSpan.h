@@ -1,5 +1,4 @@
-#ifndef HEADER_CORE_SYSTEM_TIMESPAN
-#define HEADER_CORE_SYSTEM_TIMESPAN
+#pragma once
 
 #include "Engine/System/Definition.h"
 
@@ -34,5 +33,3 @@ namespace Engine {
 		int64 ticks = 0;
 	};
 }
-
-#endif
