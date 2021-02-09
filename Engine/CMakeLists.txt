@@ -14,7 +14,6 @@ set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Console.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/TimeSpan.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Reflection.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.cpp"
@@ -24,9 +23,6 @@ set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Algorithm/StringSearcherSunday.cpp"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.cpp"
-
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Engine/Engine.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Engine/AppLoop.cpp"
 )
 set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Definition.h"
@@ -38,7 +34,6 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/UniquePtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Allocator.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/TimeSpan.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Reflection.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.h"
@@ -48,13 +43,7 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Algorithm/StringSearcherSunday.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Iterator.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/List.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Dictionary.h"
-
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Engine/Engine.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Engine/AppLoop.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Engine/FileSystem.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.h"	
 )
 
 # Add platform-depended source files.

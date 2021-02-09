@@ -1,5 +1,4 @@
 #include "Engine/System/Console.h"
-#include "Platform/Platform.h"
 #include <cstdio>
 
 namespace Engine {

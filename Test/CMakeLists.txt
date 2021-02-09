@@ -7,7 +7,6 @@ target_link_libraries(Test PRIVATE Engine)
 target_sources(Test PRIVATE
 	"${CMAKE_CURRENT_LIST_DIR}/Source/Main.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Source/Allocator.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Source/List.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Source/String.cpp"
 )
 if(MSVC)
