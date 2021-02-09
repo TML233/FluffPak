@@ -2,19 +2,18 @@
 
 #include "Engine/System/Definition.h"
 #include "Engine/System/Object.h"
+#include "Engine/System/String.h"
 
 namespace Engine {
 	// Base exception.
 	class Exception:public Object {
 	public:
-		Exception();
 		explicit Exception(const String& message);
-		Exception& operator=(const Exception& obj);
-		const String& GetMessage() const;
-		virtual ~Exception();
+		const String GetMessage() const;
+
 		virtual String ToString() const override;
 	protected:
-		String* message;
+		String message;
 	};
 
 	class ArgumentException :public Exception {

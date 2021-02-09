@@ -2,21 +2,11 @@
 #include "Engine/System/String.h"
 
 namespace Engine {
-	Exception::Exception() {
-		message = new String;
-	}
 	Exception::Exception(const String& message) {
-		this->message = new String(message);
+		this->message = message;
 	}
-	Exception& Exception::operator=(const Exception& obj) {
-		*message = *(obj.message);
-		return *this;
-	}
-	Exception::~Exception() {
-		delete message;
-	}
-	const String& Exception::GetMessage() const {
-		return *message;
+	const String Exception::GetMessage() const {
+		return message;
 	}
 
 	String Exception::ToString() const {
