@@ -5,6 +5,8 @@
 namespace Engine {
 	class Math final {
 	public:
+		STATIC_CLASS(Math)
+
 		static const float PI;
 		static const float Deg2Rad;
 		static const float Rad2Deg;

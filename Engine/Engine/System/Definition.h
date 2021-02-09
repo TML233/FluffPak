@@ -2,6 +2,14 @@
 
 #include <cstdint>
 
+#define STATIC_CLASS(name)					\
+name() = delete;							\
+~name() = delete;							\
+name(const name&) = delete;					\
+name& operator=(const name&) = delete;		\
+name(name&&) = delete;						\
+name& operator=(name&&) = delete;
+
 namespace Engine {
 	// Represents a signed 8-bit integer.
 	using sbyte = std::int8_t;
