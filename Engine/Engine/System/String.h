@@ -5,6 +5,7 @@
 #include "fmt/core.h"
 #include "fmt/format.h"
 #include "Engine/Algorithm/StringSearcherSunday.h"
+#include <string_view>
 
 namespace Engine {
 	template<typename T>
@@ -34,23 +35,23 @@ namespace Engine {
 		// Get char count.
 		// NULL not included.
 		int32 GetCount() const;
-		// Get char array length.
-		// NULL included.
-		int32 GetLength() const;
 
 		// Get internal C-style char array.
 		// Do not store the pointer.
 		const char* GetRawArray() const;
 
+		bool IsIndividual() const;
+		String ToIndividual() const;
+
 		ReadonlyIterator<char> operator[](int32 index) const;
 
 		// Find the position of the substring appearance in the current string.
 		// Return -1 if not found.
-		int32 IndexOf(String pattern, int32 from = 0, int32 length = -1) const;
+		int32 IndexOf(const String& pattern) const;
 
-		bool StartsWith(String pattern) const;
-		bool EndsWith(String pattern) const;
-		String Substring(int startIndex, int count) const;
+		bool StartsWith(const String& pattern) const;
+		bool EndsWith(const String& pattern) const;
+		String Substring(int32 startIndex, int32 count) const;
 		String Trim() const;
 		String TrimStart() const;
 		String TrimEnd() const;
@@ -64,11 +65,24 @@ namespace Engine {
 
 		String ToString() const override;
 
+		int32 GetStartIndex() const;
+		const char* GetStartPtr() const;
+
+		bool operator==(const String& obj) const;
+		bool operator!=(const String& obj) const;
+
 	private:
+		bool IsEqual(const String& obj) const;
+
+		// Internal ctor
+		String(const char* string, int32 count);
 		// Prepares a string with a brand new data object.
-		void Prepare(const char* string, int32 count);
+		void PrepareData(const char* string, int32 count);
 		// Current data reference.
 		std::shared_ptr<StringData> data;
+
+		int32 refStart = 0;
+		int32 refCount = 0;
 
 		// Global sunday string searcher.
 		static StringSearcherSunday searcher;
@@ -93,7 +107,7 @@ namespace fmt {
 	struct formatter<String> : formatter<string_view> {
 		template <typename FormatContext>
 		auto format(const String& c, FormatContext& ctx) {
-			return formatter<string_view>::format(c.GetRawArray(), ctx);
+			return formatter<string_view>::format(string_view(c.GetStartPtr(), c.GetCount()), ctx);
 		}
 	};
 }
