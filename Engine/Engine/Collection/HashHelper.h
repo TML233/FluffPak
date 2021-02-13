@@ -7,7 +7,7 @@ namespace Engine {
 	// Referenced .NET 5 standard library: https://source.dot.net
 	class HashHelper final {
 	public:
-		STATIC_CLASS(HashHelper)
+		STATIC_CLASS(HashHelper);
 
 		static bool IsPrime(int32 value);
 		static int32 GetPrime(int32 min);

@@ -8,7 +8,7 @@ name() = delete;							\
 name(const name&) = delete;					\
 name& operator=(const name&) = delete;		\
 name(name&&) = delete;						\
-name& operator=(name&&) = delete;
+name& operator=(name&&) = delete
 
 namespace Engine {
 	// Represents a signed 8-bit integer.
@@ -27,6 +27,8 @@ namespace Engine {
 	using int64 = std::int64_t;
 	// Represents an unsigned 64-bit integer.
 	using uint64 = std::uint64_t;
-	// String
+	// Represents a local machine sized integer which can hold the memory size.
+	using sizeint = size_t;
+
 	class String;
 }

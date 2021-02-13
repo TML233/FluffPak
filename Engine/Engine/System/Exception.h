@@ -40,4 +40,9 @@ namespace Engine {
 	public:
 		OverflowException(const String& message);
 	};
+
+	class OutOfMemoryException :public Exception {
+	public:
+		OutOfMemoryException(const String& message);
+	};
 }

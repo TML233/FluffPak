@@ -14,6 +14,7 @@ set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Console.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/TimeSpan.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.cpp"
@@ -32,8 +33,8 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Console.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/IEnumerable.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/UniquePtr.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Allocator.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/TimeSpan.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.h"
