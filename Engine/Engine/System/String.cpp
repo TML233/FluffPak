@@ -3,6 +3,7 @@
 #include "Engine/System/Exception.h"
 #include "Engine/Collection/Iterator.h"
 #include "Engine/System/IEnumerable.h"
+#include "Engine/System/Memory.h"
 #include <string>
 #include <cstring>
 
@@ -10,14 +11,14 @@
 namespace Engine {
 	StringData::StringData(const char* data, int32 count) {
 		length = count + 1;
-		this->data = new char[length];
+		this->data = MEMNEWARR(char, length);
 		// Copy data
 		std::memcpy(this->data, data, count);
 		// Add NULL
 		std::memset(this->data + count, 0, sizeof(char));
 	}
 	StringData::~StringData() {
-		delete[] data;
+		MEMDELARR(data);
 	}
 	std::shared_ptr<StringData> StringData::empty = std::make_shared<StringData>("", sizeof(""));
 

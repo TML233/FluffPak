@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/System/Exception.h"
+#include "Engine/System/Memory.h"
 
 namespace Engine {
 	// Default deleter which calls delete
@@ -11,7 +12,7 @@ namespace Engine {
 	};
 	template<typename T>
 	void DefaultDeleter<T>::operator()(T* ptr) {
-		delete ptr;
+		MEMDEL(ptr);
 	}
 
 	// Default deleter for arrays which calls delete[]
@@ -22,7 +23,7 @@ namespace Engine {
 	};
 	template<typename T>
 	void DefaultDeleter<T[]>::operator()(T* ptr) {
-		delete[] ptr;
+		MEMDELARR(ptr);
 	}
 
 	// UniquePtr
