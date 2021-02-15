@@ -6,6 +6,7 @@ target_link_libraries(Test PRIVATE Engine)
 target_link_libraries(Test PRIVATE doctest)
 target_sources(Test PRIVATE
 	"${CMAKE_CURRENT_LIST_DIR}/Source/Main.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Source/Memory.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Source/String.cpp"
 )
 if(MSVC)

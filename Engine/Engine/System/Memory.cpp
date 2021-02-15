@@ -31,8 +31,14 @@ namespace Engine {
 	void Memory::Deallocate(void* ptr) {
 		std::free(ptr);
 	}
+	sizeint Memory::GetHeapArrayElementCount(void* ptr) {
+		return *(((sizeint*)ptr) - 1);
+	}
 }
 
 void* operator new(size_t size, bool reserved) {
 	return Engine::Memory::Allocate(size);
+}
+void operator delete(void* ptr, bool reserved){
+	Engine::Memory::Deallocate(ptr);
 }
