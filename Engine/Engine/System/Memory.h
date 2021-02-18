@@ -27,9 +27,9 @@ namespace Engine {
 
 		// Constructs a object on an existing memory.
 		template<typename T,typename ... Args>
-		static void Construct(T* ptr, const Args& ... args) {
+		static void Construct(T* ptr, Args&& ... args) {
 			// Placement new
-			new (ptr) T(args...);
+			new (ptr) T(Object::Forward<Args>(args)...);
 		}
 		// Deconstructs a object but doesn't deallocate the memory.
 		template<typename T>
@@ -56,7 +56,7 @@ namespace Engine {
 		}
 
 		template<typename T,typename ... Args>
-		static T* NewArray(sizeint count, const Args& ... args) {
+		static T* NewArray(sizeint count, Args&& ... args) {
 			if (count <= 0) {
 				throw ArgumentOutOfRangeException("count", "must be larger than 0.");
 			}
@@ -71,7 +71,7 @@ namespace Engine {
 			// Do constructions.
 			T* ptr = (T*)(rawPtr + 1);
 			for (sizeint i = 0; i < count; i += 1) {
-				Construct(ptr + i, args...);
+				Construct(ptr + i, Object::Forward<Args>(args)...);
 			}
 
 			return ptr;

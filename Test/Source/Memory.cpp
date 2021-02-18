@@ -29,6 +29,12 @@ TEST_SUITE("Memory"){
 		int32* ptr = (int32*)Memory::Allocate(sizeof(int32));
 		*ptr = 114514;
 		Memory::Deallocate(ptr);
+
+		ComplexClass* c = (ComplexClass*)Memory::Allocate(sizeof(ComplexClass));
+		Memory::Construct(c, 1234);
+		CHECK(c->Get() == 1234);
+		Memory::Destruct(c);
+		Memory::Deallocate(c);
 	}
 
 	TEST_CASE("Memory - CPP Style Management") {

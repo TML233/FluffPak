@@ -12,6 +12,7 @@ namespace Engine {
 		// Override this if the object indicates value.
 		virtual int32 GetHashCode() const;
 
+#pragma region ToStrings
 		static String ToString(const Object& obj);
 		static String ToString(bool obj);
 		static String ToString(byte obj);
@@ -24,7 +25,9 @@ namespace Engine {
 		static String ToString(uint64 obj);
 		static String ToString(float obj);
 		static String ToString(double obj);
+#pragma endregion
 
+#pragma region GetHashCodes
 		static int32 GetHashCode(const Object& obj);
 		static int32 GetHashCode(bool obj);
 		static int32 GetHashCode(byte obj);
@@ -37,5 +40,46 @@ namespace Engine {
 		static int32 GetHashCode(uint64 obj);
 		static int32 GetHashCode(float obj);
 		static int32 GetHashCode(double obj);
+#pragma endregion
+
+#pragma region Move & Forward support
+	private:
+		template<typename T>
+		class ReferenceRemover {
+		public:
+			using Type = T;
+		};
+
+		template<typename T>
+		class ReferenceRemover<T&> {
+		public:
+			using Type = T;
+		};
+
+		template<typename T>
+		class ReferenceRemover<T&&> {
+		public:
+			using Type = T;
+		};
+
+	public:
+		// Turn everything to Right Value Reference.
+		// Convenient tool for moving objects.
+		template<typename T>
+		static typename ReferenceRemover<T>::Type Move(T&& obj) {
+			return static_cast<typename ReferenceRemover<T>::Type&&>(obj);
+		}
+
+		// Keep the Right Value Reference still as a Right Value.
+		template<typename T>
+		static T&& Forward(typename ReferenceRemover<T>::Type& obj) {
+			return static_cast<T&&>(obj);
+		}
+		// Keep the Right Value Reference still as a Right Value.
+		template<typename T>
+		static T&& Forward(typename ReferenceRemover<T>::Type&& obj) {
+			return static_cast<T&&>(obj);
+		}
 	};
+#pragma endregion
 }
