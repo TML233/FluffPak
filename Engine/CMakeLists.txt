@@ -44,7 +44,8 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Algorithm/StringSearcherSunday.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Iterator.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.h"	
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/List.h"
 )
 
 # Add platform-depended source files.
@@ -54,6 +55,9 @@ if(WIN32)
 elseif(__LINUX__)
 
 endif()
+
+# Force C++17
+target_compile_features(Engine PUBLIC cxx_std_17)
 
 # Build with sources and headers.
 target_sources(Engine
