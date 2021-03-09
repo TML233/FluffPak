@@ -7,6 +7,17 @@
 #include "Engine/Algorithm/StringSearcherSunday.h"
 #include <string_view>
 
+// Defines a String literal. Encoded in UTF-8.
+#define STRING_LITERAL(text)									\
+([](){															\
+	static const char textContent[]=u8##text##;					\
+	static const StringData literal={							\
+		textContent,											\
+		(int32)sizeof(u8##text##)								\
+	};															\
+	/* TODO: Use dummy sharedptr */								\
+})();
+
 namespace Engine {
 	template<typename T>
 	class ReadonlyIterator;
