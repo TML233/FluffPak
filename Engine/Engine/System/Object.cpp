@@ -18,9 +18,6 @@ namespace Engine {
 	}
 
 #pragma region ToStrings
-	String Object::ToString(const Object& obj) {
-		return obj.ToString();
-	}
 	String Object::ToString(bool obj) {
 		return (obj ? u8"True" : u8"False");
 	}
@@ -57,9 +54,6 @@ namespace Engine {
 #pragma endregion
 
 #pragma region GetHashCodes
-	int32 Object::GetHashCode(const Object& obj) {
-		return obj.GetHashCode();
-	}
 	int32 Object::GetHashCode(bool obj) {
 		return obj;
 	}

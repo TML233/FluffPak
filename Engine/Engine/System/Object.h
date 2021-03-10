@@ -13,7 +13,10 @@ namespace Engine {
 		virtual int32 GetHashCode() const;
 
 #pragma region ToStrings
-		static String ToString(const Object& obj);
+		template<typename T>
+		static String ToString(const T& obj) {
+			return obj.ToString();
+		}
 		static String ToString(bool obj);
 		static String ToString(byte obj);
 		static String ToString(sbyte obj);
@@ -28,7 +31,10 @@ namespace Engine {
 #pragma endregion
 
 #pragma region GetHashCodes
-		static int32 GetHashCode(const Object& obj);
+		template<typename T>
+		static int32 GetHashCode(const T& obj) {
+			return obj.GetHashCode();
+		}
 		static int32 GetHashCode(bool obj);
 		static int32 GetHashCode(byte obj);
 		static int32 GetHashCode(sbyte obj);
