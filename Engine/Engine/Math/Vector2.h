@@ -4,7 +4,7 @@
 #include "Engine/System/Object.h"
 
 namespace Engine {
-	struct Vector2 final:public Object {
+	struct Vector2 final {
 		Vector2(float x, float y);
 
 		float x;
@@ -21,7 +21,8 @@ namespace Engine {
 		Vector2 operator*(float value);
 		Vector2 operator/(float value);
 
-		String ToString() const override;
+		String ToString() const;
+		int32 GetHashCode() const;
 
 		static const Vector2 up;
 		static const Vector2 down;

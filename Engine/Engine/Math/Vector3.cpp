@@ -41,7 +41,10 @@ namespace Engine {
 	}
 
 	String Vector3::ToString() const {
-		return "(" + Object::ToString(x) + ", " + Object::ToString(y) + ", " + Object::ToString(z) + ")";
+		return String::Format("({0}, {1}, {2})", x, y, z);
+	}
+	int32 Vector3::GetHashCode() const {
+		return (*((int32*)(&x))) ^ (*((int32*)(&y))) ^ (*((int32*)(&z)));
 	}
 
 	const Vector3 Vector3::up(0, -1, 0);

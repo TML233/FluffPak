@@ -39,7 +39,10 @@ namespace Engine {
 	}
 
 	String Vector2::ToString() const {
-		return "(" + Object::ToString(x) + ", " + Object::ToString(y) + ")";
+		return String::Format("({0}, {1})", x, y);
+	}
+	int32 Vector2::GetHashCode() const {
+		return (*((int32*)(&x))) ^ (*((int32*)(&y)));
 	}
 
 	const Vector2 Vector2::up(0, -1);
