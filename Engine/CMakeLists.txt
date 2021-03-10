@@ -31,7 +31,6 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Exception.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Console.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/IEnumerable.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/UniquePtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/TimeSpan.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory.h"
@@ -43,6 +42,7 @@ set(HeaderFileCore
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Algorithm/StringSearcherSunday.h"
 
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/IEnumerable.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Iterator.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/List.h"

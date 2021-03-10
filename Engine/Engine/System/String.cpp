@@ -1,9 +1,8 @@
 #include "Engine/System/Definition.h"
 #include "Engine/System/String.h"
 #include "Engine/System/Exception.h"
-#include "Engine/Collection/Iterator.h"
-#include "Engine/System/IEnumerable.h"
 #include "Engine/System/Memory.h"
+#include "Engine/Collection/Iterator.h"
 #include <string>
 #include <cstring>
 

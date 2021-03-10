@@ -22,7 +22,7 @@ namespace Engine {
 			throw ArgumentOutOfRangeException("newSize", "must be larger than 0.");
 		}
 
-		void* result = realloc(ptr, newSize);
+		void* result = std::realloc(ptr, newSize);
 		if (result == NULL) {
 			throw OutOfMemoryException(String::Format("realloc failed to allocate a new memory of {0} bytes!", newSize));
 		}

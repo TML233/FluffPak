@@ -45,21 +45,4 @@ namespace Engine {
 		target += 1;
 		return *this;
 	}
-
-	template<typename T>
-	class Iterator:public ReadonlyIterator<T> {
-	public:
-		Iterator(T* ptr);
-
-		Iterator<T>& operator=(const T& value);
-	};
-
-	template<typename T>
-	Iterator<T>::Iterator(T* ptr) :ReadonlyIterator(ptr) {}
-
-	template<typename T>
-	Iterator<T>& Iterator<T>::operator=(const T& value) {
-		*target = value;
-		return *this;
-	}
 }
