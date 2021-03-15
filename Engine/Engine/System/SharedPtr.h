@@ -13,30 +13,63 @@ namespace Engine{
 	template<typename T>
 	class SharedPtr {
 	public:
+		// Create a SharedPtr from the given arguments.
+		template<typename ... Args>
+		static SharedPtr Create(Args&& ... args) {
+			return SharedPtr(MEMNEW(T(Object::Forward<Args>(args)...)));
+		}
+
 		SharedPtr(T* ptr, SharedPtrCounter* data) :ptr(ptr), data(data) {
 			Reference();
 		}
 
-		SharedPtr(T* ptr):ptr(ptr) {
+		SharedPtr() {}
+		explicit SharedPtr(T* ptr):ptr(ptr) {
+			if (ptr == nullptr) {
+				return;
+			}
 			data = MEMNEW(SharedPtrCounter);
 			Reference();
 		}
+
 		SharedPtr(const SharedPtr& shared) :ptr(shared.ptr), data(shared.data) {
 			Reference();
 		}
 		SharedPtr& operator=(const SharedPtr& obj) {
+			if (&obj == this) {
+				return;
+			}
+
 			Dereference();
 
 			ptr = obj.ptr;
 			data = obj.data;
 			Reference();
+
+			return *this;
 		}
 		~SharedPtr() {
 			Dereference();
 		}
-		// No moving.
-		SharedPtr(SharedPtr&&) = delete;
-		SharedPtr& operator=(SharedPtr&&) = delete;
+		
+		SharedPtr(SharedPtr&& obj):ptr(obj.ptr),data(obj.data) {
+			obj.ptr = nullptr;
+			obj.data = nullptr;
+		}
+		SharedPtr& operator=(SharedPtr&& obj) {
+			if (&obj == this) {
+				return;
+			}
+
+			Dereference();
+
+			ptr = obj.ptr;
+			data = obj.data;
+			obj.ptr = nullptr;
+			obj.data = nullptr;
+
+			return *this;
+		}
 
 		int32 GetReferenceCount() const {
 			return data->refCount;
@@ -58,9 +91,15 @@ namespace Engine{
 		}
 	private:
 		void Reference() {
+			if (data == nullptr) {
+				return;
+			}
 			data->refCount += 1;
 		}
 		void Dereference() {
+			if (data == nullptr) {
+				return;
+			}
 			data->refCount -= 1;
 			if (data->refCount <= 0) {
 				MEMDEL(ptr);

@@ -24,7 +24,7 @@ public:
 };
 
 TEST_CASE("SharedPtr"){
-	SharedPtr<Derived> ptr(new Derived());
+	SharedPtr<Derived> ptr = SharedPtr<Derived>::Create();
 	SharedPtr<Base> base = ptr.StaticCastTo<Base>();
 	SharedPtr<Derived> casted = base.DynamicCastTo<Derived>();
 	casted->Print();
