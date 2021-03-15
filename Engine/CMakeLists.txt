@@ -32,6 +32,7 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Console.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/UniquePtr.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/SharedPtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/TimeSpan.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory.h"
 
