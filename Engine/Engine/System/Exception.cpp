@@ -2,6 +2,7 @@
 #include "Engine/System/String.h"
 
 namespace Engine {
+	Exception::~Exception() {}
 	Exception::Exception(const String& message) {
 		this->message = message;
 	}

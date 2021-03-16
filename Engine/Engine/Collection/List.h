@@ -7,7 +7,7 @@
 
 namespace Engine{
 	template<typename T>
-	class List:Object,IEnumerable<T> {
+	class List:IEnumerable<T> {
 	public:
 		using ValueType = T;
 		~List() {

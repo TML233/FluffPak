@@ -6,12 +6,13 @@
 
 namespace Engine {
 	// Base exception.
-	class Exception:public Object {
+	class Exception {
 	public:
+		virtual ~Exception();
 		explicit Exception(const String& message);
 		const String GetMessage() const;
 
-		virtual String ToString() const override;
+		virtual String ToString() const;
 	protected:
 		String message;
 	};
