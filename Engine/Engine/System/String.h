@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Engine/System/Object.h"
 #include <memory>
 #include "fmt/core.h"
 #include "fmt/format.h"
@@ -37,7 +36,7 @@ namespace Engine {
 	};
 
 	// A string holding a NULL-termined char array.
-	class String final :public Object {
+	class String final {
 	public:
 		String(const char* string = "");
 		String(const std::string& string);
@@ -69,12 +68,16 @@ namespace Engine {
 
 		// Format strings like "This is a {0}, except {1}";
 		template<typename ... Ts>
-		static String Format(const String& format, const Ts& ... args);
+		static String Format(const String& format, const Ts& ... args) {
+			return fmt::format(format.ToIndividual().GetRawArray(), args...);
+		}
 		// Format strings like "This is a {0}, except {1}";
 		template<typename ... Ts>
-		static String Format(const char* format, const Ts& ... args);
+		static String Format(const char* format, const Ts& ... args) {
+			return fmt::format(format, args...);
+		}
 
-		String ToString() const override;
+		String ToString() const;
 
 		int32 GetStartIndex() const;
 		const char* GetStartPtr() const;
@@ -98,16 +101,6 @@ namespace Engine {
 		// Global sunday string searcher.
 		static StringSearcherSunday searcher;
 	};
-
-	template<typename ... Ts>
-	static String String::Format(const String& format, const Ts& ... args) {
-		return fmt::format(format.GetRawArray(), args...);
-	}
-
-	template<typename ... Ts>
-	static String String::Format(const char* format, const Ts& ... args) {
-		return fmt::format(format, args...);
-	}
 
 	String operator+(const String& left, const String& right);
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <cstddef>
 
 #define STATIC_CLASS(name)					\
 name() = delete;							\
@@ -28,7 +29,5 @@ namespace Engine {
 	// Represents an unsigned 64-bit integer.
 	using uint64 = std::uint64_t;
 	// Represents a local machine sized integer which can hold the memory size.
-	using sizeint = size_t;
-
-	class String;
+	using sizeint = std::size_t;
 }

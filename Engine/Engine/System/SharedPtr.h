@@ -37,7 +37,7 @@ namespace Engine{
 		}
 		SharedPtr& operator=(const SharedPtr& obj) {
 			if (&obj == this) {
-				return;
+				return *this;
 			}
 
 			Dereference();
@@ -58,7 +58,7 @@ namespace Engine{
 		}
 		SharedPtr& operator=(SharedPtr&& obj) {
 			if (&obj == this) {
-				return;
+				return *this;
 			}
 
 			Dereference();

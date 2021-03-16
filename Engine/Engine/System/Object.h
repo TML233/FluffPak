@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/System/Definition.h"
+#include "Engine/System/String.h"
 
 namespace Engine {
 	class Object {

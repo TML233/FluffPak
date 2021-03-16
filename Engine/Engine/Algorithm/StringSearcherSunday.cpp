@@ -1,5 +1,6 @@
 #include "Engine/Algorithm/StringSearcherSunday.h"
 #include <memory>
+#include <cstring>
 
 namespace Engine {
 	int32 StringSearcherSunday::Search(const char* target, int32 lenTarget, const char* pattern, int32 lenPattern) {
