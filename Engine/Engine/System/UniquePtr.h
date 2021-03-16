@@ -26,6 +26,12 @@ namespace Engine {
 	template<typename T, typename TDeleter = DefaultDeleter<T>>
 	class UniquePtr final {
 	public:
+		// Create a UniquePtr from the given arguments.
+		template<typename ... Args>
+		static UniquePtr Create(Args&& ... args) {
+			return UniquePtr(MEMNEW(T(Object::Forward<Args>(args)...)));
+		}
+
 		explicit UniquePtr(T* ptr = nullptr) :ptr(ptr) {}
 		~UniquePtr() {
 			Reset();
