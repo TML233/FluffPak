@@ -4,12 +4,24 @@
 #include "Engine/System/Memory.h"
 #include "Engine/System/String.h"
 #include "Engine/Collection/IEnumerable.h"
+#include <initializer_list>
 
 namespace Engine{
 	template<typename T>
 	class List:IEnumerable<T> {
 	public:
 		using ValueType = T;
+
+		List(std::initializer_list<T> values) {
+			if (values.size() <= 0) {
+				return;
+			}
+			SetCapacity(static_cast<int32>(values.size()));
+			for (auto value : values) {
+				Add(value);
+			}
+		}
+
 		~List() {
 			if (elements == nullptr) {
 				return;

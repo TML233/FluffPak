@@ -59,12 +59,12 @@ namespace Engine {
 		// Return -1 if not found.
 		int32 IndexOf(const String& pattern) const;
 
+		// Check if the current string contains another string.
+		bool Contains(const String& pattern) const;
+
 		bool StartsWith(const String& pattern) const;
 		bool EndsWith(const String& pattern) const;
 		String Substring(int32 startIndex, int32 count) const;
-		String Trim() const;
-		String TrimStart() const;
-		String TrimEnd() const;
 
 		// Format strings like "This is a {0}, except {1}";
 		template<typename ... Ts>

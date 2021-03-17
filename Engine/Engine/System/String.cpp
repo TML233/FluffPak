@@ -19,16 +19,16 @@ namespace Engine {
 	StringData::~StringData() {
 		MEMDELARR(data);
 	}
-	std::shared_ptr<StringData> StringData::empty = std::make_shared<StringData>("", sizeof(""));
+	std::shared_ptr<StringData> StringData::empty = std::make_shared<StringData>("", static_cast<int32>(sizeof("")));
 
 	String::String(const char* string) {
-		PrepareData(string, std::strlen(string));
+		PrepareData(string, static_cast<int32>(std::strlen(string)));
 	}
 	String::String(const std::string& string) {
-		PrepareData(string.c_str(), string.length());
+		PrepareData(string.c_str(), static_cast<int32>(string.length()));
 	}
 	String& String::operator=(const char* string) {
-		PrepareData(string, std::strlen(string));
+		PrepareData(string, static_cast<int32>(std::strlen(string)));
 		return *this;
 	}
 
@@ -63,6 +63,10 @@ namespace Engine {
 			return -1;
 		}
 		return searcher.Search(GetStartPtr(), GetCount(), pattern.GetStartPtr(), pattern.GetCount());
+	}
+
+	bool String::Contains(const String& pattern) const {
+		return IndexOf(pattern) >= 0;
 	}
 
 	String String::Substring(int32 startIndex, int32 count) const {

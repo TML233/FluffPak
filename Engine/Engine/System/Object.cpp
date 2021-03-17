@@ -1,10 +1,12 @@
 #include "Engine/System/Object.h"
 #include "Engine/System/String.h"
+#include "Engine/System/Memory.h"
 #include <string>
 #include <typeinfo>
 
 namespace Engine {
 	Object::~Object() {}
+
 	String Object::ToString() const {
 		return typeid(*this).name();
 	}
@@ -101,4 +103,12 @@ namespace Engine {
 		return Object::GetHashCode(bits);
 	}
 #pragma endregion
+
+	bool ManualObject::IsReferenced() const {
+		return false;
+	}
+
+	bool ReferencedObject::IsReferenced() const {
+		return true;
+	}
 }

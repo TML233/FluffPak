@@ -4,9 +4,14 @@
 #include "Engine/System/String.h"
 
 namespace Engine {
+	// Inherit ManualManagement or AutoManagement instead.
 	class Object {
 	public:
-		virtual ~Object();
+		virtual ~Object() = 0;
+
+		// Indicates if current object is a ReferencedObject
+		virtual bool IsReferenced() const = 0;
+
 		virtual String ToString() const;
 
 		// Get hash code. Hash code is not used to identify objects!
@@ -87,6 +92,19 @@ namespace Engine {
 		static T&& Forward(typename ReferenceRemover<T>::Type&& obj) {
 			return static_cast<T&&>(obj);
 		}
-	};
 #pragma endregion
+
+	};
+
+	// Represents a Object which its memory management is done by the user.
+	// Raw pointers of ManualObject can be passed around.
+	class ManualObject :public Object {
+		bool IsReferenced() const override;
+	};
+
+	// Represents a Object which its memory management is done automatically via smart pointers.
+	// No raw pointer of ReferenceObject should be passed around!
+	class ReferencedObject :public Object {
+		bool IsReferenced() const override;
+	};
 }

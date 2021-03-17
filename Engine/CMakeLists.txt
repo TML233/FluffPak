@@ -24,6 +24,8 @@ set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Algorithm/StringSearcherSunday.cpp"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.cpp"
+
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node.cpp"
 )
 set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Definition.h"
@@ -47,6 +49,8 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Iterator.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/List.h"
+
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node.h"
 )
 
 # Add platform-depended source files.
