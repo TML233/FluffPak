@@ -1,6 +1,7 @@
 #include "Engine/Collection/HashHelper.h"
-#include "Engine/System/Exception.h"
 #include "Engine/Math/Math.h"
+#include "Engine/System/Debug.h"
+
 namespace Engine {
 	const int32 HashHelper::primes[] = {
 		3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 293, 353, 431, 521, 631, 761, 919,
@@ -23,9 +24,8 @@ namespace Engine {
 		return true;
 	}
 	int32 HashHelper::GetPrime(int32 min) {
-		if (min < 0) {
-			throw ArgumentOutOfRangeException("min", "Cannot be smaller than 0.");
-		}
+		ERR_ASSERT_ACTION(min >= 0, "min cannot be smaller than 0.", return 0);
+
 		// Find in the pre-defined.
 		for (int32 prime : primes) {
 			if (prime >= min) {

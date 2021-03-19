@@ -1,6 +1,8 @@
 #include "doctest.h"
 #include "Engine/System/String.h"
 
+using namespace Engine;
+
 TEST_SUITE("String") {
 	TEST_CASE("String - Comparing") {
 		String strA = u8"鞋   履   甚   多";

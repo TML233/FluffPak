@@ -23,6 +23,8 @@ public:
 	}
 };
 
+using namespace Engine;
+
 TEST_CASE("SharedPtr"){
 	SharedPtr<Derived> ptr = SharedPtr<Derived>::Create();
 	SharedPtr<Base> base = ptr.StaticCastTo<Base>();

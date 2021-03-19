@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Engine/System/Exception.h"
 #include "Engine/System/Memory.h"
 
 namespace Engine {

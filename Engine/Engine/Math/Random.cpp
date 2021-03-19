@@ -1,5 +1,5 @@
 #include "Engine/Math/Random.h"
-#include "Engine/System/Exception.h"
+#include "Engine/System/Debug.h"
 #include "Engine/System/String.h"
 #include <chrono>
 
@@ -15,24 +15,21 @@ namespace Engine {
 		SetSeed(seed);
 	}
 	int32 Random::Next(int32 min, int32 max) {
-		if (min > max) {
-			throw ArgumentOutOfRangeException("min", "min cannot be greater than max.");
-		}
+		ERR_ASSERT_ACTION(min <= max, "min cannot be greater than max.", return max);
+
 		if (min == max) {
 			return min;
 		}
 		return std::uniform_int_distribution<int32>(min, max - 1)(engine);
 	}
 	float Random::NextFloat(float min, float max) {
-		if (min > max) {
-			throw ArgumentOutOfRangeException("min", "min cannot be greater than max.");
-		}
+		ERR_ASSERT_ACTION(min <= max, "min cannot be greater than max.", return max);
+
 		return std::uniform_real_distribution<float>(min, max)(engine);
 	}
 	double Random::NextDouble(double min, double max) {
-		if (min > max) {
-			throw ArgumentOutOfRangeException("min", "min cannot be greater than max.");
-		}
+		ERR_ASSERT_ACTION(min <= max, "min cannot be greater than max.", return max);
+
 		return std::uniform_real_distribution<double>(min, max)(engine);
 	}
 	void Random::SetSeed(uint32 seed) {

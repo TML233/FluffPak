@@ -1,14 +1,13 @@
 #pragma once
 #include "Engine/System/Definition.h"
-#include "Engine/System/Exception.h"
 #include "Engine/System/Memory.h"
-#include "Engine/System/String.h"
-#include "Engine/Collection/IEnumerable.h"
+#include "Engine/System/Debug.h"
+#include "Engine/Collection/Iterator.h"
 #include <initializer_list>
 
 namespace Engine{
 	template<typename T>
-	class List:IEnumerable<T> {
+	class List {
 	public:
 		using ValueType = T;
 
@@ -36,9 +35,8 @@ namespace Engine{
 			return capacity;
 		}
 		void SetCapacity(int32 capacity) {
-			if (capacity < 0 || capacity < count) {
-				throw ArgumentOutOfRangeException("capacity", "Cannot be less than 0 or the current size.");
-			}
+			ERR_ASSERT_ACTION(capacity >= 0 && capacity >= count, "capacity cannot be less than 0 or the current size.", return);
+
 			if (capacity == count || capacity == this->capacity) {
 				return;
 			}
@@ -54,15 +52,11 @@ namespace Engine{
 			return count;
 		}
 		T Get(int32 index) const {
-			if (index < 0 || index >= count) {
-				throw ArgumentOutOfRangeException("index", "Out of bounds.");
-			}
+			ERR_ASSERT_ACTION(index >= 0 && index < count, "index out of bounds.", FATAL_CRASH("List<T>::Get cannot return a value."));
 			return elements[index];
 		}
 		void Set(int32 index, const T& value) {
-			if (index < 0 || index >= count) {
-				throw ArgumentOutOfRangeException("index", "Out of bounds.");
-			}
+			ERR_ASSERT_ACTION(index >= 0 && index < count, "index out of bounds.", return);
 			*(elements + index) = value;
 		}
 		void Add(const T& value) {
@@ -71,9 +65,8 @@ namespace Engine{
 			count += 1;
 		}
 		void Insert(int32 index, const T& value) {
-			if (index<0 || index>count) {
-				throw ArgumentOutOfRangeException("index", "Out of bounds.");
-			}
+			ERR_ASSERT_ACTION(index >= 0 && index <= count, "index out of bounds.", return);
+			
 			if (index == count) {
 				Add(value);
 				return;
@@ -92,9 +85,8 @@ namespace Engine{
 			count += 1;
 		}
 		void RemoveAt(int32 index) {
-			if (index < 0 || index >= count) {
-				throw ArgumentOutOfRangeException("index", "Out of bounds.");
-			}
+			ERR_ASSERT_ACTION(index >= 0 && index < count, "index out of bounds", return);
+
 			// Destruct.
 			Memory::Destruct(elements + index);
 
@@ -120,10 +112,10 @@ namespace Engine{
 		static const inline int32 DefaultCapacity = 4;
 		static const inline int32 CapacityMultiplier = 2;
 		
-		ReadonlyIterator<T> begin() const override {
+		ReadonlyIterator<T> begin() const {
 			return ReadonlyIterator<T>(elements);
 		}
-		ReadonlyIterator<T> end() const override {
+		ReadonlyIterator<T> end() const {
 			return ReadonlyIterator<T>(elements + count);
 		}
 	private:

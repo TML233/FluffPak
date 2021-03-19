@@ -1,6 +1,8 @@
 #include "doctest.h"
 #include "Engine/Collection/List.h"
 
+using namespace Engine;
+
 TEST_SUITE("List") {
 	TEST_CASE("List") {
 		List<int32> list{};

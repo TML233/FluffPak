@@ -1,13 +1,12 @@
 #include "Engine/Application/Node.h"
+#include "Engine/System/Debug.h"
 
 namespace Engine {
 	int32 Node::GetChildrenCount() const {
 		return children.GetCount();
 	}
 	Node* Node::GetChild(int32 index) const {
-		if (index < 0 || index>children.GetCount()) {
-			throw ArgumentOutOfRangeException("index", "out of bounds.");
-		}
+		ERR_ASSERT_ACTION(index >= 0 && index < children.GetCount(), "index out of bounds.", return nullptr);
 		return children.Get(index);
 	}
 	String Node::GetName() const {

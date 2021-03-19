@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Engine/System/Definition.h"
-#include "Engine/System/Exception.h"
+#include "Engine/System/Object.h"
+#include "Engine/System/Debug.h"
 #include <memory>
 #include <new>
-#include <type_traits>
 
 // Partly referenced Godot Engine 3.2.3 source code.
 // https://www.github.com/godotengine/godot
@@ -57,9 +57,7 @@ namespace Engine {
 
 		template<typename T,typename ... Args>
 		static T* NewArray(sizeint count, Args&& ... args) {
-			if (count <= 0) {
-				throw ArgumentOutOfRangeException("count", "must be larger than 0.");
-			}
+			ERR_ASSERT_ACTION(count > 0, "count must be larger than 0.", return nullptr);
 
 			// Reserve a few bytes of size_t for saving the count data.
 			sizeint size = sizeof(T) * count + sizeof(sizeint);

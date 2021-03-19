@@ -1,6 +1,6 @@
 #include "Engine/System/Definition.h"
 #include "Engine/System/String.h"
-#include "Engine/System/Exception.h"
+#include "Engine/System/Debug.h"
 #include "Engine/System/Memory.h"
 #include "Engine/Collection/Iterator.h"
 #include <string>
@@ -44,10 +44,9 @@ namespace Engine {
 	}
 
 	ReadonlyIterator<char> String::operator[](int32 index) const {
-		if (index >= data->length) {
-			throw ArgumentOutOfRangeException("index", "out of the range of the string.");
-		}
-		return ReadonlyIterator<char>(&(data->data[index]));
+		ERR_ASSERT_ACTION(index >= 0 && index <= GetCount(), "index out of bounds.", return ReadonlyIterator<char>((char*)""));
+		
+		return ReadonlyIterator<char>(data->data + refStart + index);
 	}
 
 	int32 String::GetCount() const {
@@ -70,12 +69,9 @@ namespace Engine {
 	}
 
 	String String::Substring(int32 startIndex, int32 count) const {
-		if (startIndex < 0) {
-			throw ArgumentOutOfRangeException("startIndex", "Out of range.");
-		}
-		if ((count < 0) || count > (GetCount() - startIndex)) {
-			throw ArgumentOutOfRangeException("count", "Out of range.");
-		}
+		ERR_ASSERT_ACTION(startIndex >= 0, "startIndex out of bounds.", return String());
+		ERR_ASSERT_ACTION(count >= 0 && count <= (GetCount() - startIndex), "count out of bounds.", return String());
+
 		String substr = *this;
 		substr.refStart = startIndex;
 		substr.refCount = count;

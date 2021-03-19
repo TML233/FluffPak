@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Engine/System/Object.h"
-#include "Engine/System/String.h"
+#include "Engine/System/Definition.h"
 
 namespace Engine {
 	// Referenced .NET 5 standard library: https://source.dot.net

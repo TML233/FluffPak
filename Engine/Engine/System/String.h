@@ -4,6 +4,7 @@
 #include "fmt/core.h"
 #include "fmt/format.h"
 #include "Engine/Algorithm/StringSearcherSunday.h"
+#include "Engine/Collection/Iterator.h"
 #include <string_view>
 
 // Defines a String literal. Encoded in UTF-8.
@@ -18,11 +19,6 @@
 })();
 
 namespace Engine {
-	template<typename T>
-	class ReadonlyIterator;
-	template<typename T>
-	class List;
-
 	struct StringData final {
 		explicit StringData(const char* data,int32 count);
 		~StringData();
@@ -105,12 +101,11 @@ namespace Engine {
 	String operator+(const String& left, const String& right);
 }
 
-using namespace Engine;
 namespace fmt {
 	template<>
-	struct formatter<String> : formatter<string_view> {
+	struct formatter<::Engine::String> : formatter<string_view> {
 		template <typename FormatContext>
-		auto format(const String& c, FormatContext& ctx) {
+		auto format(const ::Engine::String& c, FormatContext& ctx) {
 			return formatter<string_view>::format(string_view(c.GetStartPtr(), c.GetCount()), ctx);
 		}
 	};
