@@ -10,7 +10,7 @@ target_sources(Test PRIVATE
 	"${CMAKE_CURRENT_LIST_DIR}/Source/String.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Source/List.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Source/SharedPtr.cpp"
-)
+	"${CMAKE_CURRENT_LIST_DIR}/Source/IntrusivePtr.cpp")
 if(MSVC)
 	target_compile_options(Test PRIVATE /utf-8)
 endif()
