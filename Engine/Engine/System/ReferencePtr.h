@@ -5,26 +5,26 @@
 
 namespace Engine {
 	template<typename T>
-	class IntrusivePtr {
+	class ReferencePtr {
 	public:
 		// Create a SharedPtr from the given arguments.
 		template<typename ... Args>
-		static IntrusivePtr Create(Args&& ... args) {
-			return IntrusivePtr(MEMNEW(T(Object::Forward<Args>(args)...)));
+		static ReferencePtr Create(Args&& ... args) {
+			return ReferencePtr(MEMNEW(T(Object::Forward<Args>(args)...)));
 		}
 
-		IntrusivePtr() {}
-		explicit IntrusivePtr(T* ptr) :ptr(ptr) {
+		ReferencePtr() {}
+		explicit ReferencePtr(T* ptr) :ptr(ptr) {
 			if (ptr == nullptr) {
 				return;
 			}
 			Reference();
 		}
 
-		IntrusivePtr(const IntrusivePtr& shared) :ptr(shared.ptr) {
+		ReferencePtr(const ReferencePtr& shared) :ptr(shared.ptr) {
 			Reference();
 		}
-		IntrusivePtr& operator=(const IntrusivePtr& obj) {
+		ReferencePtr& operator=(const ReferencePtr& obj) {
 			if (&obj == this) {
 				return *this;
 			}
@@ -36,14 +36,14 @@ namespace Engine {
 
 			return *this;
 		}
-		~IntrusivePtr() {
+		~ReferencePtr() {
 			Dereference();
 		}
 
-		IntrusivePtr(IntrusivePtr&& obj) :ptr(obj.ptr) {
+		ReferencePtr(ReferencePtr&& obj) :ptr(obj.ptr) {
 			obj.ptr = nullptr;
 		}
-		IntrusivePtr& operator=(IntrusivePtr&& obj) {
+		ReferencePtr& operator=(ReferencePtr&& obj) {
 			if (&obj == this) {
 				return *this;
 			}
@@ -70,12 +70,12 @@ namespace Engine {
 		}
 
 		template<typename U>
-		IntrusivePtr<U> StaticCastTo() {
-			return IntrusivePtr<U>(static_cast<U*>(ptr));
+		ReferencePtr<U> StaticCastTo() {
+			return ReferencePtr<U>(static_cast<U*>(ptr));
 		}
 		template<typename U>
-		IntrusivePtr<U> DynamicCastTo() {
-			return IntrusivePtr<U>(dynamic_cast<U*>(ptr));
+		ReferencePtr<U> DynamicCastTo() {
+			return ReferencePtr<U>(dynamic_cast<U*>(ptr));
 		}
 	private:
 		void Reference() {
@@ -88,8 +88,7 @@ namespace Engine {
 			if (ptr == nullptr) {
 				return;
 			}
-			ptr->Dereference();
-			if (ptr->GetReferenceCount() == 0) {
+			if (ptr->Dereference() == 0) {
 				MEMDEL(ptr);
 			}
 		}

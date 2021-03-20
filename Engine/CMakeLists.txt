@@ -31,9 +31,10 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/UniquePtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/SharedPtr.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/IntrusivePtr.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/ReferencePtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Atomic.h"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.h"
