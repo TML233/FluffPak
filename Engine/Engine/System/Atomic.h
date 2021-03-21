@@ -62,6 +62,8 @@ namespace Engine {
 
 	class ReferenceCount {
 	public:
+		ReferenceCount(uint32 count = 0) :count(count) {}
+
 		uint32 Get() const {
 			return count.Get();
 		}

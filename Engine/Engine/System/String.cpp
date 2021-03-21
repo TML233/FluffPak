@@ -3,32 +3,48 @@
 #include "Engine/System/Debug.h"
 #include "Engine/System/Memory.h"
 #include "Engine/Collection/Iterator.h"
+#include "Engine/System/UniquePtr.h"
 #include <string>
 #include <cstring>
 
 
 namespace Engine {
-	StringData::StringData(const char* data, int32 count) {
-		length = count + 1;
-		this->data = MEMNEWARR(char, length);
-		// Copy data
-		std::memcpy(this->data, data, count);
-		// Add NULL
-		std::memset(this->data + count, 0, sizeof(char));
+	StringData::StringData(const char* data, int32 length, bool staticData):length(length),staticData(staticData) {
+		if (!staticData) {
+			UniquePtr<char[]> chars = UniquePtr<char[]>::Create(length);
+			// Copy data and set null.
+			std::memcpy(chars.GetRaw(), data, (sizeint)length - 1);
+			std::memset(chars.GetRaw() + length - 1, 0, sizeof(char));
+			this->data = chars.Release();
+		} else {
+			this->data = data;
+		}
 	}
 	StringData::~StringData() {
-		MEMDELARR(data);
+		if (!staticData) {
+			MEMDELARR(data);
+		}
 	}
 	uint32 StringData::Reference() {
+		if (staticData) {
+			return 10;
+		}
 		return referenceCount.Reference();
 	}
 	uint32 StringData::Dereference() {
+		if (staticData) {
+			return 10;
+		}
 		return referenceCount.Dereference();
 	}
 	uint32 StringData::GetReferenceCount() const {
+		if (staticData) {
+			return 10;
+		}
 		return referenceCount.Get();
 	}
-	ReferencePtr<StringData> StringData::empty = ReferencePtr<StringData>::Create("", static_cast<int32>(sizeof("")));
+	
+	StringData StringData::empty = StringData("", sizeof(""), true);
 
 	String::String(const char* string) {
 		PrepareData(string, static_cast<int32>(std::strlen(string)));
@@ -40,6 +56,8 @@ namespace Engine {
 		PrepareData(string, static_cast<int32>(std::strlen(string)));
 		return *this;
 	}
+
+	String::String(ReferencePtr<StringData> dataPtr) :data(dataPtr), refStart(0), refCount(dataPtr->length - 1) {}
 
 	bool String::IsIndividual() const {
 		return (refStart == 0 && refCount == data->length - 1);
@@ -143,10 +161,10 @@ namespace Engine {
 	void String::PrepareData(const char* string,int32 count) {
 		// Use public empty string.
 		if (count <= 0) {
-			data = StringData::empty;
+			data = ReferencePtr<StringData>(&StringData::empty);
 			return;
 		}
-		data = ReferencePtr<StringData>::Create(string,count);
+		data = ReferencePtr<StringData>::Create(string, count + 1);
 		refStart = 0;
 		refCount = count;
 	}

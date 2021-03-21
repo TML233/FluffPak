@@ -8,24 +8,24 @@
 #include "Engine/System/ReferencePtr.h"
 #include <string_view>
 
-// Defines a String literal. Encoded in UTF-8.
-#define STRING_LITERAL(text)									\
-([](){															\
-	static const char textContent[]=u8##text##;					\
-	static const StringData literal={							\
-		textContent,											\
-		(int32)sizeof(u8##text##)								\
-	};															\
-	/* TODO: Use dummy sharedptr */								\
-})();
+// Defines a String literal.
+#define STRING_LITERAL(text)													\
+([](){																			\
+	static const char content[]=text;											\
+	static const StringData data(content, sizeof(content), true);				\
+	return String(ReferencePtr<StringData>(const_cast<StringData*>(&data)));	\
+})()
 
 namespace Engine {
 	struct StringData final {
-		explicit StringData(const char* data,int32 count);
+		// Will allocate memory and copy from data.
+		// If staticData == true, will use pre-defined string data instead of copying.
+		StringData(const char* data, int32 length, bool staticData = false);
+
 		~StringData();
 
 		// Original data of the string.
-		char* data = nullptr;
+		const char* data = nullptr;
 		// NULL included.
 		int length = 0;
 
@@ -33,8 +33,9 @@ namespace Engine {
 		uint32 Dereference();
 		uint32 GetReferenceCount() const;
 
-		static ReferencePtr<StringData> empty;
+		static StringData empty;
 	private:
+		bool staticData;
 		ReferenceCount referenceCount;
 	};
 
@@ -44,6 +45,10 @@ namespace Engine {
 		String(const char* string = "");
 		String(const std::string& string);
 		String& operator=(const char* string);
+
+		// For STRING_LITERAL
+		// DO NOT use.
+		String(ReferencePtr<StringData> dataPtr);
 
 		// Get char count.
 		// NULL not included.
