@@ -85,11 +85,20 @@ namespace Engine {
 		return data->data;
 	}
 
-	int32 String::IndexOf(const String& pattern) const {
+	int32 String::IndexOf(const String& pattern,int32 startFrom,int32 count) const {
+		ERR_ASSERT_ACTION(startFrom >= 0 && startFrom < GetCount(), "startFrom out of bounds.", return -1);
+		ERR_ASSERT_ACTION(count >= -1 && count <= (GetCount() - startFrom), "count out of bounds.", return -1);
+		
 		if (GetCount() < pattern.GetCount()) {
 			return -1;
 		}
-		return searcher.Search(GetStartPtr(), GetCount(), pattern.GetStartPtr(), pattern.GetCount());
+		if (count == 0) {
+			return -1;
+		}
+		if (count == -1) {
+			count = GetCount() - startFrom;
+		}
+		return searcher.Search(GetStartPtr()+startFrom, count, pattern.GetStartPtr(), pattern.GetCount());
 	}
 
 	bool String::Contains(const String& pattern) const {
@@ -97,7 +106,7 @@ namespace Engine {
 	}
 
 	String String::Substring(int32 startIndex, int32 count) const {
-		ERR_ASSERT_ACTION(startIndex >= 0, "startIndex out of bounds.", return String());
+		ERR_ASSERT_ACTION(startIndex >= 0 && startIndex < GetCount(), "startIndex out of bounds.", return String());
 		ERR_ASSERT_ACTION(count >= 0 && count <= (GetCount() - startIndex), "count out of bounds.", return String());
 
 		String substr = *this;

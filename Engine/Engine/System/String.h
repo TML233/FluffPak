@@ -64,8 +64,9 @@ namespace Engine {
 		ReadonlyIterator<char> operator[](int32 index) const;
 
 		// Find the position of the substring appearance in the current string.
+		// If count == -1, search the whole string.
 		// Return -1 if not found.
-		int32 IndexOf(const String& pattern) const;
+		int32 IndexOf(const String& pattern,int32 startFrom=0,int32 count=-1) const;
 
 		// Check if the current string contains another string.
 		bool Contains(const String& pattern) const;
