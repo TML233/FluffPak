@@ -86,6 +86,7 @@ namespace Engine {
 		}
 
 		String ToString() const;
+		int32 GetHashCode() const;
 
 		int32 GetStartIndex() const;
 		const char* GetStartPtr() const;

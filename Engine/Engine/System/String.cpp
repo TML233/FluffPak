@@ -1,11 +1,12 @@
-#include "Engine/System/Definition.h"
 #include "Engine/System/String.h"
+#include "Engine/System/Object.h"
 #include "Engine/System/Debug.h"
 #include "Engine/System/Memory.h"
 #include "Engine/Collection/Iterator.h"
 #include "Engine/System/UniquePtr.h"
 #include <string>
 #include <cstring>
+#include <string_view>
 
 
 namespace Engine {
@@ -127,7 +128,9 @@ namespace Engine {
 			return true;
 		}
 
-		// TODO: Quick hash
+		if (GetHashCode() != obj.GetHashCode()) {
+			return false;
+		}
 
 		const char* ptrA = GetStartPtr();
 		const char* ptrB = obj.GetStartPtr();
@@ -149,6 +152,9 @@ namespace Engine {
 
 	String String::ToString() const {
 		return *this;
+	}
+	int32 String::GetHashCode() const {
+		return Object::GetHashCode(std::hash<std::string_view>{}(std::string_view(GetStartPtr(), GetCount())));
 	}
 
 	String::String(const char* string, int32 count) {
