@@ -10,7 +10,7 @@ namespace Engine {
 		// Create a SharedPtr from the given arguments.
 		template<typename ... Args>
 		static ReferencePtr Create(Args&& ... args) {
-			return ReferencePtr(MEMNEW(T(Object::Forward<Args>(args)...)));
+			return ReferencePtr(MEMNEW(T(Memory::Forward<Args>(args)...)));
 		}
 
 		ReferencePtr() {}

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Engine/System/Definition.h"
-#include "Engine/System/Object.h"
 #include "Engine/System/Debug.h"
 #include <memory>
 #include <new>
@@ -13,6 +12,46 @@ namespace Engine {
 	class Memory final {
 		STATIC_CLASS(Memory);
 	public:
+#pragma region Move & Forward support
+	private:
+		template<typename T>
+		class ReferenceRemover {
+		public:
+			using Type = T;
+		};
+
+		template<typename T>
+		class ReferenceRemover<T&> {
+		public:
+			using Type = T;
+		};
+
+		template<typename T>
+		class ReferenceRemover<T&&> {
+		public:
+			using Type = T;
+		};
+
+	public:
+		// Turn everything to Right Value Reference.
+		// Convenient tool for moving objects.
+		template<typename T>
+		static typename ReferenceRemover<T>::Type Move(T&& obj) {
+			return static_cast<typename ReferenceRemover<T>::Type&&>(obj);
+		}
+
+		// Keep the Right Value Reference still as a Right Value.
+		template<typename T>
+		static T&& Forward(typename ReferenceRemover<T>::Type& obj) {
+			return static_cast<T&&>(obj);
+		}
+		// Keep the Right Value Reference still as a Right Value.
+		template<typename T>
+		static T&& Forward(typename ReferenceRemover<T>::Type&& obj) {
+			return static_cast<T&&>(obj);
+		}
+#pragma endregion
+
 		// Allocate a memory of the specific size.
 		static void* Allocate(sizeint size);
 		// Resize a memory block.
@@ -29,7 +68,7 @@ namespace Engine {
 		template<typename T,typename ... Args>
 		static void Construct(T* ptr, Args&& ... args) {
 			// Placement new
-			new (ptr) T(Object::Forward<Args>(args)...);
+			new (ptr) T(Forward<Args>(args)...);
 		}
 		// Deconstructs a object but doesn't deallocate the memory.
 		template<typename T>
@@ -69,7 +108,7 @@ namespace Engine {
 			// Do constructions.
 			T* ptr = (T*)(rawPtr + 1);
 			for (sizeint i = 0; i < count; i += 1) {
-				Construct(ptr + i, Object::Forward<Args>(args)...);
+				Construct(ptr + i, Forward<Args>(args)...);
 			}
 
 			return ptr;

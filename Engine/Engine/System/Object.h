@@ -53,47 +53,6 @@ namespace Engine {
 		static int32 GetHashCode(float obj);
 		static int32 GetHashCode(double obj);
 #pragma endregion
-
-#pragma region Move & Forward support
-	private:
-		template<typename T>
-		class ReferenceRemover {
-		public:
-			using Type = T;
-		};
-
-		template<typename T>
-		class ReferenceRemover<T&> {
-		public:
-			using Type = T;
-		};
-
-		template<typename T>
-		class ReferenceRemover<T&&> {
-		public:
-			using Type = T;
-		};
-
-	public:
-		// Turn everything to Right Value Reference.
-		// Convenient tool for moving objects.
-		template<typename T>
-		static typename ReferenceRemover<T>::Type Move(T&& obj) {
-			return static_cast<typename ReferenceRemover<T>::Type&&>(obj);
-		}
-
-		// Keep the Right Value Reference still as a Right Value.
-		template<typename T>
-		static T&& Forward(typename ReferenceRemover<T>::Type& obj) {
-			return static_cast<T&&>(obj);
-		}
-		// Keep the Right Value Reference still as a Right Value.
-		template<typename T>
-		static T&& Forward(typename ReferenceRemover<T>::Type&& obj) {
-			return static_cast<T&&>(obj);
-		}
-#pragma endregion
-
 	};
 
 	// Represents a Object which its memory management is done by the user.
