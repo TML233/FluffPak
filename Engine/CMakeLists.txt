@@ -24,6 +24,7 @@ set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/NodePath.cpp"
 )
 set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Definition.h"
@@ -48,6 +49,8 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/List.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/NodePath.h"
+
 )
 
 # Add platform-depended source files.

@@ -73,6 +73,17 @@ namespace Engine {
 		uint32 GetReferenceCount() const {
 			return data->refCount.Get();
 		}
+
+		bool operator==(const T* ptr) const {
+			return this->ptr == ptr;
+		}
+		bool operator!=(const T* ptr) const {
+			return this->ptr != ptr;
+		}
+		operator bool() {
+			return ptr != nullptr;
+		}
+
 		T* GetRaw() const {
 			return ptr;
 		}
