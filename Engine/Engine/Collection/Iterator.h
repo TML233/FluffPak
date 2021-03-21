@@ -6,43 +6,28 @@ namespace Engine {
 	template<typename T>
 	class ReadonlyIterator {
 	public:
-		ReadonlyIterator(T* ptr);
+		ReadonlyIterator(const T* ptr) :target(ptr) {}
 
 		// Getter
-		operator T() const;
+		operator const T() const {
+			return *target;
+		}
 
 		// Iterator getter/dereference
-		T& operator*() const;
+		const T& operator*() const {
+			return *target;
+		}
 		// Iterator !=
-		bool operator!=(const ReadonlyIterator<T>& obj) const;
+		bool operator!=(const ReadonlyIterator<T>& obj) const {
+			return target != obj.target;
+		}
 		// Iterator next
-		ReadonlyIterator<T>& operator++();
+		ReadonlyIterator<T>& operator++() {
+			target += 1;
+			return *this;
+		}
 
 	private:
-		T* target;
+		const T* target;
 	};
-
-	template<typename T>
-	ReadonlyIterator<T>::ReadonlyIterator(T* ptr) :target(ptr) {}
-
-	template<typename T>
-	ReadonlyIterator<T>::operator T() const {
-		return *target;
-	}
-
-	template<typename T>
-	T& ReadonlyIterator<T>::operator*() const {
-		return *target;
-	}
-
-	template<typename T>
-	bool ReadonlyIterator<T>::operator!=(const ReadonlyIterator<T>& obj) const {
-		return target != obj.target;
-	}
-
-	template<typename T>
-	ReadonlyIterator<T>& ReadonlyIterator<T>::operator++() {
-		target += 1;
-		return *this;
-	}
 }

@@ -1,25 +1,51 @@
-#include "Engine/System/Definition.h"
 #include "Engine/System/String.h"
+#include "Engine/System/Object.h"
 #include "Engine/System/Debug.h"
 #include "Engine/System/Memory.h"
 #include "Engine/Collection/Iterator.h"
+#include "Engine/System/UniquePtr.h"
 #include <string>
 #include <cstring>
+#include <string_view>
 
 
 namespace Engine {
-	StringData::StringData(const char* data, int32 count) {
-		length = count + 1;
-		this->data = MEMNEWARR(char, length);
-		// Copy data
-		std::memcpy(this->data, data, count);
-		// Add NULL
-		std::memset(this->data + count, 0, sizeof(char));
+	StringData::StringData(const char* data, int32 length, bool staticData):length(length),staticData(staticData) {
+		if (!staticData) {
+			UniquePtr<char[]> chars = UniquePtr<char[]>::Create(length);
+			// Copy data and set null.
+			std::memcpy(chars.GetRaw(), data, (sizeint)length - 1);
+			std::memset(chars.GetRaw() + length - 1, 0, sizeof(char));
+			this->data = chars.Release();
+		} else {
+			this->data = data;
+		}
 	}
 	StringData::~StringData() {
-		MEMDELARR(data);
+		if (!staticData) {
+			MEMDELARR(data);
+		}
 	}
-	std::shared_ptr<StringData> StringData::empty = std::make_shared<StringData>("", static_cast<int32>(sizeof("")));
+	uint32 StringData::Reference() {
+		if (staticData) {
+			return 10;
+		}
+		return referenceCount.Reference();
+	}
+	uint32 StringData::Dereference() {
+		if (staticData) {
+			return 10;
+		}
+		return referenceCount.Dereference();
+	}
+	uint32 StringData::GetReferenceCount() const {
+		if (staticData) {
+			return 10;
+		}
+		return referenceCount.Get();
+	}
+	
+	StringData StringData::empty = StringData("", sizeof(""), true);
 
 	String::String(const char* string) {
 		PrepareData(string, static_cast<int32>(std::strlen(string)));
@@ -31,6 +57,8 @@ namespace Engine {
 		PrepareData(string, static_cast<int32>(std::strlen(string)));
 		return *this;
 	}
+
+	String::String(ReferencePtr<StringData> dataPtr) :data(dataPtr), refStart(0), refCount(dataPtr->length - 1) {}
 
 	bool String::IsIndividual() const {
 		return (refStart == 0 && refCount == data->length - 1);
@@ -57,11 +85,20 @@ namespace Engine {
 		return data->data;
 	}
 
-	int32 String::IndexOf(const String& pattern) const {
+	int32 String::IndexOf(const String& pattern,int32 startFrom,int32 count) const {
+		ERR_ASSERT_ACTION(startFrom >= 0 && startFrom < GetCount(), "startFrom out of bounds.", return -1);
+		ERR_ASSERT_ACTION(count >= -1 && count <= (GetCount() - startFrom), "count out of bounds.", return -1);
+		
 		if (GetCount() < pattern.GetCount()) {
 			return -1;
 		}
-		return searcher.Search(GetStartPtr(), GetCount(), pattern.GetStartPtr(), pattern.GetCount());
+		if (count == 0) {
+			return -1;
+		}
+		if (count == -1) {
+			count = GetCount() - startFrom;
+		}
+		return searcher.Search(GetStartPtr()+startFrom, count, pattern.GetStartPtr(), pattern.GetCount());
 	}
 
 	bool String::Contains(const String& pattern) const {
@@ -69,7 +106,7 @@ namespace Engine {
 	}
 
 	String String::Substring(int32 startIndex, int32 count) const {
-		ERR_ASSERT_ACTION(startIndex >= 0, "startIndex out of bounds.", return String());
+		ERR_ASSERT_ACTION(startIndex >= 0 && startIndex < GetCount(), "startIndex out of bounds.", return String());
 		ERR_ASSERT_ACTION(count >= 0 && count <= (GetCount() - startIndex), "count out of bounds.", return String());
 
 		String substr = *this;
@@ -96,7 +133,13 @@ namespace Engine {
 			return false;
 		}
 
-		// TODO: Quick hash
+		if (data.GetRaw() == obj.data.GetRaw() && refStart == obj.refStart) {
+			return true;
+		}
+
+		if (GetHashCode() != obj.GetHashCode()) {
+			return false;
+		}
 
 		const char* ptrA = GetStartPtr();
 		const char* ptrB = obj.GetStartPtr();
@@ -119,6 +162,9 @@ namespace Engine {
 	String String::ToString() const {
 		return *this;
 	}
+	int32 String::GetHashCode() const {
+		return Object::GetHashCode(std::hash<std::string_view>{}(std::string_view(GetStartPtr(), GetCount())));
+	}
 
 	String::String(const char* string, int32 count) {
 		PrepareData(string, count);
@@ -134,10 +180,10 @@ namespace Engine {
 	void String::PrepareData(const char* string,int32 count) {
 		// Use public empty string.
 		if (count <= 0) {
-			data = StringData::empty;
+			data = ReferencePtr<StringData>(&StringData::empty);
 			return;
 		}
-		data = std::make_shared<StringData>(string,count);
+		data = ReferencePtr<StringData>::Create(string, count + 1);
 		refStart = 0;
 		refCount = count;
 	}
