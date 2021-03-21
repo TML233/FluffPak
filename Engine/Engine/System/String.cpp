@@ -123,6 +123,10 @@ namespace Engine {
 			return false;
 		}
 
+		if (data.GetRaw() == obj.data.GetRaw() && refStart == obj.refStart) {
+			return true;
+		}
+
 		// TODO: Quick hash
 
 		const char* ptrA = GetStartPtr();
