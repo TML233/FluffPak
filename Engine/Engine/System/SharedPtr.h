@@ -2,21 +2,20 @@
 
 #include "Engine/System/Definition.h"
 #include "Engine/System/Memory.h"
-#include <atomic>
+#include "Engine/System/Atomic.h"
 
-namespace Engine{
+namespace Engine {
 	struct SharedPtrCounter {
-		std::atomic<int32> refCount = 0;
-		std::atomic<int32> weakCount = 0;
+		ReferenceCount refCount;
+		ReferenceCount weakCount;
 	};
 
 	template<typename T>
 	class SharedPtr {
 	public:
-		// Create a SharedPtr from the given arguments.
 		template<typename ... Args>
 		static SharedPtr Create(Args&& ... args) {
-			return SharedPtr(MEMNEW(T(Object::Forward<Args>(args)...)));
+			return SharedPtr(MEMNEW(T(Memory::Forward<Args>(args)...)));
 		}
 
 		SharedPtr(T* ptr, SharedPtrCounter* data) :ptr(ptr), data(data) {
@@ -24,7 +23,7 @@ namespace Engine{
 		}
 
 		SharedPtr() {}
-		explicit SharedPtr(T* ptr):ptr(ptr) {
+		explicit SharedPtr(T* ptr) :ptr(ptr) {
 			if (ptr == nullptr) {
 				return;
 			}
@@ -51,8 +50,8 @@ namespace Engine{
 		~SharedPtr() {
 			Dereference();
 		}
-		
-		SharedPtr(SharedPtr&& obj):ptr(obj.ptr),data(obj.data) {
+
+		SharedPtr(SharedPtr&& obj) :ptr(obj.ptr), data(obj.data) {
 			obj.ptr = nullptr;
 			obj.data = nullptr;
 		}
@@ -71,8 +70,8 @@ namespace Engine{
 			return *this;
 		}
 
-		int32 GetReferenceCount() const {
-			return data->refCount;
+		uint32 GetReferenceCount() const {
+			return data->refCount.Get();
 		}
 		T* GetRaw() const {
 			return ptr;
@@ -94,17 +93,16 @@ namespace Engine{
 			if (data == nullptr) {
 				return;
 			}
-			data->refCount += 1;
+			data->refCount.Reference();
 		}
 		void Dereference() {
 			if (data == nullptr) {
 				return;
 			}
-			data->refCount -= 1;
-			if (data->refCount <= 0) {
+			if (data->refCount.Dereference() == 0) {
 				MEMDEL(ptr);
 
-				if (data->weakCount <= 0) {
+				if (data->weakCount.Get() == 0) {
 					MEMDEL(data);
 				}
 			}

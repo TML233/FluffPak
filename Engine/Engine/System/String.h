@@ -1,10 +1,11 @@
 #pragma once
 
-#include <memory>
 #include "fmt/core.h"
 #include "fmt/format.h"
 #include "Engine/Algorithm/StringSearcherSunday.h"
 #include "Engine/Collection/Iterator.h"
+#include "Engine/System/Atomic.h"
+#include "Engine/System/ReferencePtr.h"
 #include <string_view>
 
 // Defines a String literal. Encoded in UTF-8.
@@ -28,7 +29,13 @@ namespace Engine {
 		// NULL included.
 		int length = 0;
 
-		static std::shared_ptr<StringData> empty;
+		uint32 Reference();
+		uint32 Dereference();
+		uint32 GetReferenceCount() const;
+
+		static ReferencePtr<StringData> empty;
+	private:
+		ReferenceCount referenceCount;
 	};
 
 	// A string holding a NULL-termined char array.
@@ -89,7 +96,7 @@ namespace Engine {
 		// Prepares a string with a brand new data object.
 		void PrepareData(const char* string, int32 count);
 		// Current data reference.
-		std::shared_ptr<StringData> data;
+		ReferencePtr<StringData> data;
 
 		int32 refStart = 0;
 		int32 refCount = 0;

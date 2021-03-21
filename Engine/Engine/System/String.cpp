@@ -19,7 +19,16 @@ namespace Engine {
 	StringData::~StringData() {
 		MEMDELARR(data);
 	}
-	std::shared_ptr<StringData> StringData::empty = std::make_shared<StringData>("", static_cast<int32>(sizeof("")));
+	uint32 StringData::Reference() {
+		return referenceCount.Reference();
+	}
+	uint32 StringData::Dereference() {
+		return referenceCount.Dereference();
+	}
+	uint32 StringData::GetReferenceCount() const {
+		return referenceCount.Get();
+	}
+	ReferencePtr<StringData> StringData::empty = ReferencePtr<StringData>::Create("", static_cast<int32>(sizeof("")));
 
 	String::String(const char* string) {
 		PrepareData(string, static_cast<int32>(std::strlen(string)));
@@ -137,7 +146,7 @@ namespace Engine {
 			data = StringData::empty;
 			return;
 		}
-		data = std::make_shared<StringData>(string,count);
+		data = ReferencePtr<StringData>::Create(string,count);
 		refStart = 0;
 		refCount = count;
 	}
