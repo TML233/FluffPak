@@ -2,6 +2,7 @@
 
 #include "Engine/System/Definition.h"
 #include "Engine/System/String.h"
+#include "Engine/System/Atomic.h"
 
 namespace Engine {
 	// Inherit ManualManagement or AutoManagement instead.
@@ -64,6 +65,12 @@ namespace Engine {
 	// Represents a Object which its memory management is done automatically via smart pointers.
 	// No raw pointer of ReferenceObject should be passed around!
 	class ReferencedObject :public Object {
+	public:
 		bool IsReferenced() const override;
+		uint32 Reference();
+		uint32 Dereference();
+		uint32 GetReferenceCount() const;
+	private:
+		ReferenceCount referenceCount;
 	};
 }

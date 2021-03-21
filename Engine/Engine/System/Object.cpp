@@ -111,4 +111,13 @@ namespace Engine {
 	bool ReferencedObject::IsReferenced() const {
 		return true;
 	}
+	uint32 ReferencedObject::Reference() {
+		return referenceCount.Reference();
+	}
+	uint32 ReferencedObject::Dereference() {
+		return referenceCount.Dereference();
+	}
+	uint32 ReferencedObject::GetReferenceCount() const {
+		return referenceCount.Get();
+	}
 }
