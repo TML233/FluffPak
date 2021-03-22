@@ -7,25 +7,7 @@ target_include_directories(Engine PUBLIC "./")
 # Link thirdparty libraries
 target_link_libraries(Engine PUBLIC fmt)
 
-# Add common source/header files.
-set(SourceFileCore
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.cpp"
-
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Vector2.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Vector3.cpp"
-
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Algorithm/StringSearcherSunday.cpp"
-	
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.cpp"
-
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/NodePath.cpp"
-)
+# Add common header/source files.
 set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Definition.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object.h"
@@ -40,7 +22,7 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Vector2.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Vector3.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Rect2.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Algorithm/StringSearcherSunday.h"
 
@@ -48,9 +30,32 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/List.h"
 
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/NodePath.h"
 
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node2D.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Rect2D.h"
+)
+set(SourceFileCore
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.cpp"
+
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Vector2.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Rect2.cpp"
+
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Algorithm/StringSearcherSunday.cpp"
+	
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.cpp"
+
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/NodePath.cpp"
+
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node2D.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Rect2D.cpp"
 )
 
 # Add platform-depended source files.

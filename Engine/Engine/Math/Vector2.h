@@ -5,7 +5,7 @@
 
 namespace Engine {
 	struct Vector2 final {
-		Vector2(float x, float y);
+		Vector2(float x = 0, float y = 0);
 
 		float x;
 		float y;
@@ -16,10 +16,12 @@ namespace Engine {
 		Vector2 GetNormalized() const;
 		void Normalize();
 
-		Vector2 operator+(const Vector2& value);
-		Vector2 operator-(const Vector2& value);
-		Vector2 operator*(float value);
-		Vector2 operator/(float value);
+		Vector2 operator+(const Vector2& value) const;
+		Vector2 operator-(const Vector2& value) const;
+		Vector2 operator*(float value) const;
+		Vector2 operator/(float value) const;
+		bool operator==(const Vector2& value) const;
+		bool operator!=(const Vector2& value) const;
 
 		String ToString() const;
 		int32 GetHashCode() const;

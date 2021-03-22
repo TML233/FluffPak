@@ -3,10 +3,7 @@
 #include "Engine/System/String.h"
 
 namespace Engine {
-	Vector2::Vector2(float x, float y) {
-		this->x = x;
-		this->y = y;
-	}
+	Vector2::Vector2(float x, float y) :x(x), y(y) {}
 
 	float Vector2::GetLength() const {
 		return Math::Sqrt(GetLengthSquared());
@@ -25,17 +22,23 @@ namespace Engine {
 		y = y / len;
 	}
 
-	Vector2 Vector2::operator+(const Vector2& value) {
+	Vector2 Vector2::operator+(const Vector2& value) const {
 		return Vector2(x + value.x, y + value.y);
 	}
-	Vector2 Vector2::operator-(const Vector2& value) {
+	Vector2 Vector2::operator-(const Vector2& value) const {
 		return Vector2(x - value.x, y - value.y);
 	}
-	Vector2 Vector2::operator*(float value) {
+	Vector2 Vector2::operator*(float value) const {
 		return Vector2(x * value, y * value);
 	}
-	Vector2 Vector2::operator/(float value) {
+	Vector2 Vector2::operator/(float value) const {
 		return Vector2(x / value, y / value);
+	}
+	bool Vector2::operator==(const Vector2& value) const {
+		return (x == value.x && y == value.y);
+	}
+	bool Vector2::operator!=(const Vector2& value) const {
+		return (x != value.x || y != value.y);
 	}
 
 	String Vector2::ToString() const {
