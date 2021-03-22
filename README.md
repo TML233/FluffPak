@@ -1,6 +1,7 @@
 # PawsEngine
 ## Info
 This is a working personal project. The purpose is to learn, and build a useable, cross-platform 2D game engine.
+Currently not accepting any pull requests.
 
 ## Used libraries
 * Make system: [CMake](https://cmake.org)
