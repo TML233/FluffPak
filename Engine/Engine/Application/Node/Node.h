@@ -3,9 +3,12 @@
 #include "Engine/System/Definition.h"
 #include "Engine/System/Object.h"
 #include "Engine/Collection/List.h"
-#include "Engine/Application/NodePath.h"
+#include "Engine/Application/Node/NodePath.h"
 
 namespace Engine {
+	// Avoid circular dependency.
+	class NodeTree;
+
 	class Node :public ManualObject {
 	public:
 		Node* GetParent() const;
@@ -17,7 +20,8 @@ namespace Engine {
 		void SetName(String name);
 		Node* GetNode(NodePath path) const;
 		Node* GetNodeOrNull(NodePath path) const;
-
+		
+		NodeTree* GetTree() const;
 		bool IsInTree() const;
 
 		static bool IsNameValid(String name);
@@ -26,7 +30,8 @@ namespace Engine {
 		String name;
 		List<Node*> children{};
 		Node* parent = nullptr;
-		bool inTree = false;
+
+		NodeTree* tree = nullptr;
 
 		static List<String> invalidChars;
 	};

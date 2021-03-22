@@ -30,8 +30,10 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/List.h"
 
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/NodePath.h"
-
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Engine.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/AppLoop.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodeTree.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodePath.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node2D.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Rect2D.h"
@@ -51,8 +53,10 @@ set(SourceFileCore
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.cpp"
 
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/NodePath.cpp"
-
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Engine.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/AppLoop.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodeTree.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodePath.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node2D.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Rect2D.cpp"

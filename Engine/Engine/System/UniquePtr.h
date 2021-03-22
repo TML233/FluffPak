@@ -37,7 +37,7 @@ namespace Engine {
 		
 		// No copying
 		UniquePtr(const UniquePtr& obj) = delete;
-		UniquePtr& operator=(const UniquePtr obj) = delete;
+		UniquePtr& operator=(const UniquePtr& obj) = delete;
 		// Moving
 		UniquePtr(UniquePtr&& obj) {
 			ptr = obj.ptr;
@@ -95,7 +95,7 @@ namespace Engine {
 
 		// No copying
 		UniquePtr(const UniquePtr& obj) = delete;
-		UniquePtr& operator=(const UniquePtr obj) = delete;
+		UniquePtr& operator=(const UniquePtr& obj) = delete;
 		// Moving
 		UniquePtr(UniquePtr&& obj) {
 			ptr = obj.ptr;

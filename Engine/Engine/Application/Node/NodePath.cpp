@@ -1,4 +1,4 @@
-#include "Engine/Application/NodePath.h"
+#include "Engine/Application/Node/NodePath.h"
 #include "Engine/System/Debug.h"
 
 namespace Engine {
