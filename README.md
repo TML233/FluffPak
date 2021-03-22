@@ -3,6 +3,11 @@
 This is a working personal project. The purpose is to learn, and build a useable, cross-platform 2D game engine.
 Currently not accepting any pull requests.
 
+## Coding convention
+* **Pointers** are only used when the client *doesn't control the life time* of the object.
+* `Object` provides functions of *Reflection*. Pure data classes does not inherit `Object`.
+* Inherit `ManualObject` or `ReferencedObject` instead of `Object` to indicate the method of controlling the memory life time. `ReferencedObject` are used with `ReferencePtr`, which is essentially a *intrusive pointer*.
+
 ## Used libraries
 * Make system: [CMake](https://cmake.org)
 * Unit testing: [DocTest](https://github.com/onqtam/doctest)
