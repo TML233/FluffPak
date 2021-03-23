@@ -72,7 +72,7 @@ namespace Engine {
 	}
 
 	ReadonlyIterator<char> String::operator[](int32 index) const {
-		ERR_ASSERT_ACTION(index >= 0 && index <= GetCount(), "index out of bounds.", return ReadonlyIterator<char>((char*)""));
+		ERR_ASSERT(index >= 0 && index <= GetCount(), "index out of bounds.", return ReadonlyIterator<char>((char*)""));
 		
 		return ReadonlyIterator<char>(data->data + refStart + index);
 	}
@@ -86,8 +86,8 @@ namespace Engine {
 	}
 
 	int32 String::IndexOf(const String& pattern,int32 startFrom,int32 count) const {
-		ERR_ASSERT_ACTION(startFrom >= 0 && startFrom < GetCount(), "startFrom out of bounds.", return -1);
-		ERR_ASSERT_ACTION(count >= -1 && count <= (GetCount() - startFrom), "count out of bounds.", return -1);
+		ERR_ASSERT(startFrom >= 0 && startFrom < GetCount(), "startFrom out of bounds.", return -1);
+		ERR_ASSERT(count >= -1 && count <= (GetCount() - startFrom), "count out of bounds.", return -1);
 		
 		if (GetCount() < pattern.GetCount()) {
 			return -1;
@@ -106,8 +106,8 @@ namespace Engine {
 	}
 
 	String String::Substring(int32 startIndex, int32 count) const {
-		ERR_ASSERT_ACTION(startIndex >= 0 && startIndex < GetCount(), "startIndex out of bounds.", return String());
-		ERR_ASSERT_ACTION(count >= 0 && count <= (GetCount() - startIndex), "count out of bounds.", return String());
+		ERR_ASSERT(startIndex >= 0 && startIndex < GetCount(), "startIndex out of bounds.", return String());
+		ERR_ASSERT(count >= 0 && count <= (GetCount() - startIndex), "count out of bounds.", return String());
 
 		String substr = *this;
 		substr.refStart = startIndex;

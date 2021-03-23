@@ -13,8 +13,7 @@
 #define WARN_MSG(msg) DebugPrintWarn(__func__,__FILE__,__LINE__,DEBUG_TEXT(msg))
 
 #define ERR_MSG(msg) DebugPrintError(__func__,__FILE__,__LINE__,DEBUG_TEXT(msg))
-#define ERR_ASSERT(expr,msg) if (!(expr)) { ERR_MSG("Assertion \"" #expr "\" failed: " msg);}
-#define ERR_ASSERT_ACTION(expr,msg,action) if (!(expr)) { ERR_MSG("Assertion \"" #expr "\" failed: " msg " Executing \"" #action "\".");action;}
+#define ERR_ASSERT(expr,msg,action) if (!(expr)) { ERR_MSG("Assertion \"" #expr "\" failed: " msg " Executing \"" #action "\".");action;}
 
 #ifdef _MSC_VER
 #define FATAL_CRASH_IMMEDIATELY() __debugbreak()

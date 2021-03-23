@@ -15,7 +15,7 @@ namespace Engine {
 		SetSeed(seed);
 	}
 	int32 Random::Next(int32 min, int32 max) {
-		ERR_ASSERT_ACTION(min <= max, "min cannot be greater than max.", return max);
+		ERR_ASSERT(min <= max, "min cannot be greater than max.", return max);
 
 		if (min == max) {
 			return min;
@@ -23,12 +23,12 @@ namespace Engine {
 		return std::uniform_int_distribution<int32>(min, max - 1)(engine);
 	}
 	float Random::NextFloat(float min, float max) {
-		ERR_ASSERT_ACTION(min <= max, "min cannot be greater than max.", return max);
+		ERR_ASSERT(min <= max, "min cannot be greater than max.", return max);
 
 		return std::uniform_real_distribution<float>(min, max)(engine);
 	}
 	double Random::NextDouble(double min, double max) {
-		ERR_ASSERT_ACTION(min <= max, "min cannot be greater than max.", return max);
+		ERR_ASSERT(min <= max, "min cannot be greater than max.", return max);
 
 		return std::uniform_real_distribution<double>(min, max)(engine);
 	}

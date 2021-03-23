@@ -4,14 +4,14 @@
 
 namespace Engine {
 	void* Memory::Allocate(sizeint size) {
-		ERR_ASSERT_ACTION(size > 0, "size must be larger than 0.", return nullptr);
+		ERR_ASSERT(size > 0, "size must be larger than 0.", return nullptr);
 
 		void* ptr = std::malloc(size);
 		return ptr;
 	}
 	void* Memory::Reallocate(void* ptr, sizeint newSize) {
-		ERR_ASSERT_ACTION(ptr != nullptr, "ptr must not be nullptr!", return nullptr);
-		ERR_ASSERT_ACTION(newSize > 0, "newSize must be larger than 0.", return nullptr);
+		ERR_ASSERT(ptr != nullptr, "ptr must not be nullptr!", return nullptr);
+		ERR_ASSERT(newSize > 0, "newSize must be larger than 0.", return nullptr);
 
 		void* result = std::realloc(ptr, newSize);
 		return result;

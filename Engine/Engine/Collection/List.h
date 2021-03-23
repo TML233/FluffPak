@@ -35,7 +35,7 @@ namespace Engine{
 			return capacity;
 		}
 		void SetCapacity(int32 capacity) {
-			ERR_ASSERT_ACTION(capacity >= 0 && capacity >= count, "capacity cannot be less than 0 or the current size.", return);
+			ERR_ASSERT(capacity >= 0 && capacity >= count, "capacity cannot be less than 0 or the current size.", return);
 
 			if (capacity == count || capacity == this->capacity) {
 				return;
@@ -52,11 +52,11 @@ namespace Engine{
 			return count;
 		}
 		T Get(int32 index) const {
-			ERR_ASSERT_ACTION(index >= 0 && index < count, "index out of bounds.", FATAL_CRASH("List<T>::Get cannot return a value."));
+			ERR_ASSERT(index >= 0 && index < count, "index out of bounds.", FATAL_CRASH("List<T>::Get cannot return a value."));
 			return elements[index];
 		}
 		void Set(int32 index, const T& value) {
-			ERR_ASSERT_ACTION(index >= 0 && index < count, "index out of bounds.", return);
+			ERR_ASSERT(index >= 0 && index < count, "index out of bounds.", return);
 			*(elements + index) = value;
 		}
 		void Add(const T& value) {
@@ -65,7 +65,7 @@ namespace Engine{
 			count += 1;
 		}
 		void Insert(int32 index, const T& value) {
-			ERR_ASSERT_ACTION(index >= 0 && index <= count, "index out of bounds.", return);
+			ERR_ASSERT(index >= 0 && index <= count, "index out of bounds.", return);
 			
 			if (index == count) {
 				Add(value);
@@ -85,7 +85,7 @@ namespace Engine{
 			count += 1;
 		}
 		void RemoveAt(int32 index) {
-			ERR_ASSERT_ACTION(index >= 0 && index < count, "index out of bounds", return);
+			ERR_ASSERT(index >= 0 && index < count, "index out of bounds", return);
 
 			// Destruct.
 			Memory::Destruct(elements + index);

@@ -24,7 +24,7 @@ namespace Engine {
 		return true;
 	}
 	int32 HashHelper::GetPrime(int32 min) {
-		ERR_ASSERT_ACTION(min >= 0, "min cannot be smaller than 0.", return 0);
+		ERR_ASSERT(min >= 0, "min cannot be smaller than 0.", return 0);
 
 		// Find in the pre-defined.
 		for (int32 prime : primes) {

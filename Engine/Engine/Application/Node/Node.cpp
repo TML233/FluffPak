@@ -6,7 +6,7 @@ namespace Engine {
 		return children.GetCount();
 	}
 	Node* Node::GetChild(int32 index) const {
-		ERR_ASSERT_ACTION(index >= 0 && index < children.GetCount(), "index out of bounds.", return nullptr);
+		ERR_ASSERT(index >= 0 && index < children.GetCount(), "index out of bounds.", return nullptr);
 		return children.Get(index);
 	}
 	String Node::GetName() const {
