@@ -5,7 +5,7 @@
 using namespace Engine;
 int main() {
 	UniquePtr<::Engine::Engine> app(MEMNEW(::Engine::Engine));
-	WARN_MSG("Using \"NodeTree\" as AppLoop.");
+	INFO_MSG("Using \"NodeTree\" as AppLoop.");
 	app->SetAppLoop(UniquePtr<AppLoop>(MEMNEW(NodeTree)));
 	app->Start();
 	return 0;

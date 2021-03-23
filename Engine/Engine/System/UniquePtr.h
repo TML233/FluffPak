@@ -72,6 +72,12 @@ namespace Engine {
 		T* operator->() const {
 			return ptr;
 		}
+		bool operator==(T* ptr) const {
+			return this->ptr == ptr;
+		}
+		bool operator!=(T* ptr) const {
+			return this->ptr != ptr;
+		}
 		operator bool() {
 			return ptr != nullptr;
 		}
@@ -123,6 +129,12 @@ namespace Engine {
 				deleter(this->ptr);
 			}
 			this->ptr = ptr;
+		}
+		bool operator==(T* ptr) const {
+			return this->ptr == ptr;
+		}
+		bool operator!=(T* ptr) const {
+			return this->ptr != ptr;
 		}
 		operator bool() {
 			return ptr != nullptr;

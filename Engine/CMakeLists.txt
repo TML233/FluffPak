@@ -31,6 +31,7 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/List.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Engine.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Time.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/AppLoop.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodeTree.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodePath.h"
@@ -54,6 +55,7 @@ set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Engine.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Time.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/AppLoop.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodeTree.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodePath.cpp"

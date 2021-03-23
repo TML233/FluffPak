@@ -1,19 +1,48 @@
 #include "Engine/Application/Engine.h"
 #include "Engine/System/Memory.h"
+#include <chrono>
 
 namespace Engine {
-	Engine::Engine() {}
-	Engine::~Engine() {}
+	Engine* Engine::instance = nullptr;
+	Engine* Engine::GetInstance() {
+		return instance;
+	}
+
+	Engine::Engine() {
+		instance = this;
+	}
+	Engine::~Engine() {
+		if (instance == this) {
+			instance = nullptr;
+		}
+	}
 	void Engine::SetAppLoop(UniquePtr<AppLoop>&& appLoop) {
-		currentAppLoop = Memory::Move(appLoop);
+		this->appLoop = Memory::Move(appLoop);
 	}
 	AppLoop* Engine::GetAppLoop() const {
-		return currentAppLoop.GetRaw();
+		return appLoop.GetRaw();
 	}
 	void Engine::Start() {
-		while (currentAppLoop->IsRunning()) {
-			// TODO: Timing
-			currentAppLoop->Update(0);
+		if (appLoop == nullptr) {
+			FATAL_MSG("No AppLoop has been assigned.");
+			return;
 		}
+
+		appLoop->Start();
+
+		while (appLoop->IsRunning()) {
+			// TODO: Timing.
+			time.unscaledDelta = 0;
+			time.totalFrames += 1;
+			time.unscaledTotal += time.GetUnscaledDelta();
+			time.total += time.GetDelta();
+
+			appLoop->Update(time);
+			appLoop->PhysicsUpdate(time);
+		}
+
+
+
+		INFO_MSG("AppLoop finished running. Stopping...");
 	}
 }

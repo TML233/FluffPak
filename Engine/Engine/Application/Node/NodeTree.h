@@ -6,9 +6,10 @@
 namespace Engine{
 	class NodeTree final:public AppLoop {
 	public:
-		void Update(float deltaTime) override;
+		void Start() override;
+		void Update(const Time& time) override;
+		void PhysicsUpdate(const Time& time) override;
 		bool IsRunning() const override;
-		int32 GetCurrentFrame() const;
 	private:
 		bool running = true;
 		int32 currentFrame = 0;
