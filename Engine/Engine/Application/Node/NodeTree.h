@@ -6,7 +6,7 @@
 namespace Engine{
 	class NodeTree final:public AppLoop {
 	public:
-		void OnUpdate(float deltaTime) override;
+		void Update(float deltaTime) override;
 		bool IsRunning() const override;
 		int32 GetCurrentFrame() const;
 	private:

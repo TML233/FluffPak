@@ -1,7 +1,7 @@
 #include "Engine/Application/Node/NodeTree.h"
 
 namespace Engine {
-	void NodeTree::OnUpdate(float deltaTime) {
+	void NodeTree::Update(float deltaTime) {
 		currentFrame += 1;
 	}
 	bool NodeTree::IsRunning() const {

@@ -13,7 +13,7 @@ namespace Engine {
 	void Engine::Start() {
 		while (currentAppLoop->IsRunning()) {
 			// TODO: Timing
-			currentAppLoop->OnUpdate(0);
+			currentAppLoop->Update(0);
 		}
 	}
 }
