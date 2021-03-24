@@ -11,6 +11,7 @@ target_link_libraries(Engine PUBLIC fmt)
 set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Definition.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/ObjectId.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/UniquePtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/SharedPtr.h"
@@ -41,6 +42,7 @@ set(HeaderFileCore
 )
 set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/ObjectId.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.cpp"

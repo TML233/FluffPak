@@ -3,12 +3,13 @@
 #include "Engine/System/Definition.h"
 #include "Engine/System/String.h"
 #include "Engine/System/Atomic.h"
+#include "Engine/System/ObjectId.h"
 
 namespace Engine {
 	// Inherit ManualManagement or AutoManagement instead.
 	class Object {
 	public:
-		virtual ~Object() = 0;
+		virtual ~Object();
 
 		// Indicates if current object is a ReferencedObject
 		virtual bool IsReferenced() const = 0;
@@ -18,6 +19,8 @@ namespace Engine {
 		// Get hash code. Hash code is not used to identify objects!
 		// Override this if the object indicates value.
 		virtual int32 GetHashCode() const;
+
+		ObjectId GetInstanceId() const;
 
 #pragma region ToStrings
 		template<typename T>
@@ -54,11 +57,16 @@ namespace Engine {
 		static int32 GetHashCode(float obj);
 		static int32 GetHashCode(double obj);
 #pragma endregion
+
+	protected:
+		ObjectId instanceId{};
 	};
 
 	// Represents a Object which its memory management is done by the user.
 	// Raw pointers of ManualObject can be passed around.
 	class ManualObject :public Object {
+	public:
+		ManualObject();
 		bool IsReferenced() const override;
 	};
 
@@ -66,6 +74,7 @@ namespace Engine {
 	// No raw pointer of ReferenceObject should be passed around!
 	class ReferencedObject :public Object {
 	public:
+		ReferencedObject();
 		bool IsReferenced() const override;
 		uint32 Reference();
 		uint32 Dereference();
