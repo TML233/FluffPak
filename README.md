@@ -17,5 +17,9 @@ Currently not accepting any pull requests.
 * C# scripting embedding: [mono](mono-project.com)
 
 ## Referenced materials
+* [.NET Source](https://source.dot.net)
 * [Godot Engine](https://godotengine.org/)
 * [The Cherno Game Engine Series](https://www.youtube.com/playlist?list=PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT)
+* [Don't Store That in a Float (Use double for total elapsed time)](https://randomascii.wordpress.com/2012/02/13/dont-store-that-in-a-float/)
+* [Discussion about Update and FixedUpdate](https://news.ycombinator.com/item?id=23649406)
+* [Frame Pacing Analysis of the Game Loop](https://nkga.github.io/post/frame-pacing-analysis-of-the-game-loop/)

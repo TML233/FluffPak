@@ -16,6 +16,8 @@ namespace Engine {
 		virtual void PhysicsUpdate(const Time& time) = 0;
 		
 		//virtual void Input(const InputEvent& event)=0;
+
+		virtual void Stop() = 0;
 		
 		virtual bool IsRunning() const = 0;
 	};

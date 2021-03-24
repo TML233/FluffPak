@@ -17,17 +17,17 @@ namespace Engine {
 		void SetPhysicsScale(float scale);
 		float GetPhysicsScale() const;
 		
-		void SetPhysicsUnscaledDelta(float unscaledDelta);
-		float GetPhysicsUnscaledDelta() const;
+		void SetUnscaledPhysicsDelta(float unscaledDelta);
+		float GetUnscaledPhysicsDelta() const;
 		
 		float GetPhysicsDelta() const;
 
 
 		// Summed up
 
-		float GetTotalFrames() const;
-		float GetTotal() const;
-		float GetUnscaledTotal() const;
+		int32 GetTotalFrames() const;
+		double GetTotal() const;
+		double GetUnscaledTotal() const;
 
 	public:
 		float scale = 1;
@@ -36,9 +36,12 @@ namespace Engine {
 		float physicsScale = 1;
 		float unscaledPhysicsDelta = 60;
 		
-		uint32 totalFrames = 0;
-		float total = 0;
-		float unscaledTotal = 0;
+		int32 totalFrames = 0;
+
+		// Use double for total time to avoid catastrophic cancellation.
+		// Referenced material: https://randomascii.wordpress.com/2012/02/13/dont-store-that-in-a-float/
+		double total = 0;
+		double unscaledTotal = 0;
 
 
 		friend class Engine;

@@ -30,19 +30,33 @@ namespace Engine {
 
 		appLoop->Start();
 
+
+		// Aliases for std::chrono
+		using Clock = std::chrono::steady_clock;
+		using TimePoint = std::chrono::time_point<Clock>;
+		using Duration = std::chrono::duration<double>;
+
+		TimePoint lastTime = Clock::now();
+
 		while (appLoop->IsRunning()) {
+			TimePoint now = Clock::now();
+
+			float delta = std::chrono::duration_cast<Duration>(lastTime - now).count();
+
 			// TODO: Timing.
-			time.unscaledDelta = 0;
+			time.unscaledDelta = delta;
 			time.totalFrames += 1;
 			time.unscaledTotal += time.GetUnscaledDelta();
 			time.total += time.GetDelta();
 
 			appLoop->Update(time);
 			appLoop->PhysicsUpdate(time);
+
+			lastTime = now;
 		}
 
+		appLoop->Stop();
 
-
-		INFO_MSG("AppLoop finished running. Stopping...");
+		INFO_MSG("AppLoop finished running.");
 	}
 }

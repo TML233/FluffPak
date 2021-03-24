@@ -9,6 +9,8 @@ namespace Engine{
 		void Start() override;
 		void Update(const Time& time) override;
 		void PhysicsUpdate(const Time& time) override;
+
+		void Stop() override;
 		bool IsRunning() const override;
 	private:
 		bool running = true;

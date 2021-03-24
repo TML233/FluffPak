@@ -11,6 +11,9 @@ namespace Engine {
 	void NodeTree::PhysicsUpdate(const Time& time) {
 
 	}
+	void NodeTree::Stop() {
+
+	}
 	bool NodeTree::IsRunning() const {
 		return running;
 	}

@@ -7,14 +7,9 @@
 
 namespace Engine {
 	class Engine final{
-#pragma region Static
 	public:
 		static Engine* GetInstance();
-	private:
-		static Engine* instance;
-#pragma endregion
 
-	public:
 		Engine();
 		~Engine();
 		// Start the engine, this will block the program until the engine stops.
@@ -36,9 +31,10 @@ namespace Engine {
 
 
 	private:
+		static Engine* instance;
+
 		UniquePtr<AppLoop> appLoop{};
 		Time time{};
-		//VirtualFileSystem vfs{};
 
 		int targetFps = 60;
 	};
