@@ -14,7 +14,7 @@ namespace Engine {
 		return r;
 	}
 
-	ObjectId::ObjectId(uint64 id = 0) :value(id) {}
+	ObjectId::ObjectId(uint64 id) :value(id) {}
 	uint64 ObjectId::Get() const {
 		return value;
 	}

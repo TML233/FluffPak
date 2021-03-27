@@ -3,7 +3,7 @@
 
 using namespace Engine;
 
-TEST_SUITE("List") {
+TEST_SUITE("Collections") {
 	TEST_CASE("List") {
 		List<int32> list{};
 
