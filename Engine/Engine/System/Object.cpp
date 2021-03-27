@@ -11,12 +11,11 @@ namespace Engine {
 		return typeid(*this).name();
 	}
 	int32 Object::GetHashCode() const {
-		size_t addr = (size_t)this;
-		if (sizeof(size_t) == sizeof(uint64)) {
-			return Object::GetHashCode((uint64)addr);
-		} else {
-			return Object::GetHashCode((uint32)addr);
-		}
+		return Object::GetHashCode(instanceId.Get());
+	}
+
+	ObjectId Object::GetInstanceId() const {
+		return instanceId;
 	}
 
 #pragma region ToStrings
@@ -104,10 +103,16 @@ namespace Engine {
 	}
 #pragma endregion
 
+	ManualObject::ManualObject() {
+		instanceId = ObjectId::Generate(false);
+	}
 	bool ManualObject::IsReferenced() const {
 		return false;
 	}
 
+	ReferencedObject::ReferencedObject() {
+		instanceId = ObjectId::Generate(true);
+	}
 	bool ReferencedObject::IsReferenced() const {
 		return true;
 	}

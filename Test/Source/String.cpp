@@ -4,7 +4,7 @@
 using namespace Engine;
 
 TEST_SUITE("String") {
-	TEST_CASE("String - Comparing") {
+	TEST_CASE("Comparing") {
 		String strA = STRING_LITERAL(u8"鞋   履   甚   多");
 		String strB = STRING_LITERAL(u8"滴滴，你个王八蛋！");
 		CHECK(strA != strB);
@@ -15,7 +15,7 @@ TEST_SUITE("String") {
 		CHECK(strA == STRING_LITERAL(u8"我是臭傻逼"));
 		CHECK(strA != STRING_LITERAL(u8"我是大名鼎鼎的V"));
 	}
-	TEST_CASE("String - Simple search") {
+	TEST_CASE("Simple search") {
 		String target = STRING_LITERAL("This is a simple example.");
 		CHECK(target.IndexOf(STRING_LITERAL("fuck")) == -1);
 		CHECK(target.IndexOf(STRING_LITERAL("this")) == -1);
@@ -35,7 +35,7 @@ TEST_SUITE("String") {
 		CHECK(emoji.IndexOf(STRING_LITERAL(u8"🐴")) == -1);
 	}
 
-	TEST_CASE("String - Referencing") {
+	TEST_CASE("Referencing") {
 		String original = STRING_LITERAL("Hello World!");
 		CHECK(original.IsIndividual());
 
@@ -55,7 +55,7 @@ TEST_SUITE("String") {
 		CHECK(substr.GetRawArray() != individual.GetRawArray());
 	}
 
-	TEST_CASE("String - StartsWith and EndsWith") {
+	TEST_CASE("StartsWith & EndsWith") {
 		String target = STRING_LITERAL(u8"伞兵一号卢本伟，准备就绪！");
 		CHECK(target.StartsWith(STRING_LITERAL(u8"伞兵")));
 		CHECK(!target.StartsWith(STRING_LITERAL(u8"Steam用户")));
