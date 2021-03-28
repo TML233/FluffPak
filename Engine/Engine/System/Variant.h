@@ -15,11 +15,7 @@ namespace Engine {
 			// === Plan Data Types ===
 
 			Bool,
-			Byte,
-			Int16,
-			Int32,
 			Int64,
-			Float,
 			Double,
 
 			// === Custom Data Types ===
@@ -32,38 +28,72 @@ namespace Engine {
 			Object,
 		};
 
+		void Clear();
+		Type GetType() const;
+
 		~Variant();
+
+#pragma region Ctors
 		Variant();
 		Variant(bool value);
 		Variant(byte value);
+		Variant(sbyte value);
 		Variant(int16 value);
+		Variant(uint16 value);
 		Variant(int32 value);
+		Variant(uint32 value);
 		Variant(int64 value);
+		Variant(uint64 value);
 		Variant(float value);
 		Variant(double value);
-
 		Variant(const String& value);
-		
 		Variant(Object* value);
+#pragma endregion
+
+#pragma region Converts
+		operator bool() const;
+		operator byte() const;
+		operator sbyte() const;
+		operator int16() const;
+		operator uint16() const;
+		operator int32() const;
+		operator uint32() const;
+		operator int64() const;
+		operator uint64() const;
+		operator float() const;
+		operator double() const;
+		operator String() const;
+		operator Object*() const;
+#pragma endregion
+		String ToString() const;
+
+		Variant& operator=(const Variant& obj);
+		//Variant(Variant&& obj);
+		//Variant& operator=(Variant&& obj);
 
 	private:
-		Type currentType;
-
 		struct ObjectData {
+			ObjectData(Object* ptr, const InstanceId& id);
 			Object* ptr;
-			ObjectInstanceId id;
+			InstanceId id;
 		};
 		union DataUnion {
 			bool vBool;
-			byte vByte;
-			int16 vInt16;
-			int32 vInt32;
 			int64 vInt64;
-			float vFloat;
 			double vDouble;
 			String vString;
 			ObjectData vObject;
+			DataUnion();
+			~DataUnion();
 		};
+
+		void ConstructBool(bool value);
+		void ConstructInt64(int64 value);
+		void ConstructDouble(double value);
+		void ConstructString(const String& value);
+		void ConstructObject(const ObjectData& value);
+
 		DataUnion data;
+		Type type = Type::Null;
 	};
 }
