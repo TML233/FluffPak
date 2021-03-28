@@ -1,5 +1,5 @@
 #include "Engine/System/String.h"
-#include "Engine/System/Object.h"
+#include "Engine/System/ObjectUtil.h"
 #include "Engine/System/Debug.h"
 #include "Engine/System/Memory.h"
 #include "Engine/Collection/Iterator.h"
@@ -163,7 +163,7 @@ namespace Engine {
 		return *this;
 	}
 	int32 String::GetHashCode() const {
-		return Object::GetHashCode(std::hash<std::string_view>{}(std::string_view(GetStartPtr(), GetCount())));
+		return ObjectUtil::GetHashCode(std::hash<std::string_view>{}(std::string_view(GetStartPtr(), GetCount())));
 	}
 
 	String::String(const char* string, int32 count) {

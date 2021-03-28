@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/System/Object.h"
+#include "Engine/System/ObjectUtil.h"
 #include "Engine/Collection/HashHelper.h"
 #include "Engine/System/Memory.h"
 #include "Engine/System/Debug.h"
@@ -14,6 +14,9 @@ namespace Engine {
 		using KeyType = TKey;
 		using ValueType = TValue;
 
+		Dictionary(int32 capacity=0) {
+			SetCapacity(capacity);
+		}
 		~Dictionary() {
 			Clear();
 
@@ -185,7 +188,7 @@ namespace Engine {
 		};
 		enum class InsertMode { Add, Set };
 		static uint32 GetKeyHash(const TKey& key) {
-			int32 s_hash = Object::GetHashCode(key);
+			int32 s_hash = ObjectUtil::GetHashCode(key);
 			return *((uint32*)(&s_hash));
 		}
 		

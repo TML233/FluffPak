@@ -3,12 +3,14 @@
 #include "Engine/System/Definition.h"
 #include "Engine/System/String.h"
 #include "Engine/System/Atomic.h"
-#include "Engine/System/ObjectId.h"
+#include "Engine/System/InstanceId.h"
+#include "Engine/Collection/Dictionary.h"
 
 namespace Engine {
 	// Inherit ManualManagement or AutoManagement instead.
 	class Object {
 	public:
+		static bool IsInstanceValid(InstanceId id);
 		virtual ~Object();
 
 		// Indicates if current object is a ReferencedObject
@@ -20,46 +22,11 @@ namespace Engine {
 		// Override this if the object indicates value.
 		virtual int32 GetHashCode() const;
 
-		ObjectId GetInstanceId() const;
-
-#pragma region ToStrings
-		template<typename T>
-		static String ToString(const T& obj) {
-			return obj.ToString();
-		}
-		static String ToString(bool obj);
-		static String ToString(byte obj);
-		static String ToString(sbyte obj);
-		static String ToString(int16 obj);
-		static String ToString(uint16 obj);
-		static String ToString(int32 obj);
-		static String ToString(uint32 obj);
-		static String ToString(int64 obj);
-		static String ToString(uint64 obj);
-		static String ToString(float obj);
-		static String ToString(double obj);
-#pragma endregion
-
-#pragma region GetHashCodes
-		template<typename T>
-		static int32 GetHashCode(const T& obj) {
-			return obj.GetHashCode();
-		}
-		static int32 GetHashCode(bool obj);
-		static int32 GetHashCode(byte obj);
-		static int32 GetHashCode(sbyte obj);
-		static int32 GetHashCode(int16 obj);
-		static int32 GetHashCode(uint16 obj);
-		static int32 GetHashCode(int32 obj);
-		static int32 GetHashCode(uint32 obj);
-		static int32 GetHashCode(int64 obj);
-		static int32 GetHashCode(uint64 obj);
-		static int32 GetHashCode(float obj);
-		static int32 GetHashCode(double obj);
-#pragma endregion
+		InstanceId GetInstanceId() const;
 
 	protected:
-		ObjectId instanceId{};
+		static Dictionary<InstanceId, bool> objectLookup;
+		InstanceId instanceId;
 	};
 
 	// Represents a Object which its memory management is done by the user.
