@@ -9,11 +9,11 @@
 #include <string_view>
 
 // Defines a String literal.
-#define STRING_LITERAL(text)													\
-([](){																			\
-	static const char content[]=text;											\
-	static const StringData data(content, sizeof(content), true);				\
-	return String(ReferencePtr<StringData>(const_cast<StringData*>(&data)));	\
+#define STRING_LITERAL(text)																							\
+([](){																													\
+	static const char content[]=text;																					\
+	static const ::Engine::StringData data(content, sizeof(content), true);												\
+	return ::Engine::String(::Engine::ReferencePtr<::Engine::StringData>(const_cast<::Engine::StringData*>(&data)));	\
 })()
 
 namespace Engine {
@@ -33,7 +33,7 @@ namespace Engine {
 		uint32 Dereference();
 		uint32 GetReferenceCount() const;
 
-		static StringData empty;
+		static StringData* GetEmpty();
 	private:
 		bool staticData;
 		ReferenceCount referenceCount;
