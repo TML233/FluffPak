@@ -5,6 +5,8 @@
 #include <typeinfo>
 
 namespace Engine {
+#pragma region Object
+
 	// TODO: Change this capacity value to a reasonable one.
 	Dictionary<InstanceId, bool> Object::objectLookup{ 100 };
 
@@ -33,6 +35,7 @@ namespace Engine {
 		instanceId = InstanceId::Generate(false);
 		objectLookup.Add(instanceId, true);
 	}
+	ManualObject::~ManualObject() {}
 	bool ManualObject::IsReferenced() const {
 		return false;
 	}
@@ -43,6 +46,7 @@ namespace Engine {
 		instanceId = InstanceId::Generate(true);
 		objectLookup.Add(instanceId, true);
 	}
+	ReferencedObject::~ReferencedObject() {}
 	bool ReferencedObject::IsReferenced() const {
 		return true;
 	}
@@ -55,4 +59,41 @@ namespace Engine {
 	uint32 ReferencedObject::GetReferenceCount() const {
 		return referenceCount.Get();
 	}
+
+#pragma endregion
+
+#pragma region Reflection
+
+	Reflection::ClassData& Reflection::GetData() {
+		static ClassData classes{ 30 };
+		return classes;
+	}
+	bool Reflection::IsClassExists(const String& name) {
+		return GetData().ContainsKey(name);
+	}
+	ReflectionClass* Reflection::GetClass(const String& name) {
+		ERR_ASSERT(IsClassExists(name), "Class name doesn't exists.", return nullptr);
+		return GetData().Get(name).GetRaw();
+	}
+
+	String ReflectionClass::GetName() const {
+		return name;
+	}
+	String ReflectionClass::GetParentName() const {
+		return parentName;
+	}
+	bool ReflectionClass::IsInstantiatable() const {
+		return instantiable;
+	}
+	void ReflectionClass::SetInstantiable(bool instantiable) {
+		this->instantiable = instantiable;
+	}
+	UniquePtr<Object> ReflectionClass::Instantiate() const {
+		// Does this need to crash?
+		ERR_ASSERT(IsInstantiatable(), "Trying to instantiate a class which is not instantiable!", return UniquePtr<Object>(nullptr));
+
+		return (*instantiator)();
+	}
+
+#pragma endregion
 }

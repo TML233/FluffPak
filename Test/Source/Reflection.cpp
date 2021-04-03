@@ -1,29 +1,17 @@
 #include "doctest.h"
-#include "Engine/System/Reflection.h"
-
-namespace Test {
-	class Object {
-	public:
-		REFLECTION_ROOTCLASS(Test::Object) {
-			REFLECTION_CLASS_INSTANTIABLE(false);
-		}
-	};
-
-	class Derived :public Object {
-		REFLECTION_CLASS(Test::Derived, Test::Object) {
-			REFLECTION_CLASS_INSTANTIABLE(true);
-		}
-	};
-}
+#include "Engine/System/Object.h"
 
 using namespace Engine;
-TEST_CASE("Reflection"){
-	CHECK(Reflection::IsClassExists("Test::Object"));
-	CHECK(Reflection::IsClassExists("Test::Derived"));
-	CHECK(!Reflection::IsClassExists("Test::Fucked"));
-	
-	ReflectionClass* cObj = Reflection::GetClass("Test::Object");
-	ReflectionClass* cDer = Reflection::GetClass("Test::Derived");
+TEST_CASE("Reflection") {
+	CHECK(Reflection::IsClassExists("::Engine::Object"));
+	CHECK(Reflection::IsClassExists("::Engine::ManualObject"));
+	CHECK(Reflection::IsClassExists("::Engine::ReferencedObject"));
+	CHECK(!Reflection::IsClassExists("::Engine::Fucked"));
+
+	ReflectionClass* cObj = Reflection::GetClass("::Engine::Object");
+	ReflectionClass* cMan = Reflection::GetClass("::Engine::ManualObject");
+	ReflectionClass* cRef = Reflection::GetClass("::Engine::ReferencedObject");
 	CHECK(!cObj->IsInstantiatable());
-	CHECK(cDer->IsInstantiatable());
+	CHECK(!cMan->IsInstantiatable());
+	CHECK(!cRef->IsInstantiatable());
 }

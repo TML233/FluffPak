@@ -21,7 +21,6 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Atomic.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Variant.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Reflection.h"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.h"
@@ -52,7 +51,6 @@ set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Variant.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Reflection.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.cpp"
