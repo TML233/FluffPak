@@ -13,10 +13,22 @@ namespace Engine {
 		return GetData().Get(name).GetRaw();
 	}
 
+	String ReflectionClass::GetName() const {
+		return name;
+	}
+	String ReflectionClass::GetParentName() const {
+		return parentName;
+	}
 	bool ReflectionClass::IsInstantiatable() const {
 		return instantiable;
 	}
 	void ReflectionClass::SetInstantiable(bool instantiable) {
 		this->instantiable = instantiable;
+	}
+	UniquePtr<Object> ReflectionClass::Instantiate() const {
+		// Does this need to crash?
+		ERR_ASSERT(IsInstantiatable(), "Trying to instantiate a class which is not instantiable!", return UniquePtr<Object>(nullptr));
+
+		return (*instantiator)();
 	}
 }

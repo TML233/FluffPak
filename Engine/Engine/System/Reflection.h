@@ -6,6 +6,7 @@
 #include "Engine/System/UniquePtr.h"
 #include "Engine/System/Variant.h"
 #include "Engine/System/String.h"
+#include "Engine/System/Object.h"
 
 namespace Engine{
 	class ReflectionClass;
@@ -40,16 +41,18 @@ namespace Engine{
 	public:
 		String GetName() const;
 		String GetParentName() const;
-		UniquePtr<Object> Instantiate() const;
+
 		bool IsInstantiatable() const;
 		void SetInstantiable(bool instantiable);
+
+		UniquePtr<Object> Instantiate() const;
 	private:
 		friend class Reflection;
 
 		String name;
 		String parentName;
 		bool instantiable = true;
-		UniquePtr<Object> (*factory)();
+		UniquePtr<Object>(*instantiator)() = nullptr;
 
 		using MethodData = Dictionary<String, SharedPtr<ReflectionMethod>>;
 	};
@@ -90,66 +93,74 @@ virtual ::Engine::String GetParentClassName() const{								\
 }
 #pragma endregion
 
-#pragma region Auto initializer.
-#define _REFLECTION_CLASS_AUTO_INITIALIZER()										\
-	class _ReflectionInitializer{													\
+#pragma region Auto register
+#define _REFLECTION_CLASS_AUTO_REGISTER()											\
+	class _ReflectionInitializerCaller{												\
 	public:																			\
-		_ReflectionInitializer(){													\
-			/*WARN_MSG("Reflection Initializer!");*/								\
-			InitializeReflectionClass();											\
+		_ReflectionInitializerCaller(){												\
+			_InitializeReflection();												\
 		}																			\
 	};																				\
-	inline static _ReflectionInitializer _reflectionInitializer{}
+	inline static _ReflectionInitializerCaller _reflectionInitializerCaller{}
 #pragma endregion
 
-#pragma region Normal class register
+#pragma region Initializer components
+
+#pragma region Initializer common head
+#define _REFLECTION_CLASS_INITIALIZER_HEAD()									\
+	static void _InitializeReflection(){												\
+		static bool inited=false;														\
+		if(inited){																		\
+			return;																		\
+		}
+#pragma endregion
+
+#define _REFLECTION_CLASS_INITIALIZER_CALL_PARENT(parent) parent::_InitializeReflection()
+
+#pragma region Initializer common tail
+#define _REFLECTION_CLASS_INITIALIZER_TAIL(name)								\
+		::Engine::ReflectionClass* ptr=::Engine::Reflection::AddClass<name>();		\
+		FATAL_ASSERT_CRASH(ptr!=nullptr,"Failed to register class.");				\
+		_InitializeCustomReflection(ptr);											\
+																					\
+		inited=true;																\
+	}
+#pragma endregion
+
+#define _REFLECTION_CLASS_INITIALIZER_CUSTOM() static void _InitializeCustomReflection(::Engine::ReflectionClass* c)
+
+#pragma endregion
+
+#pragma region Root class register, not calling parent
+#define REFLECTION_ROOTCLASS(name)													\
+public:																				\
+	_REFLECTION_CLASS_NAME_GETTERS(#name,"")										\
+																					\
+protected:																			\
+	_REFLECTION_CLASS_INITIALIZER_HEAD()											\
+	_REFLECTION_CLASS_INITIALIZER_TAIL(name)										\
+																					\
+private:																			\
+	_REFLECTION_CLASS_AUTO_REGISTER();												\
+	_REFLECTION_CLASS_INITIALIZER_CUSTOM()
+		
+#pragma endregion
+
+#pragma region Normal class register, calling parent
 // Name and ParentName must be located from the root namespace!
 // e.g. Object should be Engine::Object
 #define REFLECTION_CLASS(name,parent)												\
 public:																				\
-	_REFLECTION_CLASS_NAME_GETTERS(#name,#parent);									\
+	_REFLECTION_CLASS_NAME_GETTERS(#name,#parent)									\
 																					\
 protected:																			\
-	static void InitializeReflectionClass(){										\
-		static bool inited=false;													\
-		if(inited){																	\
-			return;																	\
-		}																			\
+	_REFLECTION_CLASS_INITIALIZER_HEAD()											\
+	_REFLECTION_CLASS_INITIALIZER_CALL_PARENT(parent);								\
+	_REFLECTION_CLASS_INITIALIZER_TAIL(name)										\
 																					\
-		parent::InitializeReflectionClass();										\
-																					\
-		::Engine::ReflectionClass* ptr=::Engine::Reflection::AddClass<name>();		\
-		FATAL_ASSERT_CRASH(ptr!=nullptr,"Failed to register class.");				\
-		InitializeCustomReflection(ptr);											\
-																					\
-		inited=true;																\
-	}																				\
 private:																			\
-	_REFLECTION_CLASS_AUTO_INITIALIZER();											\
-	static void InitializeCustomReflection(::Engine::ReflectionClass* c)
-#pragma endregion
-
-#pragma region Root class register
-#define REFLECTION_ROOTCLASS(name)													\
-public:																				\
-	_REFLECTION_CLASS_NAME_GETTERS(#name,"");										\
-																					\
-protected:																			\
-	static void InitializeReflectionClass(){										\
-		static bool inited=false;													\
-		if(inited){																	\
-			return;																	\
-		}																			\
-																					\
-		::Engine::ReflectionClass* ptr=::Engine::Reflection::AddClass<name>();		\
-		FATAL_ASSERT_CRASH(ptr!=nullptr,"Failed to register class.");				\
-		InitializeCustomReflection(ptr);											\
-																					\
-		inited=true;																\
-	}																				\
-private:																			\
-	_REFLECTION_CLASS_AUTO_INITIALIZER();											\
-	static void InitializeCustomReflection(::Engine::ReflectionClass* c)
+	_REFLECTION_CLASS_AUTO_REGISTER();												\
+	_REFLECTION_CLASS_INITIALIZER_CUSTOM()
 #pragma endregion
 
 #define REFLECTION_CLASS_INSTANTIABLE(instantiable) c->SetInstantiable(instantiable)
