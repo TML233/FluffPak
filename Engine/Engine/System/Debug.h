@@ -22,6 +22,7 @@
 #endif
 #define FATAL_MSG(msg) DebugPrintFatal(__func__,__FILE__,__LINE__,DEBUG_TEXT(msg))
 #define FATAL_CRASH(msg) FATAL_MSG(msg);FATAL_CRASH_IMMEDIATELY()
+#define FATAL_ASSERT_CRASH(expr,msg) if (!(expr)) { FATAL_CRASH("Assertion \"" #expr "\" failed: " msg " Crashing.");}
 
 
 void DebugPrintInfo(const char* message);

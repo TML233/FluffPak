@@ -139,7 +139,7 @@ namespace Engine {
 		TValue Get(const TKey& key) const {
 			TValue result{};
 			bool succeed = TryGet(key, result);
-			ERR_ASSERT(succeed, "Entry with key does not exists!", FATAL_CRASH("TryGet cannot return a value."));
+			FATAL_ASSERT_CRASH(succeed, "Entry with key does not exists! Cannot return a value.");
 			return result;
 		}
 		bool Remove(const TKey& key) {
