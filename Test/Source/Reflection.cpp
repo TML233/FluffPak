@@ -8,10 +8,16 @@ TEST_CASE("Reflection") {
 	CHECK(Reflection::IsClassExists("::Engine::ReferencedObject"));
 	CHECK(!Reflection::IsClassExists("::Engine::Fucked"));
 
-	ReflectionClass* cObj = Reflection::GetClass("::Engine::Object");
-	ReflectionClass* cMan = Reflection::GetClass("::Engine::ManualObject");
-	ReflectionClass* cRef = Reflection::GetClass("::Engine::ReferencedObject");
+	const ReflectionClass* cObj = Reflection::GetClass("::Engine::Object");
+	const ReflectionClass* cMan = Reflection::GetClass("::Engine::ManualObject");
+	const ReflectionClass* cRef = Reflection::GetClass("::Engine::ReferencedObject");
 	CHECK(!cObj->IsInstantiatable());
 	CHECK(!cMan->IsInstantiatable());
 	CHECK(!cRef->IsInstantiatable());
+
+	CHECK(cObj->IsParentOf(cMan));
+	CHECK(cObj->IsParentOf(cRef));
+	CHECK(cMan->IsChildOf(cObj));
+	CHECK(cRef->IsChildOf(cObj));
+	CHECK(!cMan->IsChildOf(cRef));
 }

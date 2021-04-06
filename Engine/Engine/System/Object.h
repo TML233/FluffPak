@@ -119,7 +119,7 @@ namespace Engine{
 
 		static bool IsClassExists(const String& name);
 
-		static ReflectionClass* GetClass(const String& name);
+		static const ReflectionClass* GetClass(const String& name);
 
 		template<typename T>
 		static ReflectionClass* AddClass() {
@@ -143,6 +143,9 @@ namespace Engine{
 
 		bool IsInstantiatable() const;
 		void SetInstantiable(bool instantiable);
+
+		bool IsParentOf(const ReflectionClass* target) const;
+		bool IsChildOf(const ReflectionClass* target) const;
 
 		UniquePtr<Object> Instantiate() const;
 	private:
