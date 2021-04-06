@@ -204,7 +204,6 @@ namespace Engine{
 	};
 
 	// Represents a Object which its memory management is done by the user.
-	// Raw pointers of ManualObject can be passed around.
 	class ManualObject :public Object {
 		REFLECTION_CLASS(::Engine::ManualObject,::Engine::Object) {
 			REFLECTION_CLASS_INSTANTIABLE(false);
@@ -217,7 +216,6 @@ namespace Engine{
 	};
 
 	// Represents a Object which its memory management is done automatically via smart pointers.
-	// No raw pointer of ReferenceObject should be passed around!
 	class ReferencedObject :public Object {
 		REFLECTION_CLASS(::Engine::ReferencedObject, ::Engine::Object) {
 			REFLECTION_CLASS_INSTANTIABLE(false);
