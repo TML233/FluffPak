@@ -98,12 +98,33 @@ namespace Engine {
 
 		Variant& operator=(const Variant& obj);
 
+#pragma region Operators
 		bool operator==(const Variant& obj) const;
 		bool operator!=(const Variant& obj) const;
 		bool operator>(const Variant& obj) const;
 		bool operator>=(const Variant& obj) const;
 		bool operator<(const Variant& obj) const;
 		bool operator<=(const Variant& obj) const;
+
+		Variant operator+(const Variant& obj) const;
+		Variant operator-(const Variant& obj) const;
+		Variant operator*(const Variant& obj) const;
+		Variant operator/(const Variant& obj) const;
+		Variant operator%(const Variant& obj) const;
+		Variant operator+() const;
+		Variant operator-() const;
+		
+		Variant operator&&(const Variant& obj) const;
+		Variant operator||(const Variant& obj) const;
+		Variant operator!() const;
+
+		Variant operator&(const Variant& obj) const;
+		Variant operator|(const Variant& obj) const;
+		Variant operator^(const Variant& obj) const;
+		Variant operator~() const;
+		Variant operator<<(const Variant& obj) const;
+		Variant operator>>(const Variant& obj) const;
+#pragma endregion
 
 		static bool CanEvaluate(Operator op, Type a, Type b);
 		static Variant Evaluate(Operator op, const Variant& a, const Variant& b);
@@ -146,10 +167,4 @@ namespace Engine {
 		inline static EvaluatorInitializer _evaluatorInitializer{};
 #pragma endregion
 	};
-	/*bool operator==(const Variant& a, const Variant& b);
-	bool operator!=(const Variant& a, const Variant& b);
-	bool operator>(const Variant& a, const Variant& b);
-	bool operator>=(const Variant& a, const Variant& b);
-	bool operator<(const Variant& a, const Variant& b);
-	bool operator<=(const Variant& a, const Variant& b);*/
 }

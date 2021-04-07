@@ -204,35 +204,6 @@ namespace Engine {
 		return AsString();
 	}
 
-	/*bool operator==(const Variant& a, const Variant& b) {
-		if (!Variant::CanEvaluate(Variant::Operator::Equal, a.GetType(), b.GetType())) {
-			return false;
-		}
-		return Variant::Evaluate(Variant::Operator::Equal, a, b);
-	}
-	bool operator!=(const Variant& a, const Variant& b) {
-		if (!Variant::CanEvaluate(Variant::Operator::NotEqual, a.GetType(), b.GetType())) {
-			return true;
-		}
-		return Variant::Evaluate(Variant::Operator::NotEqual, a, b);
-	}
-	bool operator<(const Variant& a, const Variant& b) {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Less, a.GetType(), b.GetType()), "Cannot evaluate Less! No evaluator registered for this.", return false);
-		return Variant::Evaluate(Variant::Operator::Less, a, b);
-	}
-	bool operator<=(const Variant& a, const Variant& b) {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::LessEqual, a.GetType(), b.GetType()), "Cannot evaluate LessEqual! No evaluator registered for this.", return false);
-		return Variant::Evaluate(Variant::Operator::LessEqual, a, b);
-	}
-	bool operator>(const Variant& a, const Variant& b) {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Greater, a.GetType(), b.GetType()), "Cannot evaluate Greater! No evaluator registered for this.", return false);
-		return Variant::Evaluate(Variant::Operator::Greater, a, b);
-	}
-	bool operator>=(const Variant& a, const Variant& b) {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::GreaterEqual, a.GetType(), b.GetType()), "Cannot evaluate GreaterEqual! No evaluator registered for this.", return false);
-		return Variant::Evaluate(Variant::Operator::GreaterEqual, a, b);
-	}*/
-
 	bool Variant::operator==(const Variant& obj) const {
 		if (!CanEvaluate(Operator::Equal, type, obj.type)) {
 			return false;
@@ -246,28 +217,84 @@ namespace Engine {
 		return Evaluate(Operator::NotEqual, *this, obj).AsBool();
 	}
 	bool Variant::operator>(const Variant& obj) const {
-		if (!CanEvaluate(Operator::Greater, type, obj.type)) {
-			return false;
-		}
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Greater, GetType(), obj.GetType()), "Cannot evaluate Greater! No evaluator registered for this.", return false);
 		return Evaluate(Operator::Greater, *this, obj).AsBool();
 	}
 	bool Variant::operator>=(const Variant& obj) const {
-		if (!CanEvaluate(Operator::GreaterEqual, type, obj.type)) {
-			return false;
-		}
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::GreaterEqual, GetType(), obj.GetType()), "Cannot evaluate GreaterEqual! No evaluator registered for this.", return false);
 		return Evaluate(Operator::GreaterEqual, *this, obj).AsBool();
 	}
 	bool Variant::operator<(const Variant& obj) const {
-		if (!CanEvaluate(Operator::Less, type, obj.type)) {
-			return false;
-		}
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Less, GetType(), obj.GetType()), "Cannot evaluate Less! No evaluator registered for this.", return false);
 		return Evaluate(Operator::Less, *this, obj).AsBool();
 	}
 	bool Variant::operator<=(const Variant& obj) const {
-		if (!CanEvaluate(Operator::LessEqual, type, obj.type)) {
-			return false;
-		}
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::LessEqual, GetType(), obj.GetType()), "Cannot evaluate LessEqual! No evaluator registered for this.", return false);
 		return Evaluate(Operator::LessEqual, *this, obj).AsBool();
+	}
+	Variant Variant::operator+(const Variant& obj) const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Add, GetType(), obj.GetType()), "Cannot evaluate Add! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::Add, *this, obj);
+	}
+	Variant Variant::operator-(const Variant& obj) const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Subtract, GetType(), obj.GetType()), "Cannot evaluate Subtract! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::Subtract, *this, obj);
+	}
+	Variant Variant::operator*(const Variant& obj) const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Multiply, GetType(), obj.GetType()), "Cannot evaluate Multiply! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::Multiply, *this, obj);
+	}
+	Variant Variant::operator/(const Variant& obj) const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Divide, GetType(), obj.GetType()), "Cannot evaluate Divide! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::Divide, *this, obj);
+	}
+	Variant Variant::operator%(const Variant& obj) const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Mod, GetType(), obj.GetType()), "Cannot evaluate Mod! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::Mod, *this, obj);
+	}
+	Variant Variant::operator+() const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Positive, GetType(), Type::Null), "Cannot evaluate Positive! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::Positive, *this, Variant());
+	}
+	Variant Variant::operator-() const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Negative, GetType(), Type::Null), "Cannot evaluate Negetive! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::Negative, *this, Variant());
+	}
+	Variant Variant::operator&&(const Variant& obj) const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::And, GetType(), obj.GetType()), "Cannot evaluate And! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::And, *this, obj);
+	}
+	Variant Variant::operator||(const Variant& obj) const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Or, GetType(), obj.GetType()), "Cannot evaluate Or! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::Or, *this, obj);
+	}
+	Variant Variant::operator!() const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Not, GetType(), Type::Null), "Cannot evaluate Not! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::Not, *this, Variant());
+	}
+	Variant Variant::operator&(const Variant& obj) const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::BitAnd, GetType(), obj.GetType()), "Cannot evaluate BitAnd! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::BitAnd, *this, obj);
+	}
+	Variant Variant::operator|(const Variant& obj) const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::BitOr, GetType(), obj.GetType()), "Cannot evaluate BitOr! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::BitOr, *this, obj);
+	}
+	Variant Variant::operator^(const Variant& obj) const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::BitXOr, GetType(), obj.GetType()), "Cannot evaluate BitXOr! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::BitXOr, *this, obj);
+	}
+	Variant Variant::operator~() const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::BitFlip, GetType(), Type::Null), "Cannot evaluate BitFlip! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::BitFlip, *this, Variant());
+	}
+	Variant Variant::operator<<(const Variant& obj) const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::BitShiftLeft, GetType(), obj.GetType()), "Cannot evaluate BitShiftLeft! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::BitShiftLeft, *this, obj);
+	}
+	Variant Variant::operator>>(const Variant& obj) const {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::BitShiftRight, GetType(), obj.GetType()), "Cannot evaluate BitShiftRight! No evaluator registered for this.", return Variant());
+		return Evaluate(Operator::BitShiftRight, *this, obj);
 	}
 
 	bool Variant::CanEvaluate(Operator op, Type a, Type b) {
@@ -277,11 +304,11 @@ namespace Engine {
 
 		return evaluators[(sizeint)a][(sizeint)b][(sizeint)op] != nullptr;
 	}
-	Variant Variant::Evaluate(Operator op, const Variant& a,const Variant& b) {
+	Variant Variant::Evaluate(Operator op, const Variant& a, const Variant& b) {
 		ERR_ASSERT(CanEvaluate(op, a.type, b.type), "No evaluator registered for target operator and types.", return Variant());
 
 		Evaluator ev = evaluators[(sizeint)a.type][(sizeint)b.type][(sizeint)op];
-		
+
 		return ev(a, b);
 	}
 
@@ -375,25 +402,32 @@ namespace Engine {
 #define VARIANT_EVALUATOR(typeA,typeB,op) evaluators[(sizeint)(Type::##typeA)][(sizeint)(Type::##typeB)][(sizeint)(Operator::##op)] = [](const Variant& a, const Variant& b) -> Variant
 
 	Variant::EvaluatorInitializer::EvaluatorInitializer() {
+#pragma region Null
 		VARIANT_EVALUATOR(Null, Null, Equal) { return true; };
 		VARIANT_EVALUATOR(Null, Null, NotEqual) { return false; };
+#pragma endregion
 
-		// Bool
+#pragma region Bool
 		VARIANT_EVALUATOR(Bool, Bool, Equal) { return a.AsBool() == b.AsBool(); };
 		VARIANT_EVALUATOR(Bool, Bool, NotEqual) { return a.AsBool() != b.AsBool(); };
 		VARIANT_EVALUATOR(Bool, Null, Not) { return !a.AsBool(); };
 		VARIANT_EVALUATOR(Bool, Bool, And) { return a.AsBool() && b.AsBool(); };
 		VARIANT_EVALUATOR(Bool, Bool, Or) { return a.AsBool() || b.AsBool(); };
 		VARIANT_EVALUATOR(Bool, Bool, XOr) { return a.AsBool() ^ b.AsBool(); };
+#pragma endregion
 
-		// Int64
+#pragma region Int64
 		VARIANT_EVALUATOR(Int64, Int64, Add) { return a.AsInt64() + b.AsInt64(); };
 		VARIANT_EVALUATOR(Int64, Int64, Subtract) { return a.AsInt64() - b.AsInt64(); };
 		VARIANT_EVALUATOR(Int64, Int64, Multiply) { return a.AsInt64() * b.AsInt64(); };
 		VARIANT_EVALUATOR(Int64, Int64, Divide) { return a.AsInt64() / b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Double, Add) { return a.AsInt64() + b.AsDouble(); };
+		VARIANT_EVALUATOR(Int64, Double, Subtract) { return a.AsInt64() - b.AsDouble(); };
+		VARIANT_EVALUATOR(Int64, Double, Multiply) { return a.AsInt64() * b.AsDouble(); };
+		VARIANT_EVALUATOR(Int64, Double, Divide) { return a.AsInt64() / b.AsDouble(); };
 		VARIANT_EVALUATOR(Int64, Int64, Mod) { return a.AsInt64() % b.AsInt64(); };
-		VARIANT_EVALUATOR(Int64, Int64, Positive) { return +(a.AsInt64()); };
-		VARIANT_EVALUATOR(Int64, Int64, Negative) { return -(a.AsInt64()); };
+		VARIANT_EVALUATOR(Int64, Null, Positive) { return +(a.AsInt64()); };
+		VARIANT_EVALUATOR(Int64, Null, Negative) { return -(a.AsInt64()); };
 
 		VARIANT_EVALUATOR(Int64, Int64, Equal) { return a.AsInt64() == b.AsInt64(); };
 		VARIANT_EVALUATOR(Int64, Int64, NotEqual) { return a.AsInt64() != b.AsInt64(); };
@@ -401,13 +435,44 @@ namespace Engine {
 		VARIANT_EVALUATOR(Int64, Int64, LessEqual) { return a.AsInt64() <= b.AsInt64(); };
 		VARIANT_EVALUATOR(Int64, Int64, Greater) { return a.AsInt64() > b.AsInt64(); };
 		VARIANT_EVALUATOR(Int64, Int64, GreaterEqual) { return a.AsInt64() >= b.AsInt64(); };
-		
+
 		VARIANT_EVALUATOR(Int64, Int64, BitAnd) { return a.AsInt64() & b.AsInt64(); };
 		VARIANT_EVALUATOR(Int64, Int64, BitOr) { return a.AsInt64() | b.AsInt64(); };
 		VARIANT_EVALUATOR(Int64, Int64, BitXOr) { return a.AsInt64() ^ b.AsInt64(); };
-		VARIANT_EVALUATOR(Int64, Int64, BitFlip) { return ~(a.AsInt64()); };
+		VARIANT_EVALUATOR(Int64, Null, BitFlip) { return ~(a.AsInt64()); };
 		VARIANT_EVALUATOR(Int64, Int64, BitShiftLeft) { return a.AsInt64() << b.AsInt64(); };
 		VARIANT_EVALUATOR(Int64, Int64, BitShiftRight) { return a.AsInt64() >> b.AsInt64(); };
+#pragma endregion
 
+#pragma region Double
+		VARIANT_EVALUATOR(Double, Double, Add) { return a.AsDouble() + b.AsDouble(); };
+		VARIANT_EVALUATOR(Double, Double, Subtract) { return a.AsDouble() - b.AsDouble(); };
+		VARIANT_EVALUATOR(Double, Double, Multiply) { return a.AsDouble() * b.AsDouble(); };
+		VARIANT_EVALUATOR(Double, Double, Divide) { return a.AsDouble() / b.AsDouble(); };
+		VARIANT_EVALUATOR(Double, Int64, Add) { return a.AsDouble() + b.AsInt64(); };
+		VARIANT_EVALUATOR(Double, Int64, Subtract) { return a.AsDouble() - b.AsInt64(); };
+		VARIANT_EVALUATOR(Double, Int64, Multiply) { return a.AsDouble() * b.AsInt64(); };
+		VARIANT_EVALUATOR(Double, Int64, Divide) { return a.AsDouble() / b.AsInt64(); };
+		VARIANT_EVALUATOR(Double, Null, Positive) { return +(a.AsDouble()); };
+		VARIANT_EVALUATOR(Double, Null, Negative) { return -(a.AsDouble()); };
+
+		VARIANT_EVALUATOR(Double, Double, Equal) { return a.AsDouble() == b.AsDouble(); };
+		VARIANT_EVALUATOR(Double, Double, NotEqual) { return a.AsDouble() != b.AsDouble(); };
+		VARIANT_EVALUATOR(Double, Double, Less) { return a.AsDouble() < b.AsDouble(); };
+		VARIANT_EVALUATOR(Double, Double, LessEqual) { return a.AsDouble() <= b.AsDouble(); };
+		VARIANT_EVALUATOR(Double, Double, Greater) { return a.AsDouble() > b.AsDouble(); };
+		VARIANT_EVALUATOR(Double, Double, GreaterEqual) { return a.AsDouble() >= b.AsDouble(); };
+#pragma endregion
+
+#pragma region String
+		VARIANT_EVALUATOR(String, String, Equal) { return a.AsString() == b.AsString(); };
+		VARIANT_EVALUATOR(String, String, NotEqual) { return a.AsString() != b.AsString(); };
+		VARIANT_EVALUATOR(String, String, Add) { return a.AsString() + b.AsString(); };
+#pragma endregion
+
+#pragma region Object
+		VARIANT_EVALUATOR(Object, Object, Equal) { return a.AsObject() == b.AsObject(); };
+		VARIANT_EVALUATOR(Object, Object, NotEqual) { return a.AsObject() != b.AsObject(); };
+#pragma endregion
 	}
 }
