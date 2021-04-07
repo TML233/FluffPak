@@ -10,24 +10,52 @@ namespace Engine {
 	class Variant final {
 	public:
 		enum class Type:byte {
-			Null,
+			Null,		// Null
 
-			// === Plan Data Types ===
+			Bool,		// Boolean
+			Int64,		// 64-bit Integer
+			Double,		// 64-bit Float
 
-			Bool,
-			Int64,
-			Double,
-
-			// === Custom Data Types ===
-			
-			String,
+			String,		// String
 			//Vector2,
 			//Rect2,
 			//NodePath,
+			//Color,
 
-			Object,
+			Object,		// ManualObject or ReferencedObject
+
+			End,		// Marks the end
 		};
+		enum class Operator :byte {
+			Equal,
+			NotEqual,
+			Less,
+			LessEqual,
+			Greater,
+			GreaterEqual,
 
+			Add,
+			Subtract,
+			Multiply,
+			Divide,
+			Mod,
+			Negative,
+			Positive,
+
+			And,
+			Or,
+			XOr,
+			Not,
+
+			BitAnd,
+			BitOr,
+			BitXOr,
+			BitFlip,
+			BitShiftLeft,
+			BitShiftRight,
+
+			End,
+		};
 		void Clear();
 		Type GetType() const;
 
@@ -65,11 +93,19 @@ namespace Engine {
 		operator String() const;
 		operator Object*() const;
 #pragma endregion
+
 		String ToString() const;
 
 		Variant& operator=(const Variant& obj);
-		//Variant(Variant&& obj);
-		//Variant& operator=(Variant&& obj);
+		/*bool operator==(const Variant& obj) const;
+		bool operator!=(const Variant& obj) const;
+		bool operator>(const Variant& obj) const;
+		bool operator>=(const Variant& obj) const;
+		bool operator<(const Variant& obj) const;
+		bool operator<=(const Variant& obj) const;*/
+
+		static bool CanEvaluate(Operator op, Type a, Type b);
+		static Variant Evaluate(Operator op, const Variant& a, const Variant& b);
 
 	private:
 		struct ObjectData {
@@ -95,5 +131,24 @@ namespace Engine {
 
 		DataUnion data;
 		Type type = Type::Null;
+
+#pragma region Evaluation internal
+		typedef Variant(*Evaluator)(const Variant& a, const Variant& b);
+
+		// Evaluator table [typeA][typeB][op]
+		static Evaluator evaluators[(sizeint)Type::End][(sizeint)Type::End][(sizeint)Operator::End];
+
+		class EvaluatorInitializer final{
+		public:
+			EvaluatorInitializer();
+		};
+		inline static EvaluatorInitializer _evaluatorInitializer{};
+#pragma endregion
 	};
+	bool operator==(const Variant& a, const Variant& b);
+	bool operator!=(const Variant& a, const Variant& b);
+	bool operator>(const Variant& a, const Variant& b);
+	bool operator>=(const Variant& a, const Variant& b);
+	bool operator<(const Variant& a, const Variant& b);
+	bool operator<=(const Variant& a, const Variant& b);
 }

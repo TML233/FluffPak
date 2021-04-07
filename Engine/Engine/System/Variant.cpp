@@ -1,5 +1,6 @@
 #include "Engine/System/Variant.h"
 #include "Engine/System/Object.h"
+#include "Engine/System/Debug.h"
 
 namespace Engine {
 	Variant::~Variant() {
@@ -201,6 +202,50 @@ namespace Engine {
 		return operator String();
 	}
 
+	bool operator==(const Variant& a, const Variant& b) {
+		if (!Variant::CanEvaluate(Variant::Operator::Equal, a.GetType(), b.GetType())) {
+			return false;
+		}
+		return Variant::Evaluate(Variant::Operator::Equal, a, b);
+	}
+	bool operator!=(const Variant& a, const Variant& b) {
+		if (!Variant::CanEvaluate(Variant::Operator::NotEqual, a.GetType(), b.GetType())) {
+			return true;
+		}
+		return Variant::Evaluate(Variant::Operator::NotEqual, a, b);
+	}
+	bool operator<(const Variant& a, const Variant& b) {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Less, a.GetType(), b.GetType()), "Cannot evaluate Less! No evaluator registered for this.", return false);
+		return Variant::Evaluate(Variant::Operator::Less, a, b);
+	}
+	bool operator<=(const Variant& a, const Variant& b) {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::LessEqual, a.GetType(), b.GetType()), "Cannot evaluate LessEqual! No evaluator registered for this.", return false);
+		return Variant::Evaluate(Variant::Operator::LessEqual, a, b);
+	}
+	bool operator>(const Variant& a, const Variant& b) {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Greater, a.GetType(), b.GetType()), "Cannot evaluate Greater! No evaluator registered for this.", return false);
+		return Variant::Evaluate(Variant::Operator::Greater, a, b);
+	}
+	bool operator>=(const Variant& a, const Variant& b) {
+		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::GreaterEqual, a.GetType(), b.GetType()), "Cannot evaluate GreaterEqual! No evaluator registered for this.", return false);
+		return Variant::Evaluate(Variant::Operator::GreaterEqual, a, b);
+	}
+
+	bool Variant::CanEvaluate(Operator op, Type a, Type b) {
+		ERR_ASSERT((sizeint)op >= 0 && op < Operator::End, "op out of bounds.", return false);
+		ERR_ASSERT((sizeint)a >= 0 && a < Type::End, "a out of bounds.", return false);
+		ERR_ASSERT((sizeint)b >= 0 && b < Type::End, "b out of bounds.", return false);
+
+		return evaluators[(sizeint)a][(sizeint)b][(sizeint)op] != nullptr;
+	}
+	Variant Variant::Evaluate(Operator op, const Variant& a,const Variant& b) {
+		ERR_ASSERT(CanEvaluate(op, a.type, b.type), "No evaluator registered for target operator and types.", return Variant());
+
+		Evaluator ev = evaluators[(sizeint)a.type][(sizeint)b.type][(sizeint)op];
+		
+		return ev(a, b);
+	}
+
 	void Variant::Clear() {
 		switch (type) {
 			case Type::String:
@@ -285,4 +330,45 @@ namespace Engine {
 	Variant::ObjectData::ObjectData(Object* ptr, const InstanceId& id) :ptr(ptr), id(id) {}
 	Variant::DataUnion::DataUnion() {}
 	Variant::DataUnion::~DataUnion() {}
+
+	Variant::Evaluator Variant::evaluators[(sizeint)Type::End][(sizeint)Type::End][(sizeint)Operator::End]{};
+
+#define VARIANT_EVALUATOR(typeA,typeB,op) evaluators[(sizeint)(Type::##typeA)][(sizeint)(Type::##typeB)][(sizeint)(Operator::##op)] = [](const Variant& a, const Variant& b) -> Variant
+
+	Variant::EvaluatorInitializer::EvaluatorInitializer() {
+		VARIANT_EVALUATOR(Null, Null, Equal) { return true; };
+		VARIANT_EVALUATOR(Null, Null, NotEqual) { return false; };
+
+		// Bool
+		VARIANT_EVALUATOR(Bool, Bool, Equal) { return a.operator bool() == b.operator bool(); };
+		VARIANT_EVALUATOR(Bool, Bool, NotEqual) { return a.operator bool() != b.operator bool(); };
+		VARIANT_EVALUATOR(Bool, Null, Not) { return !a; };
+		VARIANT_EVALUATOR(Bool, Bool, And) { return a.operator bool() && b.operator bool(); };
+		VARIANT_EVALUATOR(Bool, Bool, Or) { return a.operator bool() || b.operator bool(); };
+		VARIANT_EVALUATOR(Bool, Bool, XOr) { return a.operator bool() ^ b.operator bool(); };
+
+		// Int64
+		VARIANT_EVALUATOR(Int64, Int64, Add) { return a.operator int64() + b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Subtract) { return a.operator int64() - b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Multiply) { return a.operator int64() * b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Divide) { return a.operator int64() / b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Mod) { return a.operator int64() % b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Positive) { return +(a.operator int64()); };
+		VARIANT_EVALUATOR(Int64, Int64, Negative) { return -(a.operator int64()); };
+
+		VARIANT_EVALUATOR(Int64, Int64, Equal) { return a.operator int64() == b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, NotEqual) { return a.operator int64() != b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Less) { return a.operator int64() < b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, LessEqual) { return a.operator int64() <= b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Greater) { return a.operator int64() > b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, GreaterEqual) { return a.operator int64() >= b.operator int64(); };
+		
+		VARIANT_EVALUATOR(Int64, Int64, BitAnd) { return a.operator int64() & b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, BitOr) { return a.operator int64() | b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, BitXOr) { return a.operator int64() ^ b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, BitFlip) { return ~(a.operator int64()); };
+		VARIANT_EVALUATOR(Int64, Int64, BitShiftLeft) { return a.operator int64() << b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, BitShiftRight) { return a.operator int64() >> b.operator int64(); };
+
+	}
 }
