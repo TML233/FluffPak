@@ -79,30 +79,31 @@ namespace Engine {
 #pragma endregion
 
 #pragma region Converts
-		operator bool() const;
-		operator byte() const;
-		operator sbyte() const;
-		operator int16() const;
-		operator uint16() const;
-		operator int32() const;
-		operator uint32() const;
-		operator int64() const;
-		operator uint64() const;
-		operator float() const;
-		operator double() const;
-		operator String() const;
-		operator Object*() const;
+		bool AsBool(bool defaultValue=false) const;
+		byte AsByte(byte defaultValue = 0) const;
+		sbyte AsSByte(sbyte defaultValue = 0) const;
+		int16 AsInt16(int16 defaultValue = 0) const;
+		uint16 AsUInt16(uint16 defaultValue = 0) const;
+		int32 AsInt32(int32 defaultValue = 0) const;
+		uint32 AsUInt32(uint32 defaultValue = 0) const;
+		int64 AsInt64(int64 defaultValue = 0) const;
+		uint64 AsUInt64(uint64 defaultValue = 0) const;
+		float AsFloat(float defaultValue = 0) const;
+		double AsDouble(double defaultValue = 0) const;
+		String AsString() const;
+		Object* AsObject(Object* defaultValue = nullptr) const;
 #pragma endregion
 
 		String ToString() const;
 
 		Variant& operator=(const Variant& obj);
-		/*bool operator==(const Variant& obj) const;
+
+		bool operator==(const Variant& obj) const;
 		bool operator!=(const Variant& obj) const;
 		bool operator>(const Variant& obj) const;
 		bool operator>=(const Variant& obj) const;
 		bool operator<(const Variant& obj) const;
-		bool operator<=(const Variant& obj) const;*/
+		bool operator<=(const Variant& obj) const;
 
 		static bool CanEvaluate(Operator op, Type a, Type b);
 		static Variant Evaluate(Operator op, const Variant& a, const Variant& b);
@@ -145,10 +146,10 @@ namespace Engine {
 		inline static EvaluatorInitializer _evaluatorInitializer{};
 #pragma endregion
 	};
-	bool operator==(const Variant& a, const Variant& b);
+	/*bool operator==(const Variant& a, const Variant& b);
 	bool operator!=(const Variant& a, const Variant& b);
 	bool operator>(const Variant& a, const Variant& b);
 	bool operator>=(const Variant& a, const Variant& b);
 	bool operator<(const Variant& a, const Variant& b);
-	bool operator<=(const Variant& a, const Variant& b);
+	bool operator<=(const Variant& a, const Variant& b);*/
 }

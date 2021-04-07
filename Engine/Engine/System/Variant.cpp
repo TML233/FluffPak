@@ -53,7 +53,7 @@ namespace Engine {
 #pragma endregion
 
 #pragma region Converts
-	Variant::operator bool() const {
+	bool Variant::AsBool(bool defaultValue) const {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool;
@@ -62,9 +62,9 @@ namespace Engine {
 			case Type::Double:
 				return data.vDouble >= 1;
 		}
-		return false;
+		return defaultValue;
 	}
-	Variant::operator byte() const {
+	byte Variant::AsByte(byte defaultValue) const {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool ? 1 : 0;
@@ -73,9 +73,9 @@ namespace Engine {
 			case Type::Double:
 				return data.vDouble;
 		}
-		return 0;
+		return defaultValue;
 	}
-	Variant::operator sbyte() const {
+	sbyte Variant::AsSByte(sbyte defaultValue) const {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool ? 1 : 0;
@@ -84,9 +84,9 @@ namespace Engine {
 			case Type::Double:
 				return data.vDouble;
 		}
-		return 0;
+		return defaultValue;
 	}
-	Variant::operator int16() const {
+	int16 Variant::AsInt16(int16 defaultValue) const {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool ? 1 : 0;
@@ -95,9 +95,9 @@ namespace Engine {
 			case Type::Double:
 				return data.vDouble;
 		}
-		return 0;
+		return defaultValue;
 	}
-	Variant::operator uint16() const {
+	uint16 Variant::AsUInt16(uint16 defaultValue) const {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool ? 1 : 0;
@@ -106,9 +106,9 @@ namespace Engine {
 			case Type::Double:
 				return data.vDouble;
 		}
-		return 0;
+		return defaultValue;
 	}
-	Variant::operator int32() const {
+	int32 Variant::AsInt32(int32 defaultValue) const {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool ? 1 : 0;
@@ -117,9 +117,9 @@ namespace Engine {
 			case Type::Double:
 				return data.vDouble;
 		}
-		return 0;
+		return defaultValue;
 	}
-	Variant::operator uint32() const {
+	uint32 Variant::AsUInt32(uint32 defaultValue) const {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool ? 1 : 0;
@@ -128,9 +128,9 @@ namespace Engine {
 			case Type::Double:
 				return data.vDouble;
 		}
-		return 0;
+		return defaultValue;
 	}
-	Variant::operator int64() const {
+	int64 Variant::AsInt64(int64 defaultValue) const {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool ? 1 : 0;
@@ -139,9 +139,9 @@ namespace Engine {
 			case Type::Double:
 				return data.vDouble;
 		}
-		return 0;
+		return defaultValue;
 	}
-	Variant::operator uint64() const {
+	uint64 Variant::AsUInt64(uint64 defaultValue) const {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool ? 1 : 0;
@@ -150,9 +150,9 @@ namespace Engine {
 			case Type::Double:
 				return data.vDouble;
 		}
-		return 0;
+		return defaultValue;
 	}
-	Variant::operator float() const {
+	float Variant::AsFloat(float defaultValue) const {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool ? 1 : 0;
@@ -161,9 +161,9 @@ namespace Engine {
 			case Type::Double:
 				return data.vDouble;
 		}
-		return 0;
+		return defaultValue;
 	}
-	Variant::operator double() const {
+	double Variant::AsDouble(double defaultValue) const {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool ? 1 : 0;
@@ -172,9 +172,9 @@ namespace Engine {
 			case Type::Double:
 				return data.vDouble;
 		}
-		return 0;
+		return defaultValue;
 	}
-	Variant::operator String() const {
+	String Variant::AsString() const {
 		switch (type) {
 			case Type::Null:
 				return STRING_LITERAL("Null");
@@ -186,23 +186,25 @@ namespace Engine {
 				return ObjectUtil::ToString(data.vDouble);
 			case Type::String:
 				return data.vString;
+			case Type::Object:
+				return data.vObject.ptr->ToString();
 		}
 		return String();
 	}
-	Variant::operator Object* () const {
+	Object* Variant::AsObject(Object* defaultValue) const {
 		switch (type) {
 			case Type::Object:
 				return data.vObject.ptr;
 		}
-		return nullptr;
+		return defaultValue;
 	}
 #pragma endregion
 
 	String Variant::ToString() const {
-		return operator String();
+		return AsString();
 	}
 
-	bool operator==(const Variant& a, const Variant& b) {
+	/*bool operator==(const Variant& a, const Variant& b) {
 		if (!Variant::CanEvaluate(Variant::Operator::Equal, a.GetType(), b.GetType())) {
 			return false;
 		}
@@ -229,6 +231,43 @@ namespace Engine {
 	bool operator>=(const Variant& a, const Variant& b) {
 		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::GreaterEqual, a.GetType(), b.GetType()), "Cannot evaluate GreaterEqual! No evaluator registered for this.", return false);
 		return Variant::Evaluate(Variant::Operator::GreaterEqual, a, b);
+	}*/
+
+	bool Variant::operator==(const Variant& obj) const {
+		if (!CanEvaluate(Operator::Equal, type, obj.type)) {
+			return false;
+		}
+		return Evaluate(Operator::Equal, *this, obj).AsBool();
+	}
+	bool Variant::operator!=(const Variant& obj) const {
+		if (!CanEvaluate(Operator::NotEqual, type, obj.type)) {
+			return true;
+		}
+		return Evaluate(Operator::NotEqual, *this, obj).AsBool();
+	}
+	bool Variant::operator>(const Variant& obj) const {
+		if (!CanEvaluate(Operator::Greater, type, obj.type)) {
+			return false;
+		}
+		return Evaluate(Operator::Greater, *this, obj).AsBool();
+	}
+	bool Variant::operator>=(const Variant& obj) const {
+		if (!CanEvaluate(Operator::GreaterEqual, type, obj.type)) {
+			return false;
+		}
+		return Evaluate(Operator::GreaterEqual, *this, obj).AsBool();
+	}
+	bool Variant::operator<(const Variant& obj) const {
+		if (!CanEvaluate(Operator::Less, type, obj.type)) {
+			return false;
+		}
+		return Evaluate(Operator::Less, *this, obj).AsBool();
+	}
+	bool Variant::operator<=(const Variant& obj) const {
+		if (!CanEvaluate(Operator::LessEqual, type, obj.type)) {
+			return false;
+		}
+		return Evaluate(Operator::LessEqual, *this, obj).AsBool();
 	}
 
 	bool Variant::CanEvaluate(Operator op, Type a, Type b) {
@@ -340,35 +379,35 @@ namespace Engine {
 		VARIANT_EVALUATOR(Null, Null, NotEqual) { return false; };
 
 		// Bool
-		VARIANT_EVALUATOR(Bool, Bool, Equal) { return a.operator bool() == b.operator bool(); };
-		VARIANT_EVALUATOR(Bool, Bool, NotEqual) { return a.operator bool() != b.operator bool(); };
-		VARIANT_EVALUATOR(Bool, Null, Not) { return !a; };
-		VARIANT_EVALUATOR(Bool, Bool, And) { return a.operator bool() && b.operator bool(); };
-		VARIANT_EVALUATOR(Bool, Bool, Or) { return a.operator bool() || b.operator bool(); };
-		VARIANT_EVALUATOR(Bool, Bool, XOr) { return a.operator bool() ^ b.operator bool(); };
+		VARIANT_EVALUATOR(Bool, Bool, Equal) { return a.AsBool() == b.AsBool(); };
+		VARIANT_EVALUATOR(Bool, Bool, NotEqual) { return a.AsBool() != b.AsBool(); };
+		VARIANT_EVALUATOR(Bool, Null, Not) { return !a.AsBool(); };
+		VARIANT_EVALUATOR(Bool, Bool, And) { return a.AsBool() && b.AsBool(); };
+		VARIANT_EVALUATOR(Bool, Bool, Or) { return a.AsBool() || b.AsBool(); };
+		VARIANT_EVALUATOR(Bool, Bool, XOr) { return a.AsBool() ^ b.AsBool(); };
 
 		// Int64
-		VARIANT_EVALUATOR(Int64, Int64, Add) { return a.operator int64() + b.operator int64(); };
-		VARIANT_EVALUATOR(Int64, Int64, Subtract) { return a.operator int64() - b.operator int64(); };
-		VARIANT_EVALUATOR(Int64, Int64, Multiply) { return a.operator int64() * b.operator int64(); };
-		VARIANT_EVALUATOR(Int64, Int64, Divide) { return a.operator int64() / b.operator int64(); };
-		VARIANT_EVALUATOR(Int64, Int64, Mod) { return a.operator int64() % b.operator int64(); };
-		VARIANT_EVALUATOR(Int64, Int64, Positive) { return +(a.operator int64()); };
-		VARIANT_EVALUATOR(Int64, Int64, Negative) { return -(a.operator int64()); };
+		VARIANT_EVALUATOR(Int64, Int64, Add) { return a.AsInt64() + b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Subtract) { return a.AsInt64() - b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Multiply) { return a.AsInt64() * b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Divide) { return a.AsInt64() / b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Mod) { return a.AsInt64() % b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Positive) { return +(a.AsInt64()); };
+		VARIANT_EVALUATOR(Int64, Int64, Negative) { return -(a.AsInt64()); };
 
-		VARIANT_EVALUATOR(Int64, Int64, Equal) { return a.operator int64() == b.operator int64(); };
-		VARIANT_EVALUATOR(Int64, Int64, NotEqual) { return a.operator int64() != b.operator int64(); };
-		VARIANT_EVALUATOR(Int64, Int64, Less) { return a.operator int64() < b.operator int64(); };
-		VARIANT_EVALUATOR(Int64, Int64, LessEqual) { return a.operator int64() <= b.operator int64(); };
-		VARIANT_EVALUATOR(Int64, Int64, Greater) { return a.operator int64() > b.operator int64(); };
-		VARIANT_EVALUATOR(Int64, Int64, GreaterEqual) { return a.operator int64() >= b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Equal) { return a.AsInt64() == b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Int64, NotEqual) { return a.AsInt64() != b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Less) { return a.AsInt64() < b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Int64, LessEqual) { return a.AsInt64() <= b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Int64, Greater) { return a.AsInt64() > b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Int64, GreaterEqual) { return a.AsInt64() >= b.AsInt64(); };
 		
-		VARIANT_EVALUATOR(Int64, Int64, BitAnd) { return a.operator int64() & b.operator int64(); };
-		VARIANT_EVALUATOR(Int64, Int64, BitOr) { return a.operator int64() | b.operator int64(); };
-		VARIANT_EVALUATOR(Int64, Int64, BitXOr) { return a.operator int64() ^ b.operator int64(); };
-		VARIANT_EVALUATOR(Int64, Int64, BitFlip) { return ~(a.operator int64()); };
-		VARIANT_EVALUATOR(Int64, Int64, BitShiftLeft) { return a.operator int64() << b.operator int64(); };
-		VARIANT_EVALUATOR(Int64, Int64, BitShiftRight) { return a.operator int64() >> b.operator int64(); };
+		VARIANT_EVALUATOR(Int64, Int64, BitAnd) { return a.AsInt64() & b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Int64, BitOr) { return a.AsInt64() | b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Int64, BitXOr) { return a.AsInt64() ^ b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Int64, BitFlip) { return ~(a.AsInt64()); };
+		VARIANT_EVALUATOR(Int64, Int64, BitShiftLeft) { return a.AsInt64() << b.AsInt64(); };
+		VARIANT_EVALUATOR(Int64, Int64, BitShiftRight) { return a.AsInt64() >> b.AsInt64(); };
 
 	}
 }

@@ -8,12 +8,12 @@ TEST_SUITE("Variant") {
 		Variant null;
 		CHECK(null.GetType() == Variant::Type::Null);
 		CHECK(null == Variant());
-		CHECK(null != Variant(1));
-		CHECK(null != Variant("Null"));
+		CHECK(null != 1);
+		CHECK(null != "Null");
 
 		Variant a = 1;
 		CHECK(a.GetType() == Variant::Type::Int64);
-		CHECK(a == Variant(1));
-		CHECK(a >= Variant(0));
+		CHECK(a == 1);
+		CHECK(a >= 0);
 	}
 }
