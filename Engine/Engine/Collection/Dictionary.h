@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/System/Object.h"
+#include "Engine/System/ObjectUtil.h"
 #include "Engine/Collection/HashHelper.h"
 #include "Engine/System/Memory.h"
 #include "Engine/System/Debug.h"
@@ -14,6 +14,9 @@ namespace Engine {
 		using KeyType = TKey;
 		using ValueType = TValue;
 
+		Dictionary(int32 capacity=0) {
+			SetCapacity(capacity);
+		}
 		~Dictionary() {
 			Clear();
 
@@ -136,7 +139,7 @@ namespace Engine {
 		TValue Get(const TKey& key) const {
 			TValue result{};
 			bool succeed = TryGet(key, result);
-			ERR_ASSERT(succeed, "Entry with key does not exists!", FATAL_CRASH("TryGet cannot return a value."));
+			FATAL_ASSERT_CRASH(succeed, "Entry with key does not exists! Cannot return a value.");
 			return result;
 		}
 		bool Remove(const TKey& key) {
@@ -185,7 +188,7 @@ namespace Engine {
 		};
 		enum class InsertMode { Add, Set };
 		static uint32 GetKeyHash(const TKey& key) {
-			int32 s_hash = Object::GetHashCode(key);
+			int32 s_hash = ObjectUtil::GetHashCode(key);
 			return *((uint32*)(&s_hash));
 		}
 		

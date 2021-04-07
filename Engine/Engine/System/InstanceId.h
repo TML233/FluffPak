@@ -4,16 +4,18 @@
 #include "Engine/System/Atomic.h"
 
 namespace Engine{
-	struct ObjectId{
+	struct InstanceId{
 	public:
-		static ObjectId Generate(bool referenced);
+		static InstanceId Generate(bool referenced);
 
-		explicit ObjectId(uint64 id = 0);
+		explicit InstanceId(uint64 id = 0);
 		uint64 Get() const;
 		bool IsValid() const;
 		bool IsReferenced() const;
-		bool operator==(const ObjectId& obj) const;
-		bool operator!=(const ObjectId& obj) const;
+		bool operator==(const InstanceId& obj) const;
+		bool operator!=(const InstanceId& obj) const;
+
+		int32 GetHashCode() const;
 
 	private:
 		// The highest bit == 1 == ReferencedObject

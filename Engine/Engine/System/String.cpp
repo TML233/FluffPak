@@ -1,5 +1,5 @@
 #include "Engine/System/String.h"
-#include "Engine/System/Object.h"
+#include "Engine/System/ObjectUtil.h"
 #include "Engine/System/Debug.h"
 #include "Engine/System/Memory.h"
 #include "Engine/Collection/Iterator.h"
@@ -19,6 +19,7 @@ namespace Engine {
 			this->data = chars.Release();
 		} else {
 			this->data = data;
+			referenceCount.Reference();
 		}
 	}
 	StringData::~StringData() {
@@ -28,24 +29,27 @@ namespace Engine {
 	}
 	uint32 StringData::Reference() {
 		if (staticData) {
-			return 10;
+			return 1;
 		}
 		return referenceCount.Reference();
 	}
 	uint32 StringData::Dereference() {
 		if (staticData) {
-			return 10;
+			return 1;
 		}
 		return referenceCount.Dereference();
 	}
 	uint32 StringData::GetReferenceCount() const {
 		if (staticData) {
-			return 10;
+			return 1;
 		}
 		return referenceCount.Get();
 	}
 	
-	StringData StringData::empty = StringData("", sizeof(""), true);
+	StringData* StringData::GetEmpty() {
+		static StringData empty("", sizeof(""), true);
+		return &empty;
+	}
 
 	String::String(const char* string) {
 		PrepareData(string, static_cast<int32>(std::strlen(string)));
@@ -163,7 +167,7 @@ namespace Engine {
 		return *this;
 	}
 	int32 String::GetHashCode() const {
-		return Object::GetHashCode(std::hash<std::string_view>{}(std::string_view(GetStartPtr(), GetCount())));
+		return ObjectUtil::GetHashCode(std::hash<std::string_view>{}(std::string_view(GetStartPtr(), GetCount())));
 	}
 
 	String::String(const char* string, int32 count) {
@@ -180,7 +184,7 @@ namespace Engine {
 	void String::PrepareData(const char* string,int32 count) {
 		// Use public empty string.
 		if (count <= 0) {
-			data = ReferencePtr<StringData>(&StringData::empty);
+			data = ReferencePtr<StringData>(StringData::GetEmpty());
 			return;
 		}
 		data = ReferencePtr<StringData>::Create(string, count + 1);

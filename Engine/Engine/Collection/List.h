@@ -52,7 +52,7 @@ namespace Engine{
 			return count;
 		}
 		T Get(int32 index) const {
-			ERR_ASSERT(index >= 0 && index < count, "index out of bounds.", FATAL_CRASH("List<T>::Get cannot return a value."));
+			FATAL_ASSERT_CRASH(index >= 0 && index < count, "index out of bounds. Cannot return a value.");
 			return elements[index];
 		}
 		void Set(int32 index, const T& value) {

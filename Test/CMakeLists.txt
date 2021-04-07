@@ -10,6 +10,8 @@ target_sources(Test PRIVATE
 	"${CMAKE_CURRENT_LIST_DIR}/Source/String.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Source/List.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Source/Dictionary.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Source/Variant.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Source/Reflection.cpp"
 )
 if(MSVC)
 	target_compile_options(Test PRIVATE /utf-8)
