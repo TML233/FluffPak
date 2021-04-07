@@ -42,14 +42,17 @@ namespace Engine {
 	// A string holding a NULL-termined char array.
 	class String final {
 	public:
-		String(const char* string = "");
+		static String GetEmpty();
+
+#pragma region ctor/assignment
+		String(const char* string = "", int32 count = -1);
+		// Creates a string using a pre-allocated StringData.
+		String(ReferencePtr<StringData> dataPtr, int32 start = 0, int32 count = -1);
 		String(const std::string& string);
 		String& operator=(const char* string);
+#pragma endregion
 
-		// For STRING_LITERAL
-		// DO NOT use.
-		String(ReferencePtr<StringData> dataPtr);
-
+#pragma region Tool functions
 		// Get char count.
 		// NULL not included.
 		int32 GetCount() const;
@@ -75,6 +78,17 @@ namespace Engine {
 		bool EndsWith(const String& pattern) const;
 		String Substring(int32 startIndex, int32 count) const;
 
+		String ToString() const;
+		int32 GetHashCode() const;
+
+		int32 GetStartIndex() const;
+		const char* GetStartPtr() const;
+
+		bool operator==(const String& obj) const;
+		bool operator!=(const String& obj) const;
+#pragma endregion
+
+#pragma region Format
 		// Format strings like "This is a {0}, except {1}";
 		template<typename ... Ts>
 		static String Format(const String& format, const Ts& ... args) {
@@ -85,21 +99,11 @@ namespace Engine {
 		static String Format(const char* format, const Ts& ... args) {
 			return fmt::format(format, args...);
 		}
-
-		String ToString() const;
-		int32 GetHashCode() const;
-
-		int32 GetStartIndex() const;
-		const char* GetStartPtr() const;
-
-		bool operator==(const String& obj) const;
-		bool operator!=(const String& obj) const;
+#pragma endregion
 
 	private:
 		bool IsEqual(const String& obj) const;
 
-		// Internal ctor
-		String(const char* string, int32 count);
 		// Prepares a string with a brand new data object.
 		void PrepareData(const char* string, int32 count);
 		// Current data reference.

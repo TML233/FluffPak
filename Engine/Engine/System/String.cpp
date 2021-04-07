@@ -51,8 +51,15 @@ namespace Engine {
 		return &empty;
 	}
 
-	String::String(const char* string) {
-		PrepareData(string, static_cast<int32>(std::strlen(string)));
+	String String::GetEmpty() {
+		return String(ReferencePtr<StringData>(StringData::GetEmpty()));
+	}
+
+	String::String(const char* string,int32 count) {
+		if (count < 0) {
+			count = static_cast<int32>(std::strlen(string));
+		}
+		PrepareData(string, count);
 	}
 	String::String(const std::string& string) {
 		PrepareData(string.c_str(), static_cast<int32>(string.length()));
@@ -62,7 +69,23 @@ namespace Engine {
 		return *this;
 	}
 
-	String::String(ReferencePtr<StringData> dataPtr) :data(dataPtr), refStart(0), refCount(dataPtr->length - 1) {}
+	String::String(ReferencePtr<StringData> dataPtr, int32 start, int32 count) :data(dataPtr), refStart(start) {
+		if (count < 0) {
+			count = dataPtr->length - 1;
+		}
+		refCount = count;
+	}
+
+	void String::PrepareData(const char* string, int32 count) {
+		// Use public empty string.
+		if (count <= 0) {
+			data = ReferencePtr<StringData>(StringData::GetEmpty());
+			return;
+		}
+		data = ReferencePtr<StringData>::Create(string, count + 1);
+		refStart = 0;
+		refCount = count;
+	}
 
 	bool String::IsIndividual() const {
 		return (refStart == 0 && refCount == data->length - 1);
@@ -170,26 +193,11 @@ namespace Engine {
 		return ObjectUtil::GetHashCode(std::hash<std::string_view>{}(std::string_view(GetStartPtr(), GetCount())));
 	}
 
-	String::String(const char* string, int32 count) {
-		PrepareData(string, count);
-	}
-
 	int32 String::GetStartIndex() const {
 		return refStart;
 	}
 	const char* String::GetStartPtr() const {
 		return data->data + refStart;
-	}
-
-	void String::PrepareData(const char* string,int32 count) {
-		// Use public empty string.
-		if (count <= 0) {
-			data = ReferencePtr<StringData>(StringData::GetEmpty());
-			return;
-		}
-		data = ReferencePtr<StringData>::Create(string, count + 1);
-		refStart = 0;
-		refCount = count;
 	}
 
 	String operator+(const String& left,const String& right) {
