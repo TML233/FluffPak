@@ -28,17 +28,29 @@ namespace Engine {
 	Vector2 Vector2::operator-(const Vector2& value) const {
 		return Vector2(x - value.x, y - value.y);
 	}
-	Vector2 Vector2::operator*(float value) const {
-		return Vector2(x * value, y * value);
+	Vector2 operator*(const Vector2& a, float b) {
+		return Vector2(a.x * b, a.y * b);
 	}
-	Vector2 Vector2::operator/(float value) const {
-		return Vector2(x / value, y / value);
+	Vector2 operator*(float a, const Vector2& b) {
+		return operator*(b, a);
+	}
+	Vector2 operator/(const Vector2& a, float b) {
+		return Vector2(a.x / b, a.y / b);
+	}
+	Vector2 operator/(float a, const Vector2& b) {
+		return operator/(b, a);
 	}
 	bool Vector2::operator==(const Vector2& value) const {
 		return (x == value.x && y == value.y);
 	}
 	bool Vector2::operator!=(const Vector2& value) const {
 		return (x != value.x || y != value.y);
+	}
+	Vector2 Vector2::operator+() const {
+		return *this;
+	}
+	Vector2 Vector2::operator-() const {
+		return *this * -1;
 	}
 
 	String Vector2::ToString() const {

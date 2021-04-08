@@ -16,4 +16,9 @@ TEST_SUITE("Variant") {
 		CHECK(a == 1);
 		CHECK(a >= 0);
 	}
+	TEST_CASE("Vector2") {
+		Variant v1 = Vector2(11, 23);
+		CHECK(v1 * 3 == Vector2(33, 69));
+		CHECK(v1.AsVector2() == Vector2(11, 23));
+	}
 }

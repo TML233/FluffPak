@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/System/Definition.h"
-#include "Engine/System/Object.h"
+#include "Engine/System/String.h"
 
 namespace Engine {
 	struct Vector2 final {
@@ -18,10 +18,10 @@ namespace Engine {
 
 		Vector2 operator+(const Vector2& value) const;
 		Vector2 operator-(const Vector2& value) const;
-		Vector2 operator*(float value) const;
-		Vector2 operator/(float value) const;
 		bool operator==(const Vector2& value) const;
 		bool operator!=(const Vector2& value) const;
+		Vector2 operator+() const;
+		Vector2 operator-() const;
 
 		String ToString() const;
 		int32 GetHashCode() const;
@@ -37,4 +37,8 @@ namespace Engine {
 		static float Dot(const Vector2& a, const Vector2& b);
 		static float Cross(const Vector2& a, const Vector2& b);
 	};
+	Vector2 operator*(const Vector2& a, float b);
+	Vector2 operator*(float a, const Vector2& b);
+	Vector2 operator/(const Vector2& a, float b);
+	Vector2 operator/(float a, const Vector2& b);
 }

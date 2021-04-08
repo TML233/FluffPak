@@ -86,7 +86,7 @@ namespace Engine {
 		Clear();
 	}
 #pragma region Ctors
-	// !! AddTypeHint 4.5: Implement your constructor to call the value constructor(the ConstructT function).
+	// !! AddTypeHint 4.1: Implement your constructor to call the value constructor(the ConstructT function).
 
 	Variant::Variant() {}
 	Variant::Variant(bool value) {
@@ -131,6 +131,9 @@ namespace Engine {
 	Variant::Variant(const char* value) {
 		ConstructString(String(value));
 	}
+	Variant::Variant(const Vector2& value) {
+		ConstructVector2(value);
+	}
 	Variant::Variant(Object* value) {
 		if (value == nullptr) {
 			return;
@@ -140,82 +143,16 @@ namespace Engine {
 #pragma endregion
 
 #pragma region AsType
-	// !! AddTypeHint 5.5: Implement your AsType function.
+	// !! AddTypeHint 5.2: Implement your AsType function.
 
 	bool Variant::AsBool(bool defaultValue) const {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool;
 			case Type::Int64:
-				return data.vInt64 >= 1;
+				return data.vInt64 != 0;
 			case Type::Double:
-				return data.vDouble >= 1;
-		}
-		return defaultValue;
-	}
-	byte Variant::AsByte(byte defaultValue) const {
-		switch (type) {
-			case Type::Bool:
-				return data.vBool ? 1 : 0;
-			case Type::Int64:
-				return data.vInt64;
-			case Type::Double:
-				return data.vDouble;
-		}
-		return defaultValue;
-	}
-	sbyte Variant::AsSByte(sbyte defaultValue) const {
-		switch (type) {
-			case Type::Bool:
-				return data.vBool ? 1 : 0;
-			case Type::Int64:
-				return data.vInt64;
-			case Type::Double:
-				return data.vDouble;
-		}
-		return defaultValue;
-	}
-	int16 Variant::AsInt16(int16 defaultValue) const {
-		switch (type) {
-			case Type::Bool:
-				return data.vBool ? 1 : 0;
-			case Type::Int64:
-				return data.vInt64;
-			case Type::Double:
-				return data.vDouble;
-		}
-		return defaultValue;
-	}
-	uint16 Variant::AsUInt16(uint16 defaultValue) const {
-		switch (type) {
-			case Type::Bool:
-				return data.vBool ? 1 : 0;
-			case Type::Int64:
-				return data.vInt64;
-			case Type::Double:
-				return data.vDouble;
-		}
-		return defaultValue;
-	}
-	int32 Variant::AsInt32(int32 defaultValue) const {
-		switch (type) {
-			case Type::Bool:
-				return data.vBool ? 1 : 0;
-			case Type::Int64:
-				return data.vInt64;
-			case Type::Double:
-				return data.vDouble;
-		}
-		return defaultValue;
-	}
-	uint32 Variant::AsUInt32(uint32 defaultValue) const {
-		switch (type) {
-			case Type::Bool:
-				return data.vBool ? 1 : 0;
-			case Type::Int64:
-				return data.vInt64;
-			case Type::Double:
-				return data.vDouble;
+				return data.vDouble != 0;
 		}
 		return defaultValue;
 	}
@@ -226,29 +163,7 @@ namespace Engine {
 			case Type::Int64:
 				return data.vInt64;
 			case Type::Double:
-				return data.vDouble;
-		}
-		return defaultValue;
-	}
-	uint64 Variant::AsUInt64(uint64 defaultValue) const {
-		switch (type) {
-			case Type::Bool:
-				return data.vBool ? 1 : 0;
-			case Type::Int64:
-				return data.vInt64;
-			case Type::Double:
-				return data.vDouble;
-		}
-		return defaultValue;
-	}
-	float Variant::AsFloat(float defaultValue) const {
-		switch (type) {
-			case Type::Bool:
-				return data.vBool ? 1 : 0;
-			case Type::Int64:
-				return data.vInt64;
-			case Type::Double:
-				return data.vDouble;
+				return static_cast<int64>(data.vDouble);
 		}
 		return defaultValue;
 	}
@@ -257,13 +172,14 @@ namespace Engine {
 			case Type::Bool:
 				return data.vBool ? 1 : 0;
 			case Type::Int64:
-				return data.vInt64;
+				return static_cast<double>(data.vInt64);
 			case Type::Double:
 				return data.vDouble;
 		}
 		return defaultValue;
 	}
 	String Variant::AsString() const {
+		// !! AddTypeHint 5.3: Add a AsString entry.
 		switch (type) {
 			case Type::Null:
 				return STRING_LITERAL("Null");
@@ -275,10 +191,19 @@ namespace Engine {
 				return ObjectUtil::ToString(data.vDouble);
 			case Type::String:
 				return data.vString;
+			case Type::Vector2:
+				return data.vVector2.ToString();
 			case Type::Object:
 				return data.vObject.ptr->ToString();
 		}
 		return String();
+	}
+	Vector2 Variant::AsVector2(const Vector2& defaultValue) const {
+		switch (type) {
+			case Type::Vector2:
+				return data.vVector2;
+		}
+		return defaultValue;
 	}
 	Object* Variant::AsObject(Object* defaultValue) const {
 		switch (type) {
@@ -298,6 +223,10 @@ namespace Engine {
 		switch (type) {
 			case Type::String:
 				Memory::Destruct(&data.vString);
+				break;
+
+			case Type::Vector2:
+				Memory::Destruct(&data.vVector2);
 				break;
 
 			case Type::Object:
@@ -342,6 +271,9 @@ namespace Engine {
 			case Type::String:
 				ConstructString(obj.data.vString);
 				break;
+			case Type::Vector2:
+				ConstructVector2(obj.data.vVector2);
+				break;
 			case Type::Object:
 				ConstructObject(obj.data.vObject);
 				break;
@@ -351,7 +283,7 @@ namespace Engine {
 	}
 
 #pragma region Value constructors
-	// !! AddTypeHint 3.5: Implement your value constructor.
+	// !! AddTypeHint 3.1: Implement your value constructor.
 
 	void Variant::ConstructBool(bool value) {
 		type = Type::Bool;
@@ -368,6 +300,10 @@ namespace Engine {
 	void Variant::ConstructString(const String& value) {
 		type = Type::String;
 		Memory::Construct(&data.vString, value);
+	}
+	void Variant::ConstructVector2(const Vector2& value) {
+		type = Type::Vector2;
+		Memory::Construct(&data.vVector2, value);
 	}
 	void Variant::ConstructObject(const ObjectData& value) {
 		type = Type::Object;
@@ -561,6 +497,26 @@ namespace Engine {
 		VARIANT_EVALUATOR(Object, Object, Equal) { return a.AsObject() == b.AsObject(); };
 		VARIANT_EVALUATOR(Object, Object, NotEqual) { return a.AsObject() != b.AsObject(); };
 #pragma endregion
+
+#pragma region Vector2
+		VARIANT_EVALUATOR(Vector2, Vector2, Equal) { return a.AsVector2() == b.AsVector2(); };
+		VARIANT_EVALUATOR(Vector2, Vector2, NotEqual) { return a.AsVector2() != b.AsVector2(); };
+		
+		VARIANT_EVALUATOR(Vector2, Vector2, Add) { return a.AsVector2() + b.AsVector2(); };
+		VARIANT_EVALUATOR(Vector2, Vector2, Subtract) { return a.AsVector2() - b.AsVector2(); };
+		VARIANT_EVALUATOR(Vector2, Null, Positive) { return +a.AsVector2(); };
+		VARIANT_EVALUATOR(Vector2, Null, Negative) { return -a.AsVector2(); };
+
+		VARIANT_EVALUATOR(Vector2, Int64, Multiply) { return a.AsVector2() * static_cast<float>(b.AsInt64()); };
+		VARIANT_EVALUATOR(Vector2, Int64, Divide) { return a.AsVector2() / static_cast<float>(b.AsInt64()); };
+		VARIANT_EVALUATOR(Int64, Vector2, Multiply) { return static_cast<float>(a.AsInt64()) * b.AsVector2(); };
+		VARIANT_EVALUATOR(Int64, Vector2, Divide) { return static_cast<float>(a.AsInt64()) / b.AsVector2(); };
+		VARIANT_EVALUATOR(Vector2, Double, Multiply) { return a.AsVector2() * static_cast<float>(b.AsDouble()); };
+		VARIANT_EVALUATOR(Vector2, Double, Divide) { return a.AsVector2() / static_cast<float>(b.AsDouble()); };
+		VARIANT_EVALUATOR(Double, Vector2, Multiply) { return static_cast<float>(a.AsDouble()) * b.AsVector2(); };
+		VARIANT_EVALUATOR(Double, Vector2, Divide) { return static_cast<float>(a.AsDouble()) / b.AsVector2(); };
+#pragma endregion
+
 	}
 #pragma endregion
 }

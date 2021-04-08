@@ -3,6 +3,7 @@
 #include "Engine/System/Definition.h"
 #include "Engine/System/String.h"
 #include "Engine/System/InstanceId.h"
+#include "Engine/Math/Vector2.h"
 
 namespace Engine {
 	class Object;
@@ -22,7 +23,7 @@ namespace Engine {
 			Double,		// 64-bit Float
 
 			String,		// String
-			//Vector2,
+			Vector2,
 			//Rect2,
 			//NodePath,
 			//Color,
@@ -90,6 +91,7 @@ namespace Engine {
 		Variant(float value);
 		Variant(double value);
 		Variant(const String& value);
+		Variant(const Vector2& value);
 		Variant(const char* value);
 		Variant(Object* value);
 #pragma endregion
@@ -98,17 +100,10 @@ namespace Engine {
 		// !! AddTypeHint 5.0: Add a AsType function for getting the original value.
 
 		bool AsBool(bool defaultValue=false) const;
-		byte AsByte(byte defaultValue = 0) const;
-		sbyte AsSByte(sbyte defaultValue = 0) const;
-		int16 AsInt16(int16 defaultValue = 0) const;
-		uint16 AsUInt16(uint16 defaultValue = 0) const;
-		int32 AsInt32(int32 defaultValue = 0) const;
-		uint32 AsUInt32(uint32 defaultValue = 0) const;
 		int64 AsInt64(int64 defaultValue = 0) const;
-		uint64 AsUInt64(uint64 defaultValue = 0) const;
-		float AsFloat(float defaultValue = 0) const;
 		double AsDouble(double defaultValue = 0) const;
 		String AsString() const;
+		Vector2 AsVector2(const Vector2& defaultValue = Vector2()) const;
 		Object* AsObject(Object* defaultValue = nullptr) const;
 #pragma endregion
 
@@ -162,6 +157,7 @@ namespace Engine {
 			int64 vInt64;
 			double vDouble;
 			String vString;
+			Vector2 vVector2;
 			ObjectData vObject;
 			DataUnion();
 			~DataUnion();
@@ -176,6 +172,7 @@ namespace Engine {
 		void ConstructDouble(double value);
 		void ConstructString(const String& value);
 		void ConstructObject(const ObjectData& value);
+		void ConstructVector2(const Vector2& value);
 #pragma endregion
 
 		DataUnion data;
