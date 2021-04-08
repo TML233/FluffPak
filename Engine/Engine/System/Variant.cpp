@@ -414,7 +414,7 @@ namespace Engine {
 
 	Variant::Evaluator Variant::evaluators[(sizeint)Type::End][(sizeint)Type::End][(sizeint)Operator::End]{};
 
-#define VARIANT_EVALUATOR(typeA,typeB,op) evaluators[(sizeint)(Type::##typeA)][(sizeint)(Type::##typeB)][(sizeint)(Operator::##op)] = [](const Variant& a, const Variant& b) -> Variant
+#define VARIANT_EVALUATOR(typeA,typeB,op) evaluators[(sizeint)(Type::typeA)][(sizeint)(Type::typeB)][(sizeint)(Operator::op)] = [](const Variant& a, const Variant& b) -> Variant
 
 	Variant::EvaluatorInitializer::EvaluatorInitializer() {
 		// !! AddTypeHint 8.0: Add necessary evaluator.
