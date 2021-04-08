@@ -86,6 +86,8 @@ namespace Engine {
 		Clear();
 	}
 #pragma region Ctors
+	// !! AddTypeHint 4.5: Implement your constructor to call the value constructor(the ConstructT function).
+
 	Variant::Variant() {}
 	Variant::Variant(bool value) {
 		ConstructBool(value);
@@ -137,7 +139,9 @@ namespace Engine {
 	}
 #pragma endregion
 
-#pragma region Converts
+#pragma region AsType
+	// !! AddTypeHint 5.5: Implement your AsType function.
+
 	bool Variant::AsBool(bool defaultValue) const {
 		switch (type) {
 			case Type::Bool:
@@ -289,6 +293,100 @@ namespace Engine {
 		return AsString();
 	}
 
+	void Variant::Clear() {
+		// !! AddTypeHint 7.0: Add a entry to destruct the value.
+		switch (type) {
+			case Type::String:
+				Memory::Destruct(&data.vString);
+				break;
+
+			case Type::Object:
+				if (data.vObject.id.IsReferenced()) {
+					// Containing object is reference-counted. Do the dereferencing.
+					ReferencedObject* refObj = static_cast<ReferencedObject*>(data.vObject.ptr);
+					if (refObj->Dereference() == 0) {
+						MEMDEL(refObj);
+					}
+				}
+				Memory::Destruct(&data.vObject);
+				break;
+		}
+
+		type = Type::Null;
+	}
+
+	Variant::Type Variant::GetType() const {
+		return type;
+	}
+
+	Variant& Variant::operator=(const Variant& obj) {
+		if (&obj == this) {
+			return *this;
+		}
+
+		Clear();
+
+		type = obj.type;
+
+		// !! AddTypeHint 6.0: Add an entry to call the value constructor.
+		switch (type) {
+			case Type::Bool:
+				ConstructBool(obj.data.vBool);
+				break;
+			case Type::Int64:
+				ConstructInt64(obj.data.vInt64);
+				break;
+			case Type::Double:
+				ConstructDouble(obj.data.vDouble);
+				break;
+			case Type::String:
+				ConstructString(obj.data.vString);
+				break;
+			case Type::Object:
+				ConstructObject(obj.data.vObject);
+				break;
+		}
+
+		return *this;
+	}
+
+#pragma region Value constructors
+	// !! AddTypeHint 3.5: Implement your value constructor.
+
+	void Variant::ConstructBool(bool value) {
+		type = Type::Bool;
+		data.vBool = value;
+	}
+	void Variant::ConstructInt64(int64 value) {
+		type = Type::Int64;
+		data.vInt64 = value;
+	}
+	void Variant::ConstructDouble(double value) {
+		type = Type::Double;
+		data.vDouble = value;
+	}
+	void Variant::ConstructString(const String& value) {
+		type = Type::String;
+		Memory::Construct(&data.vString, value);
+	}
+	void Variant::ConstructObject(const ObjectData& value) {
+		type = Type::Object;
+
+		if (value.id.IsReferenced()) {
+			// Containing object is reference-counted. Do the referencing.
+			ReferencedObject* refObj = static_cast<ReferencedObject*>(value.ptr);
+			refObj->Reference();
+		}
+		Memory::Construct(&data.vObject, value);
+	}
+#pragma endregion
+
+	Variant::ObjectData::ObjectData(Object* ptr, const InstanceId& id) :ptr(ptr), id(id) {}
+	Variant::DataUnion::DataUnion() {}
+	Variant::DataUnion::~DataUnion() {}
+
+#pragma region Evaluating
+#pragma region Operators
 	bool Variant::operator==(const Variant& obj) const {
 		if (!CanEvaluate(Operator::Equal, type, obj.type)) {
 			return false;
@@ -361,6 +459,7 @@ namespace Engine {
 	Variant Variant::operator>>(const Variant& obj) const {
 		return Evaluate(Operator::BitShiftRight, *this, obj);
 	}
+#pragma endregion
 
 	bool Variant::CanEvaluate(Operator op, Type a, Type b) {
 		ERR_ASSERT((sizeint)op >= 0 && op < Operator::End, "op out of bounds.", return false);
@@ -370,103 +469,20 @@ namespace Engine {
 		return evaluators[(sizeint)a][(sizeint)b][(sizeint)op] != nullptr;
 	}
 	Variant Variant::Evaluate(Operator op, const Variant& a, const Variant& b) {
-		ERR_ASSERT(CanEvaluate(op, a.type, b.type), String::Format("No evaluator registered for [{0}] with [{1}] and [{2}].",GetOperatorName(op),GetTypeName(a.type),GetTypeName(b.type)).GetRawArray(), return Variant());
+		ERR_ASSERT(CanEvaluate(op, a.type, b.type), String::Format("No evaluator registered for [{0}] with [{1}] and [{2}].", GetOperatorName(op), GetTypeName(a.type), GetTypeName(b.type)).GetRawArray(), return Variant());
 
 		Evaluator ev = evaluators[(sizeint)a.type][(sizeint)b.type][(sizeint)op];
 
 		return ev(a, b);
 	}
 
-	void Variant::Clear() {
-		switch (type) {
-			case Type::String:
-				Memory::Destruct(&data.vString);
-				break;
-
-			case Type::Object:
-				if (data.vObject.id.IsReferenced()) {
-					// Containing object is reference-counted. Do the dereferencing.
-					ReferencedObject* refObj = static_cast<ReferencedObject*>(data.vObject.ptr);
-					if (refObj->Dereference() == 0) {
-						MEMDEL(refObj);
-					}
-				}
-				Memory::Destruct(&data.vObject);
-				break;
-		}
-
-		type = Type::Null;
-	}
-
-	Variant::Type Variant::GetType() const {
-		return type;
-	}
-
-	Variant& Variant::operator=(const Variant& obj) {
-		if (&obj == this) {
-			return *this;
-		}
-
-		Clear();
-
-		type = obj.type;
-		switch (type) {
-			case Type::Bool:
-				ConstructBool(obj.data.vBool);
-				break;
-			case Type::Int64:
-				ConstructInt64(obj.data.vInt64);
-				break;
-			case Type::Double:
-				ConstructDouble(obj.data.vDouble);
-				break;
-			case Type::String:
-				ConstructString(obj.data.vString);
-				break;
-			case Type::Object:
-				ConstructObject(obj.data.vObject);
-				break;
-		}
-
-		return *this;
-	}
-
-	void Variant::ConstructBool(bool value) {
-		type = Type::Bool;
-		data.vBool = value;
-	}
-	void Variant::ConstructInt64(int64 value) {
-		type = Type::Int64;
-		data.vInt64 = value;
-	}
-	void Variant::ConstructDouble(double value) {
-		type = Type::Double;
-		data.vDouble = value;
-	}
-	void Variant::ConstructString(const String& value) {
-		type = Type::String;
-		Memory::Construct(&data.vString, value);
-	}
-	void Variant::ConstructObject(const ObjectData& value) {
-		type = Type::Object;
-
-		if (value.id.IsReferenced()) {
-			// Containing object is reference-counted. Do the referencing.
-			ReferencedObject* refObj = static_cast<ReferencedObject*>(value.ptr);
-			refObj->Reference();
-		}
-		Memory::Construct(&data.vObject, value);
-	}
-
-	Variant::ObjectData::ObjectData(Object* ptr, const InstanceId& id) :ptr(ptr), id(id) {}
-	Variant::DataUnion::DataUnion() {}
-	Variant::DataUnion::~DataUnion() {}
-
 	Variant::Evaluator Variant::evaluators[(sizeint)Type::End][(sizeint)Type::End][(sizeint)Operator::End]{};
 
 #define VARIANT_EVALUATOR(typeA,typeB,op) evaluators[(sizeint)(Type::##typeA)][(sizeint)(Type::##typeB)][(sizeint)(Operator::##op)] = [](const Variant& a, const Variant& b) -> Variant
 
 	Variant::EvaluatorInitializer::EvaluatorInitializer() {
+		// !! AddTypeHint 8.0: Add necessary evaluator.
+
 #pragma region Null
 		VARIANT_EVALUATOR(Null, Null, Equal) { return true; };
 		VARIANT_EVALUATOR(Null, Null, NotEqual) { return false; };
@@ -546,4 +562,5 @@ namespace Engine {
 		VARIANT_EVALUATOR(Object, Object, NotEqual) { return a.AsObject() != b.AsObject(); };
 #pragma endregion
 	}
+#pragma endregion
 }

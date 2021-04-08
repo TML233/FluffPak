@@ -9,6 +9,11 @@ namespace Engine {
 	
 	class Variant final {
 	public:
+		// !! AddTypeHint 0.0: To add a new type, search for "AddTypeHint" for the guide.
+
+#pragma region Types
+		// !! AddTypeHint 1.0: Add an entry in Type.
+
 		enum class Type:byte {
 			Null,		// Null
 
@@ -26,7 +31,11 @@ namespace Engine {
 
 			End,		// Marks the end
 		};
+
 		static String GetTypeName(Type type);
+#pragma endregion
+
+#pragma region Operators
 		enum class Operator :byte {
 			Equal,
 			NotEqual,
@@ -58,6 +67,7 @@ namespace Engine {
 			End,
 		};
 		static String GetOperatorName(Operator op);
+#pragma endregion
 
 		void Clear();
 		Type GetType() const;
@@ -65,6 +75,8 @@ namespace Engine {
 		~Variant();
 
 #pragma region Ctors
+		// !! AddTypeHint 4.0: Add a constructor to call ConstructT(T value).
+
 		Variant();
 		Variant(bool value);
 		Variant(byte value);
@@ -82,7 +94,9 @@ namespace Engine {
 		Variant(Object* value);
 #pragma endregion
 
-#pragma region Converts
+#pragma region AsType
+		// !! AddTypeHint 5.0: Add a AsType function for getting the original value.
+
 		bool AsBool(bool defaultValue=false) const;
 		byte AsByte(byte defaultValue = 0) const;
 		sbyte AsSByte(sbyte defaultValue = 0) const;
@@ -139,6 +153,10 @@ namespace Engine {
 			Object* ptr;
 			InstanceId id;
 		};
+
+#pragma region Union
+		// !! AddTypeHint 2.0: Add an entry in DataUnion.
+
 		union DataUnion {
 			bool vBool;
 			int64 vInt64;
@@ -148,12 +166,17 @@ namespace Engine {
 			DataUnion();
 			~DataUnion();
 		};
+#pragma endregion
+
+#pragma region Value constructor
+		// !! AddTypeHint 3.0: Add a value constructor.
 
 		void ConstructBool(bool value);
 		void ConstructInt64(int64 value);
 		void ConstructDouble(double value);
 		void ConstructString(const String& value);
 		void ConstructObject(const ObjectData& value);
+#pragma endregion
 
 		DataUnion data;
 		Type type = Type::Null;
