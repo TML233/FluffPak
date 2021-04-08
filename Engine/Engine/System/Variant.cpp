@@ -468,6 +468,12 @@ namespace Engine {
 		VARIANT_EVALUATOR(String, String, Equal) { return a.AsString() == b.AsString(); };
 		VARIANT_EVALUATOR(String, String, NotEqual) { return a.AsString() != b.AsString(); };
 		VARIANT_EVALUATOR(String, String, Add) { return a.AsString() + b.AsString(); };
+		VARIANT_EVALUATOR(String, Bool, Add) { return a.AsString() + b.AsString(); };
+		VARIANT_EVALUATOR(String, Int64, Add) { return a.AsString() + b.AsString(); };
+		VARIANT_EVALUATOR(String, Double, Add) { return a.AsString() + b.AsString(); };
+		VARIANT_EVALUATOR(Bool, String, Add) { return a.AsString() + b.AsString(); };
+		VARIANT_EVALUATOR(Int64, String, Add) { return a.AsString() + b.AsString(); };
+		VARIANT_EVALUATOR(Double, String, Add) { return a.AsString() + b.AsString(); };
 #pragma endregion
 
 #pragma region Object
