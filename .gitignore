@@ -426,3 +426,4 @@ MigrationBackup/
 
 # Visual Studio CMAKE Output Folder
 out/
+CMakeSettings.json
