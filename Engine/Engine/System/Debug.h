@@ -13,7 +13,7 @@
 #define WARN_MSG(msg) DebugPrintWarn(__func__,__FILE__,__LINE__,DEBUG_TEXT(msg))
 
 #define ERR_MSG(msg) DebugPrintError(__func__,__FILE__,__LINE__,DEBUG_TEXT(msg))
-#define ERR_ASSERT(expr,msg,action) if (!(expr)) { ERR_MSG("Assertion \"" #expr "\" failed: " msg " Executing \"" #action "\".");action;}
+#define ERR_ASSERT(expr,msg,action) if (!(expr)) { DebugPrintErrorAssert(__func__,__FILE__,__LINE__,#expr,msg,#action);action;}
 
 #ifdef _MSC_VER
 #define FATAL_CRASH_IMMEDIATELY() __debugbreak()
@@ -22,10 +22,12 @@
 #endif
 #define FATAL_MSG(msg) DebugPrintFatal(__func__,__FILE__,__LINE__,DEBUG_TEXT(msg))
 #define FATAL_CRASH(msg) FATAL_MSG(msg);FATAL_CRASH_IMMEDIATELY()
-#define FATAL_ASSERT_CRASH(expr,msg) if (!(expr)) { FATAL_CRASH("Assertion \"" #expr "\" failed: " msg " Crashing.");}
+#define FATAL_ASSERT(expr,msg) if (!(expr)) { DebugPrintFatalAssert(__func__,__FILE__,__LINE__,#expr,msg);FATAL_CRASH_IMMEDIATELY();}
 
 
 void DebugPrintInfo(const char* message);
 void DebugPrintWarn(const char* func, const char* file, int line, const char* message);
 void DebugPrintError(const char* func, const char* file, int line, const char* message);
+void DebugPrintErrorAssert(const char* func, const char* file, int line, const char* expr, const char* message, const char* action);
 void DebugPrintFatal(const char* func, const char* file, int line, const char* message);
+void DebugPrintFatalAssert(const char* func, const char* file, int line, const char* expr, const char* message);

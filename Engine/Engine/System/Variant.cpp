@@ -3,6 +3,85 @@
 #include "Engine/System/Debug.h"
 
 namespace Engine {
+	String Variant::GetTypeName(Type type) {
+		switch (type) {
+			case Type::Null:
+				return STRING_LITERAL("Null");
+
+			case Type::Bool:
+				return STRING_LITERAL("Bool");
+			case Type::Int64:
+				return STRING_LITERAL("Int64");
+			case Type::Double:
+				return STRING_LITERAL("Double");
+
+			case Type::String:
+				return STRING_LITERAL("String");
+
+			case Type::Object:
+				return STRING_LITERAL("Object");
+
+			default:
+				return STRING_LITERAL("Undefined Type");
+		}
+	}
+	String Variant::GetOperatorName(Operator op) {
+		switch (op) {
+			case Operator::Equal:
+				return STRING_LITERAL("Equal");
+			case Operator::NotEqual:
+				return STRING_LITERAL("NotEqual");
+			case Operator::Less:
+				return STRING_LITERAL("Less");
+			case Operator::LessEqual:
+				return STRING_LITERAL("LessEqual");
+			case Operator::Greater:
+				return STRING_LITERAL("Greater");
+			case Operator::GreaterEqual:
+				return STRING_LITERAL("GreaterEqual");
+
+			case Operator::Add:
+				return STRING_LITERAL("Add");
+			case Operator::Subtract:
+				return STRING_LITERAL("Subtract");
+			case Operator::Multiply:
+				return STRING_LITERAL("Multiply");
+			case Operator::Divide:
+				return STRING_LITERAL("Divide");
+			case Operator::Mod:
+				return STRING_LITERAL("Mod");
+			case Operator::Positive:
+				return STRING_LITERAL("Positive");
+			case Operator::Negative:
+				return STRING_LITERAL("Negative");
+
+			case Operator::LogicAnd:
+				return STRING_LITERAL("LogicAnd");
+			case Operator::LogicOr:
+				return STRING_LITERAL("LogicOr");
+			case Operator::LogicXOr:
+				return STRING_LITERAL("LogicXOr");
+			case Operator::LogicNot:
+				return STRING_LITERAL("LogicNot");
+
+			case Operator::BitAnd:
+				return STRING_LITERAL("BitAnd");
+			case Operator::BitOr:
+				return STRING_LITERAL("BitOr");
+			case Operator::BitXOr:
+				return STRING_LITERAL("BitXOr");
+			case Operator::BitFlip:
+				return STRING_LITERAL("BitFlip");
+			case Operator::BitShiftLeft:
+				return STRING_LITERAL("BitShiftLeft");
+			case Operator::BitShiftRight:
+				return STRING_LITERAL("BitShiftRight");
+
+			default:
+				return STRING_LITERAL("Undefined Operator");
+		}
+	}
+
 	Variant::~Variant() {
 		Clear();
 	}
@@ -47,7 +126,13 @@ namespace Engine {
 	Variant::Variant(const String& value) {
 		ConstructString(value);
 	}
+	Variant::Variant(const char* value) {
+		ConstructString(String(value));
+	}
 	Variant::Variant(Object* value) {
+		if (value == nullptr) {
+			return;
+		}
 		ConstructObject(ObjectData(value, value->GetInstanceId()));
 	}
 #pragma endregion
@@ -179,7 +264,7 @@ namespace Engine {
 			case Type::Null:
 				return STRING_LITERAL("Null");
 			case Type::Bool:
-				return data.vBool ? STRING_LITERAL("True") : STRING_LITERAL("FALSE");
+				return data.vBool ? STRING_LITERAL("True") : STRING_LITERAL("False");
 			case Type::Int64:
 				return ObjectUtil::ToString(data.vInt64);
 			case Type::Double:
@@ -216,84 +301,64 @@ namespace Engine {
 		}
 		return Evaluate(Operator::NotEqual, *this, obj).AsBool();
 	}
-	bool Variant::operator>(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Greater, GetType(), obj.GetType()), "Cannot evaluate Greater! No evaluator registered for this.", return false);
-		return Evaluate(Operator::Greater, *this, obj).AsBool();
-	}
-	bool Variant::operator>=(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::GreaterEqual, GetType(), obj.GetType()), "Cannot evaluate GreaterEqual! No evaluator registered for this.", return false);
-		return Evaluate(Operator::GreaterEqual, *this, obj).AsBool();
-	}
 	bool Variant::operator<(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Less, GetType(), obj.GetType()), "Cannot evaluate Less! No evaluator registered for this.", return false);
 		return Evaluate(Operator::Less, *this, obj).AsBool();
 	}
 	bool Variant::operator<=(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::LessEqual, GetType(), obj.GetType()), "Cannot evaluate LessEqual! No evaluator registered for this.", return false);
 		return Evaluate(Operator::LessEqual, *this, obj).AsBool();
 	}
+	bool Variant::operator>(const Variant& obj) const {
+		return Evaluate(Operator::Greater, *this, obj).AsBool();
+	}
+	bool Variant::operator>=(const Variant& obj) const {
+		return Evaluate(Operator::GreaterEqual, *this, obj).AsBool();
+	}
 	Variant Variant::operator+(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Add, GetType(), obj.GetType()), "Cannot evaluate Add! No evaluator registered for this.", return Variant());
 		return Evaluate(Operator::Add, *this, obj);
 	}
 	Variant Variant::operator-(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Subtract, GetType(), obj.GetType()), "Cannot evaluate Subtract! No evaluator registered for this.", return Variant());
 		return Evaluate(Operator::Subtract, *this, obj);
 	}
 	Variant Variant::operator*(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Multiply, GetType(), obj.GetType()), "Cannot evaluate Multiply! No evaluator registered for this.", return Variant());
 		return Evaluate(Operator::Multiply, *this, obj);
 	}
 	Variant Variant::operator/(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Divide, GetType(), obj.GetType()), "Cannot evaluate Divide! No evaluator registered for this.", return Variant());
 		return Evaluate(Operator::Divide, *this, obj);
 	}
 	Variant Variant::operator%(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Mod, GetType(), obj.GetType()), "Cannot evaluate Mod! No evaluator registered for this.", return Variant());
 		return Evaluate(Operator::Mod, *this, obj);
 	}
 	Variant Variant::operator+() const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Positive, GetType(), Type::Null), "Cannot evaluate Positive! No evaluator registered for this.", return Variant());
 		return Evaluate(Operator::Positive, *this, Variant());
 	}
 	Variant Variant::operator-() const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Negative, GetType(), Type::Null), "Cannot evaluate Negetive! No evaluator registered for this.", return Variant());
 		return Evaluate(Operator::Negative, *this, Variant());
 	}
 	Variant Variant::operator&&(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::And, GetType(), obj.GetType()), "Cannot evaluate And! No evaluator registered for this.", return Variant());
-		return Evaluate(Operator::And, *this, obj);
+		return Evaluate(Operator::LogicAnd, *this, obj);
 	}
 	Variant Variant::operator||(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Or, GetType(), obj.GetType()), "Cannot evaluate Or! No evaluator registered for this.", return Variant());
-		return Evaluate(Operator::Or, *this, obj);
+		return Evaluate(Operator::LogicOr, *this, obj);
 	}
 	Variant Variant::operator!() const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::Not, GetType(), Type::Null), "Cannot evaluate Not! No evaluator registered for this.", return Variant());
-		return Evaluate(Operator::Not, *this, Variant());
+		return Evaluate(Operator::LogicNot, *this, Variant());
 	}
 	Variant Variant::operator&(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::BitAnd, GetType(), obj.GetType()), "Cannot evaluate BitAnd! No evaluator registered for this.", return Variant());
 		return Evaluate(Operator::BitAnd, *this, obj);
 	}
 	Variant Variant::operator|(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::BitOr, GetType(), obj.GetType()), "Cannot evaluate BitOr! No evaluator registered for this.", return Variant());
 		return Evaluate(Operator::BitOr, *this, obj);
 	}
 	Variant Variant::operator^(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::BitXOr, GetType(), obj.GetType()), "Cannot evaluate BitXOr! No evaluator registered for this.", return Variant());
 		return Evaluate(Operator::BitXOr, *this, obj);
 	}
 	Variant Variant::operator~() const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::BitFlip, GetType(), Type::Null), "Cannot evaluate BitFlip! No evaluator registered for this.", return Variant());
 		return Evaluate(Operator::BitFlip, *this, Variant());
 	}
 	Variant Variant::operator<<(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::BitShiftLeft, GetType(), obj.GetType()), "Cannot evaluate BitShiftLeft! No evaluator registered for this.", return Variant());
 		return Evaluate(Operator::BitShiftLeft, *this, obj);
 	}
 	Variant Variant::operator>>(const Variant& obj) const {
-		ERR_ASSERT(Variant::CanEvaluate(Variant::Operator::BitShiftRight, GetType(), obj.GetType()), "Cannot evaluate BitShiftRight! No evaluator registered for this.", return Variant());
 		return Evaluate(Operator::BitShiftRight, *this, obj);
 	}
 
@@ -305,7 +370,7 @@ namespace Engine {
 		return evaluators[(sizeint)a][(sizeint)b][(sizeint)op] != nullptr;
 	}
 	Variant Variant::Evaluate(Operator op, const Variant& a, const Variant& b) {
-		ERR_ASSERT(CanEvaluate(op, a.type, b.type), "No evaluator registered for target operator and types.", return Variant());
+		ERR_ASSERT(CanEvaluate(op, a.type, b.type), String::Format("No evaluator registered for [{0}] with [{1}] and [{2}].",GetOperatorName(op),GetTypeName(a.type),GetTypeName(b.type)).GetRawArray(), return Variant());
 
 		Evaluator ev = evaluators[(sizeint)a.type][(sizeint)b.type][(sizeint)op];
 
@@ -410,10 +475,10 @@ namespace Engine {
 #pragma region Bool
 		VARIANT_EVALUATOR(Bool, Bool, Equal) { return a.AsBool() == b.AsBool(); };
 		VARIANT_EVALUATOR(Bool, Bool, NotEqual) { return a.AsBool() != b.AsBool(); };
-		VARIANT_EVALUATOR(Bool, Null, Not) { return !a.AsBool(); };
-		VARIANT_EVALUATOR(Bool, Bool, And) { return a.AsBool() && b.AsBool(); };
-		VARIANT_EVALUATOR(Bool, Bool, Or) { return a.AsBool() || b.AsBool(); };
-		VARIANT_EVALUATOR(Bool, Bool, XOr) { return a.AsBool() ^ b.AsBool(); };
+		VARIANT_EVALUATOR(Bool, Null, LogicNot) { return !a.AsBool(); };
+		VARIANT_EVALUATOR(Bool, Bool, LogicAnd) { return a.AsBool() && b.AsBool(); };
+		VARIANT_EVALUATOR(Bool, Bool, LogicOr) { return a.AsBool() || b.AsBool(); };
+		VARIANT_EVALUATOR(Bool, Bool, LogicXOr) { return a.AsBool() ^ b.AsBool(); };
 #pragma endregion
 
 #pragma region Int64

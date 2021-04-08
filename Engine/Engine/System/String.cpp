@@ -200,8 +200,8 @@ namespace Engine {
 		return data->data + refStart;
 	}
 
-	String operator+(const String& left,const String& right) {
-		return String::Format("{0}{1}", left, right);
+	String String::operator+(const String& obj) {
+		return String::Format("{0}{1}", *this, obj);
 	}
 
 	StringSearcherSunday String::searcher{};

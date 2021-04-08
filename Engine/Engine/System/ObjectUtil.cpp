@@ -3,7 +3,7 @@
 namespace Engine {
 #pragma region ToStrings
 	String ObjectUtil::ToString(bool obj) {
-		return (obj ? u8"True" : u8"False");
+		return (obj ? "True" : "False");
 	}
 	String ObjectUtil::ToString(byte obj) {
 		return std::to_string(obj);

@@ -26,6 +26,7 @@ namespace Engine {
 
 			End,		// Marks the end
 		};
+		static String GetTypeName(Type type);
 		enum class Operator :byte {
 			Equal,
 			NotEqual,
@@ -39,13 +40,13 @@ namespace Engine {
 			Multiply,
 			Divide,
 			Mod,
-			Negative,
 			Positive,
+			Negative,
 
-			And,
-			Or,
-			XOr,
-			Not,
+			LogicAnd,
+			LogicOr,
+			LogicXOr,
+			LogicNot,
 
 			BitAnd,
 			BitOr,
@@ -56,6 +57,8 @@ namespace Engine {
 
 			End,
 		};
+		static String GetOperatorName(Operator op);
+
 		void Clear();
 		Type GetType() const;
 
@@ -75,6 +78,7 @@ namespace Engine {
 		Variant(float value);
 		Variant(double value);
 		Variant(const String& value);
+		Variant(const char* value);
 		Variant(Object* value);
 #pragma endregion
 

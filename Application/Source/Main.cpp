@@ -4,13 +4,15 @@
 #include "Engine/System/Variant.h"
 
 using namespace Engine;
+using var = Variant;
+
 int main() {
-	/*
-	UniquePtr<::Engine::Engine> app(MEMNEW(::Engine::Engine));
-	INFO_MSG("Using \"NodeTree\" as AppLoop.");
-	app->SetAppLoop(UniquePtr<AppLoop>(MEMNEW(NodeTree)));
-	app->Start();
-	//*/
-	std::printf("%d",(int32)sizeof(Variant::Type));
+	var a = 4;
+	var b = 3.99;
+	var c = STRING_LITERAL(" YYDS");
+	var d = a + b + c + true + var();
+
+	printf("%s", d.ToString().GetRawArray());
+
 	return 0;
 }

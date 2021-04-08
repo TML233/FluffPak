@@ -101,6 +101,8 @@ namespace Engine {
 		}
 #pragma endregion
 
+		String operator+(const String& obj);
+
 	private:
 		bool IsEqual(const String& obj) const;
 
@@ -115,8 +117,6 @@ namespace Engine {
 		// Global sunday string searcher.
 		static StringSearcherSunday searcher;
 	};
-
-	String operator+(const String& left, const String& right);
 }
 
 namespace fmt {

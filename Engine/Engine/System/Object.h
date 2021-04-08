@@ -13,10 +13,10 @@
 
 #pragma region Common name getter.
 #define _REFLECTION_CLASS_NAME_GETTERS(name,parent)									\
-static ::Engine::String GetClassNameStatic(){										\
+static ::Engine::String GetReflectionClassNameStatic(){								\
 	return STRING_LITERAL(name);													\
 }																					\
-virtual ::Engine::String GetClassName() const{										\
+virtual ::Engine::String GetReflectionClassName() const{							\
 	return STRING_LITERAL(name);													\
 }																					\
 static ::Engine::String GetParentClassNameStatic(){									\
@@ -54,7 +54,7 @@ virtual ::Engine::String GetParentClassName() const{								\
 #pragma region Initializer common tail
 #define _REFLECTION_CLASS_INITIALIZER_TAIL(name)									\
 		::Engine::ReflectionClass* ptr=::Engine::Reflection::AddClass<name>();		\
-		FATAL_ASSERT_CRASH(ptr!=nullptr,"Failed to register class.");				\
+		FATAL_ASSERT(ptr!=nullptr,"Failed to register class.");						\
 		_InitializeCustomReflection(ptr);											\
 																					\
 		inited=true;																\
@@ -125,10 +125,10 @@ namespace Engine{
 		static ReflectionClass* AddClass() {
 			SharedPtr<ReflectionClass> data = SharedPtr<ReflectionClass>::Create();
 
-			data->name = T::GetClassNameStatic();
+			data->name = T::GetReflectionClassNameStatic();
 			data->parentName = T::GetParentClassNameStatic();
 
-			return (GetData().Add(T::GetClassNameStatic(), data) ? data.GetRaw() : nullptr);
+			return (GetData().Add(T::GetReflectionClassNameStatic(), data) ? data.GetRaw() : nullptr);
 		}
 
 	private:
