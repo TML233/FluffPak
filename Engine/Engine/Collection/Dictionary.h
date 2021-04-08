@@ -57,7 +57,10 @@ namespace Engine {
 				this->entries = (Entry*)Memory::Allocate(desired * sizeof(Entry));
 
 				// Re-index the elements in the old container into the new one and destroy the old element.
-				for (int32 i = 0; i < oldCapacity && oldBuckets[i] >= 0; i += 1) {
+				for (int32 i = 0; i < oldCapacity; i += 1) {
+					if (oldBuckets[i] < 0) {
+						continue;
+					}
 					for (int32 j = oldBuckets[i]; j >= 0; j = oldEntries[j].next) {
 						Insert(oldEntries[j].key, oldEntries[j].value, oldEntries[j].hashCode, InsertMode::Set);
 						Memory::Destruct(oldEntries + j);
@@ -108,7 +111,10 @@ namespace Engine {
 			}
 
 			// Do destruction
-			for (int32 i = 0; i < capacity && buckets[i] >= 0; i += 1) {
+			for (int32 i = 0; i < capacity; i += 1) {
+				if (buckets[i] < 0) {
+					continue;
+				}
 				for (int32 j = buckets[i]; j >= 0; j = entries[j].next) {
 					Memory::Destruct(entries + j);
 				}
