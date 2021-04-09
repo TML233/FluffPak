@@ -1,5 +1,6 @@
 #include "doctest.h"
 #include "Engine/System/Memory.h"
+#include "Engine/System/SharedPtr.h"
 
 using namespace Engine;
 
@@ -17,6 +18,13 @@ public:
 	}
 private:
 	int32* heap = nullptr;
+};
+
+class Base {
+
+};
+class Derived :public Base {
+
 };
 
 TEST_SUITE("Memory"){
@@ -52,5 +60,10 @@ TEST_SUITE("Memory"){
 		int32* ptrarr = MEMNEWARR(int32, 8);
 		CHECK(Memory::GetHeapArrayElementCount(ptrarr) == 8);
 		MEMDELARR(ptrarr);
+	}
+
+	TEST_CASE("SharedPtr") {
+		SharedPtr<Derived> d = SharedPtr<Derived>::Create();
+		SharedPtr<Base> b{ d };
 	}
 }
