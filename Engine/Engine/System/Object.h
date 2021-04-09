@@ -113,27 +113,23 @@ namespace Engine{
 	class ReflectionSignal;
 
 #pragma region Reflection
-	class Reflection final {
+	class ReflectionMethod {
 	public:
-		STATIC_CLASS(Reflection);
+		virtual ~ReflectionMethod();
 
-		static bool IsClassExists(const String& name);
+		enum class InvokeResult {
+			OK,
+			ArgumentCountNotMatching,
 
-		static const ReflectionClass* GetClass(const String& name);
-
-		template<typename T>
-		static ReflectionClass* AddClass() {
-			SharedPtr<ReflectionClass> data = SharedPtr<ReflectionClass>::Create();
-
-			data->name = T::GetReflectionClassNameStatic();
-			data->parentName = T::GetParentClassNameStatic();
-
-			return (GetData().Add(T::GetReflectionClassNameStatic(), data) ? data.GetRaw() : nullptr);
-		}
+		};
+		virtual InvokeResult Invoke(Object* target, Variant* arguments, int32 argumentCount, Variant& returnValue);
 
 	private:
-		using ClassData = Dictionary<String, SharedPtr<ReflectionClass>>;
-		static ClassData& GetData();
+		friend class ReflectionClass;
+
+		String name;
+		Variant::Type returnType;
+		int32 argumentCount;
 	};
 
 	class ReflectionClass final {
@@ -159,23 +155,27 @@ namespace Engine{
 		using MethodData = Dictionary<String, SharedPtr<ReflectionMethod>>;
 	};
 
-	class ReflectionMethod {
+	class Reflection final {
 	public:
-		virtual ~ReflectionMethod();
+		STATIC_CLASS(Reflection);
 
-		enum class InvokeResult {
-			OK,
-			ArgumentCountNotMatching,
+		static bool IsClassExists(const String& name);
 
-		};
-		virtual InvokeResult Invoke(Object* target, Variant* arguments, int32 argumentCount, Variant& returnValue);
+		static const ReflectionClass* GetClass(const String& name);
+
+		template<typename T>
+		static ReflectionClass* AddClass() {
+			SharedPtr<ReflectionClass> data = SharedPtr<ReflectionClass>::Create();
+
+			data->name = T::GetReflectionClassNameStatic();
+			data->parentName = T::GetParentClassNameStatic();
+
+			return (GetData().Add(T::GetReflectionClassNameStatic(), data) ? data.GetRaw() : nullptr);
+		}
 
 	private:
-		friend class ReflectionClass;
-
-		String name;
-		Variant::Type returnType;
-		int32 argumentCount;
+		using ClassData = Dictionary<String, SharedPtr<ReflectionClass>>;
+		static ClassData& GetData();
 	};
 #pragma endregion
 
