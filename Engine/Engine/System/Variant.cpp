@@ -175,7 +175,7 @@ namespace Engine {
 		}
 		return defaultValue;
 	}
-	String Variant::AsString() const {
+	String Variant::AsString(String defaultValue) const {
 		// !! AddTypeHint 5.3: Add a AsString entry.
 		switch (type) {
 			case Type::Null:
@@ -199,7 +199,7 @@ namespace Engine {
 				}
 				return data.vObject.ptr->ToString();
 		}
-		return String();
+		return defaultValue;
 	}
 	Vector2 Variant::AsVector2(const Vector2& defaultValue) const {
 		switch (type) {
