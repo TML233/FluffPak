@@ -135,10 +135,7 @@ namespace Engine {
 		ConstructVector2(value);
 	}
 	Variant::Variant(Object* value) {
-		if (value == nullptr) {
-			return;
-		}
-		ConstructObject(ObjectData(value, value->GetInstanceId()));
+		ConstructObject(ObjectData(value, (value != nullptr ? value->GetInstanceId() : InstanceId())));
 	}
 #pragma endregion
 
@@ -194,6 +191,12 @@ namespace Engine {
 			case Type::Vector2:
 				return data.vVector2.ToString();
 			case Type::Object:
+				if (data.vObject.ptr == nullptr) {
+					return STRING_LITERAL("[Nullptr]");
+				}
+				if(!Object::IsInstanceValid(data.vObject.id)){
+					return STRING_LITERAL("[Released Object]");
+				}
 				return data.vObject.ptr->ToString();
 		}
 		return String();
@@ -336,11 +339,12 @@ namespace Engine {
 	}
 	void Variant::ConstructObject(const ObjectData& value) {
 		type = Type::Object;
-
-		if (value.id.IsReferenced()) {
-			// Containing object is reference-counted. Do the referencing.
-			ReferencedObject* refObj = static_cast<ReferencedObject*>(value.ptr);
-			refObj->Reference();
+		if (value.ptr != nullptr) {
+			if (value.id.IsReferenced()) {
+				// Containing object is reference-counted. Do the referencing.
+				ReferencedObject* refObj = static_cast<ReferencedObject*>(value.ptr);
+				refObj->Reference();
+			}
 		}
 		Memory::Construct(&data.vObject, value);
 	}
