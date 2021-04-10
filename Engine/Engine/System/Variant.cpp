@@ -353,88 +353,88 @@ namespace Engine {
 #pragma region Evaluating
 #pragma region Operators
 	bool Variant::operator==(const Variant& obj) const {
-		if (!CanEvaluate(Operator::Equal, type, obj.type)) {
+		if (!CanEvaluateDirectly(Operator::Equal, type, obj.type)) {
 			return false;
 		}
-		return Evaluate(Operator::Equal, *this, obj).AsBool();
+		return EvaluateDirectly(Operator::Equal, *this, obj).AsBool();
 	}
 	bool Variant::operator!=(const Variant& obj) const {
-		if (!CanEvaluate(Operator::NotEqual, type, obj.type)) {
+		if (!CanEvaluateDirectly(Operator::NotEqual, type, obj.type)) {
 			return true;
 		}
-		return Evaluate(Operator::NotEqual, *this, obj).AsBool();
+		return EvaluateDirectly(Operator::NotEqual, *this, obj).AsBool();
 	}
 	bool Variant::operator<(const Variant& obj) const {
-		return Evaluate(Operator::Less, *this, obj).AsBool();
+		return EvaluateDirectly(Operator::Less, *this, obj).AsBool();
 	}
 	bool Variant::operator<=(const Variant& obj) const {
-		return Evaluate(Operator::LessEqual, *this, obj).AsBool();
+		return EvaluateDirectly(Operator::LessEqual, *this, obj).AsBool();
 	}
 	bool Variant::operator>(const Variant& obj) const {
-		return Evaluate(Operator::Greater, *this, obj).AsBool();
+		return EvaluateDirectly(Operator::Greater, *this, obj).AsBool();
 	}
 	bool Variant::operator>=(const Variant& obj) const {
-		return Evaluate(Operator::GreaterEqual, *this, obj).AsBool();
+		return EvaluateDirectly(Operator::GreaterEqual, *this, obj).AsBool();
 	}
 	Variant Variant::operator+(const Variant& obj) const {
-		return Evaluate(Operator::Add, *this, obj);
+		return EvaluateDirectly(Operator::Add, *this, obj);
 	}
 	Variant Variant::operator-(const Variant& obj) const {
-		return Evaluate(Operator::Subtract, *this, obj);
+		return EvaluateDirectly(Operator::Subtract, *this, obj);
 	}
 	Variant Variant::operator*(const Variant& obj) const {
-		return Evaluate(Operator::Multiply, *this, obj);
+		return EvaluateDirectly(Operator::Multiply, *this, obj);
 	}
 	Variant Variant::operator/(const Variant& obj) const {
-		return Evaluate(Operator::Divide, *this, obj);
+		return EvaluateDirectly(Operator::Divide, *this, obj);
 	}
 	Variant Variant::operator%(const Variant& obj) const {
-		return Evaluate(Operator::Mod, *this, obj);
+		return EvaluateDirectly(Operator::Mod, *this, obj);
 	}
 	Variant Variant::operator+() const {
-		return Evaluate(Operator::Positive, *this, Variant());
+		return EvaluateDirectly(Operator::Positive, *this, Variant());
 	}
 	Variant Variant::operator-() const {
-		return Evaluate(Operator::Negative, *this, Variant());
+		return EvaluateDirectly(Operator::Negative, *this, Variant());
 	}
 	Variant Variant::operator&&(const Variant& obj) const {
-		return Evaluate(Operator::LogicAnd, *this, obj);
+		return EvaluateDirectly(Operator::LogicAnd, *this, obj);
 	}
 	Variant Variant::operator||(const Variant& obj) const {
-		return Evaluate(Operator::LogicOr, *this, obj);
+		return EvaluateDirectly(Operator::LogicOr, *this, obj);
 	}
 	Variant Variant::operator!() const {
-		return Evaluate(Operator::LogicNot, *this, Variant());
+		return EvaluateDirectly(Operator::LogicNot, *this, Variant());
 	}
 	Variant Variant::operator&(const Variant& obj) const {
-		return Evaluate(Operator::BitAnd, *this, obj);
+		return EvaluateDirectly(Operator::BitAnd, *this, obj);
 	}
 	Variant Variant::operator|(const Variant& obj) const {
-		return Evaluate(Operator::BitOr, *this, obj);
+		return EvaluateDirectly(Operator::BitOr, *this, obj);
 	}
 	Variant Variant::operator^(const Variant& obj) const {
-		return Evaluate(Operator::BitXOr, *this, obj);
+		return EvaluateDirectly(Operator::BitXOr, *this, obj);
 	}
 	Variant Variant::operator~() const {
-		return Evaluate(Operator::BitFlip, *this, Variant());
+		return EvaluateDirectly(Operator::BitFlip, *this, Variant());
 	}
 	Variant Variant::operator<<(const Variant& obj) const {
-		return Evaluate(Operator::BitShiftLeft, *this, obj);
+		return EvaluateDirectly(Operator::BitShiftLeft, *this, obj);
 	}
 	Variant Variant::operator>>(const Variant& obj) const {
-		return Evaluate(Operator::BitShiftRight, *this, obj);
+		return EvaluateDirectly(Operator::BitShiftRight, *this, obj);
 	}
 #pragma endregion
 
-	bool Variant::CanEvaluate(Operator op, Type a, Type b) {
+	bool Variant::CanEvaluateDirectly(Operator op, Type a, Type b) {
 		ERR_ASSERT((sizeint)op >= 0 && op < Operator::End, "op out of bounds.", return false);
 		ERR_ASSERT((sizeint)a >= 0 && a < Type::End, "a out of bounds.", return false);
 		ERR_ASSERT((sizeint)b >= 0 && b < Type::End, "b out of bounds.", return false);
 
 		return evaluatorTable[(sizeint)a][(sizeint)b][(sizeint)op] != nullptr;
 	}
-	Variant Variant::Evaluate(Operator op, const Variant& a, const Variant& b) {
-		ERR_ASSERT(CanEvaluate(op, a.type, b.type), String::Format("No evaluator registered for [{0}] with [{1}] and [{2}].", GetOperatorName(op), GetTypeName(a.type), GetTypeName(b.type)).GetRawArray(), return Variant());
+	Variant Variant::EvaluateDirectly(Operator op, const Variant& a, const Variant& b) {
+		ERR_ASSERT(CanEvaluateDirectly(op, a.type, b.type), String::Format("No evaluator registered for [{0}] with [{1}] and [{2}].", GetOperatorName(op), GetTypeName(a.type), GetTypeName(b.type)).GetRawArray(), return Variant());
 
 		Evaluator ev = evaluatorTable[(sizeint)a.type][(sizeint)b.type][(sizeint)op];
 

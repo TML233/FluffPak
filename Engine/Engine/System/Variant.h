@@ -141,9 +141,14 @@ namespace Engine {
 		Variant operator>>(const Variant& obj) const;
 #pragma endregion
 
+		// Indicates that if a and b can evaluate with type formatting.
+		static bool CanEvaluateDirectly(Operator op, Type a, Type b);
+		// Indicates that if a and b can evaluate without any type formatting.
 		static bool CanEvaluate(Operator op, Type a, Type b);
+		// Evaluate operand a and b with operator. A type formatting will be done if needed.
+		static Variant EvaluateDirectly(Operator op, const Variant& a, const Variant& b);
+		// Evaluate operand a and b with operator directly, without type formatting.
 		static Variant Evaluate(Operator op, const Variant& a, const Variant& b);
-
 	private:
 		struct ObjectData {
 			ObjectData(Object* ptr, const InstanceId& id);
