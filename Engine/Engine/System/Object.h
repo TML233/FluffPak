@@ -4,10 +4,11 @@
 #include "Engine/System/String.h"
 #include "Engine/System/Atomic.h"
 #include "Engine/System/InstanceId.h"
-#include "Engine/Collection/Dictionary.h"
 #include "Engine/System/UniquePtr.h"
 #include "Engine/System/SharedPtr.h"
 #include "Engine/System/Variant.h"
+#include "Engine/Collection/Dictionary.h"
+#include "Engine/Collection/List.h"
 
 #pragma region Reflection macros
 
@@ -127,9 +128,12 @@ namespace Engine{
 	private:
 		friend class ReflectionClass;
 
-		String name;
 		Variant::Type returnType;
-		int32 argumentCount;
+		String name;
+
+		List<Variant::Type> argumentTypes;
+		List<String> argumentNames;
+		List<Variant> defaultArguments;
 	};
 
 	class ReflectionClass final {

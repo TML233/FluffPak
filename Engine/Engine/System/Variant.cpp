@@ -218,6 +218,35 @@ namespace Engine {
 		return AsString();
 	}
 
+	bool Variant::CanConvertImplicitly(Type from, Type to) {
+		if (from == to) {
+			return true;
+		}
+
+		return implicitConversionTable[(sizeint)from, (sizeint)to];
+	}
+
+	bool Variant::implicitConversionTable[(sizeint)Type::End][(sizeint)Type::End] = {};
+
+#define VARIANT_CONVERTIBLE(from,to) implicitConversionTable[(sizeint)Type::from][(sizeint)Type::to]=true
+	void Variant::Initializer::InitImplicitConversionTable() {
+		// !! AddTypeHint 8.0: Add necessary implicit conversion.
+		VARIANT_CONVERTIBLE(Bool, Int64);
+		VARIANT_CONVERTIBLE(Bool, Double);
+		
+		VARIANT_CONVERTIBLE(Int64, Double);
+		
+		VARIANT_CONVERTIBLE(Null, Object);
+
+		VARIANT_CONVERTIBLE(Null, String);
+		VARIANT_CONVERTIBLE(Bool, String);
+		VARIANT_CONVERTIBLE(Int64, String);
+		VARIANT_CONVERTIBLE(Double, String);
+		VARIANT_CONVERTIBLE(Vector2, String);
+		VARIANT_CONVERTIBLE(Object, String);
+	}
+#undef VARIANT_CONVERTIBLE
+
 	void Variant::Clear() {
 		// !! AddTypeHint 7.0: Add a entry to destruct the value.
 		switch (type) {
@@ -402,22 +431,21 @@ namespace Engine {
 		ERR_ASSERT((sizeint)a >= 0 && a < Type::End, "a out of bounds.", return false);
 		ERR_ASSERT((sizeint)b >= 0 && b < Type::End, "b out of bounds.", return false);
 
-		return evaluators[(sizeint)a][(sizeint)b][(sizeint)op] != nullptr;
+		return evaluatorTable[(sizeint)a][(sizeint)b][(sizeint)op] != nullptr;
 	}
 	Variant Variant::Evaluate(Operator op, const Variant& a, const Variant& b) {
 		ERR_ASSERT(CanEvaluate(op, a.type, b.type), String::Format("No evaluator registered for [{0}] with [{1}] and [{2}].", GetOperatorName(op), GetTypeName(a.type), GetTypeName(b.type)).GetRawArray(), return Variant());
 
-		Evaluator ev = evaluators[(sizeint)a.type][(sizeint)b.type][(sizeint)op];
+		Evaluator ev = evaluatorTable[(sizeint)a.type][(sizeint)b.type][(sizeint)op];
 
 		return ev(a, b);
 	}
 
-	Variant::Evaluator Variant::evaluators[(sizeint)Type::End][(sizeint)Type::End][(sizeint)Operator::End]{};
+	Variant::Evaluator Variant::evaluatorTable[(sizeint)Type::End][(sizeint)Type::End][(sizeint)Operator::End]{};
 
-#define VARIANT_EVALUATOR(typeA,typeB,op) evaluators[(sizeint)(Type::typeA)][(sizeint)(Type::typeB)][(sizeint)(Operator::op)] = [](const Variant& a, const Variant& b) -> Variant
-
-	Variant::EvaluatorInitializer::EvaluatorInitializer() {
-		// !! AddTypeHint 8.0: Add necessary evaluator.
+#define VARIANT_EVALUATOR(typeA,typeB,op) evaluatorTable[(sizeint)(Type::typeA)][(sizeint)(Type::typeB)][(sizeint)(Operator::op)] = [](const Variant& a, const Variant& b) -> Variant
+	void Variant::Initializer::InitEvaluatorTable() {
+		// !! AddTypeHint 9.0: Add necessary evaluator.
 
 #pragma region Null
 		VARIANT_EVALUATOR(Null, Null, Equal) { return true; };
@@ -501,7 +529,7 @@ namespace Engine {
 #pragma region Vector2
 		VARIANT_EVALUATOR(Vector2, Vector2, Equal) { return a.AsVector2() == b.AsVector2(); };
 		VARIANT_EVALUATOR(Vector2, Vector2, NotEqual) { return a.AsVector2() != b.AsVector2(); };
-		
+
 		VARIANT_EVALUATOR(Vector2, Vector2, Add) { return a.AsVector2() + b.AsVector2(); };
 		VARIANT_EVALUATOR(Vector2, Vector2, Subtract) { return a.AsVector2() - b.AsVector2(); };
 		VARIANT_EVALUATOR(Vector2, Null, Positive) { return +a.AsVector2(); };
@@ -518,5 +546,12 @@ namespace Engine {
 #pragma endregion
 
 	}
+#undef VARIANT_EVALUATOR
+
 #pragma endregion
+
+	Variant::Initializer::Initializer() {
+		InitImplicitConversionTable();
+		InitEvaluatorTable();
+	}
 }

@@ -107,6 +107,8 @@ namespace Engine {
 		Object* AsObject(Object* defaultValue = nullptr) const;
 #pragma endregion
 
+		static bool CanConvertImplicitly(Type from, Type to);
+
 		String ToString() const;
 
 		Variant& operator=(const Variant& obj);
@@ -178,17 +180,20 @@ namespace Engine {
 		DataUnion data;
 		Type type = Type::Null;
 
-#pragma region Evaluation internal
+
 		typedef Variant(*Evaluator)(const Variant& a, const Variant& b);
+		// [typeA][typeB][op]
+		static Evaluator evaluatorTable[(sizeint)Type::End][(sizeint)Type::End][(sizeint)Operator::End];
 
-		// Evaluator table [typeA][typeB][op]
-		static Evaluator evaluators[(sizeint)Type::End][(sizeint)Type::End][(sizeint)Operator::End];
-
-		class EvaluatorInitializer final{
+		static bool implicitConversionTable[(sizeint)Type::End][(sizeint)Type::End];
+		
+		class Initializer final {
 		public:
-			EvaluatorInitializer();
+			Initializer();
+			static void InitEvaluatorTable();
+			static void InitImplicitConversionTable();
 		};
-		inline static EvaluatorInitializer _evaluatorInitializer{};
-#pragma endregion
+		inline static Initializer _initializer{};
+
 	};
 }
