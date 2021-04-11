@@ -179,7 +179,7 @@ namespace Engine {
 		// !! AddTypeHint 5.3: Add a AsString entry.
 		switch (type) {
 			case Type::Null:
-				return STRING_LITERAL("Null");
+				return STRING_LITERAL("[Null]");
 			case Type::Bool:
 				return data.vBool ? STRING_LITERAL("True") : STRING_LITERAL("False");
 			case Type::Int64:
@@ -226,27 +226,20 @@ namespace Engine {
 			return true;
 		}
 
-		return implicitConversionTable[(sizeint)from, (sizeint)to];
+		return (implicitConverterTable[(sizeint)from, (sizeint)to] != nullptr);
 	}
 
-	bool Variant::implicitConversionTable[(sizeint)Type::End][(sizeint)Type::End] = {};
+	Variant::Convertor Variant::implicitConverterTable[(sizeint)Type::End][(sizeint)Type::End] = {};
 
-#define VARIANT_CONVERTIBLE(from,to) implicitConversionTable[(sizeint)Type::from][(sizeint)Type::to]=true
+#define VARIANT_CONVERTIBLE(from,to) implicitConverterTable[(sizeint)Type::from][(sizeint)Type::to]=[](const Variant& value)->Variant
 	void Variant::Initializer::InitImplicitConversionTable() {
 		// !! AddTypeHint 8.0: Add necessary implicit conversion.
-		VARIANT_CONVERTIBLE(Bool, Int64);
-		VARIANT_CONVERTIBLE(Bool, Double);
+		VARIANT_CONVERTIBLE(Bool, Int64) { return value.AsInt64(); };
+		VARIANT_CONVERTIBLE(Bool, Double) { return value.AsDouble(); };
 		
-		VARIANT_CONVERTIBLE(Int64, Double);
+		VARIANT_CONVERTIBLE(Int64, Double) { return value.AsDouble(); };
 		
-		VARIANT_CONVERTIBLE(Null, Object);
-
-		VARIANT_CONVERTIBLE(Null, String);
-		VARIANT_CONVERTIBLE(Bool, String);
-		VARIANT_CONVERTIBLE(Int64, String);
-		VARIANT_CONVERTIBLE(Double, String);
-		VARIANT_CONVERTIBLE(Vector2, String);
-		VARIANT_CONVERTIBLE(Object, String);
+		VARIANT_CONVERTIBLE(Null, Object) { return Variant((Object*)nullptr); };
 	}
 #undef VARIANT_CONVERTIBLE
 

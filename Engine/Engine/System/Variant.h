@@ -190,7 +190,8 @@ namespace Engine {
 		// [typeA][typeB][op]
 		static Evaluator evaluatorTable[(sizeint)Type::End][(sizeint)Type::End][(sizeint)Operator::End];
 
-		static bool implicitConversionTable[(sizeint)Type::End][(sizeint)Type::End];
+		typedef Variant(*Convertor)(const Variant& value);
+		static Convertor implicitConverterTable[(sizeint)Type::End][(sizeint)Type::End];
 		
 		class Initializer final {
 		public:
