@@ -41,7 +41,6 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodePath.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node2D.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Rect2D.h"
 )
 set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object.cpp"
@@ -68,7 +67,6 @@ set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodePath.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node2D.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Rect2D.cpp"
 )
 
 # Add platform-depended source files.
