@@ -12,6 +12,7 @@ Currently not accepting any pull requests.
 * Make system: [CMake](https://cmake.org)
 * Unit testing: [DocTest](https://github.com/onqtam/doctest)
 * String formating: [fmt](https://github.com/fmtlib/fmt)
+* Math: [glm](https://github.com/g-truc/glm)
 * Compressing data: [zlib](https://github.com/madler/zlib)
 * PNG image procressing: [libpng](https://github.com/glennrp/libpng)
 * C# scripting embedding: [mono](mono-project.com)
@@ -19,7 +20,9 @@ Currently not accepting any pull requests.
 ## Referenced materials
 * [.NET Source](https://source.dot.net)
 * [Godot Engine](https://godotengine.org/)
+* [Game Programming Patterns](https://gameprogrammingpatterns.com/)([zh-cn](https://gpp.tkchu.me/))
+* [Learn OpenGL](https://learnopengl.com/)([zh-cn](https://learnopengl-cn.github.io/))
 * [The Cherno Game Engine Series](https://www.youtube.com/playlist?list=PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT)
-* [Don't Store That in a Float (Use double for total elapsed time)](https://randomascii.wordpress.com/2012/02/13/dont-store-that-in-a-float/)
+* [Don't Store That in a Float](https://randomascii.wordpress.com/2012/02/13/dont-store-that-in-a-float/)
 * [Discussion about Update and FixedUpdate](https://news.ycombinator.com/item?id=23649406)
 * [Frame Pacing Analysis of the Game Loop](https://nkga.github.io/post/frame-pacing-analysis-of-the-game-loop/)
