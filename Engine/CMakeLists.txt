@@ -26,6 +26,7 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Vector2.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Rect2.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Transform2.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Algorithm/StringSearcherSunday.h"
 
@@ -55,6 +56,7 @@ set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Vector2.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Rect2.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Transform2.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Algorithm/StringSearcherSunday.cpp"
 	

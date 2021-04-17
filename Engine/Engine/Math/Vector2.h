@@ -17,7 +17,13 @@ namespace Engine {
 		void Normalize();
 
 		Vector2 operator+(const Vector2& value) const;
+		Vector2& operator+=(const Vector2& value);
 		Vector2 operator-(const Vector2& value) const;
+		Vector2& operator-=(const Vector2& value);
+		Vector2 operator*(float value) const;
+		Vector2& operator*=(float value);
+		Vector2 operator/(float value) const;
+		Vector2& operator/=(float value);
 		bool operator==(const Vector2& value) const;
 		bool operator!=(const Vector2& value) const;
 		Vector2 operator+() const;
@@ -37,8 +43,4 @@ namespace Engine {
 		static float Dot(const Vector2& a, const Vector2& b);
 		static float Cross(const Vector2& a, const Vector2& b);
 	};
-	Vector2 operator*(const Vector2& a, float b);
-	Vector2 operator*(float a, const Vector2& b);
-	Vector2 operator/(const Vector2& a, float b);
-	Vector2 operator/(float a, const Vector2& b);
 }

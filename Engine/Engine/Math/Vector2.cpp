@@ -25,20 +25,34 @@ namespace Engine {
 	Vector2 Vector2::operator+(const Vector2& value) const {
 		return Vector2(x + value.x, y + value.y);
 	}
+	Vector2& Vector2::operator+=(const Vector2& value) {
+		x += value.x;
+		y += value.y;
+		return *this;
+	}
 	Vector2 Vector2::operator-(const Vector2& value) const {
 		return Vector2(x - value.x, y - value.y);
 	}
-	Vector2 operator*(const Vector2& a, float b) {
-		return Vector2(a.x * b, a.y * b);
+	Vector2& Vector2::operator-=(const Vector2& value) {
+		x -= value.x;
+		y -= value.y;
+		return *this;
 	}
-	Vector2 operator*(float a, const Vector2& b) {
-		return operator*(b, a);
+	Vector2 Vector2::operator*(float value) const {
+		return Vector2(x * value, y * value);
 	}
-	Vector2 operator/(const Vector2& a, float b) {
-		return Vector2(a.x / b, a.y / b);
+	Vector2& Vector2::operator*=(float value) {
+		x *= value;
+		y *= value;
+		return *this;
 	}
-	Vector2 operator/(float a, const Vector2& b) {
-		return operator/(b, a);
+	Vector2 Vector2::operator/(float value) const {
+		return Vector2(x / value, y / value);
+	}
+	Vector2& Vector2::operator/=(float value) {
+		x /= value;
+		y /= value;
+		return *this;
 	}
 	bool Vector2::operator==(const Vector2& value) const {
 		return (x == value.x && y == value.y);
