@@ -2,21 +2,35 @@
 
 #include "Engine/Application/Node/Node.h"
 #include "Engine/Math/Vector2.h"
+#include "Engine/Math/Transform2.h"
 
 namespace Engine {
 	class Node2D :public Node {
 	public:
-		float GetRotation() const;
-
 		Vector2 GetPosition() const;
-		void SetPosition(Vector2 position);
+		void SetPosition(const Vector2& position);
 		
-		void SetScale(Vector2 scale);
+		Vector2 GetScale() const;
+		void SetScale(const Vector2& scale);
+
+		float GetRotation() const;
 		void SetRotation(float rotation);
+
+		Vector2 GetGlobalPosition() const;
+		Vector2 GetGlobalScale() const;
+		float GetGlobalRotation() const;
 		
+		void UpdateLocalTransform() const;
+		void UpdateGlobalTransform() const;
+
 	private:
 		Vector2 position = Vector2(0, 0);
 		Vector2 scale = Vector2(1, 1);
 		float rotation = 0;
+
+		mutable Transform2 localTransform;
+		mutable Transform2 globalTransform;
+		mutable bool localTransformDirty = true;
+		mutable bool globalTransformDirty = true;
 	};
 }

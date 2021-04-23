@@ -1,29 +1,24 @@
 #include "Engine/Math/Transform2.h"
 
 namespace Engine {
-	Transform2::Transform2(Vector2 o, Vector2 x, Vector2 y) :o(o), x(x), y(y) {}
+	Transform2::Transform2(const Vector2& o, const Vector2& x, const Vector2& y) :o(o), x(x), y(y) {}
 
-	Transform2 Transform2::operator*(float scale) const {
-		return Transform2(o, x * scale, y * scale);
-	}
-	Transform2& Transform2::operator*=(float scale) {
-		x *= scale;
-		y *= scale;
-		return *this;
-	}
-	Transform2 Transform2::operator+(const Vector2& translate) const {
-		return Transform2(o + translate, x, y);
-	}
-	Transform2& Transform2::operator+=(const Vector2& translate) {
+	void Transform2::Translate(const Vector2& translate) {
 		o += translate;
-		return *this;
 	}
-	Transform2 Transform2::operator+(const Vector2& translate) const {
-		return Transform2(o - translate, x, y);
+	Transform2 Transform2::GetTranslated(const Vector2& translate) const {
+		Transform2 r = *this;
+		r.Translate(translate);
+		return r;
 	}
-	Transform2& Transform2::operator-=(const Vector2& translate) {
-		o -= translate;
-		return *this;
+	void Transform2::Scale(const Vector2& scale) {
+		x *= scale.x;
+		y *= scale.y;
+	}
+	Transform2 Transform2::GetScaled(const Vector2& scale) const {
+		Transform2 r = *this;
+		r.Scale(scale);
+		return r;
 	}
 	void Transform2::Rotate(float radian) {
 		x.x *= Math::Cos(radian);
@@ -32,19 +27,9 @@ namespace Engine {
 		y.y *= Math::Cos(radian);
 	}
 	Transform2 Transform2::GetRotated(float radian) const {
-		return Transform2(
-			o,
-			Vector2(x.x * Math::Cos(radian), x.y * Math::Sin(radian)),
-			Vector2(y.x * -Math::Sin(radian), y.y * Math::Cos(radian))
-		);
-	}
-
-	Transform2 Transform2::operator*(const Transform2& child) const {
-		return Transform2(
-			x * child.o.x + y * child.o.y + o,
-			x * child.x.x + y * child.x.y,
-			x * child.y.x + y * child.y.y
-		);
+		Transform2 r = *this;
+		r.Rotate(radian);
+		return r;
 	}
 
 	Transform2& Transform2::operator*=(const Transform2& child) {
@@ -52,5 +37,30 @@ namespace Engine {
 		x = x * child.x.x + y * child.x.y;
 		y = x * child.y.x + y * child.y.y;
 		return *this;
+	}
+	Transform2 Transform2::operator*(const Transform2& child) const {
+		Transform2 r = *this;
+		r *= child;
+		return r;
+	}
+
+	float Transform2::GetBasisDeterminant() const {
+		return x.x * y.y - y.x * x.y;
+	}
+	Vector2 Transform2::TransformBasis(const Vector2& vec) const {
+		return Vector2(
+			x.x * vec.x + y.x * vec.y,
+			x.y * vec.x + y.y * vec.y
+		);
+	}
+	Vector2 Transform2::InverseTransformBasis(const Vector2& vec) const {
+		return Vector2(x.Dot(vec), y.Dot(vec));
+	}
+	Vector2 Transform2::Transform(const Vector2& vec) const {
+		return TransformBasis(vec) + o;
+	}
+	Vector2 Transform2::InverseTransform(const Vector2& vec) const {
+		Vector2 v = vec - o;
+		return Vector2(x.Dot(v), y.Dot(v));
 	}
 }

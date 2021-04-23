@@ -5,22 +5,39 @@
 
 namespace Engine {
 	struct Transform2 final {
-		Transform2(Vector2 o = Vector2(0,0),Vector2 x = Vector2(1,0), Vector2 y = Vector2(0,1)) {}
+		Transform2(const Vector2& o = Vector2(0, 0), const Vector2& x = Vector2(1, 0), const Vector2& y = Vector2(0, 1));
 
 		Vector2 o;
 		Vector2 x;
 		Vector2 y;
 
-		Transform2 operator*(float scale) const;
-		Transform2& operator*=(float scale);
-		Transform2 operator+(const Vector2& translate) const;
-		Transform2& operator+=(const Vector2& translate);
-		Transform2 operator+(const Vector2& translate) const;
-		Transform2& operator-=(const Vector2& translate);
+#pragma region Affine
+		// Translate the origin.
+		void Translate(const Vector2& translate);
+		// Returns a new Transform2 with translated origin.
+		Transform2 GetTranslated(const Vector2& translate) const;
+		// Scale the basis.
+		void Scale(const Vector2& scale);
+		// Returns a new Transform2 with scaled basis.
+		Transform2 GetScaled(const Vector2& scale) const;
+		// Rotate the basis.
 		void Rotate(float radian);
+		// Returns a new Transform2 with rotated basis.
 		Transform2 GetRotated(float radian) const;
+#pragma endregion
 
+		// Combine two Transform2
 		Transform2 operator*(const Transform2& child) const;
+		// Combine two Transform2
 		Transform2& operator*=(const Transform2& child);
+
+		float GetBasisDeterminant() const;
+		Vector2 TransformBasis(const Vector2& vec) const;
+		Vector2 InverseTransformBasis(const Vector2& vec) const;
+		Vector2 Transform(const Vector2& vec) const;
+		Vector2 InverseTransform(const Vector2& vec) const;
+
+		void Invert();
+		Transform2 GetInverted() const;
 	};
 }

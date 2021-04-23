@@ -28,6 +28,8 @@ namespace Engine {
 		bool operator!=(const Vector2& value) const;
 		Vector2 operator+() const;
 		Vector2 operator-() const;
+		float Dot(const Vector2& vec) const;
+		float Cross(const Vector2& vec) const;
 
 		String ToString() const;
 		int32 GetHashCode() const;
@@ -40,7 +42,10 @@ namespace Engine {
 		static const Vector2 zero;
 
 		static Vector2 Lerp(const Vector2& a, const Vector2& b, float time);
-		static float Dot(const Vector2& a, const Vector2& b);
-		static float Cross(const Vector2& a, const Vector2& b);
+
+		friend Vector2 operator*(float a, const Vector2& b);
+		friend Vector2 operator/(float a, const Vector2& b);
 	};
+	Vector2 operator*(float a, const Vector2& b);
+	Vector2 operator/(float a, const Vector2& b);
 }

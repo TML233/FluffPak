@@ -41,6 +41,9 @@ namespace Engine {
 	Vector2 Vector2::operator*(float value) const {
 		return Vector2(x * value, y * value);
 	}
+	Vector2 operator*(float a, const Vector2& b) {
+		return Vector2(a * b.x, a * b.y);
+	}
 	Vector2& Vector2::operator*=(float value) {
 		x *= value;
 		y *= value;
@@ -48,6 +51,9 @@ namespace Engine {
 	}
 	Vector2 Vector2::operator/(float value) const {
 		return Vector2(x / value, y / value);
+	}
+	Vector2 operator/(float a, const Vector2& b) {
+		return Vector2(a / b.x, a / b.y);
 	}
 	Vector2& Vector2::operator/=(float value) {
 		x /= value;
@@ -66,6 +72,12 @@ namespace Engine {
 	Vector2 Vector2::operator-() const {
 		return *this * -1;
 	}
+	float Vector2::Dot(const Vector2& vec) const {
+		return (x * x + vec.y * vec.y);
+	}
+	float Vector2::Cross(const Vector2& vec) const {
+		return (x * vec.y - y * vec.x);
+	}
 
 	String Vector2::ToString() const {
 		return String::Format("({0}, {1})", x, y);
@@ -83,11 +95,5 @@ namespace Engine {
 
 	Vector2 Vector2::Lerp(const Vector2& a, const Vector2& b, float time) {
 		return Vector2(Math::Lerp(a.x, b.x, time), Math::Lerp(a.y, b.y, time));
-	}
-	float Vector2::Dot(const Vector2& a, const Vector2& b) {
-		return (a.x * b.x + a.y * b.y);
-	}
-	float Vector2::Cross(const Vector2& a, const Vector2& b) {
-		return (a.x * b.y - a.y * b.x);
 	}
 }
