@@ -6,6 +6,7 @@
 #include "Engine/Collection/Iterator.h"
 #include "Engine/System/Atomic.h"
 #include "Engine/System/ReferencePtr.h"
+#include "Engine/Collection/List.h"
 #include <string_view>
 
 // Defines a String literal.
@@ -77,6 +78,7 @@ namespace Engine {
 		bool StartsWith(const String& pattern) const;
 		bool EndsWith(const String& pattern) const;
 		String Substring(int32 startIndex, int32 count) const;
+		String Replace(const String& from, const String& to) const;
 
 		String ToString() const;
 		int32 GetHashCode() const;
@@ -116,6 +118,8 @@ namespace Engine {
 
 		// Global sunday string searcher.
 		static StringSearcherSunday searcher;
+
+		static List<int> replacerIndexes;
 	};
 }
 

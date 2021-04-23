@@ -2,6 +2,9 @@
 #include "Engine/System/Debug.h"
 
 namespace Engine {
+	Node* Node::GetParent() const {
+		return parent;
+	}
 	int32 Node::GetChildrenCount() const {
 		return children.GetCount();
 	}
@@ -12,17 +15,18 @@ namespace Engine {
 	String Node::GetName() const {
 		return name;
 	}
-	void Node::SetNameUnchecked(String name) {
+	void Node::SetNameUnchecked(const String& name) {
 		this->name = name;
 	}
+	void Node::SetName(const String& name) {
+		SetNameUnchecked(ValidateNameInParent(ValidateNameBasically(name), parent));
+	}
 
-	List<String> Node::invalidChars = { ".","/",":" };
-	bool Node::IsNameValid(String name) {
-		for (String c : invalidChars) {
-			if (name.Contains(c)) {
-				return false;
-			}
+	List<String> Node::invalidChars = { ".","/",":","\r","\n" };
+	String Node::ValidateNameBasically(const String& name) {
+		String result = name;
+		for (const String& c : invalidChars) {
+			
 		}
-		return true;
 	}
 }

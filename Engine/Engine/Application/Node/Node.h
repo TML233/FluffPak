@@ -16,16 +16,18 @@ namespace Engine {
 		Node* GetChild(int32 index) const;
 
 		String GetName() const;
-		void SetNameUnchecked(String name);
-		void SetName(String name);
-		Node* GetNode(NodePath path) const;
-		Node* GetNodeOrNull(NodePath path) const;
+		void SetNameUnchecked(const String& name);
+		void SetName(const String& name);
+		Node* GetNode(const NodePath& path) const;
+		Node* GetNodeOrNull(const NodePath& path) const;
 		
 		NodeTree* GetTree() const;
 		bool IsInTree() const;
 
-		static bool IsNameValid(String name);
-		static String ValidateName(String name);
+		// Validate a node name, removing invalid chars in it.
+		static String ValidateNameBasically(const String& name);
+		// Recieves a name, makes it validated for inserting the given parent.
+		static String ValidateNameInParent(const String& validatedName, Node* parent);
 	private:
 		String name;
 		List<Node*> children{};

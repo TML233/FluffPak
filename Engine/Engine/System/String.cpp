@@ -125,7 +125,7 @@ namespace Engine {
 		if (count == -1) {
 			count = GetCount() - startFrom;
 		}
-		return searcher.Search(GetStartPtr()+startFrom, count, pattern.GetStartPtr(), pattern.GetCount());
+		return startFrom+searcher.Search(GetStartPtr()+startFrom, count, pattern.GetStartPtr(), pattern.GetCount());
 	}
 
 	bool String::Contains(const String& pattern) const {
@@ -140,6 +140,53 @@ namespace Engine {
 		substr.refStart = startIndex;
 		substr.refCount = count;
 		return substr;
+	}
+
+	List<int> String::replacerIndexes{ 32 };
+
+	String String::Replace(const String& from, const String& to) const {
+		replacerIndexes.Clear();
+
+		// Search for appearence times.
+		{
+			int start = 0;
+			while (start < GetCount()) {
+				int index = IndexOf(from, start);
+				if (index >= 0) {
+					replacerIndexes.Add(index);
+					start = index + from.GetCount();
+				} else {
+					break;
+				}
+			}
+		}
+
+		int times = replacerIndexes.GetCount();
+		if (times <= 0) {
+			return *this;
+		}
+
+		sizeint rawlen = GetCount() + (-from.GetCount() + to.GetCount()) * times + 1;
+		char* raw = MEMNEWARR(char, rawlen);
+
+		// Fill the string.
+		sizeint rawi = 0;
+		for (int i = 0; i < times; i += 1) {
+			sizeint start = (i == 0 ? 0 : replacerIndexes.Get(i - 1)+from.GetCount());
+			sizeint end = replacerIndexes.Get(i);
+			sizeint len = end - start;
+			std::memcpy(raw + rawi, GetStartPtr() + start, len);
+			rawi += len;
+
+			std::memcpy(raw + rawi, to.GetStartPtr(), to.GetCount());
+			rawi + to.GetCount();
+		}
+		sizeint end = replacerIndexes.Get(times-1);
+		std::memcpy(raw + rawi, GetStartPtr() + end, GetCount() - end);
+		std::memset(raw + rawlen - 1, '\0', 1);
+
+		//TODO
+		//return String(ReferencePtr<StringData>::Create(raw, rawlen));
 	}
 
 	bool String::StartsWith(const String& pattern) const {
