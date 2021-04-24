@@ -6,27 +6,29 @@
 #include "Engine/Application/Time.h"
 
 namespace Engine {
+	/// @brief The engine application manager. Contains every information necessary for a application to run.
 	class Engine final{
 	public:
+		/// @brief Get the currently active Engine instance. 
 		static Engine* GetInstance();
 
 		Engine();
 		~Engine();
-		// Start the engine, this will block the program until the engine stops.
+		/// @brief Start the engine, this will block the program until the engine stops.
 		void Start();
 
-		// Assgin an AppLoop. An AppLoop UniquePtr will be moved in to the engine.
+		/// @brief Assgin an AppLoop. An AppLoop UniquePtr will be moved into the engine.
 		void SetAppLoop(UniquePtr<AppLoop>&& appLoop);
-		// Get the current AppLoop.
+		/// @brief Get the current AppLoop.
 		AppLoop* GetAppLoop() const;
 
-		// Get the time controller.
+		/// @brief Get the time controller.
 		Time& GetTime() const;
 
-		// Controls the update frequency. -1 means no limit.
-		// Note: Physics update frequency is controlled by Time::PhysicsDelta.
+		/// @brief Controls the update frequency. -1 means no limit.
+		/// @note Physics update frequency is controlled by Time::PhysicsDelta.
 		void SetTargetFps(int fps);
-		// Get the FPS limit.
+		/// @brief Get the FPS limit.
 		float GetTargetFps() const;
 
 

@@ -6,11 +6,11 @@
 namespace Engine{
 	class NodeTree final:public AppLoop {
 	public:
-		void Start() override;
-		void Update(const Time& time) override;
-		void PhysicsUpdate(const Time& time) override;
+		void OnStart() override;
+		void OnUpdate(const Time& time) override;
+		void OnPhysicsUpdate(const Time& time) override;
 
-		void Stop() override;
+		void OnStop() override;
 		bool IsRunning() const override;
 	private:
 		bool running = true;

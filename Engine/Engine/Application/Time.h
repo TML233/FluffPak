@@ -4,6 +4,7 @@
 
 namespace Engine {
 	class Time final {
+	public:
 		// Normal updates
 
 		void SetScale(float scale);
@@ -26,10 +27,14 @@ namespace Engine {
 		// Summed up
 
 		int32 GetTotalFrames() const;
+
+		/// @brief Get total seconds elapsed from the beginning.
+		/// @note Use double for total time to avoid catastrophic cancellation.
+		/// @see https://randomascii.wordpress.com/2012/02/13/dont-store-that-in-a-float/
 		double GetTotal() const;
 		double GetUnscaledTotal() const;
 
-	public:
+	private:
 		float scale = 1;
 		float unscaledDelta = 0;
 
@@ -38,8 +43,6 @@ namespace Engine {
 		
 		int32 totalFrames = 0;
 
-		// Use double for total time to avoid catastrophic cancellation.
-		// Referenced material: https://randomascii.wordpress.com/2012/02/13/dont-store-that-in-a-float/
 		double total = 0;
 		double unscaledTotal = 0;
 

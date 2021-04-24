@@ -1,17 +1,17 @@
 #include "Engine/Application/Node/NodeTree.h"
 
 namespace Engine {
-	void NodeTree::Start() {
+	void NodeTree::OnStart() {
 
 	}
 
-	void NodeTree::Update(const Time& time) {
+	void NodeTree::OnUpdate(const Time& time) {
 
 	}
-	void NodeTree::PhysicsUpdate(const Time& time) {
+	void NodeTree::OnPhysicsUpdate(const Time& time) {
 
 	}
-	void NodeTree::Stop() {
+	void NodeTree::OnStop() {
 
 	}
 	bool NodeTree::IsRunning() const {

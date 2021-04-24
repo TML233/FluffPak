@@ -11,11 +11,11 @@ namespace Engine {
 		float y;
 
 		/// @brief Get the length / magnitude of the Vector2.
-		/// If you need the length information for comparing distance, GetLengthSquared() is usually preferred because it is faster.
+		/// @note If you need the length information for comparing distance, GetLengthSquared() is usually preferred because it is faster.
 		float GetLength() const;
 
 		/// @brief Get the squared length / magnitude of the Vector2.
-		/// This is faster than GetLength() because it doesn't need to be rooted.
+		/// @note This is faster than GetLength() because it doesn't need to be rooted.\n
 		/// If you need the length information for comparing distance, this method is usually preferred.
 		float GetLengthSquared() const;
 
@@ -49,9 +49,11 @@ namespace Engine {
 		static const Vector2 Zero;
 
 		/// @brief Calculate the dot product.
-		/// Dot production formular: ( A dot B = |A| * |B| * cos(angle) ).
-		/// When A and B are all normalized vector, the formular can be simplified as ( A dot B = cos(angle) ), as the length of A and B are both simply 1.
+		/// 
+		/// @note Dot production formular: ( A dot B = |A| * |B| * cos(angle) ).\n
+		/// When A and B are all normalized vector, the formular can be simplified as ( A dot B = cos(angle) ), as the length of A and B are both simply 1.\n
 		/// With a simple ArcCos operation, the angle between vector A and B can be calculated.
+		/// 
 		/// @see https://docs.godotengine.org/en/stable/tutorials/math/vector_math.html#dot-product
 		/// @see https://kidscancode.org/godot_recipes/math/dot_cross_product/
 		static float Dot(const Vector2& a, const Vector2& b);

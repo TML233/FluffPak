@@ -3,21 +3,23 @@
 #include "Engine/Application/Time.h"
 
 namespace Engine {
+	/// @brief Controls how the application runs its logic.
 	class AppLoop:public ManualObject {
 	public:
 		virtual ~AppLoop();
 
-		// Called right before the first frame update.
-		virtual void Start() = 0;
+		/// @brief Called right before the first frame update.
+		virtual void OnStart() = 0;
 
-		// Called every frame update.
-		virtual void Update(const Time& time) = 0;
-		// Called every physics update.
-		virtual void PhysicsUpdate(const Time& time) = 0;
+		/// @brief Called every frame update.
+		virtual void OnUpdate(const Time& time) = 0;
+		/// @brief Called every physics update.
+		virtual void OnPhysicsUpdate(const Time& time) = 0;
 		
 		//virtual void Input(const InputEvent& event)=0;
 
-		virtual void Stop() = 0;
+		/// @brief Called right after the loop stopped.
+		virtual void OnStop() = 0;
 		
 		virtual bool IsRunning() const = 0;
 	};
