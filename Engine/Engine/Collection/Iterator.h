@@ -8,20 +8,20 @@ namespace Engine {
 	public:
 		ReadonlyIterator(const T* ptr) :target(ptr) {}
 
-		// Getter
+		/// @brief Getter
 		operator const T() const {
 			return *target;
 		}
 
-		// Iterator getter/dereference
+		/// @brief Iterator getter/dereference
 		const T& operator*() const {
 			return *target;
 		}
-		// Iterator !=
+		/// @brief Iterator !=
 		bool operator!=(const ReadonlyIterator<T>& obj) const {
 			return target != obj.target;
 		}
-		// Iterator next
+		/// @brief Iterator next
 		ReadonlyIterator<T>& operator++() {
 			target += 1;
 			return *this;

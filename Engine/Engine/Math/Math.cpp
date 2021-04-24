@@ -19,11 +19,30 @@ namespace Engine {
 		return (b - a) * time + a;
 	}
 
-	float Math::Sin(float time) {
-		return sinf(time);
+	float Math::Tan(float value) {
+		return tanf(value);
 	}
-	float Math::Cos(float time) {
-		return cosf(time);
+	float Math::Cot(float value) {
+		return 1 / tanf(value);
+	}
+	float Math::Sin(float value) {
+		return sinf(value);
+	}
+	float Math::Cos(float value) {
+		return cosf(value);
+	}
+
+	float Math::ArcTan(float value) {
+		return atanf(value);
+	}
+	float Math::ArcCot(float value) {
+		return 1 / atanf(value);
+	}
+	float Math::ArcSin(float value) {
+		return asinf(value);
+	}
+	float Math::ArcCos(float value) {
+		return acosf(value);
 	}
 
 	float Math::Sign(float value) {

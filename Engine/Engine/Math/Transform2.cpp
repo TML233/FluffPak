@@ -54,13 +54,13 @@ namespace Engine {
 		);
 	}
 	Vector2 Transform2::InverseTransformBasis(const Vector2& vec) const {
-		return Vector2(x.Dot(vec), y.Dot(vec));
+		return Vector2(Vector2::Dot(x, vec), Vector2::Dot(y, vec));
 	}
 	Vector2 Transform2::Transform(const Vector2& vec) const {
 		return TransformBasis(vec) + o;
 	}
 	Vector2 Transform2::InverseTransform(const Vector2& vec) const {
 		Vector2 v = vec - o;
-		return Vector2(x.Dot(v), y.Dot(v));
+		return Vector2(Vector2::Dot(x, v), Vector2::Dot(y, v));
 	}
 }

@@ -6,6 +6,8 @@
 #include <initializer_list>
 
 namespace Engine{
+	/// @brief A random-access list.
+	/// @tparam T The value type. Needs to be default-constructable, copy-constructable and move-contstructable.
 	template<typename T>
 	class List {
 	public:

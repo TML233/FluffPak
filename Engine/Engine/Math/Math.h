@@ -14,8 +14,15 @@ namespace Engine {
 		static float Clamp(float value, float min = 0.0f, float max = 1.0f);
 		static float Lerp(float a, float b, float time);
 
-		static float Sin(float time);
-		static float Cos(float time);
+		static float Tan(float value);
+		static float Cot(float value);
+		static float Sin(float value);
+		static float Cos(float value);
+		
+		static float ArcTan(float value);
+		static float ArcCot(float value);
+		static float ArcSin(float value);
+		static float ArcCos(float value);
 
 		static float Sign(float value);
 		static float Abs(float value);

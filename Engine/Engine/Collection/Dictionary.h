@@ -5,9 +5,9 @@
 #include "Engine/System/Debug.h"
 
 namespace Engine {
-	// A hashmap.
-	// TKey needs to implement `int32 GetHashCode() const` and `bool operator==(const T&) const`
-	// TValue needs to be: default-constructable, copy-constructable, move-contstructable.
+	/// @brief A hashmap.
+	/// @tparam TKey The key type. Needs to implement `int32 GetHashCode() const` and `bool operator==(const T&) const`.
+	/// @tparam TValue The value type. Needs to be default-constructable, copy-constructable and move-contstructable.
 	template<typename TKey,typename TValue>
 	class Dictionary {
 	public:

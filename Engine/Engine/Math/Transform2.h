@@ -12,23 +12,23 @@ namespace Engine {
 		Vector2 y;
 
 #pragma region Affine
-		// Translate the origin.
+		/// @brief Translate the origin.
 		void Translate(const Vector2& translate);
-		// Returns a new Transform2 with translated origin.
+		/// @brief Returns a new Transform2 with translated origin.
 		Transform2 GetTranslated(const Vector2& translate) const;
-		// Scale the basis.
+		/// @brief Scale the basis.
 		void Scale(const Vector2& scale);
-		// Returns a new Transform2 with scaled basis.
+		/// @brief Returns a new Transform2 with scaled basis.
 		Transform2 GetScaled(const Vector2& scale) const;
-		// Rotate the basis.
+		/// @brief Rotate the basis.
 		void Rotate(float radian);
-		// Returns a new Transform2 with rotated basis.
+		/// @brief Returns a new Transform2 with rotated basis.
 		Transform2 GetRotated(float radian) const;
 #pragma endregion
 
-		// Combine two Transform2
+		/// @brief Combine two Transform2
 		Transform2 operator*(const Transform2& child) const;
-		// Combine two Transform2
+		/// @brief Combine two Transform2
 		Transform2& operator*=(const Transform2& child);
 
 		float GetBasisDeterminant() const;

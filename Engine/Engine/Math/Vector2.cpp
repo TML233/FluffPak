@@ -72,12 +72,6 @@ namespace Engine {
 	Vector2 Vector2::operator-() const {
 		return *this * -1;
 	}
-	float Vector2::Dot(const Vector2& vec) const {
-		return (x * x + vec.y * vec.y);
-	}
-	float Vector2::Cross(const Vector2& vec) const {
-		return (x * vec.y - y * vec.x);
-	}
 
 	String Vector2::ToString() const {
 		return String::Format("({0}, {1})", x, y);
@@ -86,14 +80,23 @@ namespace Engine {
 		return (*((int32*)(&x))) ^ (*((int32*)(&y)));
 	}
 
-	const Vector2 Vector2::up(0, -1);
-	const Vector2 Vector2::down(0, 1);
-	const Vector2 Vector2::left(-1, 0);
-	const Vector2 Vector2::right(1, 0);
-	const Vector2 Vector2::one(1, 1);
-	const Vector2 Vector2::zero(0, 0);
+	const Vector2 Vector2::Up(0, -1);
+	const Vector2 Vector2::Down(0, 1);
+	const Vector2 Vector2::Left(-1, 0);
+	const Vector2 Vector2::Right(1, 0);
+	const Vector2 Vector2::One(1, 1);
+	const Vector2 Vector2::Zero(0, 0);
 
+	float Vector2::Dot(const Vector2& a, const Vector2& b) {
+		return (a.x * a.x + b.y * b.y);
+	}
+	float Vector2::Cross(const Vector2& a, const Vector2& b) {
+		return (a.x * b.y - a.y * b.x);
+	}
 	Vector2 Vector2::Lerp(const Vector2& a, const Vector2& b, float time) {
 		return Vector2(Math::Lerp(a.x, b.x, time), Math::Lerp(a.y, b.y, time));
+	}
+	float Vector2::AngleBetween(const Vector2& a, const Vector2& b) {
+		return Math::ArcCos(Vector2::Dot(a.GetNormalized(), b.GetNormalized()));
 	}
 }
