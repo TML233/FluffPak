@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="AnimatedSprite2D.svg"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15)">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="33.375"
+     inkscape:cx="1.4008279"
+     inkscape:cy="11.112197"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="true"
+     units="px"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:pagecheckerboard="true"
+     objecttolerance="20">
+    <inkscape:grid
+       type="xygrid"
+       id="grid10" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="图层 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#6ecaf7;fill-opacity:0.33000001;stroke:none;stroke-width:2.00001;stroke-linejoin:round;stroke-miterlimit:0"
+       id="rect2129-2-8"
+       width="12"
+       height="12"
+       x="3"
+       y="1"
+       ry="0.99999994" />
+    <rect
+       style="fill:#6ecaf7;fill-opacity:0.66000003;stroke:none;stroke-width:2.00001;stroke-linejoin:round;stroke-miterlimit:0"
+       id="rect2129-2"
+       width="12"
+       height="12"
+       x="2"
+       y="2"
+       ry="0.99999994" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:none;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       id="rect1293"
+       width="8"
+       height="8"
+       x="4"
+       y="4" />
+    <rect
+       style="fill:#6ecaf7;fill-opacity:1;stroke:none;stroke-width:2.00001;stroke-linejoin:round;stroke-miterlimit:0"
+       id="rect2129"
+       width="12"
+       height="12"
+       x="1"
+       y="3"
+       ry="0.99999994" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755929px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 5,10 2,2 3,-4 2,3 v 3 H 2 Z"
+       id="path2121"
+       sodipodi:nodetypes="ccccccc" />
+    <circle
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:0"
+       id="path2123"
+       cx="6.5"
+       cy="6.5"
+       r="1.5" />
+  </g>
+</svg>
