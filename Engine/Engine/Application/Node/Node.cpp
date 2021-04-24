@@ -24,9 +24,18 @@ namespace Engine {
 
 	List<String> Node::invalidChars = { ".","/",":","\r","\n" };
 	String Node::ValidateNameBasically(const String& name) {
+		if (name.GetCount() <= 0) {
+			return STRING_LITERAL("@");
+		}
+
 		String result = name;
 		for (const String& c : invalidChars) {
-			
+			result.Replace(c, String::GetEmpty());
 		}
+
+		if (result.GetCount() <= 0) {
+			return STRING_LITERAL("@");
+		}
+		return result;
 	}
 }

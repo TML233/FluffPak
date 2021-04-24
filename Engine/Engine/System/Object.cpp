@@ -50,10 +50,10 @@ namespace Engine {
 	bool ReferencedObject::IsReferenced() const {
 		return true;
 	}
-	uint32 ReferencedObject::Reference() {
+	uint32 ReferencedObject::Reference() const {
 		return referenceCount.Reference();
 	}
-	uint32 ReferencedObject::Dereference() {
+	uint32 ReferencedObject::Dereference() const {
 		return referenceCount.Dereference();
 	}
 	uint32 ReferencedObject::GetReferenceCount() const {

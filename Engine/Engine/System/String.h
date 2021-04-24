@@ -5,6 +5,7 @@
 #include "Engine/Algorithm/StringSearcherSunday.h"
 #include "Engine/Collection/Iterator.h"
 #include "Engine/System/Atomic.h"
+#include "Engine/System/UniquePtr.h"
 #include "Engine/System/ReferencePtr.h"
 #include "Engine/Collection/List.h"
 #include <string_view>
@@ -13,15 +14,21 @@
 #define STRING_LITERAL(text)																							\
 ([](){																													\
 	static const char content[]=text;																					\
-	static const ::Engine::StringData data(content, sizeof(content), true);												\
+	static const ::Engine::StringData data(content, sizeof(content));												\
 	return ::Engine::String(::Engine::ReferencePtr<::Engine::StringData>(const_cast<::Engine::StringData*>(&data)));	\
 })()
 
 namespace Engine {
+	// Container of actual data of Strings. Shared between Strings.
+	// Does not copy any data.
 	struct StringData final {
-		// Will allocate memory and copy from data.
-		// If staticData == true, will use pre-defined string data instead of copying.
-		StringData(const char* data, int32 length, bool staticData = false);
+		// Accept data as a static block. Will not free the data.
+		// Only for internal use. Used by STRING_LITERAL.
+		// Must NOT be allocated on heap, or the memory leak would occur.
+		StringData(const char* data, int32 length);
+
+		// Accept data as a memory block on heap. Will free the data.
+		StringData(UniquePtr<char[]>&& data, int32 length);
 
 		~StringData();
 
@@ -30,14 +37,14 @@ namespace Engine {
 		// NULL included.
 		int length = 0;
 
-		uint32 Reference();
-		uint32 Dereference();
+		uint32 Reference() const;
+		uint32 Dereference() const;
 		uint32 GetReferenceCount() const;
 
-		static StringData* GetEmpty();
+		static ReferencePtr<StringData> GetEmpty();
 	private:
 		bool staticData;
-		ReferenceCount referenceCount;
+		mutable ReferenceCount referenceCount;
 	};
 
 	// A string holding a NULL-termined char array.
@@ -46,11 +53,19 @@ namespace Engine {
 		static String GetEmpty();
 
 #pragma region ctor/assignment
+		// Creates a string from a raw string.
+		// Will copy the original string.
 		String(const char* string = "", int32 count = -1);
-		// Creates a string using a pre-allocated StringData.
-		String(ReferencePtr<StringData> dataPtr, int32 start = 0, int32 count = -1);
-		String(const std::string& string);
+		
 		String& operator=(const char* string);
+
+		// Creates a string from a std::string.
+		// Will copy the original string.
+		String(const std::string& string);
+
+		// Creates a string using a StringData.
+		// Will not copy.
+		String(ReferencePtr<StringData> dataPtr, int32 start = 0, int32 count = -1);
 #pragma endregion
 
 #pragma region Tool functions
@@ -108,8 +123,10 @@ namespace Engine {
 	private:
 		bool IsEqual(const String& obj) const;
 
-		// Prepares a string with a brand new data object.
-		void PrepareData(const char* string, int32 count);
+		// Prepares a string, the string data will be copied.
+		// Count does not accept -1.
+		void PrepareData(const char* string, sizeint count);
+
 		// Current data reference.
 		ReferencePtr<StringData> data;
 
@@ -119,7 +136,7 @@ namespace Engine {
 		// Global sunday string searcher.
 		static StringSearcherSunday searcher;
 
-		static List<int> replacerIndexes;
+		static List<sizeint> replacerIndexes;
 	};
 }
 

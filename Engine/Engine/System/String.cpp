@@ -10,30 +10,22 @@
 
 
 namespace Engine {
-	StringData::StringData(const char* data, int32 length, bool staticData):length(length),staticData(staticData) {
-		if (!staticData) {
-			UniquePtr<char[]> chars = UniquePtr<char[]>::Create(length);
-			// Copy data and set null.
-			std::memcpy(chars.GetRaw(), data, (sizeint)length - 1);
-			std::memset(chars.GetRaw() + length - 1, 0, sizeof(char));
-			this->data = chars.Release();
-		} else {
-			this->data = data;
-			referenceCount.Reference();
-		}
-	}
+#pragma region StringData
+	StringData::StringData(const char* data, int32 length) :data(data), length(length), staticData(true) {}
+	StringData::StringData(UniquePtr<char[]>&& data, int32 length) : data(data.Release()), length(length), staticData(false) {}
+
 	StringData::~StringData() {
 		if (!staticData) {
 			MEMDELARR(data);
 		}
 	}
-	uint32 StringData::Reference() {
+	uint32 StringData::Reference() const {
 		if (staticData) {
 			return 1;
 		}
 		return referenceCount.Reference();
 	}
-	uint32 StringData::Dereference() {
+	uint32 StringData::Dereference() const {
 		if (staticData) {
 			return 1;
 		}
@@ -46,10 +38,12 @@ namespace Engine {
 		return referenceCount.Get();
 	}
 	
-	StringData* StringData::GetEmpty() {
-		static StringData empty("", sizeof(""), true);
-		return &empty;
+	ReferencePtr<StringData> StringData::GetEmpty() {
+		static const StringData empty("", 1);
+		static ReferencePtr<StringData> ptr{ const_cast<StringData*>(&empty) };
+		return ptr;
 	}
+#pragma endregion
 
 	String String::GetEmpty() {
 		return String(ReferencePtr<StringData>(StringData::GetEmpty()));
@@ -61,28 +55,32 @@ namespace Engine {
 		}
 		PrepareData(string, count);
 	}
-	String::String(const std::string& string) {
-		PrepareData(string.c_str(), static_cast<int32>(string.length()));
-	}
 	String& String::operator=(const char* string) {
 		PrepareData(string, static_cast<int32>(std::strlen(string)));
 		return *this;
 	}
 
-	String::String(ReferencePtr<StringData> dataPtr, int32 start, int32 count) :data(dataPtr), refStart(start) {
-		if (count < 0) {
-			count = dataPtr->length - 1;
-		}
-		refCount = count;
+	String::String(const std::string& string) {
+		PrepareData(string.c_str(), static_cast<int32>(string.length()));
 	}
 
-	void String::PrepareData(const char* string, int32 count) {
+	String::String(ReferencePtr<StringData> dataPtr, int32 start, int32 count) :data(dataPtr), refStart(start), refCount(count < 0 ? dataPtr->length - 1 : count) {}
+
+	void String::PrepareData(const char* string, sizeint count) {
 		// Use public empty string.
 		if (count <= 0) {
-			data = ReferencePtr<StringData>(StringData::GetEmpty());
+			data = StringData::GetEmpty();
+			refStart = 0;
+			refCount = 0;
 			return;
 		}
-		data = ReferencePtr<StringData>::Create(string, count + 1);
+
+		sizeint len = count + 1;
+		UniquePtr<char[]> strData = UniquePtr<char[]>::Create(len);
+		std::memcpy(strData.GetRaw(), string, count);
+		std::memset(strData.GetRaw() + len-1, '\0', 1);
+
+		data = ReferencePtr<StringData>::Create(Memory::Move(strData), len);
 		refStart = 0;
 		refCount = count;
 	}
@@ -142,7 +140,7 @@ namespace Engine {
 		return substr;
 	}
 
-	List<int> String::replacerIndexes{ 32 };
+	List<sizeint> String::replacerIndexes{ 32 };
 
 	String String::Replace(const String& from, const String& to) const {
 		replacerIndexes.Clear();
@@ -167,7 +165,8 @@ namespace Engine {
 		}
 
 		sizeint rawlen = GetCount() + (-from.GetCount() + to.GetCount()) * times + 1;
-		char* raw = MEMNEWARR(char, rawlen);
+		UniquePtr<char[]> rawptr = UniquePtr<char[]>::Create(rawlen);
+		char* raw = rawptr.GetRaw();
 
 		// Fill the string.
 		sizeint rawi = 0;
@@ -185,8 +184,7 @@ namespace Engine {
 		std::memcpy(raw + rawi, GetStartPtr() + end, GetCount() - end);
 		std::memset(raw + rawlen - 1, '\0', 1);
 
-		//TODO
-		//return String(ReferencePtr<StringData>::Create(raw, rawlen));
+		return String(ReferencePtr<StringData>::Create(Memory::Move(rawptr), rawlen));
 	}
 
 	bool String::StartsWith(const String& pattern) const {

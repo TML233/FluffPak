@@ -233,11 +233,11 @@ namespace Engine{
 		virtual ~ReferencedObject() = 0;
 
 		bool IsReferenced() const override;
-		uint32 Reference();
-		uint32 Dereference();
+		uint32 Reference() const;
+		uint32 Dereference() const;
 		uint32 GetReferenceCount() const;
 	private:
-		ReferenceCount referenceCount;
+		mutable ReferenceCount referenceCount;
 	};
 #pragma endregion
 }
