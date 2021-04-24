@@ -14,42 +14,42 @@
 #define STRING_LITERAL(text)																							\
 ([](){																													\
 	static const char content[]=text;																					\
-	static const ::Engine::StringData data(content, sizeof(content));												\
-	return ::Engine::String(::Engine::ReferencePtr<::Engine::StringData>(const_cast<::Engine::StringData*>(&data)));	\
+	static const ::Engine::String::ContentData data(content, sizeof(content));												\
+	return ::Engine::String(::Engine::ReferencePtr<::Engine::String::ContentData>(const_cast<::Engine::String::ContentData*>(&data)));	\
 })()
 
 namespace Engine {
-	// Container of actual data of Strings. Shared between Strings.
-	// Does not copy any data.
-	struct StringData final {
-		// Accept data as a static block. Will not free the data.
-		// Only for internal use. Used by STRING_LITERAL.
-		// Must NOT be allocated on heap, or the memory leak would occur.
-		StringData(const char* data, int32 length);
-
-		// Accept data as a memory block on heap. Will free the data.
-		StringData(UniquePtr<char[]>&& data, int32 length);
-
-		~StringData();
-
-		// Original data of the string.
-		const char* data = nullptr;
-		// NULL included.
-		int length = 0;
-
-		uint32 Reference() const;
-		uint32 Dereference() const;
-		uint32 GetReferenceCount() const;
-
-		static ReferencePtr<StringData> GetEmpty();
-	private:
-		bool staticData;
-		mutable ReferenceCount referenceCount;
-	};
-
 	// A string holding a NULL-termined char array.
 	class String final {
 	public:
+		// Container of actual data of Strings. Shared between Strings.
+		// Does not copy any data.
+		struct ContentData final {
+			// Accept data as a static block. Will not free the data.
+			// Only for internal use. Used by STRING_LITERAL.
+			// Must NOT be allocated on heap, or the memory leak would occur.
+			ContentData(const char* data, int32 length);
+
+			// Accept data as a memory block on heap. Will free the data.
+			ContentData(UniquePtr<char[]>&& data, int32 length);
+
+			~ContentData();
+
+			// Original data of the string.
+			const char* data = nullptr;
+			// NULL included.
+			int length = 0;
+
+			uint32 Reference() const;
+			uint32 Dereference() const;
+			uint32 GetReferenceCount() const;
+
+			static ReferencePtr<ContentData> GetEmpty();
+		private:
+			bool staticData;
+			mutable ReferenceCount referenceCount;
+		};
+
 		static String GetEmpty();
 
 #pragma region ctor/assignment
@@ -63,9 +63,9 @@ namespace Engine {
 		// Will copy the original string.
 		String(const std::string& string);
 
-		// Creates a string using a StringData.
+		// Creates a string using a ContentData.
 		// Will not copy.
-		String(ReferencePtr<StringData> dataPtr, int32 start = 0, int32 count = -1);
+		String(ReferencePtr<ContentData> dataPtr, int32 start = 0, int32 count = -1);
 #pragma endregion
 
 #pragma region Tool functions
@@ -128,7 +128,7 @@ namespace Engine {
 		void PrepareData(const char* string, sizeint count);
 
 		// Current data reference.
-		ReferencePtr<StringData> data;
+		ReferencePtr<ContentData> data;
 
 		int32 refStart = 0;
 		int32 refCount = 0;
