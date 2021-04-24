@@ -123,7 +123,8 @@ namespace Engine {
 		if (count == -1) {
 			count = GetCount() - startFrom;
 		}
-		return startFrom+searcher.Search(GetStartPtr()+startFrom, count, pattern.GetStartPtr(), pattern.GetCount());
+		int32 found=searcher.Search(GetStartPtr()+startFrom, count, pattern.GetStartPtr(), pattern.GetCount());
+		return (found < 0 ? -1 : startFrom + found);
 	}
 
 	bool String::Contains(const String& pattern) const {
@@ -178,10 +179,10 @@ namespace Engine {
 			rawi += len;
 
 			std::memcpy(raw + rawi, to.GetStartPtr(), to.GetCount());
-			rawi + to.GetCount();
+			rawi += to.GetCount();
 		}
 		sizeint end = replacerIndexes.Get(times-1);
-		std::memcpy(raw + rawi, GetStartPtr() + end, GetCount() - end);
+		std::memcpy(raw + rawi, GetStartPtr() + (end + 1), GetCount() - (end + 1));
 		std::memset(raw + rawlen - 1, '\0', 1);
 
 		return String(ReferencePtr<StringData>::Create(Memory::Move(rawptr), rawlen));

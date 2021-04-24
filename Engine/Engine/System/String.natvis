@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="Engine::StringData">
+		<DisplayString>{ data, [length-1]s8 }</DisplayString>
+		<Expand>
+			<Item Name="Length">length</Item>
+			<Item Name="Static Data">staticData</Item>
+			<Item Name="Reference Count" Condition="staticData">-1</Item>
+			<Item Name="Reference Count" Condition="!staticData">referenceCount.count.value</Item>
+		</Expand>
+	</Type>
+
+	<Type Name="Engine::String">
+		<DisplayString>{ data.ptr->data, [refCount]s8 }</DisplayString>
+		<Expand>
+			<Item Name="Start">refStart</Item>
+			<Item Name="Count">refCount</Item>
+			<Item Name="Individual">refStart==0 &amp;&amp; refCount==data.ptr->length-1</Item>
+			<Item Name="Literal">data.ptr->staticData</Item>
+			<Item Name="Internal Data">data.ptr</Item>
+		</Expand>
+	</Type>
+</AutoVisualizer>

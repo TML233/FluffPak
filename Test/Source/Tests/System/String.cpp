@@ -4,6 +4,19 @@
 using namespace Engine;
 
 TEST_SUITE("String") {
+	TEST_CASE("Replacing") {
+		String str = STRING_LITERAL(u8"TestCase001 1234 asr");
+		str = str.Replace(STRING_LITERAL(" "), String::GetEmpty());
+		CHECK(str == STRING_LITERAL("TestCase0011234asr"));
+		str = str.Replace(STRING_LITERAL("e"), STRING_LITERAL("w"));
+		CHECK(str == STRING_LITERAL("TwstCasw0011234asr"));
+		str = str.Replace(STRING_LITERAL("s"), STRING_LITERAL("123"));
+		CHECK(str == STRING_LITERAL("Tw123tCa123w0011234a123r"));
+		str = str.Replace(STRING_LITERAL("1"), String::GetEmpty());
+		CHECK(str == STRING_LITERAL("Tw23tCa23w00234a23r"));
+		str = str.Replace(STRING_LITERAL("0"), STRING_LITERAL("SB"));
+		CHECK(str == STRING_LITERAL("Tw23tCa23wSBSB234a23r"));
+	}
 	TEST_CASE("Comparing") {
 		String strA = STRING_LITERAL(u8"鞋   履   甚   多");
 		String strB = STRING_LITERAL(u8"滴滴，你个王八蛋！");
