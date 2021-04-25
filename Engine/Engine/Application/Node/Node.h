@@ -27,13 +27,23 @@ namespace Engine {
 		/// @brief Get the child by the given name.
 		Node* GetChildByName(const String& name) const;
 
+		bool MoveChild(int32 from, int32 to);
+
 		/// @brief Check if the given node is a child of the current node.
 		bool IsChild(Node* node) const;
 
 		/// @brief Add a node as a child of current node.
-		bool AddChild(Node* node);
+		/// @param node The node to add.
+		/// @param index The position to insert at. -1 for the last position.
+		bool AddChild(Node* node, int index = -1);
+
 		/// @brief Remove a child from the current node.
+		/// @param The node to remove.
 		bool RemoveChild(Node* child);
+
+		/// @brief Check if other nodes can add or remove child for the current node.\n
+		/// When preparing node tree, the parent node is locked to prevent the data from out of sync.  
+		bool CanAddOrRemoveChildren() const;
 
 		/// @brief Get the index of this node inside its parent.
 		/// @return The index inside its parent.\n
@@ -87,22 +97,29 @@ namespace Engine {
 		static String ValidateName(const String& name);
 
 		enum class ChildNameValidation {
+			/// @brief System will automatically choose a validation method.
 			NotSpecified,
-			HumanReadable,
+			/// @brief Human-readable name style.\n
+			/// e.g., "CollidedName" -> "CollidedName1"
+			Ordinal,
+			/// @brief Use auto generated names, less human-readable.
+			/// e.g., "CollidedName" -> "@@Auto@700"
 			Fast
 		};
+
 		/// @brief Validate a node name, makes it suitable for inserting into the given parent.\n
 		/// Given name must be validated by ValidateName method first!\n
-		/// Will choose the HumanReadble or the Fast way itself.
-		static String ValidateChildName(const String& name, const String& original,Node* parent, ChildNameValidation method = ChildNameValidation::NotSpecified);
-
-		/// @brief Validate the node name to a human-readable one.\n
-		/// @example "CollidedName" -> "CollidedName1"
-		static String ValidateChildNameHumanReadable(const String& name, const String& original,Node* parent);
-		
-		/// @brief Validate the node name fast, but less readable.
-		/// @example "CollidedName" -> "@@Auto@700"
-		static String ValidateChildNameFast(const String& name, Node* parent);
+		/// @param originalName The original name.
+		/// @param orginalParent The original parent.
+		/// @param targetName The name to validate. Must be grammerly validated by ValidateName(...) first.
+		/// @param targetParent The parent for "inserting".
+		/// @param method The method to validate the name. Choose automatically when not specified.
+		/// @return The validated name.
+		static String ValidateChildName(
+			const String& originalName, Node* orginalParent,
+			const String& targetName,Node* targetParent,
+			ChildNameValidation method = ChildNameValidation::NotSpecified
+		);
 
 		/// @brief Generates an auto node name.\n
 		/// Guaranteed not collided with other node names.
@@ -115,9 +132,16 @@ namespace Engine {
 
 		NodeTree* tree = nullptr;
 
+		bool preparingTree = false;
+		bool exitingTree = false;
+
 		static List<String> invalidChars;
 		static AtomicValue<uint32> autoNameCounter;
 
 		friend class NodeTree;
+
+		void SystemUpdate(float delta);
+		void SystemPhysicsUpdate(float delta);
+		void SystemAssignTree(NodeTree* tree);
 	};
 }

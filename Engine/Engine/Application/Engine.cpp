@@ -28,7 +28,7 @@ namespace Engine {
 			return;
 		}
 
-		appLoop->Start();
+		appLoop->OnStart();
 
 
 		// Aliases for std::chrono
@@ -49,13 +49,13 @@ namespace Engine {
 			time.unscaledTotal += time.GetUnscaledDelta();
 			time.total += time.GetDelta();
 
-			appLoop->Update(time);
-			appLoop->PhysicsUpdate(time);
+			appLoop->OnUpdate(time);
+			appLoop->OnPhysicsUpdate(time);
 
 			lastTime = now;
 		}
 
-		appLoop->Stop();
+		appLoop->OnStop();
 
 		INFO_MSG("AppLoop finished running.");
 	}
