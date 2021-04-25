@@ -12,7 +12,7 @@ namespace Engine {
 	class Node :public ManualObject {
 	public:
 		/// @brief Destroys the node and all its children.
-		~Node();
+		virtual ~Node();
 
 		/// @brief Get the parent of this node.
 		/// @return The parent of this node.\n

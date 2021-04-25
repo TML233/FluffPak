@@ -6,14 +6,19 @@
 namespace Engine{
 	class NodeTree final:public AppLoop {
 	public:
+		using RootType = Node;
+
 		void OnStart() override;
 		void OnUpdate(const Time& time) override;
 		void OnPhysicsUpdate(const Time& time) override;
 
 		void OnStop() override;
 		bool IsRunning() const override;
+
+		RootType* GetRoot() const;
 	private:
-		bool running = true;
-		int32 currentFrame = 0;
+		bool running = false;
+
+		UniquePtr<RootType> root = UniquePtr<RootType>::Create();
 	};
 }

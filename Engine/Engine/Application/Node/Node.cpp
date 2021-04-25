@@ -2,6 +2,15 @@
 #include "Engine/System/Debug.h"
 
 namespace Engine {
+	Node::~Node() {
+		while (children.GetCount() > 0) {
+			Node* child = children.Get(children.GetCount() - 1);
+			MEMDEL(child);
+		}
+		if (HasParent()) {
+			GetParent()->RemoveChild(this);
+		}
+	}
 	Node* Node::GetParent() const {
 		return parent;
 	}
@@ -59,10 +68,14 @@ namespace Engine {
 
 		children.Insert(index, node);
 
+		// Re-assign index for affected nodes.
+		for (int i = index; i < children.GetCount(); i += 1) {
+			children.Get(i)->index = i;
+		}
+
+		node->parent = this;
 		String name = ValidateChildName(node->GetName(), nullptr, node->GetName(), this);
 		node->SetNameUnchecked(name);
-		node->parent = this;
-		node->index = index;
 		// Not assigning tree when preparing the tree because it is assigned later by the preparation procedure.
 		// And not assigning the tree when exiting tree because the parent is leaving the tree.
 		if (!preparingTree&&!exitingTree) {
@@ -89,8 +102,17 @@ namespace Engine {
 		
 		child->SystemAssignTree(nullptr);
 		child->parent = nullptr;
+		
+		int32 index = child->GetIndex();
+		children.RemoveAt(index);
+		// Re-assign index for affected nodes.
+		for (int32 i = index; i < children.GetCount(); i += 1) {
+			children.Get(i)->index = i;
+		}
+
 		child->index = -1;
-		children.RemoveAt(child->GetIndex());
+
+		return true;
 	}
 	
 	bool Node::CanAddOrRemoveChildren() const {
