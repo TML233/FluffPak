@@ -11,6 +11,7 @@ namespace Engine {
 
 	class Node :public ManualObject {
 	public:
+		Node();
 		/// @brief Destroys the node and all its children.
 		virtual ~Node();
 
@@ -27,7 +28,7 @@ namespace Engine {
 		/// @brief Get the child by the given name.
 		Node* GetChildByName(const String& name) const;
 
-		bool MoveChild(int32 from, int32 to);
+		//bool MoveChild(int32 from, int32 to);
 
 		/// @brief Check if the given node is a child of the current node.
 		bool IsChild(Node* node) const;
@@ -43,7 +44,7 @@ namespace Engine {
 
 		/// @brief Check if other nodes can add or remove child for the current node.\n
 		/// When preparing node tree, the parent node is locked to prevent the data from out of sync.  
-		bool CanAddOrRemoveChildren() const;
+		bool CanAddChild() const;
 
 		/// @brief Get the index of this node inside its parent.
 		/// @return The index inside its parent.\n
@@ -65,12 +66,12 @@ namespace Engine {
 		/// @brief Find the node with the given path. Produces error messages when not found.
 		/// @return The found node.\n
 		/// nullptr when not found.
-		Node* GetNode(const NodePath& path) const;
+		//Node* GetNode(const NodePath& path) const;
 
 		/// @brief Find the node with the given path. Will not produce error messages when not found.
 		/// @return The found node.\n
 		/// nullptr when not found.
-		Node* GetNodeOrNull(const NodePath& path) const;
+		//Node* GetNodeOrNull(const NodePath& path) const;
 		
 		/// @brief Get the NodeTree the current node is in.
 		/// @return The NodeTree the current node is in.\n
@@ -79,19 +80,6 @@ namespace Engine {
 
 		/// @brief Check if the current node is in the NodeTree.
 		bool IsInTree() const;
-
-		/// @brief Called right after the current node entered the NodeTree.
-		virtual void OnEnteredTree();
-		/// @brief Called when all children of the current node is ready.
-		virtual void OnReady();
-		/// @brief Called when logic update occurs.
-		/// @param delta Elapsed seconds since last Update.
-		virtual void OnUpdate(float delta);
-		/// @brief Called when physics update occurs.
-		/// @param delta Elapsed seconds since last PhysicsUpdate.
-		virtual void OnPhysicsUpdate(float delta);
-		/// @brief Called right before the current node exits the NodeTree.
-		virtual void OnExitingTree();
 
 		/// @brief Validate a node name, removing invalid chars in it.
 		static String ValidateName(const String& name);
@@ -124,6 +112,21 @@ namespace Engine {
 		/// @brief Generates an auto node name.\n
 		/// Guaranteed not collided with other node names.
 		static String GenerateAutoName();
+
+		/// @brief Called right after the current node entered the NodeTree.
+		virtual void OnEnteredTree();
+		/// @brief Called when all children of the current node is ready.
+		virtual void OnReady();
+		/// @brief Called when logic update occurs.
+		/// @param delta Elapsed seconds since last Update.
+		virtual void OnUpdate(float delta);
+		/// @brief Called when physics update occurs.
+		/// @param delta Elapsed seconds since last PhysicsUpdate.
+		virtual void OnPhysicsUpdate(float delta);
+		/// @brief Called right before the current node exits the NodeTree.
+		virtual void OnExitingTree();
+
+		String GetTreeStructureFormated(int32 level = 0) const;
 	private:
 		String name;
 		List<Node*> children{};
@@ -132,16 +135,16 @@ namespace Engine {
 
 		NodeTree* tree = nullptr;
 
-		bool preparingTree = false;
-		bool exitingTree = false;
+		bool childrenAddLocked = false;
 
 		static List<String> invalidChars;
-		static AtomicValue<uint32> autoNameCounter;
+		static AtomicValue<uint64> autoNameCounter;
 
 		friend class NodeTree;
 
+		void SystemAssignTree(NodeTree* tree);
+		//void SystemRemoveFromTree();
 		void SystemUpdate(float delta);
 		void SystemPhysicsUpdate(float delta);
-		void SystemAssignTree(NodeTree* tree);
 	};
 }

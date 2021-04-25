@@ -23,13 +23,13 @@ namespace Engine {
 		AppLoop* GetAppLoop() const;
 
 		/// @brief Get the time controller.
-		Time& GetTime() const;
+		Time& GetTime();
 
 		/// @brief Controls the update frequency. -1 means no limit.
 		/// @note Physics update frequency is controlled by Time::PhysicsDelta.
-		void SetTargetFps(int fps);
+		void SetTargetFps(int32 targetFps);
 		/// @brief Get the FPS limit.
-		float GetTargetFps() const;
+		int32 GetTargetFps() const;
 
 
 	private:
@@ -38,6 +38,6 @@ namespace Engine {
 		UniquePtr<AppLoop> appLoop{};
 		Time time{};
 
-		int targetFps = 60;
+		int32 targetFps = 60;
 	};
 }

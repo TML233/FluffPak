@@ -2,6 +2,9 @@
 #include "Engine/System/Debug.h"
 
 namespace Engine {
+	Node::Node() {
+		SetNameUnchecked(GenerateAutoName());
+	}
 	Node::~Node() {
 		while (children.GetCount() > 0) {
 			Node* child = children.Get(children.GetCount() - 1);
@@ -50,8 +53,8 @@ namespace Engine {
 
 	bool Node::AddChild(Node* node,int index) {
 		ERR_ASSERT(
-			CanAddOrRemoveChildren(),
-			"The node is busy preparing its children. Try not to add or remove nodes of the parent in OnEnteredTree() or OnReady().",
+			CanAddChild(),
+			"The node is busy preparing its children. Try not to add or remove nodes of the parent in OnEnteredTree(), OnReady() or OnExitTree(). If you want to auto-create its depended nodes, do it in the constructor.",
 			return false
 		);
 
@@ -66,30 +69,20 @@ namespace Engine {
 			index = GetChildrenCount();
 		}
 
+		String name = ValidateChildName(node->GetName(), nullptr, node->GetName(), this);
+		node->SetNameUnchecked(name);
 		children.Insert(index, node);
+		node->parent = this;
 
 		// Re-assign index for affected nodes.
 		for (int i = index; i < children.GetCount(); i += 1) {
 			children.Get(i)->index = i;
 		}
 
-		node->parent = this;
-		String name = ValidateChildName(node->GetName(), nullptr, node->GetName(), this);
-		node->SetNameUnchecked(name);
-		// Not assigning tree when preparing the tree because it is assigned later by the preparation procedure.
-		// And not assigning the tree when exiting tree because the parent is leaving the tree.
-		if (!preparingTree&&!exitingTree) {
-			node->SystemAssignTree(tree);
-		}
+		node->SystemAssignTree(tree);
 		return true;
 	}
 	bool Node::RemoveChild(Node* child) {
-		ERR_ASSERT(
-			CanAddOrRemoveChildren(),
-			"The node is busy preparing its children. Try not to add or remove nodes of the parent in OnEnteredTree() or OnReady().",
-			return false
-		);
-
 		ERR_ASSERT(child != nullptr, "child is nullptr.", return false);
 		ERR_ASSERT(child != this, "child can't be itself.", return false);
 
@@ -115,8 +108,8 @@ namespace Engine {
 		return true;
 	}
 	
-	bool Node::CanAddOrRemoveChildren() const {
-		return !preparingTree;
+	bool Node::CanAddChild() const {
+		return !childrenAddLocked;
 	}
 
 	int Node::GetIndex() const {
@@ -141,11 +134,13 @@ namespace Engine {
 		SetNameUnchecked(validated);
 	}
 
+	/*
 	Node* Node::GetNode(const NodePath& path) const {
 		Node* node = GetNodeOrNull(path);
 		ERR_ASSERT(node != nullptr, "Cannot find node with the given path.", return nullptr);
 		return node;
 	}
+	*/
 
 	NodeTree* Node::GetTree() const {
 		return tree;
@@ -155,9 +150,11 @@ namespace Engine {
 	}
 
 	List<String> Node::invalidChars = { ".","/",":","\r","\n" };
+	AtomicValue<uint64> Node::autoNameCounter{};
+
 	String Node::ValidateName(const String& name) {
 		if (name.GetCount() <= 0) {
-			return STRING_LITERAL("@");
+			return GenerateAutoName();
 		}
 
 		String result = name;
@@ -166,7 +163,7 @@ namespace Engine {
 		}
 
 		if (result.GetCount() <= 0) {
-			return STRING_LITERAL("@Unnamed_0");
+			return GenerateAutoName();
 		}
 		return result;
 	}
@@ -220,11 +217,30 @@ namespace Engine {
 	}
 
 	String Node::GenerateAutoName() {
-		return String::Format(STRING_LITERAL("@@Auto@{0}"), autoNameCounter.FetchAdd(1));
+		return String::Format(STRING_LITERAL("@@{0}"), autoNameCounter.FetchAdd(1));
+	}
+
+	void Node::OnEnteredTree() {}
+	void Node::OnReady() {}
+	void Node::OnUpdate(float delta) {}
+	void Node::OnPhysicsUpdate(float delta) {}
+	void Node::OnExitingTree() {}
+
+	String Node::GetTreeStructureFormated(int32 level) const {
+		String r;
+		for (int32 i = 0; i < level; i++) {
+			r = String::Format(STRING_LITERAL("\t{0}"), r);
+		}
+		r = r + String::Format(STRING_LITERAL("|- {0} ({1})\n"), GetName(), GetReflectionClassName());
+		
+		for (Node* child : children) {
+			r = r + child->GetTreeStructureFormated(level + 1);
+		}
+		return r;
 	}
 
 	void Node::SystemAssignTree(NodeTree* tree) {
-		if (this->tree == tree) {
+		if (this->tree == nullptr && tree == nullptr) {
 			return;
 		}
 		if (this->tree != nullptr && tree != nullptr) {
@@ -234,31 +250,42 @@ namespace Engine {
 		if (this->tree == nullptr && tree != nullptr) {
 			// Current has no tree, assigning into a tree.
 			this->tree = tree;
+			
+			// Lock the current node to prevent the child from adding or removing nodes into the current node.
+			childrenAddLocked = true;
+
 			OnEnteredTree();
 
-			// Lock the current node to prevent the child from adding or removing nodes into the current node.
-			preparingTree = true;
 			for (int32 i = 0; i < children.GetCount(); i += 1) {
 				children.Get(i)->SystemAssignTree(tree);
 			}
-			preparingTree = false;
 
 			OnReady();
+			childrenAddLocked = false;
 		} else if (this->tree != nullptr && tree == nullptr) {
 			// Current has tree, removing the tree assignment.
-			preparingTree = true;
+
+			// Make a exiting tree flag to prevent preparing the child tree.
+			childrenAddLocked = true;
 			for (int32 i = 0; i < children.GetCount(); i += 1) {
 				children.Get(i)->SystemAssignTree(nullptr);
 			}
-			preparingTree = false;
 
-			// Make a exiting tree flag to prevent AddChild(...) prepares the child tree.
-			// But why the F someone add nodes when exiting tree??
-			exitingTree = true;
 			OnExitingTree();
-			exitingTree = false;
-
+			childrenAddLocked = false;
 			this->tree = nullptr;
+		}
+	}
+	void Node::SystemUpdate(float delta) {
+		OnUpdate(delta);
+		for (int i = 0; i < children.GetCount(); i += 1) {
+			children.Get(i)->SystemUpdate(delta);
+		}
+	}
+	void Node::SystemPhysicsUpdate(float delta) {
+		OnPhysicsUpdate(delta);
+		for (int i = 0; i < children.GetCount(); i += 1) {
+			children.Get(i)->SystemPhysicsUpdate(delta);
 		}
 	}
 }
