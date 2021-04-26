@@ -10,6 +10,8 @@ namespace Engine {
 	class NodeTree;
 
 	class Node :public ManualObject {
+		REFLECTION_CLASS(Node, ManualObject) {}
+
 	public:
 		Node();
 		/// @brief Destroys the node and all its children.

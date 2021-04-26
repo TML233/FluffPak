@@ -6,15 +6,13 @@ namespace Engine {
 		REFLECTION_CLASS(TestNode, Node) {}
 
 	public:
-		TestNode(int32 id = 0);
+		TestNode();
 		void OnEnteredTree() override;
 		void OnReady() override;
 		void OnUpdate(float delta) override;
 		//void OnPhysicsUpdate(float delta) override;
 		void OnExitingTree() override;
-
-		int id = 0;
 	private:
-		double lastTime = 0;
+		
 	};
 }

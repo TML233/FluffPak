@@ -5,8 +5,11 @@
 
 namespace Engine{
 	class NodeTree final:public AppLoop {
+		REFLECTION_CLASS(NodeTree, AppLoop) {}
+
 	public:
 		using RootType = Node;
+		NodeTree();
 
 		void OnStart() override;
 		void OnUpdate(const Time& time) override;
@@ -16,6 +19,9 @@ namespace Engine{
 		bool IsRunning() const override;
 
 		RootType* GetRoot() const;
+
+		void RequestStop();
+
 	private:
 		bool running = false;
 

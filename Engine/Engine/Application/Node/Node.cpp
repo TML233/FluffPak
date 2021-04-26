@@ -228,10 +228,28 @@ namespace Engine {
 
 	String Node::GetTreeStructureFormated(int32 level) const {
 		String r;
-		for (int32 i = 0; i < level; i++) {
-			r = String::Format(STRING_LITERAL("\t{0}"), r);
+		bool isLast = false;
+		if (HasParent()) {
+			Node* p = GetParent();
+			if (p->HasParent()) {
+				isLast = p->GetIndex() == p->GetParent()->GetChildrenCount() - 1;
+			}
 		}
-		r = r + String::Format(STRING_LITERAL("|- {0} ({1})\n"), GetName(), GetReflectionClassName());
+		for (int32 i = 0; i < level; i++) {
+			r = String::Format(STRING_LITERAL("{0}\t{1}"), i < level - 1 && !isLast ? STRING_LITERAL("©¦  ") : String::GetEmpty(), r);
+		}
+		
+		String symbol;
+		if (level > 0) {
+			if (!HasParent()) {
+				symbol = STRING_LITERAL("©°  ");
+			} else if (GetIndex() == GetParent()->GetChildrenCount() - 1) {
+				symbol = STRING_LITERAL("©¸  ");
+			} else {
+				symbol = STRING_LITERAL("©À  ");
+			}
+		}
+		r = r + String::Format(STRING_LITERAL("{0}{1}: {2} ({3})\n"), symbol,GetIndex(), GetName(), GetReflectionClassName());
 		
 		for (Node* child : children) {
 			r = r + child->GetTreeStructureFormated(level + 1);

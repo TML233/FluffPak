@@ -6,6 +6,8 @@
 
 namespace Engine {
 	class Node2D :public Node {
+		REFLECTION_CLASS(Node2D, Node) {}
+
 	public:
 		Vector2 GetPosition() const;
 		void SetPosition(const Vector2& position);
