@@ -118,6 +118,14 @@ elseif(UNIX AND "${CMAKE_SYSTEM}" MATCHES "Linux")
 	list(APPEND LibraryFilePlatform ${LibraryFilePlatformLinux})
 endif()
 
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+	target_compile_options(Engine PUBLIC -Wno-switch)
+endif()
+
+if(MSVC)
+	target_compile_options(Test PUBLIC /utf-8)
+endif()
+
 # Force C++17
 target_compile_features(Engine PUBLIC cxx_std_17)
 

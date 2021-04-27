@@ -236,17 +236,17 @@ namespace Engine {
 			}
 		}
 		for (int32 i = 0; i < level; i++) {
-			r = String::Format(STRING_LITERAL("{0}\t{1}"), i < level - 1 && !isLast ? STRING_LITERAL(u8"©¦  ") : String::GetEmpty(), r);
+			r = String::Format(STRING_LITERAL("{0}\t{1}"), i < level - 1 && !isLast ? STRING_LITERAL(u8"â”‚  ") : String::GetEmpty(), r);
 		}
 		
 		String symbol;
 		if (level > 0) {
 			if (!HasParent()) {
-				symbol = STRING_LITERAL(u8"©°  ");
+				symbol = STRING_LITERAL(u8"â”Œ  ");
 			} else if (GetIndex() == GetParent()->GetChildrenCount() - 1) {
-				symbol = STRING_LITERAL(u8"©¸  ");
+				symbol = STRING_LITERAL(u8"â””  ");
 			} else {
-				symbol = STRING_LITERAL(u8"©À  ");
+				symbol = STRING_LITERAL(u8"â”œ  ");
 			}
 		}
 		r = r + String::Format(STRING_LITERAL("{0}{1}: {2} ({3})\n"), symbol,GetIndex(), GetName(), GetReflectionClassName());
