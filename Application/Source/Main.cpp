@@ -22,7 +22,7 @@ int main() {
 	tree->GetRoot()->GetChildByIndex(2)->AddChild(MEMNEW(Node()));
 
 	engine->SetAppLoop(UniquePtr<AppLoop>(tree.Release()));
-	engine->Start();
+	engine->Run();
 
 	return 0;
 }

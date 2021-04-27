@@ -15,11 +15,11 @@ namespace Engine {
 		INFO_MSG(String::Format("{0}: Ready.", GetName()).GetRawArray());
 	}
 	void TestNode::OnUpdate(float delta) {
-		double elapsed = ::Engine::Engine::GetInstance()->GetTime().GetTotal();
+		//double elapsed = ::Engine::Engine::GetInstance()->GetTime().GetTotal();
 
-		if (elapsed > 3) {
-			GetTree()->RequestStop();
-		}
+		//if (elapsed > 3) {
+		//	GetTree()->RequestStop();
+		//}
 	}
 	void TestNode::OnExitingTree() {
 		INFO_MSG(String::Format("{0}: Exiting tree.", GetName()).GetRawArray());

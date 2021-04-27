@@ -1,7 +1,7 @@
 #include "Engine/Application/Engine.h"
 #include "Engine/System/Memory.h"
 #include <chrono>
-#include <thread>
+#include "Engine/Platform/NativeWindow.h"
 
 namespace Engine {
 	Engine* Engine::instance = nullptr;
@@ -11,6 +11,8 @@ namespace Engine {
 
 	Engine::Engine() {
 		instance = this;
+
+		nativeWindowManager.Reset(MEMNEW(PlatformSpecific::NativeWindowManager()));
 	}
 	Engine::~Engine() {
 		if (instance == this) {
@@ -32,7 +34,11 @@ namespace Engine {
 	Time& Engine::GetTime() {
 		return time;
 	}
-	void Engine::Start() {
+	NativeWindowManager* Engine::GetNativeWindowManager() const {
+		return nativeWindowManager.GetRaw();
+	}
+
+	void Engine::Run() {
 #pragma region Start
 		if (appLoop == nullptr) {
 			FATAL_MSG("No AppLoop has been assigned.");
@@ -54,6 +60,8 @@ namespace Engine {
 		TimePoint nextUpdate = Clock::now();
 
 		while (appLoop->IsRunning()) {
+			GetNativeWindowManager()->Update();
+
 			TimePoint now = Clock::now();
 
 			if (now >= nextUpdate) {

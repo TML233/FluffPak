@@ -4,6 +4,7 @@
 #include "Engine/System/UniquePtr.h"
 #include "Engine/Application/AppLoop.h"
 #include "Engine/Application/Time.h"
+#include "Engine/Application/NativeWindow.h"
 
 namespace Engine {
 	/// @brief The engine application manager. Contains every information necessary for a application to run.
@@ -15,7 +16,7 @@ namespace Engine {
 		Engine();
 		~Engine();
 		/// @brief Start the engine, this will block the program until the engine stops.
-		void Start();
+		void Run();
 
 		/// @brief Assgin an AppLoop. An AppLoop UniquePtr will be moved into the engine.
 		void SetAppLoop(UniquePtr<AppLoop>&& appLoop);
@@ -31,12 +32,14 @@ namespace Engine {
 		/// @brief Get the FPS limit.
 		int32 GetTargetFps() const;
 
+		NativeWindowManager* GetNativeWindowManager() const;
 
 	private:
 		static Engine* instance;
 
 		UniquePtr<AppLoop> appLoop{};
 		Time time{};
+		UniquePtr<NativeWindowManager> nativeWindowManager;
 
 		int32 targetFps = 60;
 	};

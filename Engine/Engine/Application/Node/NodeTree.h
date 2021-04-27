@@ -25,6 +25,8 @@ namespace Engine{
 	private:
 		bool running = false;
 
+		bool stopWhenNoWindow = true;
+
 		UniquePtr<RootType> root = UniquePtr<RootType>::Create();
 	};
 }

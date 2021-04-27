@@ -7,7 +7,7 @@ target_include_directories(Engine PUBLIC "./")
 # Link thirdparty libraries
 target_link_libraries(Engine PUBLIC fmt)
 
-# Add common header/source files.
+# Define common header/source files.
 set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Definition.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object.h"
@@ -35,9 +35,14 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/List.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Dictionary.h"
 
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Definition.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Platform.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/NativeWindow.h"
+
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Engine.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Time.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/AppLoop.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/NativeWindow.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodeTree.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodePath.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node.h"
@@ -66,6 +71,7 @@ set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Engine.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Time.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/AppLoop.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/NativeWindow.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodeTree.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodePath.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node.cpp"
@@ -73,9 +79,26 @@ set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/TestNode.cpp"
 )
 
-# Add platform-depended source files.
+# Define platform header/source files.
+# Windows
+set(HeaderFilePlatformWindows
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/BetterWindows.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.h"
+
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.h"
+)
+set(SourceFilePlatformWindows
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.cpp"
+
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.cpp"
+)
+
+
+# Add platform-depended header/source files.
 if(WIN32)
-	# Use Windows Unicode
+	list(APPEND HeaderFilePlatform ${HeaderFilePlatformWindows})
+	list(APPEND SourceFilePlatform ${SourceFilePlatformWindows})
+
 	target_compile_options(Engine PUBLIC -DUNICODE -D_UNICODE)
 elseif(__LINUX__)
 
