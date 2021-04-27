@@ -59,7 +59,7 @@ namespace Engine{
 		int32 GetCount() const;
 		bool IsExists(NativeWindow::ID id) const;
 		bool Destory(NativeWindow::ID id);
-		void DestroyAll();
+		void Clear();
 		virtual void Update() = 0;
 
 	private:

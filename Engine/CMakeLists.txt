@@ -4,8 +4,6 @@ project("Engine" LANGUAGES CXX)
 # Build Engine
 add_library(Engine STATIC)
 target_include_directories(Engine PUBLIC "./")
-# Link thirdparty libraries
-target_link_libraries(Engine PUBLIC fmt)
 
 # Define common header/source files.
 set(HeaderFileCore
@@ -78,6 +76,9 @@ set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node2D.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/TestNode.cpp"
 )
+set(LibraryFileCore
+	fmt
+)
 
 # Define platform header/source files.
 # Windows
@@ -92,20 +93,38 @@ set(SourceFilePlatformWindows
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.cpp"
 )
+set(LibraryFilePlatformWindows
+)
 
+# Linux
+set(HeaderFilePlatformLinux
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/X11/NativeWindow.h"
+)
+set(SourceFilePlatformLinux
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/X11/NativeWindow.cpp"
+)
+set(LibraryFilePlatformLinux
+	X11
+)
 
 # Add platform-depended header/source files.
 if(WIN32)
 	list(APPEND HeaderFilePlatform ${HeaderFilePlatformWindows})
 	list(APPEND SourceFilePlatform ${SourceFilePlatformWindows})
+	list(APPEND LibraryFilePlatform ${LibraryFilePlatformWindows})
 
 	target_compile_options(Engine PUBLIC -DUNICODE -D_UNICODE)
-elseif(__LINUX__)
-
+elseif(__linux__)
+	list(APPEND HeaderFilePlatform ${HeaderFilePlatformLinux})
+	list(APPEND SourceFilePlatform ${SourceFilePlatformLinux})
+	list(APPEND LibraryFilePlatform ${LibraryFilePlatformLinux})
 endif()
 
 # Force C++17
 target_compile_features(Engine PUBLIC cxx_std_17)
+
+# Link thirdparty libraries
+target_link_libraries(Engine PUBLIC ${LibraryFileCore} ${LibraryFilePlatform})
 
 # Build with sources and headers.
 target_sources(Engine

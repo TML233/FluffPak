@@ -43,7 +43,7 @@ namespace Engine {
 	int32 NativeWindowManager::GetCount() const {
 		return windows.GetCount();
 	}
-	void NativeWindowManager::DestroyAll() {
+	void NativeWindowManager::Clear() {
 		windows.Clear();
 	}
 }
