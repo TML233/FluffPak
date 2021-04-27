@@ -25,6 +25,9 @@ namespace Engine::PlatformSpecific {
 		XSelectInput(display,window,ExposureMask|KeyPressMask);
 		XMapWindow(display,window);
 	}
+	NativeWindow::~NativeWindow() {
+		XDestroyWindow(GetDetailedManager()->GetDisplay(), window);
+	}
 	NativeWindowManager* NativeWindow::GetDetailedManager() const{
 		return (NativeWindowManager*)GetManager();
 	}

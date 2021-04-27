@@ -123,7 +123,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 endif()
 
 if(MSVC)
-	target_compile_options(Test PUBLIC /utf-8)
+	target_compile_options(Engine PUBLIC /utf-8)
 endif()
 
 # Force C++17
