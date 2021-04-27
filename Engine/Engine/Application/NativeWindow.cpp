@@ -2,7 +2,7 @@
 #include "Engine/Platform/NativeWindow.h"
 
 namespace Engine {
-	NativeWindow::~NativeWindow() {}
+	//NativeWindow::~NativeWindow() {}
 	uint64 NativeWindow::GetId() const {
 		return id;
 	}

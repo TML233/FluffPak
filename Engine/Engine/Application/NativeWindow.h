@@ -13,7 +13,7 @@ namespace Engine{
 		using ID = uint64;
 		const static inline ID NullId = 0;
 
-		virtual ~NativeWindow();
+		virtual ~NativeWindow() = default;
 
 		virtual bool IsValid() const = 0;
 

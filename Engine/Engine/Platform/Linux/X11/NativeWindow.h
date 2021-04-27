@@ -16,7 +16,7 @@ namespace Engine::PlatformSpecific {
 	private:
 		Display* display = nullptr;
 		int screen = 0;
-		XEvent event;
+		XEvent event{};
 	};
 	class NativeWindow final :public ::Engine::NativeWindow {
 	public:
@@ -33,18 +33,18 @@ namespace Engine::PlatformSpecific {
 		bool SetPosition(const Vector2& position) override;
 		Vector2 GetSize() const override;
 		bool SetSize(const Vector2& size) override;
-		
+
 		bool IsVisible() const override;
 		bool SetVisible(bool visible) override;
-		
+
 		bool IsMinimized() const override;
 		bool SetMinimized(bool minimized) override;
 		bool IsMaximized() const override;
 		bool SetMaximized(bool maximized) override;
-		bool HasMinimizeButton() const override;
-		bool SetMinimizeButton(bool enabled) override;
 		bool HasMaximizeButton() const override;
 		bool SetMaximizeButton(bool enabled) override;
+		bool HasMinimizeButton() const override;
+		bool SetMinimizeButton(bool enabled) override;
 
 		bool HasBorder() const override;
 		bool SetBorder(bool enabled) override;
@@ -52,6 +52,6 @@ namespace Engine::PlatformSpecific {
 		bool SetResizable(bool resizable) override;
 
 	private:
-		Window window;
+		Window window{};
 	};
 }
