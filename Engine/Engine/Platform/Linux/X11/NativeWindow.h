@@ -2,7 +2,9 @@
 #include "Engine/Application/NativeWindow.h"
 #include <X11/Xlib.h>
 
-namespace Engine::PlatformSpecific {
+namespace Engine::PlatformSpecific{
+	class NativeWindow;
+
 	class NativeWindowManager final :public ::Engine::NativeWindowManager {
 	public:
 		NativeWindowManager();
@@ -10,6 +12,9 @@ namespace Engine::PlatformSpecific {
 		
 		int GetDefaultScreen() const;
 		Display* GetDisplay() const;
+		Atom GetInternAtom(const char* name);
+		void SetWindowToNative(Window window, NativeWindow* native);
+		NativeWindow* GetNativeFromWindow(Window window);
 
 		void Update() override;
 
@@ -17,13 +22,15 @@ namespace Engine::PlatformSpecific {
 		Display* display = nullptr;
 		int screen = 0;
 		XEvent event{};
+		Dictionary<const void*, Atom> internAtomCache{};
+		Dictionary<Window, NativeWindow*> windowToNative{};
 	};
 	class NativeWindow final :public ::Engine::NativeWindow {
 	public:
-		NativeWindow();
 		~NativeWindow();
 
 		NativeWindowManager* GetDetailedManager() const;
+		Display* GetDisplay() const;
 
 		bool IsValid() const override;
 
@@ -50,6 +57,10 @@ namespace Engine::PlatformSpecific {
 		bool SetBorder(bool enabled) override;
 		bool IsResizable() const override;
 		bool SetResizable(bool resizable) override;
+
+	protected:
+		bool Initialize() override;
+		XWindowAttributes GetAttributes() const;
 
 	private:
 		Window window{};

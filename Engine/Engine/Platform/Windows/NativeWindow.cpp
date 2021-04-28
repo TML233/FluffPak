@@ -59,14 +59,16 @@ namespace Engine::PlatformSpecific {
 		return wp;
 	}
 
-	NativeWindow::NativeWindow() {
+	bool NativeWindow::Initialize() {
 		const DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
 		HWND w = CreateWindowW(GetGlobalWindowClassName(), L"", style, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
-		ERR_ASSERT(IsWindow(w), "CreateWindowW failed to create a window!", return);
+		ERR_ASSERT(IsWindow(w), "CreateWindowW failed to create a window!", return false);
 		// Set user data to let hwnd trace back to NativeWindow.
 		SetWindowLongPtrW(w, GWLP_USERDATA, (LONG_PTR)this);
 
 		hWnd = w;
+
+		return true;
 	}
 	NativeWindow::~NativeWindow() {
 		if (!IsWindow(hWnd)) {

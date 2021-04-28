@@ -45,6 +45,9 @@ namespace Engine{
 		ID GetId() const;
 		NativeWindowManager* GetManager() const;
 
+	protected:
+		virtual bool Initialize() = 0;
+
 	private:
 		ID id = -1;
 		NativeWindowManager* manager = nullptr;

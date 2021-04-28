@@ -18,7 +18,6 @@ namespace Engine::PlatformSpecific {
 
 	class NativeWindow final:public ::Engine::NativeWindow {
 	public:
-		NativeWindow();
 		~NativeWindow();
 
 		bool IsValid() const override;
@@ -51,6 +50,9 @@ namespace Engine::PlatformSpecific {
 		static WCHAR* GetGlobalWindowClassName();
 
 		static NativeWindow* GetFromHWnd(HWND hWnd);
+
+	protected:
+		bool Initialize() override;
 
 	private:
 		HWND hWnd = NULL;

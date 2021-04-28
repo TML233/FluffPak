@@ -23,7 +23,15 @@ namespace Engine {
 		window->manager = this;
 
 		windows.Add(window->id, window);
-		return window.GetRaw();
+
+		bool succeeded = window->Initialize();
+		if (!succeeded) {
+			ERR_MSG("Failed to initialize a NativeWindow!");
+			window->Destroy();
+			return nullptr;
+		} else {
+			return window.GetRaw();
+		}
 	}
 	bool NativeWindowManager::IsExists(NativeWindow::ID id) const {
 		return windows.ContainsKey(id);
