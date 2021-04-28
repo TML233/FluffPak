@@ -41,6 +41,7 @@ namespace Engine{
 		static int32 GetHashCode(uint64 obj);
 		static int32 GetHashCode(float obj);
 		static int32 GetHashCode(double obj);
+		static int32 GetHashCode(const void* obj);
 #pragma endregion
 	};
 }

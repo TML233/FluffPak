@@ -2,7 +2,7 @@
 #include "Engine/Platform/NativeWindow.h"
 
 namespace Engine {
-	NativeWindow::~NativeWindow() {}
+	//NativeWindow::~NativeWindow() {}
 	uint64 NativeWindow::GetId() const {
 		return id;
 	}
@@ -23,7 +23,15 @@ namespace Engine {
 		window->manager = this;
 
 		windows.Add(window->id, window);
-		return window.GetRaw();
+
+		bool succeeded = window->Initialize();
+		if (!succeeded) {
+			ERR_MSG("Failed to initialize a NativeWindow!");
+			window->Destroy();
+			return nullptr;
+		} else {
+			return window.GetRaw();
+		}
 	}
 	bool NativeWindowManager::IsExists(NativeWindow::ID id) const {
 		return windows.ContainsKey(id);
@@ -43,7 +51,7 @@ namespace Engine {
 	int32 NativeWindowManager::GetCount() const {
 		return windows.GetCount();
 	}
-	void NativeWindowManager::DestroyAll() {
+	void NativeWindowManager::Clear() {
 		windows.Clear();
 	}
 }

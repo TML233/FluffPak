@@ -17,11 +17,9 @@ namespace Engine {
 #if defined(WIN32)
 #	define CURRENT_PLATFORM_WINDOWS true
 #	define CURRENT_PLATFORM PLATFORM(Windows)
-/*
-#elif defined(__LINUX__)
+#elif defined(__linux__)
 #	define CURRENT_PLATFORM_LINUX true
 #	define CURRENT_PLATFORM PLATFORM(Linux)
-*/
 /*
 #elif defined(__ANDROID__)
 #	define CURRENT_PLATFORM_ANDROID true

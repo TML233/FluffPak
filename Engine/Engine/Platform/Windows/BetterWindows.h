@@ -4,6 +4,8 @@
 #define WINDOWS_LEAN_AND_MEAN
 //#define NOGDI
 
+#define UNICODE
+#define _UNICODE
 #include <Windows.h>
 
 #undef NOMINMAX

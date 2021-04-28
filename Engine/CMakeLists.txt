@@ -3,12 +3,9 @@ project("Engine" LANGUAGES CXX)
 
 # Build Engine
 add_library(Engine STATIC)
-target_include_directories(Engine PUBLIC "./")
-# Link thirdparty libraries
-target_link_libraries(Engine PUBLIC fmt)
 
 # Define common header/source files.
-set(HeaderFileCore
+set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Definition.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/ObjectUtil.h"
@@ -49,7 +46,7 @@ set(HeaderFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node2D.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/TestNode.h"
 )
-set(SourceFileCore
+set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/ObjectUtil.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/InstanceId.cpp"
@@ -78,37 +75,68 @@ set(SourceFileCore
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node2D.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/TestNode.cpp"
 )
-
-# Define platform header/source files.
-# Windows
-set(HeaderFilePlatformWindows
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/BetterWindows.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.h"
-
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.h"
+set(IncludeDir
+	"${CMAKE_CURRENT_LIST_DIR}"
 )
-set(SourceFilePlatformWindows
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.cpp"
-
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.cpp"
+set(LinkLibrary
+	fmt
 )
-
 
 # Add platform-depended header/source files.
 if(WIN32)
-	list(APPEND HeaderFilePlatform ${HeaderFilePlatformWindows})
-	list(APPEND SourceFilePlatform ${SourceFilePlatformWindows})
+	list(APPEND HeaderFile
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/BetterWindows.h"
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.h"
 
-	target_compile_options(Engine PUBLIC -DUNICODE -D_UNICODE)
-elseif(__LINUX__)
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.h"
+	)
+	list(APPEND SourceFile
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.cpp"
 
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.cpp"
+	)
+	list(APPEND IncludeDir
+	)
+	list(APPEND LinkLibrary
+	)
+elseif(UNIX AND "${CMAKE_SYSTEM}" MATCHES "Linux")
+	list(APPEND HeaderFile
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/NativeWindow.h"
+	)
+	list(APPEND SourceFile
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/NativeWindow.cpp"
+	)
+
+	find_package(PkgConfig REQUIRED)
+	pkg_check_modules(GTK REQUIRED gtk+-3.0)
+
+	list(APPEND IncludeDir
+		"${GTK_INCLUDE_DIRS}"
+	)
+	list(APPEND LinkLibrary
+		"${GTK_LIBRARIES}"
+	)
+endif()
+
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+	target_compile_options(Engine PUBLIC -Wno-switch)
+endif()
+
+if(MSVC)
+	target_compile_options(Engine PUBLIC /utf-8)
 endif()
 
 # Force C++17
 target_compile_features(Engine PUBLIC cxx_std_17)
 
+# Include directories
+target_include_directories(Engine PUBLIC ${IncludeDir})
+
+# Link thirdparty libraries
+target_link_libraries(Engine PUBLIC ${LinkLibrary})
+
 # Build with sources and headers.
 target_sources(Engine
-	PUBLIC ${HeaderFileCore} ${HeaderFilePlatform}
-	PRIVATE ${SourceFileCore} ${SourceFilePlatform}
+	PUBLIC ${HeaderFile}
+	PRIVATE ${SourceFile}
 )

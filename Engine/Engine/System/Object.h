@@ -12,18 +12,34 @@
 
 #pragma region Reflection macros
 
-#pragma region Common name getter.
-#define _REFLECTION_CLASS_NAME_GETTERS(name,parent)									\
+#pragma region Common name getter for root class.
+#define _REFLECTION_CLASS_NAME_GETTERS_ROOT(name)									\
 static ::Engine::String GetReflectionClassNameStatic(){								\
 	return STRING_LITERAL(name);													\
 }																					\
 virtual ::Engine::String GetReflectionClassName() const{							\
 	return STRING_LITERAL(name);													\
 }																					\
-static ::Engine::String GetParentClassNameStatic(){									\
+static ::Engine::String GetReflectionParentClassNameStatic(){						\
+	return STRING_LITERAL("");														\
+}																					\
+virtual ::Engine::String GetReflectionParentClassName() const{						\
+	return STRING_LITERAL("");														\
+}
+#pragma endregion
+
+#pragma region Common name getter.
+#define _REFLECTION_CLASS_NAME_GETTERS(name,parent)									\
+static ::Engine::String GetReflectionClassNameStatic(){								\
+	return STRING_LITERAL(name);													\
+}																					\
+virtual ::Engine::String GetReflectionClassName() const override{					\
+	return STRING_LITERAL(name);													\
+}																					\
+static ::Engine::String GetReflectionParentClassNameStatic(){						\
 	return STRING_LITERAL(parent);													\
 }																					\
-virtual ::Engine::String GetParentClassName() const{								\
+virtual ::Engine::String GetReflectionParentClassName() const override{				\
 	return STRING_LITERAL(parent);													\
 }
 #pragma endregion
@@ -69,7 +85,7 @@ virtual ::Engine::String GetParentClassName() const{								\
 #pragma region Root class register, not calling parent
 #define REFLECTION_ROOTCLASS(name)													\
 public:																				\
-	_REFLECTION_CLASS_NAME_GETTERS(#name,"")										\
+	_REFLECTION_CLASS_NAME_GETTERS_ROOT(#name)										\
 																					\
 protected:																			\
 	_REFLECTION_CLASS_INITIALIZER_HEAD()											\
@@ -172,7 +188,7 @@ namespace Engine{
 			SharedPtr<ReflectionClass> data = SharedPtr<ReflectionClass>::Create();
 
 			data->name = T::GetReflectionClassNameStatic();
-			data->parentName = T::GetParentClassNameStatic();
+			data->parentName = T::GetReflectionParentClassNameStatic();
 
 			return (GetData().Add(T::GetReflectionClassNameStatic(), data) ? data.GetRaw() : nullptr);
 		}

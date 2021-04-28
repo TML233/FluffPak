@@ -82,5 +82,9 @@ namespace Engine {
 		}
 		return ObjectUtil::GetHashCode(bits);
 	}
+	int32 ObjectUtil::GetHashCode(const void* obj) {
+		sizeint v = *((sizeint*)(&obj));
+		return GetHashCode(v);
+	}
 #pragma endregion
 }

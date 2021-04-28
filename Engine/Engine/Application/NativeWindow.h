@@ -13,7 +13,7 @@ namespace Engine{
 		using ID = uint64;
 		const static inline ID NullId = 0;
 
-		virtual ~NativeWindow();
+		virtual ~NativeWindow() = default;
 
 		virtual bool IsValid() const = 0;
 
@@ -45,6 +45,9 @@ namespace Engine{
 		ID GetId() const;
 		NativeWindowManager* GetManager() const;
 
+	protected:
+		virtual bool Initialize() = 0;
+
 	private:
 		ID id = -1;
 		NativeWindowManager* manager = nullptr;
@@ -59,7 +62,7 @@ namespace Engine{
 		int32 GetCount() const;
 		bool IsExists(NativeWindow::ID id) const;
 		bool Destory(NativeWindow::ID id);
-		void DestroyAll();
+		void Clear();
 		virtual void Update() = 0;
 
 	private:
