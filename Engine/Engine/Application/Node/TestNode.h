@@ -13,6 +13,6 @@ namespace Engine {
 		//void OnPhysicsUpdate(float delta) override;
 		void OnExitingTree() override;
 	private:
-		
+		double next = 1;
 	};
 }

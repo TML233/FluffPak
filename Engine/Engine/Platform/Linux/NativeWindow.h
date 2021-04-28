@@ -1,37 +1,28 @@
 #pragma once
 #include "Engine/Application/NativeWindow.h"
-#include <X11/Xlib.h>
+#include <gtk/gtk.h>
 
 namespace Engine::PlatformSpecific{
 	class NativeWindow;
 
 	class NativeWindowManager final :public ::Engine::NativeWindowManager {
 	public:
-		NativeWindowManager();
-		~NativeWindowManager();
-		
-		int GetDefaultScreen() const;
-		Display* GetDisplay() const;
-		Atom GetInternAtom(const char* name);
-		void SetWindowToNative(Window window, NativeWindow* native);
-		NativeWindow* GetNativeFromWindow(Window window);
-
 		void Update() override;
 
 	private:
-		Display* display = nullptr;
-		int screen = 0;
-		XEvent event{};
-		Dictionary<const void*, Atom> internAtomCache{};
-		Dictionary<Window, NativeWindow*> windowToNative{};
+		class _Initializer final {
+		public:
+			_Initializer();
+			~_Initializer();
+		};
+		static _Initializer _initializer;
 	};
 	class NativeWindow final :public ::Engine::NativeWindow {
 	public:
 		~NativeWindow();
 
 		NativeWindowManager* GetDetailedManager() const;
-		Display* GetDisplay() const;
-
+		
 		bool IsValid() const override;
 
 		String GetTitle() const override;
@@ -58,11 +49,14 @@ namespace Engine::PlatformSpecific{
 		bool IsResizable() const override;
 		bool SetResizable(bool resizable) override;
 
+
+		void OnCallbackClose();
+		static gboolean OnGtkCloseWindow(GtkWidget* widget,GdkEvent* event,gpointer data);
+
 	protected:
 		bool Initialize() override;
-		XWindowAttributes GetAttributes() const;
-
+		
 	private:
-		Window window{};
+		GtkWidget* window;
 	};
 }
