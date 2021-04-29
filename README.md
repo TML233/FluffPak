@@ -1,10 +1,10 @@
-# PawsEngine
+# Rabbik Engine
 ## Info
 This is a working personal project. The purpose is to learn, and build a useable, cross-platform 2D game engine.
 Currently not accepting any pull requests.
 
 ## Coding convention
-* **Pointers** are only used when the client *doesn't control the life time* of the object.
+* **Pointers** are only used when the client *doesn't control the life time* of the object, where pointers of `ManualObject` are the exception.
 * `Object` provides functions of *Reflection*. Pure data classes does not inherit `Object`.
 * Inherit `ManualObject` or `ReferencedObject` instead of `Object` to indicate the method of controlling the memory life time. `ReferencedObject` are used with `ReferencePtr`, which is essentially a *intrusive pointer*.
 
@@ -16,6 +16,7 @@ Currently not accepting any pull requests.
 * Compressing data: [zlib](https://github.com/madler/zlib)
 * PNG image procressing: [libpng](https://github.com/glennrp/libpng)
 * C# scripting embedding: [mono](mono-project.com)
+* Linux Window: [GTK](https://www.gtk.org/)
 
 ## Referenced materials
 * [.NET Source](https://source.dot.net)
