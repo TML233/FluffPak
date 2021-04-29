@@ -30,4 +30,13 @@ namespace Engine {
 	using uint64 = std::uint64_t;
 	// Represents a local machine sized integer which can hold the memory size.
 	using sizeint = std::size_t;
+
+	/// @brief A helper struct for storing result code and result value together.\n
+	/// Only used for small values. Big values still remains being returned via the parameter.
+	template<typename TResult,typename TValue>
+	struct ResultPair {
+		ResultPair(TResult result, TValue value) :result(result), value(value) {}
+		TResult result;
+		TValue value;
+	};
 }

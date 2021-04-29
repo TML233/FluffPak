@@ -13,6 +13,7 @@ namespace Engine {
 		instance = this;
 
 		nativeWindowManager.Reset(MEMNEW(PlatformSpecific::NativeWindowManager()));
+		fileSystem.Reset(MEMNEW(FileSystem()));
 	}
 	Engine::~Engine() {
 		if (instance == this) {
@@ -36,6 +37,9 @@ namespace Engine {
 	}
 	NativeWindowManager* Engine::GetNativeWindowManager() const {
 		return nativeWindowManager.GetRaw();
+	}
+	FileSystem* Engine::GetFileSystem() const {
+		return fileSystem.GetRaw();
 	}
 
 	void Engine::Run() {

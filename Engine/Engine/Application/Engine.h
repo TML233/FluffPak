@@ -5,6 +5,7 @@
 #include "Engine/Application/AppLoop.h"
 #include "Engine/Application/Time.h"
 #include "Engine/Application/NativeWindow.h"
+#include "Engine/System/File.h"
 
 namespace Engine {
 	/// @brief The engine application manager. Contains every information necessary for a application to run.
@@ -33,6 +34,7 @@ namespace Engine {
 		int32 GetTargetFps() const;
 
 		NativeWindowManager* GetNativeWindowManager() const;
+		FileSystem* GetFileSystem() const;
 
 	private:
 		static Engine* instance;
@@ -40,6 +42,7 @@ namespace Engine {
 		UniquePtr<AppLoop> appLoop{};
 		Time time{};
 		UniquePtr<NativeWindowManager> nativeWindowManager;
+		UniquePtr<FileSystem> fileSystem;
 
 		int32 targetFps = 60;
 	};

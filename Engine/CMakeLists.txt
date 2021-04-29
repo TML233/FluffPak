@@ -8,16 +8,18 @@ add_library(Engine STATIC)
 set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Definition.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/ReferencePtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/ObjectUtil.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/InstanceId.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/UniquePtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/SharedPtr.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/ReferencePtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Atomic.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Variant.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.h"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.h"
@@ -52,6 +54,8 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Variant.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.cpp"

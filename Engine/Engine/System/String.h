@@ -139,6 +139,8 @@ namespace Engine {
 
 		bool operator==(const String& obj) const;
 		bool operator!=(const String& obj) const;
+
+		std::string_view GetStringView() const;
 #pragma endregion
 
 #pragma region Format
@@ -179,7 +181,7 @@ namespace fmt {
 	struct formatter<::Engine::String> : formatter<string_view> {
 		template <typename FormatContext>
 		auto format(const ::Engine::String& c, FormatContext& ctx) {
-			return formatter<string_view>::format(string_view(c.GetStartPtr(), c.GetCount()), ctx);
+			return formatter<string_view>::format(c.GetStringView(), ctx);
 		}
 	};
 }

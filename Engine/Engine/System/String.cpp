@@ -287,5 +287,9 @@ namespace Engine {
 		return String::Format("{0}{1}", *this, obj);
 	}
 
+	std::string_view String::GetStringView() const {
+		return std::string_view(GetStartPtr(), GetCount());
+	}
+
 	String::SearcherSunday String::searcher{};
 }
