@@ -1,4 +1,3 @@
-# Rabbik Engine
 <p align="center">
 <img src="Icon/Rabbik/Logo.png">
 </p>
