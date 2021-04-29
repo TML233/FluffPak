@@ -85,12 +85,17 @@ set(LinkLibrary
 # Add platform-depended header/source files.
 if(WIN32)
 	list(APPEND HeaderFile
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/Resource.h"
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/TargetVer.h"
+
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/BetterWindows.h"
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.h"
 
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.h"
 	)
 	list(APPEND SourceFile
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/Resource.rc"
+
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.cpp"
 
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.cpp"
