@@ -25,8 +25,6 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Rect2.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Transform2.h"
 
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Algorithm/StringSearcherSunday.h"
-
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Iterator.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/List.h"
@@ -60,8 +58,6 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Vector2.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Rect2.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Transform2.cpp"
-
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Algorithm/StringSearcherSunday.cpp"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.cpp"
 

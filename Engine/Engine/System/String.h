@@ -2,7 +2,6 @@
 
 #include "fmt/core.h"
 #include "fmt/format.h"
-#include "Engine/Algorithm/StringSearcherSunday.h"
 #include "Engine/Collection/Iterator.h"
 #include "Engine/System/Atomic.h"
 #include "Engine/System/UniquePtr.h"
@@ -53,6 +52,13 @@ namespace Engine {
 		private:
 			bool staticData;
 			mutable ReferenceCount referenceCount;
+		};
+
+		class SearcherSunday {
+		public:
+			int32 Search(const char* target, int32 lenTarget, const char* pattern, int32 lenPattern);
+		private:
+			int32 charPos[256] = { -1 };
 		};
 
 		/// @brief Get the global empty String.
@@ -162,7 +168,7 @@ namespace Engine {
 		int32 refCount = 0;
 
 		/// @brief Global sunday string searcher.
-		static StringSearcherSunday searcher;
+		static SearcherSunday searcher;
 
 		static List<sizeint> replacerIndexes;
 	};
