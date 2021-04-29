@@ -1,6 +1,6 @@
 # Rabbik Engine
 <p align="center">
-<img width="387" height="182" src="Icon/Rabbik/Logo.png">
+<img src="Icon/Rabbik/Logo.png">
 </p>
 
 ## Info
