@@ -1,7 +1,12 @@
-# Rabbik Engine
+<p align="center">
+<img src="Icon/Rabbik/Logo.png">
+</p>
+
 ## Info
 This is a working personal project. The purpose is to learn, and build a useable, cross-platform 2D game engine.
 Currently not accepting any pull requests.
+
+Icons, characters and other artworks of Rabbik Engine are works of mine. Do not steal.
 
 ## Coding convention
 * **Pointers** are only used when the client *doesn't control the life time* of the object, where pointers of `ManualObject` are the exception.
@@ -12,7 +17,7 @@ Currently not accepting any pull requests.
 * Make system: [CMake](https://cmake.org)
 * Unit testing: [DocTest](https://github.com/onqtam/doctest)
 * String formating: [fmt](https://github.com/fmtlib/fmt)
-* Math: [glm](https://github.com/g-truc/glm)
+* ~~Math: [glm](https://github.com/g-truc/glm)~~
 * Compressing data: [zlib](https://github.com/madler/zlib)
 * PNG image procressing: [libpng](https://github.com/glennrp/libpng)
 * C# scripting embedding: [mono](mono-project.com)
