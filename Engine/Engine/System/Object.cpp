@@ -15,7 +15,7 @@ namespace Engine {
 	}
 
 	String Object::ToString() const {
-		return typeid(*this).name();
+		return String::Format(STRING_LITERAL("{0} ({1})"), GetReflectionClassName(), GetInstanceId().Get());
 	}
 	int32 Object::GetHashCode() const {
 		return ObjectUtil::GetHashCode(instanceId.Get());
