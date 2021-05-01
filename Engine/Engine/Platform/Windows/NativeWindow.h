@@ -2,8 +2,13 @@
 #include "Engine/Application/NativeWindow.h"
 #include "Engine/Platform/Windows/BetterWindows.h"
 
-namespace Engine::PlatformSpecific {
+#define PLATFORM_SPECIFIC_CLASS_NATIVEWINDOWMANAGER ::Engine::PlatformSpecific::Windows::NativeWindowManager
+#define PLATFORM_SPECIFIC_CLASS_NATIVEWINDOW ::Engine::PlatformSpecific::Windows::NativeWindow
+
+namespace Engine::PlatformSpecific::Windows {
 	class NativeWindowManager final :public ::Engine::NativeWindowManager {
+		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::NativeWindowManager, ::Engine::NativeWindowManager) {}
+
 	public:
 		void Update() override;
 
@@ -17,6 +22,8 @@ namespace Engine::PlatformSpecific {
 	};
 
 	class NativeWindow final:public ::Engine::NativeWindow {
+		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::NativeWindow, ::Engine::NativeWindow) {}
+
 	public:
 		~NativeWindow();
 

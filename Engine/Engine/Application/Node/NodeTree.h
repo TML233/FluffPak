@@ -5,7 +5,7 @@
 
 namespace Engine{
 	class NodeTree final:public AppLoop {
-		REFLECTION_CLASS(NodeTree, AppLoop) {}
+		REFLECTION_CLASS(::Engine::NodeTree, ::Engine::AppLoop) {}
 
 	public:
 		using RootType = Node;

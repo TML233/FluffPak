@@ -1,6 +1,6 @@
 #include "Engine/Platform/Linux/NativeWindow.h"
 
-namespace Engine::PlatformSpecific {
+namespace Engine::PlatformSpecific::Linux {
 	typename NativeWindowManager::_Initializer NativeWindowManager::_initializer{};
 
 	NativeWindowManager::_Initializer::_Initializer() {

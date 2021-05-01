@@ -1,7 +1,7 @@
 #include "Engine/Platform/Windows/NativeWindow.h"
 #include "Engine/Platform/Windows/UnicodeHelper.h"
 
-namespace Engine::PlatformSpecific {
+namespace Engine::PlatformSpecific::Windows {
 	typename NativeWindowManager::_Initializer NativeWindowManager::_initializer{};
 
 	NativeWindowManager::_Initializer::_Initializer() {

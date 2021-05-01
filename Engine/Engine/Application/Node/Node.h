@@ -10,7 +10,7 @@ namespace Engine {
 	class NodeTree;
 
 	class Node :public ManualObject {
-		REFLECTION_CLASS(Node, ManualObject) {}
+		REFLECTION_CLASS(::Engine::Node, ::Engine::ManualObject) {}
 
 	public:
 		Node();

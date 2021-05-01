@@ -16,8 +16,7 @@ namespace Engine {
 	NativeWindowManager::~NativeWindowManager() {}
 
 	NativeWindow* NativeWindowManager::Create() {
-		SharedPtr<PlatformSpecific::NativeWindow> platformWindow = SharedPtr<PlatformSpecific::NativeWindow>::Create();
-		SharedPtr<NativeWindow> window = platformWindow.StaticCastTo<NativeWindow>();
+		SharedPtr<NativeWindow> window = SharedPtr<PLATFORM_SPECIFIC_CLASS_NATIVEWINDOW>::Create();
 
 		window->id = idCounter.FetchAdd(1);
 		window->manager = this;

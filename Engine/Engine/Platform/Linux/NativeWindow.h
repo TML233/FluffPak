@@ -2,10 +2,15 @@
 #include "Engine/Application/NativeWindow.h"
 #include <gtk/gtk.h>
 
-namespace Engine::PlatformSpecific{
+#define PLATFORM_SPECIFIC_CLASS_NATIVEWINDOWMANAGER ::Engine::PlatformSpecific::Linux::NativeWindowManager
+#define PLATFORM_SPECIFIC_CLASS_NATIVEWINDOW ::Engine::PlatformSpecific::Linux::NativeWindow
+
+namespace Engine::PlatformSpecific::Linux{
 	class NativeWindow;
 
 	class NativeWindowManager final :public ::Engine::NativeWindowManager {
+		REFLECTION_CLASS(::Engine::PlatformSpecific::Linux::NativeWindowManager, ::Engine::NativeWindowManager) {}
+
 	public:
 		void Update() override;
 

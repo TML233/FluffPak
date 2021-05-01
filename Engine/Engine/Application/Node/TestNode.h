@@ -3,7 +3,7 @@
 
 namespace Engine {
 	class TestNode :public Node {
-		REFLECTION_CLASS(TestNode, Node) {}
+		REFLECTION_CLASS(::Engine::TestNode, ::Engine::Node) {}
 
 	public:
 		TestNode();

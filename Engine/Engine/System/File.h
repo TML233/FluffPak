@@ -5,39 +5,8 @@
 
 namespace Engine {
 	class FileSystem;
-
-	class File:public ReferencedObject {
-		REFLECTION_CLASS(File, ReferencedObject) {
-			REFLECTION_CLASS_INSTANTIABLE(false);
-		}
-
-	public:
-		virtual ~File() = default;
-
-	};
-
-	/// @brief Protocol handler abstract layer for FileSystem.
-	class FileSystemProtocolHandler {
-	public:
-		virtual ~FileSystemProtocolHandler() = default;
-		virtual ResultPair<FileSystem::Result, bool> IsFileExists(const String& path) const = 0;
-		virtual ResultPair<FileSystem::Result, bool> IsDirectoryExists(const String& path) const = 0;
-
-		virtual FileSystem::Result CreateFile(const String& path)=0;
-		virtual FileSystem::Result CreateDirectory(const String& path)=0;
-
-		virtual ResultPair<FileSystem::Result, ReferencePtr<File>> OpenFile(const String& path, FileSystem::OpenMode mode)=0;
-
-		virtual FileSystem::Result RemoveFile(const String& path) = 0;
-		virtual FileSystem::Result RemoveDirectory(const String& path) = 0;
-
-		virtual FileSystem::Result GetAllFiles(const String& path, List<String>& result) const = 0;
-		virtual FileSystem::Result GetAllDirectories(const String& path,List<String>& result) const = 0;
-
-	private:
-		friend class FileSystem;
-		FileSystem* owner = nullptr;
-	};
+	class FileProtocolHandler;
+	class File;
 
 	class FileSystem final {
 	public:
@@ -61,7 +30,7 @@ namespace Engine {
 #pragma region Protocols
 		enum class Protocol {
 			/// @brief Invalid protocol
-			Null=-1,
+			Null = -1,
 			/// @brief Files on the local machine filesystem.
 			File,
 			/// @brief Files in the resource directory.
@@ -77,7 +46,7 @@ namespace Engine {
 		Protocol GetProtocol(const String& name) const;
 		/// @brief Get a protocol handler.
 		/// @return nullptr when not found.
-		FileSystemProtocolHandler* GetProtocolHandler(Protocol protocol) const;
+		FileProtocolHandler* GetProtocolHandler(Protocol protocol) const;
 #pragma endregion
 
 #pragma region Open modes
@@ -106,12 +75,12 @@ namespace Engine {
 		ResultPair<Result, bool> IsFileExists(const String& path) const;
 		/// @brief Check if the directory exists.
 		ResultPair<Result, bool> IsDirectoryExists(const String& path) const;
-		
+
 		/// @brief Create a empty file at the given path.
 		Result CreateFile(const String& path);
 		/// @brief Create a empty directory at the given path.
 		Result CreateDirectory(const String& path);
-		
+
 		/// @brief Open the file at the given path. Will fail if the file doesn't exist.
 		ResultPair<Result, ReferencePtr<File>> OpenFile(const String& path, OpenMode mode);
 
@@ -131,11 +100,48 @@ namespace Engine {
 		using ResultFile = ResultPair<Result, ReferencePtr<File>>;
 
 		void AddProtocol(const String& name, Protocol protocol);
-		void AddProtocolHandler(Protocol protocol, UniquePtr<FileSystemProtocolHandler>&& handler);
+		void AddProtocolHandler(Protocol protocol, UniquePtr<FileProtocolHandler>&& handler);
 
 		ResultPair<Protocol, int32> GetSplitData(const String& path) const;
-		
+
 		Dictionary<String, Protocol> protocols{};
-		Dictionary<Protocol, SharedPtr<FileSystemProtocolHandler>> protocolHandlers{};
+		Dictionary<Protocol, SharedPtr<FileProtocolHandler>> protocolHandlers{};
 	};
+
+	/// @brief Protocol handler abstract layer for FileSystem.
+	class FileProtocolHandler:public ManualObject {
+		REFLECTION_CLASS(::Engine::FileProtocolHandler, ::Engine::ManualObject) {
+			REFLECTION_CLASS_INSTANTIABLE(false);
+		}
+	public:
+		virtual ~FileProtocolHandler() = default;
+		virtual ResultPair<FileSystem::Result, bool> IsFileExists(const String& path) const = 0;
+		virtual ResultPair<FileSystem::Result, bool> IsDirectoryExists(const String& path) const = 0;
+
+		virtual FileSystem::Result CreateFile(const String& path)=0;
+		virtual FileSystem::Result CreateDirectory(const String& path)=0;
+
+		virtual ResultPair<FileSystem::Result, ReferencePtr<File>> OpenFile(const String& path, FileSystem::OpenMode mode)=0;
+
+		virtual FileSystem::Result RemoveFile(const String& path) = 0;
+		virtual FileSystem::Result RemoveDirectory(const String& path) = 0;
+
+		virtual FileSystem::Result GetAllFiles(const String& path, List<String>& result) const = 0;
+		virtual FileSystem::Result GetAllDirectories(const String& path,List<String>& result) const = 0;
+
+	private:
+		friend class FileSystem;
+		FileSystem* owner = nullptr;
+	};
+
+	class File :public ReferencedObject {
+		REFLECTION_CLASS(::Engine::File, ::Engine::ReferencedObject) {
+			REFLECTION_CLASS_INSTANTIABLE(false);
+		}
+
+	public:
+		virtual ~File() = default;
+
+	};
+
 }

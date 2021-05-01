@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/System/Definition.h"
+#include "Engine/System/Object.h"
 #include "Engine/System/String.h"
 #include "Engine/Math/Vector2.h"
 #include "Engine/Collection/Dictionary.h"
@@ -8,7 +9,11 @@
 
 namespace Engine{
 	class NativeWindowManager;
-	class NativeWindow {
+	class NativeWindow: public ManualObject {
+		REFLECTION_CLASS(::Engine::NativeWindow, ::Engine::ManualObject) {
+			REFLECTION_CLASS_INSTANTIABLE(false);
+		}
+
 	public:
 		using ID = uint64;
 		const static inline ID NullId = 0;
@@ -54,7 +59,11 @@ namespace Engine{
 		friend class NativeWindowManager;
 	};
 
-	class NativeWindowManager {
+	class NativeWindowManager :public ManualObject {
+		REFLECTION_CLASS(::Engine::NativeWindowManager, ::Engine::ManualObject) {
+			REFLECTION_CLASS_INSTANTIABLE(false);
+		}
+
 	public:
 		virtual ~NativeWindowManager();
 		NativeWindow* Create();

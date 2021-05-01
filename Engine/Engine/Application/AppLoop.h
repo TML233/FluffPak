@@ -5,7 +5,7 @@
 namespace Engine {
 	/// @brief Controls how the application runs its logic.
 	class AppLoop:public ManualObject {
-		REFLECTION_CLASS(AppLoop, ManualObject) {}
+		REFLECTION_CLASS(::Engine::AppLoop, ::Engine::ManualObject) {}
 
 	public:
 		virtual ~AppLoop();

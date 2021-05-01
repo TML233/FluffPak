@@ -12,7 +12,7 @@ namespace Engine {
 	Engine::Engine() {
 		instance = this;
 
-		nativeWindowManager.Reset(MEMNEW(PlatformSpecific::NativeWindowManager()));
+		nativeWindowManager.Reset(MEMNEW(PLATFORM_SPECIFIC_CLASS_NATIVEWINDOWMANAGER));
 		fileSystem.Reset(MEMNEW(FileSystem()));
 	}
 	Engine::~Engine() {
