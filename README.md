@@ -1,5 +1,5 @@
 <p align="center">
-<img src="Icon/Rabbik/Logo.png">
+<img src="Asset/Rabbik/Logo.png">
 </p>
 
 ## Info
