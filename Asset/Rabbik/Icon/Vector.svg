@@ -13,10 +13,10 @@
    version="1.1"
    id="svg8"
    inkscape:version="1.0.2 (e86c870879, 2021-01-15)"
-   sodipodi:docname="绘图.svg"
-   inkscape:export-filename="C:\Users\TML\Desktop\Rabbik256.png"
-   inkscape:export-xdpi="1536.0001"
-   inkscape:export-ydpi="1536.0001">
+   sodipodi:docname="Rabbik.svg"
+   inkscape:export-filename="E:\Code\RabbikEngine\Icon\Rabbik\RabbikDocs.png"
+   inkscape:export-xdpi="576.00006"
+   inkscape:export-ydpi="576.00006">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -26,11 +26,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="44.8"
-     inkscape:cx="5.8921639"
-     inkscape:cy="7.512336"
+     inkscape:zoom="22.627417"
+     inkscape:cx="9.0551817"
+     inkscape:cy="3.8293294"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer8"
+     inkscape:current-layer="g859"
      inkscape:document-rotation="0"
      showgrid="true"
      units="px"
@@ -46,8 +46,8 @@
     <inkscape:grid
        type="xygrid"
        id="grid833"
-       spacingx="0.066145834"
-       spacingy="0.066145834" />
+       spacingx="0.013229167"
+       spacingy="0.013229167" />
     <sodipodi:guide
        position="2.1166667,2.1166667"
        orientation="1,0"
@@ -56,6 +56,18 @@
        position="2.1166666,2.1166667"
        orientation="0,-1"
        id="guide865" />
+    <sodipodi:guide
+       position="0.68791666,1.3361458"
+       orientation="0,-1"
+       id="guide851" />
+    <sodipodi:guide
+       position="0.60854166,0.72760411"
+       orientation="0,-1"
+       id="guide853" />
+    <sodipodi:guide
+       position="0.635,1.9446875"
+       orientation="0,-1"
+       id="guide855" />
   </sodipodi:namedview>
   <metadata
      id="metadata5">
@@ -65,7 +77,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -75,13 +87,13 @@
      inkscape:label="图层 6">
     <g
        inkscape:groupmode="layer"
-       id="layer3"
-       inkscape:label="图层 3"
+       id="g859"
+       inkscape:label="图层 5 复制"
        style="display:inline">
       <path
-         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.24077;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="m 2.1166667,4.0969413 c 1.1178645,0 1.5478125,-0.6019271 1.5478125,-1.1178646 0,-0.6879166 -0.2579687,-0.9458854 -0.429948,-1.1178646 C 3.5784897,1.5172537 4.0084375,0.31339955 3.4925001,0.14142036 2.9765625,0.0554308 2.6326042,1.0013162 2.5466147,1.6892329 c -0.3439583,-0.08599 -0.5159375,-0.08599 -0.859896,0 C 1.6007292,1.0013162 1.2567708,0.0554308 0.74083341,0.14142036 0.22489583,0.31339955 0.65484375,1.5172537 0.99880203,1.8612121 0.82682295,2.0331913 0.56885417,2.2911601 0.56885412,2.8930871 c 5e-8,0.6019271 0.42994791,1.2038542 1.54781258,1.2038542 z"
-         id="path865"
+         style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.185;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 2.1166667,4.0969122 c 1.1178645,0 1.5478126,-0.591183 1.5478126,-1.1997247 0,-0.6085416 -0.2579688,-0.8640253 -0.4299481,-1.0360045 C 3.5784897,1.5172246 4.0084375,0.31337048 3.4925001,0.14139129 2.9765625,0.05540173 2.6326042,1.0012871 2.5466147,1.6892038 c -0.3439583,-0.08599 -0.5159375,-0.08599 -0.859896,0 C 1.6007292,1.0012871 1.2567708,0.05540173 0.74083341,0.14139129 0.22489581,0.31337048 0.65484377,1.5172246 0.99880203,1.861183 0.82682295,2.0331622 0.56885418,2.2886459 0.56885418,2.8971876 c 0,0.6085417 0.42994785,1.1997246 1.54781252,1.1997246 z"
+         id="path857"
          sodipodi:nodetypes="cccccccccc" />
     </g>
     <g
@@ -162,8 +174,8 @@
        inkscape:label="图层 5"
        style="display:inline">
       <path
-         style="display:inline;fill:none;fill-opacity:1;stroke:#2c839b;stroke-width:0.18520833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="m 2.1166667,4.0969122 c 1.1178645,0 1.5478125,-0.6019271 1.5478125,-1.1178646 0,-0.6879166 -0.2579687,-0.9458854 -0.429948,-1.1178646 C 3.5784897,1.5172246 4.0084375,0.31337048 3.4925001,0.14139129 2.9765625,0.05540173 2.6326042,1.0012871 2.5466147,1.6892038 c -0.3439583,-0.08599 -0.5159375,-0.08599 -0.859896,0 C 1.6007292,1.0012871 1.2567708,0.05540173 0.74083341,0.14139129 0.22489581,0.31337048 0.65484377,1.5172246 0.99880203,1.861183 0.82682295,2.0331622 0.56885423,2.291131 0.5688541,2.893058 c 1.3e-7,0.6019271 0.42994793,1.2038542 1.5478126,1.2038542 z"
+         style="display:inline;fill:none;fill-opacity:1;stroke:#2c839b;stroke-width:0.185208;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 2.1166667,4.0969122 c 1.1178645,0 1.5478126,-0.591183 1.5478126,-1.1997247 0,-0.6085416 -0.2579688,-0.8640253 -0.4299481,-1.0360045 C 3.5784897,1.5172246 4.0084375,0.31337048 3.4925001,0.14139129 2.9765625,0.05540173 2.6326042,1.0012871 2.5466147,1.6892038 c -0.3439583,-0.08599 -0.5159375,-0.08599 -0.859896,0 C 1.6007292,1.0012871 1.2567708,0.05540173 0.74083341,0.14139129 0.22489581,0.31337048 0.65484377,1.5172246 0.99880203,1.861183 0.82682295,2.0331622 0.56885418,2.2886459 0.56885418,2.8971876 c 0,0.6085417 0.42994785,1.1997246 1.54781252,1.1997246 z"
          id="path865-4"
          sodipodi:nodetypes="cccccccccc" />
     </g>

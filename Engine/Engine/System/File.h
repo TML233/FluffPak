@@ -30,29 +30,40 @@ namespace Engine {
 			/// @brief Error that cannot be categoried.
 			UnknownError,
 			/// @brief Protocol doesn't exist.
-			ProtocolNotFound,
-			/// @brief File is not found.
+			InvalidProtocol,
+			/// @brief File or directory is not found.
 			NotFound,
 			/// @brief Not enough permission for the operation.
 			NoPermission,
-			/// @brief File is already exists.
+			/// @brief File or directory is already exists.
 			AlreadyExists
 		};
 
 		virtual ~File() = default;
 
-
-	private:
-		friend class FileSystem;
 	};
 
+	/// @brief Protocol handler abstract layer for FileSystem.
 	class FileSystemProtocolHandler {
 	public:
 		virtual ~FileSystemProtocolHandler() = default;
-		virtual ResultPair<File::Result, bool> IsExists(const String& path) const = 0;
-		virtual File::Result Create(const String& path) = 0;
-		virtual ResultPair<File::Result, ReferencePtr<File>> Open(const String& path, File::OpenMode mode);
-		virtual File::Result Delete(const String& path) = 0;
+		virtual ResultPair<File::Result, bool> IsFileExists(const String& path) const = 0;
+		virtual ResultPair<File::Result, bool> IsDirectoryExists(const String& path) const = 0;
+
+		virtual File::Result CreateFile(const String& path)=0;
+		virtual File::Result CreateDirectory(const String& path)=0;
+
+		virtual ResultPair<File::Result, ReferencePtr<File>> OpenFile(const String& path, File::OpenMode mode)=0;
+
+		virtual File::Result RemoveFile(const String& path) = 0;
+		virtual File::Result RemoveDirectory(const String& path) = 0;
+
+		virtual File::Result GetAllFiles(const String& path, List<String>& result) = 0;
+		virtual File::Result GetAllDirectories(const String& path, List<String>& result) = 0;
+
+	private:
+		friend class FileSystem;
+		FileSystem* owner = nullptr;
 	};
 
 	class FileSystem final {
@@ -69,35 +80,40 @@ namespace Engine {
 			/// @brief End of the protocol enum.
 			End,
 		};
+		static bool IsProtocolValid(Protocol protocol);
 
 		FileSystem();
 
 		/// @brief Check if the file exists.
-		ResultPair<File::Result, bool> IsExists(const String& path) const;
+		ResultPair<File::Result, bool> IsFileExists(const String& path) const;
+		/// @brief Check if the directory exists.
+		ResultPair<File::Result, bool> IsDirectoryExists(const String& path) const;
 		
 		/// @brief Create a empty file at the given path.
-		File::Result Create(const String& path);
+		File::Result CreateFile(const String& path);
+		/// @brief Create a empty directory at the given path.
+		File::Result CreateDirectory(const String& path);
 		
 		/// @brief Open the file at the given path. Will fail if the file doesn't exist.
-		ResultPair<File::Result, ReferencePtr<File>> Open(const String& path, File::OpenMode mode);
+		ResultPair<File::Result, ReferencePtr<File>> OpenFile(const String& path, File::OpenMode mode);
 
-		/// @brief Delete a file or a whole directory.
-		File::Result Delete(const String& path);
-
-		/// @return String - The protocol name\n
-		/// int32 - The start index of the actual path.
-		static ResultPair<String, int32> SplitProtocolString(const String& path);
-
-		Protocol GetProtocolFriendly(const String& name) const;
+		/// @brief Delete a file.
+		File::Result RemoveFile(const String& path);
+		/// @brief Delete a directory.
+		File::Result RemoveDirectory(const String& path);
 
 		Protocol GetProtocol(const String& name) const;
 		FileSystemProtocolHandler* GetProtocolHandler(Protocol protocol) const;
 
-		static bool IsProtocolValid(Protocol protocol);
 	private:
+		using ResultBool = ResultPair<File::Result, bool>;
+		using ResultFile = ResultPair<File::Result, ReferencePtr<File>>;
+
 		void AddProtocol(const String& name, Protocol protocol);
 		void AddProtocolHandler(Protocol protocol, UniquePtr<FileSystemProtocolHandler>&& handler);
 
+		ResultPair<Protocol, int32> GetSplitData(const String& path) const;
+		
 		Dictionary<String, Protocol> protocols{};
 		Dictionary<Protocol, SharedPtr<FileSystemProtocolHandler>> protocolHandlers{};
 	};
