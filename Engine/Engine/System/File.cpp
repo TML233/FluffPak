@@ -6,7 +6,7 @@ namespace Engine{
 		return protocol > Protocol::Null && protocol < Protocol::End;
 	}
 	template<>
-	static int32 ObjectUtil::GetHashCode<FileSystem::Protocol>(const FileSystem::Protocol& obj) {
+	int32 ObjectUtil::GetHashCode<FileSystem::Protocol>(const FileSystem::Protocol& obj) {
 		return (int32)obj;
 	}
 	ResultPair<FileSystem::Protocol, int32> FileSystem::GetSplitData(const String& path) const {

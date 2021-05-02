@@ -123,13 +123,13 @@ elseif(UNIX AND "${CMAKE_SYSTEM}" MATCHES "Linux")
 	)
 endif()
 
-if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-	target_compile_options(Engine PUBLIC -Wno-switch)
-endif()
-
 if(MSVC)
 	target_compile_options(Engine PUBLIC /utf-8)
 	target_compile_options(Engine PUBLIC /std:c++latest)
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+	target_compile_options(Engine PUBLIC -std=c++2a)
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "MSVC")
+	target_compile_options(Engine PUBLIC -Wno-switch)
 endif()
 
 # Force C++20

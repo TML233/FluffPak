@@ -85,7 +85,7 @@ virtual ::Engine::String GetReflectionParentClassName() const override{				\
 #pragma region Root class register, not calling parent
 #define REFLECTION_ROOTCLASS(name)													\
 public:																				\
-	_REFLECTION_CLASS_NAME_GETTERS_ROOT(u8#name)									\
+	_REFLECTION_CLASS_NAME_GETTERS_ROOT(u8## #name)									\
 																					\
 protected:																			\
 	_REFLECTION_CLASS_INITIALIZER_HEAD()											\
@@ -102,7 +102,7 @@ private:																			\
 // e.g. Object should be Engine::Object
 #define REFLECTION_CLASS(name,parent)												\
 public:																				\
-	_REFLECTION_CLASS_NAME_GETTERS(u8#name,u8#parent)								\
+	_REFLECTION_CLASS_NAME_GETTERS(u8## #name,u8## #parent)							\
 																					\
 protected:																			\
 	_REFLECTION_CLASS_INITIALIZER_HEAD()											\

@@ -12,27 +12,33 @@ namespace Engine {
 		try {
 			rp = std::regex(svp.begin(), svp.end());
 		} catch (const std::regex_error& err) {
-			using Error = std::regex_constants::error_type;
+
+#if defined(_MSC_VER)
+#	define REGEX_ERROR(x) std::regex_constants::error_type::x
+#else
+#	define REGEX_ERROR(x) std::regex_constants::x
+#endif
+
 			switch (err.code()) {
-				case Error::error_collate:
-				case Error::error_ctype:
-				case Error::error_escape:
-				case Error::error_backref:
-				case Error::error_brack:
-				case Error::error_paren:
-				case Error::error_brace:
-				case Error::error_badbrace:
-				case Error::error_range:
-				case Error::error_badrepeat:
+				case REGEX_ERROR(error_collate):
+				case REGEX_ERROR(error_ctype):
+				case REGEX_ERROR(error_escape):
+				case REGEX_ERROR(error_backref):
+				case REGEX_ERROR(error_brack):
+				case REGEX_ERROR(error_paren):
+				case REGEX_ERROR(error_brace):
+				case REGEX_ERROR(error_badbrace):
+				case REGEX_ERROR(error_range):
+				case REGEX_ERROR(error_badrepeat):
 					ERR_MSG(u8"Invalid regex expression.");
 					return Result::ExpressionError;
 
-				case Error::error_space:
-				case Error::error_stack:
+				case REGEX_ERROR(error_space):
+				case REGEX_ERROR(error_stack):
 					ERR_MSG(u8"Out of memory.");
 					return Result::OutOfMemory;
 
-				case Error::error_complexity:
+				case REGEX_ERROR(error_complexity):
 					ERR_MSG(u8"Regex expression too complex.");
 					return Result::ExpressionTooComplex;
 
@@ -40,6 +46,7 @@ namespace Engine {
 					ERR_MSG(String::Format(u8"Unknown error code {0} when constructing regex expression.", (int32)err.code()).GetRawArray());
 					return Result::UnknownError;
 			}
+#undef REGEX_ERROR
 		}
 
 		result = rp;
