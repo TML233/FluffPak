@@ -2,6 +2,7 @@
 #include "Engine/System/String.h"
 #include "Engine/System/Object.h"
 #include "Engine/Collection/Dictionary.h"
+#include <bit>
 
 namespace Engine {
 	class FileSystem;
@@ -11,6 +12,12 @@ namespace Engine {
 	class FileSystem final {
 	public:
 		FileSystem();
+
+		enum class Endianness {
+			Little,
+			Big
+		};
+		static constexpr Endianness LocalEndianness = (std::endian::native == std::endian::little ? Endianness::Little : Endianness::Big);
 
 		enum class Result {
 			/// @brief Succeeded.
@@ -62,6 +69,7 @@ namespace Engine {
 			/// @brief Read-write, append to the file.
 			ReadWriteAppend
 		};
+
 		static bool IsOpenModeValid(OpenMode mode);
 		static bool IsOpenModeReadOnly(OpenMode mode);
 		static bool IsOpenModeRead(OpenMode mode);
@@ -142,6 +150,41 @@ namespace Engine {
 	public:
 		virtual ~File() = default;
 
+		/// @brief Get current endianness.\n
+		/// This only indicates that how this File instance deal with data.\n
+		/// Does not check whether the original file is small-endian or big-endian. (And there's no way.)
+		/// Default endianness will always be small-endian,
+		FileSystem::Endianness GetCurrentEndianness();
+		/// @brief Set current endianness.\n
+		/// This affects how this File instance deal with data.
+		/// Default endianness will always be small-endian.
+		void SetCurrentEndianness(FileSystem::Endianness endian);
+
+		virtual void Close() = 0;
+		virtual bool IsValid() const = 0;
+		virtual bool CanRead() const = 0;
+		virtual bool CanWrite() const = 0;
+
+		virtual FileSystem::Result SetPosition(int64 position) = 0;
+		virtual ResultPair<FileSystem::Result, int64> GetPosition() const = 0;
+		virtual ResultPair<FileSystem::Result, int64> GetLength() const = 0;
+
+		virtual FileSystem::Result WriteByte(byte value) = 0;
+		virtual FileSystem::Result WriteBytes(const List<byte>& value) = 0;
+		virtual FileSystem::Result WriteBytes(byte* value, int32 length) = 0;
+		virtual FileSystem::Result WriteSByte(sbyte value) = 0;
+		virtual FileSystem::Result WriteInt16(int16 value) = 0;
+		virtual FileSystem::Result WriteUInt16(uint16 value) = 0;
+		virtual FileSystem::Result WriteInt32(int32 value) = 0;
+		virtual FileSystem::Result WriteUInt32(uint32 value) = 0;
+		virtual FileSystem::Result WriteInt64(int64 value) = 0;
+		virtual FileSystem::Result WriteUInt64(uint64 value) = 0;
+		virtual FileSystem::Result WriteFloat(int16 value) = 0;
+		virtual FileSystem::Result WriteDouble(uint16 value) = 0;
+		virtual FileSystem::Result WriteString(const String& value) = 0;
+
+	private:
+		FileSystem::Endianness currentEndianness = FileSystem::Endianness::Little;
 	};
 
 }

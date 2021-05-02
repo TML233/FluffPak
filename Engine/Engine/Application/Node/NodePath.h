@@ -7,7 +7,7 @@
 namespace Engine {
 	class NodePath {
 	public:
-		NodePath(String path = "");
+		NodePath(String path = u8"");
 
 
 		int32 GetNameCount() const;

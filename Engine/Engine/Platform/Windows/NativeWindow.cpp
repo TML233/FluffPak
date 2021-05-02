@@ -22,7 +22,7 @@ namespace Engine::PlatformSpecific::Windows {
 		wc.lpfnWndProc = NativeWindow::WndProc;
 
 		bool succeeded = RegisterClassW(&wc);
-		FATAL_ASSERT(succeeded, "RegisterClassW failed to register window class!");
+		FATAL_ASSERT(succeeded, u8"RegisterClassW failed to register window class!");
 	}
 
 	NativeWindowManager::_Initializer::~_Initializer() {
@@ -40,7 +40,7 @@ namespace Engine::PlatformSpecific::Windows {
 		}
 	}
 
-	WCHAR* NativeWindow::GetGlobalWindowClassName() {
+	const WCHAR* NativeWindow::GetGlobalWindowClassName() {
 		return L"EngineBasicWindowClass";
 	}
 
@@ -62,7 +62,7 @@ namespace Engine::PlatformSpecific::Windows {
 	bool NativeWindow::Initialize() {
 		const DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
 		HWND w = CreateWindowW(GetGlobalWindowClassName(), L"", style, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
-		ERR_ASSERT(IsWindow(w), "CreateWindowW failed to create a window!", return false);
+		ERR_ASSERT(IsWindow(w), u8"CreateWindowW failed to create a window!", return false);
 		// Set user data to let hwnd trace back to NativeWindow.
 		SetWindowLongPtrW(w, GWLP_USERDATA, (LONG_PTR)this);
 
@@ -85,7 +85,7 @@ namespace Engine::PlatformSpecific::Windows {
 				if (nw != nullptr) {
 					nw->Destroy();
 				} else {
-					ERR_MSG("User data in hWnd is not a NativeWindow ptr! This shouldn't happen!");
+					ERR_MSG(u8"User data in hWnd is not a NativeWindow ptr! This shouldn't happen!");
 					DestroyWindow(hWnd);
 				}
 			}
@@ -103,7 +103,7 @@ namespace Engine::PlatformSpecific::Windows {
 	}
 
 	String NativeWindow::GetTitle() const {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return String::GetEmpty());
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return String::GetEmpty());
 
 		int len = GetWindowTextLengthW(hWnd);
 		if (len <= 0) {
@@ -117,25 +117,25 @@ namespace Engine::PlatformSpecific::Windows {
 		String result;
 		bool succeeded = UnicodeHelper::UnicodeToUTF8(buffer.GetRaw(), result);
 
-		ERR_ASSERT(succeeded, "Failed to convert Windows wide string to engine string!", return String::GetEmpty());
+		ERR_ASSERT(succeeded, u8"Failed to convert Windows wide string to engine string!", return String::GetEmpty());
 
 		return result;
 	}
 	bool NativeWindow::SetTitle(const String& title) {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		UniquePtr<WCHAR[]> buffer;
 		bool succeeded = UnicodeHelper::UTF8ToUnicode(title, buffer);
 		
-		ERR_ASSERT(succeeded, "Failed to convert engine string to Windows wide string!", return false);
+		ERR_ASSERT(succeeded, u8"Failed to convert engine string to Windows wide string!", return false);
 
 		succeeded=SetWindowTextW(hWnd, buffer.GetRaw());
-		ERR_ASSERT(succeeded, "SetWindowTextW failed to set window title!", return false);
+		ERR_ASSERT(succeeded, u8"SetWindowTextW failed to set window title!", return false);
 		return true;
 	}
 
 	Vector2 NativeWindow::GetPosition() const {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return Vector2());
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return Vector2());
 
 		POINT pos{};
 		ClientToScreen(hWnd, &pos);
@@ -143,7 +143,7 @@ namespace Engine::PlatformSpecific::Windows {
 		return Vector2((float)pos.x, (float)pos.y);
 	}
 	bool NativeWindow::SetPosition(const Vector2& position) {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		RECT rect = {};
 		rect.left = (int)position.x;
@@ -151,14 +151,14 @@ namespace Engine::PlatformSpecific::Windows {
 		rect.right = 100;
 		rect.bottom = 100;
 		bool succeeded = AdjustWindowRect(&rect, GetStyle(), FALSE);
-		ERR_ASSERT(succeeded, "AdjustWindowRect failed to calculate window rect!", return false);
+		ERR_ASSERT(succeeded, u8"AdjustWindowRect failed to calculate window rect!", return false);
 
 		succeeded=SetWindowPos(hWnd, NULL, rect.left, rect.top, 0, 0, SWP_NOREPOSITION | SWP_NOSIZE);
-		ERR_ASSERT(succeeded, "SetWindowPos failed to set window rect!", return false);
+		ERR_ASSERT(succeeded, u8"SetWindowPos failed to set window rect!", return false);
 		return true;
 	}
 	Vector2 NativeWindow::GetSize() const {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return Vector2());
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return Vector2());
 
 		RECT rect = {};
 		GetClientRect(hWnd, &rect);
@@ -166,7 +166,7 @@ namespace Engine::PlatformSpecific::Windows {
 		return Vector2((float)(rect.right - rect.left), (float)(rect.bottom - rect.top));
 	}
 	bool NativeWindow::SetSize(const Vector2& size) {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		RECT rect = {};
 		rect.left = 0;
@@ -180,63 +180,63 @@ namespace Engine::PlatformSpecific::Windows {
 	}
 
 	bool NativeWindow::IsVisible() const {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return HasStyleFlag(WS_VISIBLE);
 	}
 	bool NativeWindow::SetVisible(bool visible) {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		bool succeed = SetStyleFlag(WS_VISIBLE, visible);
 		UpdateWindow(hWnd);
 		return succeed;
 	}
 	
 	bool NativeWindow::IsMinimized() const {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return HasStyleFlag(WS_MINIMIZE);
 	}
 	bool NativeWindow::SetMinimized(bool minimized) {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return SetStyleFlag(WS_MINIMIZE, minimized);
 	}
 	bool NativeWindow::IsMaximized() const {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return HasStyleFlag(WS_MAXIMIZE);
 	}
 	bool NativeWindow::SetMaximized(bool maximized) {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return SetStyleFlag(WS_MAXIMIZE, maximized);
 	}
 	bool NativeWindow::HasMinimizeButton() const {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return HasStyleFlag(WS_MINIMIZEBOX);
 	}
 	bool NativeWindow::SetMinimizeButton(bool enabled) {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return SetStyleFlag(WS_MINIMIZEBOX, enabled);
 	}
 	bool NativeWindow::HasMaximizeButton() const {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return HasStyleFlag(WS_MAXIMIZEBOX);
 	}
 	bool NativeWindow::SetMaximizeButton(bool enabled) {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return SetStyleFlag(WS_MAXIMIZEBOX, enabled);
 	}
 
 	bool NativeWindow::HasBorder() const {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return HasStyleFlag(WS_BORDER);
 	}
 	bool NativeWindow::SetBorder(bool enabled) {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return SetStyleFlag(WS_BORDER, enabled);
 	}
 	bool NativeWindow::IsResizable() const {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return HasStyleFlag(WS_SIZEBOX);
 	}
 	bool NativeWindow::SetResizable(bool resizable) {
-		ERR_ASSERT(IsValid(), "The window is not valid!", return false);
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return SetStyleFlag(WS_SIZEBOX, resizable);
 	}
 

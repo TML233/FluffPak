@@ -11,8 +11,8 @@
 
 namespace Engine {
 #pragma region ContentData
-	String::ContentData::ContentData(const char* data, int32 length) :data(data), length(length), staticData(true) {}
-	String::ContentData::ContentData(UniquePtr<char[]>&& data, int32 length) : data(data.Release()), length(length), staticData(false) {}
+	String::ContentData::ContentData(const strchar* data, int32 length) :data(data), length(length), staticData(true) {}
+	String::ContentData::ContentData(UniquePtr<strchar[]>&& data, int32 length) : data(data.Release()), length(length), staticData(false) {}
 
 	String::ContentData::~ContentData() {
 		if (!staticData) {
@@ -39,13 +39,13 @@ namespace Engine {
 	}
 	
 	ReferencePtr<String::ContentData> String::ContentData::GetEmpty() {
-		static const ContentData empty("", 1);
+		static const ContentData empty(u8"", 1);
 		static ReferencePtr<ContentData> ptr{ const_cast<ContentData*>(&empty) };
 		return ptr;
 	}
 #pragma endregion
 
-	int32 String::SearcherSunday::Search(const char* target, int32 lenTarget, const char* pattern, int32 lenPattern) {
+	int32 String::SearcherSunday::Search(const strchar* target, int32 lenTarget, const strchar* pattern, int32 lenPattern) {
 		//Prepare charPos
 		std::memset(charPos, -1, 256 * sizeof(int32));
 		for (int32 i = 0; i < lenPattern; i += 1) {
@@ -86,24 +86,27 @@ namespace Engine {
 		return String(ReferencePtr<ContentData>(ContentData::GetEmpty()));
 	}
 
-	String::String(const char* string,int32 count) {
+	String::String(const strchar* string,int32 count) {
 		if (count < 0) {
-			count = static_cast<int32>(std::strlen(string));
+			count = static_cast<int32>(std::strlen(reinterpret_cast<const char*>(string)));
 		}
 		PrepareData(string, count);
 	}
-	String& String::operator=(const char* string) {
-		PrepareData(string, static_cast<int32>(std::strlen(string)));
+	String& String::operator=(const strchar* string) {
+		PrepareData(string, static_cast<int32>(std::strlen(reinterpret_cast<const char*>(string))));
 		return *this;
 	}
 
 	String::String(const std::string& string) {
+		PrepareData(reinterpret_cast<const strchar*>(string.c_str()), static_cast<int32>(string.length()));
+	}
+	String::String(const std::u8string& string) {
 		PrepareData(string.c_str(), static_cast<int32>(string.length()));
 	}
 
 	String::String(ReferencePtr<ContentData> dataPtr, int32 start, int32 count) :data(dataPtr), refStart(start), refCount(count < 0 ? dataPtr->length - 1 : count) {}
 
-	void String::PrepareData(const char* string, sizeint count) {
+	void String::PrepareData(const strchar* string, sizeint count) {
 		// Use public empty string.
 		if (count <= 0) {
 			data = ContentData::GetEmpty();
@@ -113,7 +116,7 @@ namespace Engine {
 		}
 
 		sizeint len = count + 1;
-		UniquePtr<char[]> strData = UniquePtr<char[]>::Create(len);
+		UniquePtr<strchar[]> strData = UniquePtr<strchar[]>::Create(len);
 		std::memcpy(strData.GetRaw(), string, count);
 		std::memset(strData.GetRaw() + len-1, '\0', 1);
 
@@ -133,23 +136,23 @@ namespace Engine {
 		return String(data->data + refStart, refCount);
 	}
 
-	ReadonlyIterator<char> String::operator[](int32 index) const {
-		ERR_ASSERT(index >= 0 && index <= GetCount(), "index out of bounds.", return ReadonlyIterator<char>((char*)""));
+	ReadonlyIterator<strchar> String::operator[](int32 index) const {
+		ERR_ASSERT(index >= 0 && index <= GetCount(), u8"index out of bounds.", return ReadonlyIterator<strchar>(const_cast<strchar*>(u8"")));
 		
-		return ReadonlyIterator<char>(data->data + refStart + index);
+		return ReadonlyIterator<strchar>(data->data + refStart + index);
 	}
 
 	int32 String::GetCount() const {
 		return refCount;
 	}
 
-	const char* String::GetRawArray() const {
+	const strchar* String::GetRawArray() const {
 		return data->data;
 	}
 
 	int32 String::IndexOf(const String& pattern,int32 startFrom,int32 count) const {
-		ERR_ASSERT(startFrom >= 0 && startFrom < GetCount(), "startFrom out of bounds.", return -1);
-		ERR_ASSERT(count >= -1 && count <= (GetCount() - startFrom), "count out of bounds.", return -1);
+		ERR_ASSERT(startFrom >= 0 && startFrom < GetCount(), u8"startFrom out of bounds.", return -1);
+		ERR_ASSERT(count >= -1 && count <= (GetCount() - startFrom), u8"count out of bounds.", return -1);
 		
 		if (GetCount() < pattern.GetCount()) {
 			return -1;
@@ -169,8 +172,8 @@ namespace Engine {
 	}
 
 	String String::Substring(int32 startIndex, int32 count) const {
-		ERR_ASSERT(startIndex >= 0 && startIndex < GetCount(), "startIndex out of bounds.", return String());
-		ERR_ASSERT(count >= 0 && count <= (GetCount() - startIndex), "count out of bounds.", return String());
+		ERR_ASSERT(startIndex >= 0 && startIndex < GetCount(), u8"startIndex out of bounds.", return String());
+		ERR_ASSERT(count >= 0 && count <= (GetCount() - startIndex), u8"count out of bounds.", return String());
 
 		String substr = *this;
 		substr.refStart = startIndex;
@@ -203,8 +206,8 @@ namespace Engine {
 		}
 
 		sizeint rawlen = GetCount() + (-from.GetCount() + to.GetCount()) * times + 1;
-		UniquePtr<char[]> rawptr = UniquePtr<char[]>::Create(rawlen);
-		char* raw = rawptr.GetRaw();
+		UniquePtr<strchar[]> rawptr = UniquePtr<strchar[]>::Create(rawlen);
+		strchar* raw = rawptr.GetRaw();
 
 		// Fill the string.
 		sizeint rawi = 0;
@@ -251,8 +254,8 @@ namespace Engine {
 			return false;
 		}
 
-		const char* ptrA = GetStartPtr();
-		const char* ptrB = obj.GetStartPtr();
+		const strchar* ptrA = GetStartPtr();
+		const strchar* ptrB = obj.GetStartPtr();
 		for (int i = 0; i < GetCount(); i += 1, ptrA += 1, ptrB += 1) {
 			if (*ptrA != *ptrB) {
 				return false;
@@ -273,22 +276,22 @@ namespace Engine {
 		return *this;
 	}
 	int32 String::GetHashCode() const {
-		return ObjectUtil::GetHashCode(std::hash<std::string_view>{}(std::string_view(GetStartPtr(), GetCount())));
+		return ObjectUtil::GetHashCode(std::hash<std::string_view>{}(GetStringView()));
 	}
 
 	int32 String::GetStartIndex() const {
 		return refStart;
 	}
-	const char* String::GetStartPtr() const {
+	const strchar* String::GetStartPtr() const {
 		return data->data + refStart;
 	}
 
 	String String::operator+(const String& obj) {
-		return String::Format("{0}{1}", *this, obj);
+		return String::Format(u8"{0}{1}", *this, obj);
 	}
 
 	std::string_view String::GetStringView() const {
-		return std::string_view(GetStartPtr(), GetCount());
+		return std::string_view(reinterpret_cast<const char*>(GetStartPtr()), GetCount());
 	}
 
 	String::SearcherSunday String::searcher{};

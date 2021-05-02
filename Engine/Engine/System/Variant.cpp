@@ -6,79 +6,79 @@ namespace Engine {
 	String Variant::GetTypeName(Type type) {
 		switch (type) {
 			case Type::Null:
-				return STRING_LITERAL("Null");
+				return STRING_LITERAL(u8"Null");
 
 			case Type::Bool:
-				return STRING_LITERAL("Bool");
+				return STRING_LITERAL(u8"Bool");
 			case Type::Int64:
-				return STRING_LITERAL("Int64");
+				return STRING_LITERAL(u8"Int64");
 			case Type::Double:
-				return STRING_LITERAL("Double");
+				return STRING_LITERAL(u8"Double");
 
 			case Type::String:
-				return STRING_LITERAL("String");
+				return STRING_LITERAL(u8"String");
 
 			case Type::Object:
-				return STRING_LITERAL("Object");
+				return STRING_LITERAL(u8"Object");
 
 			default:
-				return STRING_LITERAL("Undefined Type");
+				return STRING_LITERAL(u8"Undefined Type");
 		}
 	}
 	String Variant::GetOperatorName(Operator op) {
 		switch (op) {
 			case Operator::Equal:
-				return STRING_LITERAL("Equal");
+				return STRING_LITERAL(u8"Equal");
 			case Operator::NotEqual:
-				return STRING_LITERAL("NotEqual");
+				return STRING_LITERAL(u8"NotEqual");
 			case Operator::Less:
-				return STRING_LITERAL("Less");
+				return STRING_LITERAL(u8"Less");
 			case Operator::LessEqual:
-				return STRING_LITERAL("LessEqual");
+				return STRING_LITERAL(u8"LessEqual");
 			case Operator::Greater:
-				return STRING_LITERAL("Greater");
+				return STRING_LITERAL(u8"Greater");
 			case Operator::GreaterEqual:
-				return STRING_LITERAL("GreaterEqual");
+				return STRING_LITERAL(u8"GreaterEqual");
 
 			case Operator::Add:
-				return STRING_LITERAL("Add");
+				return STRING_LITERAL(u8"Add");
 			case Operator::Subtract:
-				return STRING_LITERAL("Subtract");
+				return STRING_LITERAL(u8"Subtract");
 			case Operator::Multiply:
-				return STRING_LITERAL("Multiply");
+				return STRING_LITERAL(u8"Multiply");
 			case Operator::Divide:
-				return STRING_LITERAL("Divide");
+				return STRING_LITERAL(u8"Divide");
 			case Operator::Mod:
-				return STRING_LITERAL("Mod");
+				return STRING_LITERAL(u8"Mod");
 			case Operator::Positive:
-				return STRING_LITERAL("Positive");
+				return STRING_LITERAL(u8"Positive");
 			case Operator::Negative:
-				return STRING_LITERAL("Negative");
+				return STRING_LITERAL(u8"Negative");
 
 			case Operator::LogicAnd:
-				return STRING_LITERAL("LogicAnd");
+				return STRING_LITERAL(u8"LogicAnd");
 			case Operator::LogicOr:
-				return STRING_LITERAL("LogicOr");
+				return STRING_LITERAL(u8"LogicOr");
 			case Operator::LogicXOr:
-				return STRING_LITERAL("LogicXOr");
+				return STRING_LITERAL(u8"LogicXOr");
 			case Operator::LogicNot:
-				return STRING_LITERAL("LogicNot");
+				return STRING_LITERAL(u8"LogicNot");
 
 			case Operator::BitAnd:
-				return STRING_LITERAL("BitAnd");
+				return STRING_LITERAL(u8"BitAnd");
 			case Operator::BitOr:
-				return STRING_LITERAL("BitOr");
+				return STRING_LITERAL(u8"BitOr");
 			case Operator::BitXOr:
-				return STRING_LITERAL("BitXOr");
+				return STRING_LITERAL(u8"BitXOr");
 			case Operator::BitFlip:
-				return STRING_LITERAL("BitFlip");
+				return STRING_LITERAL(u8"BitFlip");
 			case Operator::BitShiftLeft:
-				return STRING_LITERAL("BitShiftLeft");
+				return STRING_LITERAL(u8"BitShiftLeft");
 			case Operator::BitShiftRight:
-				return STRING_LITERAL("BitShiftRight");
+				return STRING_LITERAL(u8"BitShiftRight");
 
 			default:
-				return STRING_LITERAL("Undefined Operator");
+				return STRING_LITERAL(u8"Undefined Operator");
 		}
 	}
 
@@ -115,7 +115,7 @@ namespace Engine {
 	}
 	Variant::Variant(uint64 value) {
 		if (value > 9223372036854775807) {
-			WARN_MSG("Storing a UInt64 value that is too big for Int64! May lose some information.");
+			WARN_MSG(u8"Storing a UInt64 value that is too big for Int64! May lose some information.");
 		}
 		ConstructInt64(value);
 	}
@@ -128,7 +128,7 @@ namespace Engine {
 	Variant::Variant(const String& value) {
 		ConstructString(value);
 	}
-	Variant::Variant(const char* value) {
+	Variant::Variant(const strchar* value) {
 		ConstructString(String(value));
 	}
 	Variant::Variant(const Vector2& value) {
@@ -179,9 +179,9 @@ namespace Engine {
 		// !! AddTypeHint 5.3: Add a AsString entry.
 		switch (type) {
 			case Type::Null:
-				return STRING_LITERAL("[Null]");
+				return STRING_LITERAL(u8"[Null]");
 			case Type::Bool:
-				return data.vBool ? STRING_LITERAL("True") : STRING_LITERAL("False");
+				return data.vBool ? STRING_LITERAL(u8"True") : STRING_LITERAL(u8"False");
 			case Type::Int64:
 				return ObjectUtil::ToString(data.vInt64);
 			case Type::Double:
@@ -192,10 +192,10 @@ namespace Engine {
 				return data.vVector2.ToString();
 			case Type::Object:
 				if (data.vObject.ptr == nullptr) {
-					return STRING_LITERAL("[Nullptr]");
+					return STRING_LITERAL(u8"[Nullptr]");
 				}
 				if(!Object::IsInstanceValid(data.vObject.id)){
-					return STRING_LITERAL("[Released Object]");
+					return STRING_LITERAL(u8"[Released Object]");
 				}
 				return data.vObject.ptr->ToString();
 		}
@@ -424,14 +424,14 @@ namespace Engine {
 #pragma endregion
 
 	bool Variant::CanEvaluateDirectly(Operator op, Type a, Type b) {
-		ERR_ASSERT((sizeint)op >= 0 && op < Operator::End, "op out of bounds.", return false);
-		ERR_ASSERT((sizeint)a >= 0 && a < Type::End, "a out of bounds.", return false);
-		ERR_ASSERT((sizeint)b >= 0 && b < Type::End, "b out of bounds.", return false);
+		ERR_ASSERT((sizeint)op >= 0 && op < Operator::End, u8"op out of bounds.", return false);
+		ERR_ASSERT((sizeint)a >= 0 && a < Type::End, u8"a out of bounds.", return false);
+		ERR_ASSERT((sizeint)b >= 0 && b < Type::End, u8"b out of bounds.", return false);
 
 		return evaluatorTable[(sizeint)a][(sizeint)b][(sizeint)op] != nullptr;
 	}
 	Variant Variant::EvaluateDirectly(Operator op, const Variant& a, const Variant& b) {
-		ERR_ASSERT(CanEvaluateDirectly(op, a.type, b.type), String::Format("No evaluator registered for [{0}] with [{1}] and [{2}].", GetOperatorName(op), GetTypeName(a.type), GetTypeName(b.type)).GetRawArray(), return Variant());
+		ERR_ASSERT(CanEvaluateDirectly(op, a.type, b.type), String::Format(u8"No evaluator registered for [{0}] with [{1}] and [{2}].", GetOperatorName(op), GetTypeName(a.type), GetTypeName(b.type)).GetRawArray(), return Variant());
 
 		Evaluator ev = evaluatorTable[(sizeint)a.type][(sizeint)b.type][(sizeint)op];
 

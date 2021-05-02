@@ -129,10 +129,11 @@ endif()
 
 if(MSVC)
 	target_compile_options(Engine PUBLIC /utf-8)
+	target_compile_options(Engine PUBLIC /std:c++latest)
 endif()
 
-# Force C++17
-target_compile_features(Engine PUBLIC cxx_std_17)
+# Force C++20
+target_compile_features(Engine PUBLIC cxx_std_20)
 
 # Include directories
 target_include_directories(Engine PUBLIC ${IncludeDir})

@@ -9,20 +9,20 @@ namespace Engine {
 		AddChild(node);
 	}
 	void TestNode::OnEnteredTree() {
-		INFO_MSG(String::Format("{0}: Entered tree.",GetName()).GetRawArray());
+		INFO_MSG(String::Format(u8"{0}: Entered tree.",GetName()).GetRawArray());
 	}
 	void TestNode::OnReady() {
-		INFO_MSG(String::Format("{0}: Ready.", GetName()).GetRawArray());
+		INFO_MSG(String::Format(u8"{0}: Ready.", GetName()).GetRawArray());
 	}
 	void TestNode::OnUpdate(float delta) {
 		double elapsed = ::Engine::Engine::GetInstance()->GetTime().GetTotal();
 		if (elapsed > next) {
-			INFO_MSG(String::Format("{0}: {1} seconds elapsed!.", GetName(),elapsed).GetRawArray());
+			INFO_MSG(String::Format(u8"{0}: {1} seconds elapsed!.", GetName(),elapsed).GetRawArray());
 			next += 1;
 		}
 	}
 	void TestNode::OnExitingTree() {
-		INFO_MSG(String::Format("{0}: Exiting tree.", GetName()).GetRawArray());
+		INFO_MSG(String::Format(u8"{0}: Exiting tree.", GetName()).GetRawArray());
 	}
 
 }

@@ -74,7 +74,7 @@ namespace Engine {
 	}
 
 	String Vector2::ToString() const {
-		return String::Format("({0}, {1})", x, y);
+		return String::Format(u8"({0}, {1})", x, y);
 	}
 	int32 Vector2::GetHashCode() const {
 		return (*((int32*)(&x))) ^ (*((int32*)(&y)));

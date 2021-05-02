@@ -45,7 +45,7 @@ namespace Engine {
 	void Engine::Run() {
 #pragma region Start
 		if (appLoop == nullptr) {
-			FATAL_MSG("No AppLoop has been assigned.");
+			FATAL_MSG(u8"No AppLoop has been assigned.");
 			return;
 		}
 
@@ -92,7 +92,7 @@ namespace Engine {
 #pragma region Stop
 		appLoop->OnStop();
 
-		INFO_MSG("AppLoop finished running.");
+		INFO_MSG(u8"AppLoop finished running.");
 #pragma endregion
 	}
 }

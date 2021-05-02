@@ -21,10 +21,10 @@ virtual ::Engine::String GetReflectionClassName() const{							\
 	return STRING_LITERAL(name);													\
 }																					\
 static ::Engine::String GetReflectionParentClassNameStatic(){						\
-	return STRING_LITERAL("");														\
+	return STRING_LITERAL(u8"");													\
 }																					\
 virtual ::Engine::String GetReflectionParentClassName() const{						\
-	return STRING_LITERAL("");														\
+	return STRING_LITERAL(u8"");													\
 }
 #pragma endregion
 
@@ -71,7 +71,7 @@ virtual ::Engine::String GetReflectionParentClassName() const override{				\
 #pragma region Initializer common tail
 #define _REFLECTION_CLASS_INITIALIZER_TAIL(name)									\
 		::Engine::ReflectionClass* ptr=::Engine::Reflection::AddClass<name>();		\
-		FATAL_ASSERT(ptr!=nullptr,"Failed to register class.");						\
+		FATAL_ASSERT(ptr!=nullptr,u8"Failed to register class.");					\
 		_InitializeCustomReflection(ptr);											\
 																					\
 		inited=true;																\
@@ -85,7 +85,7 @@ virtual ::Engine::String GetReflectionParentClassName() const override{				\
 #pragma region Root class register, not calling parent
 #define REFLECTION_ROOTCLASS(name)													\
 public:																				\
-	_REFLECTION_CLASS_NAME_GETTERS_ROOT(#name)										\
+	_REFLECTION_CLASS_NAME_GETTERS_ROOT(u8#name)									\
 																					\
 protected:																			\
 	_REFLECTION_CLASS_INITIALIZER_HEAD()											\
@@ -102,7 +102,7 @@ private:																			\
 // e.g. Object should be Engine::Object
 #define REFLECTION_CLASS(name,parent)												\
 public:																				\
-	_REFLECTION_CLASS_NAME_GETTERS(#name,#parent)									\
+	_REFLECTION_CLASS_NAME_GETTERS(u8#name,u8#parent)								\
 																					\
 protected:																			\
 	_REFLECTION_CLASS_INITIALIZER_HEAD()											\

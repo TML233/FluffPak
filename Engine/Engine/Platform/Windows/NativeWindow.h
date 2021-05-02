@@ -54,7 +54,7 @@ namespace Engine::PlatformSpecific::Windows {
 		bool SetResizable(bool resizable) override;
 
 		static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-		static WCHAR* GetGlobalWindowClassName();
+		static const WCHAR* GetGlobalWindowClassName();
 
 		static NativeWindow* GetFromHWnd(HWND hWnd);
 

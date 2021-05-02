@@ -13,8 +13,8 @@
 /// This prevents allocating heap memory for constant strings.
 #define STRING_LITERAL(text)																											\
 ([](){																																	\
-	static const char content[]=text;																									\
-	static const ::Engine::String::ContentData data(content, sizeof(content));															\
+	static const strchar content[]=text;																									\
+	static const ::Engine::String::ContentData data(content, sizeof(text));															\
 	return ::Engine::String(::Engine::ReferencePtr<::Engine::String::ContentData>(const_cast<::Engine::String::ContentData*>(&data)));	\
 })()
 
@@ -29,16 +29,16 @@ namespace Engine {
 			///	Only for internal use. Used by STRING_LITERAL.
 			/// @param data A static string data block. Can't be allocated on heap.
 			/// @param length The length of the given string data block. NULL included.
-			ContentData(const char* data, int32 length);
+			ContentData(const strchar* data, int32 length);
 
 			/// @brief Accept data as a memory block on heap. Will free the data.
 			/// @param data A UniquePtr holding string data block on heap. Use Memory::Move to "move" it in.
 			/// @param length The length of the given string data block. NULL included.
-			ContentData(UniquePtr<char[]>&& data, int32 length);
+			ContentData(UniquePtr<strchar[]>&& data, int32 length);
 
 			~ContentData();
 
-			const char* data = nullptr;
+			const strchar* data = nullptr;
 
 			/// @brief NULL included.
 			int length = 0;
@@ -56,7 +56,7 @@ namespace Engine {
 
 		class SearcherSunday {
 		public:
-			int32 Search(const char* target, int32 lenTarget, const char* pattern, int32 lenPattern);
+			int32 Search(const strchar* target, int32 lenTarget, const strchar* pattern, int32 lenPattern);
 		private:
 			int32 charPos[256] = { -1 };
 		};
@@ -69,11 +69,12 @@ namespace Engine {
 		/// Will make a copy of the content.
 		/// @param string The C-Style string.
 		/// @param count The char count. NULL NOT included. -1 for auto detection.
-		String(const char* string = "", int32 count = -1);
+		String(const strchar* string = u8"", int32 count = -1);
 		
-		String& operator=(const char* string);
+		String& operator=(const strchar* string);
 
 		String(const std::string& string);
+		String(const std::u8string& string);
 
 		/// @brief Creates a String using a pre-allocated ContentData.
 		/// Will not do any copy.
@@ -88,7 +89,7 @@ namespace Engine {
 		int32 GetCount() const;
 
 		/// @brief Get the internal C-Style string array pointer. Do not store the pointer.
-		const char* GetRawArray() const;
+		const strchar* GetRawArray() const;
 
 		/// @brief Check if the string is a individual one.
 		/// Individual string means that the content of this string is exactally the same as the underlying raw string array.
@@ -99,7 +100,7 @@ namespace Engine {
 		String ToIndividual() const;
 
 		/// @brief Get the char at the given index.
-		ReadonlyIterator<char> operator[](int32 index) const;
+		ReadonlyIterator<strchar> operator[](int32 index) const;
 
 		/// @brief FindFind the position of the substring appearance in the string.
 		/// @param pattern The substring to search.
@@ -135,7 +136,7 @@ namespace Engine {
 		int32 GetHashCode() const;
 
 		int32 GetStartIndex() const;
-		const char* GetStartPtr() const;
+		const strchar* GetStartPtr() const;
 
 		bool operator==(const String& obj) const;
 		bool operator!=(const String& obj) const;
@@ -146,12 +147,7 @@ namespace Engine {
 #pragma region Format
 		template<typename ... Ts>
 		static String Format(const String& format, const Ts& ... args) {
-			return fmt::format(format.ToIndividual().GetRawArray(), args...);
-		}
-
-		template<typename ... Ts>
-		static String Format(const char* format, const Ts& ... args) {
-			return fmt::format(format, args...);
+			return fmt::format(format.GetStringView(), args...);
 		}
 #pragma endregion
 
@@ -162,7 +158,7 @@ namespace Engine {
 
 		/// @brief Prepares a string, the string data will be copied.
 		/// Count does not accept -1.
-		void PrepareData(const char* string, sizeint count);
+		void PrepareData(const strchar* string, sizeint count);
 
 		ReferencePtr<ContentData> data;
 

@@ -13,7 +13,7 @@ namespace Engine {
 		return data->names.GetCount();
 	}
 	String NodePath::GetName(int32 index) const {
-		ERR_ASSERT(index >= 0 && index < GetNameCount(), "index out of bounds.", return String());
+		ERR_ASSERT(index >= 0 && index < GetNameCount(), u8"index out of bounds.", return String());
 
 		return data->names.Get(index);
 	}
@@ -24,7 +24,7 @@ namespace Engine {
 		return data->subnames.GetCount();
 	}
 	String NodePath::GetSubname(int32 index) const {
-		ERR_ASSERT(index >= 0 && index < GetSubnameCount(), "index out of bounds.", return String());
+		ERR_ASSERT(index >= 0 && index < GetSubnameCount(), u8"index out of bounds.", return String());
 
 		return data->subnames.Get(index);
 	}

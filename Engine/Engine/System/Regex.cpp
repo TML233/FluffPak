@@ -24,20 +24,20 @@ namespace Engine {
 				case Error::error_badbrace:
 				case Error::error_range:
 				case Error::error_badrepeat:
-					ERR_MSG("Invalid regex expression.");
+					ERR_MSG(u8"Invalid regex expression.");
 					return Result::ExpressionError;
 
 				case Error::error_space:
 				case Error::error_stack:
-					ERR_MSG("Out of memory.");
+					ERR_MSG(u8"Out of memory.");
 					return Result::OutOfMemory;
 
 				case Error::error_complexity:
-					ERR_MSG("Regex expression too complex.");
+					ERR_MSG(u8"Regex expression too complex.");
 					return Result::ExpressionTooComplex;
 
 				default:
-					ERR_MSG(String::Format("Unknown error code {0} when constructing regex expression.", (int32)err.code()).GetRawArray());
+					ERR_MSG(String::Format(u8"Unknown error code {0} when constructing regex expression.", (int32)err.code()).GetRawArray());
 					return Result::UnknownError;
 			}
 		}
@@ -50,7 +50,7 @@ namespace Engine {
 		// Construct regex expression
 		std::regex expression;
 		Regex::Result expressionResult = CreateRegex(pattern, expression);
-		ERR_ASSERT(expressionResult == Result::OK, "Failed to construct regex expression.", return expressionResult);
+		ERR_ASSERT(expressionResult == Result::OK, u8"Failed to construct regex expression.", return expressionResult);
 
 		// Get ready for matching
 		std::string_view contentSv = content.GetStringView();

@@ -92,7 +92,7 @@ namespace Engine {
 		Variant(double value);
 		Variant(const String& value);
 		Variant(const Vector2& value);
-		Variant(const char* value);
+		Variant(const strchar* value);
 		Variant(Object* value);
 #pragma endregion
 
@@ -102,7 +102,7 @@ namespace Engine {
 		bool AsBool(bool defaultValue=false) const;
 		int64 AsInt64(int64 defaultValue = 0) const;
 		double AsDouble(double defaultValue = 0) const;
-		String AsString(String defaultValue = "") const;
+		String AsString(String defaultValue = u8"") const;
 		Vector2 AsVector2(const Vector2& defaultValue = Vector2()) const;
 		Object* AsObject(Object* defaultValue = nullptr) const;
 #pragma endregion

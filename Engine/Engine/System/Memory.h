@@ -96,7 +96,7 @@ namespace Engine {
 
 		template<typename T,typename ... Args>
 		static T* NewArray(sizeint count, Args&& ... args) {
-			ERR_ASSERT(count > 0, "count must be larger than 0.", return nullptr);
+			ERR_ASSERT(count > 0, u8"count must be larger than 0.", return nullptr);
 
 			// Reserve a few bytes of size_t for saving the count data.
 			sizeint size = sizeof(T) * count + sizeof(sizeint);

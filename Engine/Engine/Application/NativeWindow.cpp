@@ -25,7 +25,7 @@ namespace Engine {
 
 		bool succeeded = window->Initialize();
 		if (!succeeded) {
-			ERR_MSG("Failed to initialize a NativeWindow!");
+			ERR_MSG(u8"Failed to initialize a NativeWindow!");
 			window->Destroy();
 			return nullptr;
 		} else {
@@ -36,7 +36,7 @@ namespace Engine {
 		return windows.ContainsKey(id);
 	}
 	bool NativeWindowManager::Destory(NativeWindow::ID id) {
-		ERR_ASSERT(IsExists(id), "Specified window id not found!", return false);
+		ERR_ASSERT(IsExists(id), u8"Specified window id not found!", return false);
 
 		windows.Remove(id);
 		return true;

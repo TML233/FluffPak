@@ -25,20 +25,20 @@ namespace Engine {
 		}
 
 		bool SetCapacity(int32 capacity) {
-			ERR_ASSERT(capacity >= count, "capacity cannot be smaller than element count.", return false);
+			ERR_ASSERT(capacity >= count, u8"capacity cannot be smaller than element count.", return false);
 			if (capacity == count) {
 				return true;
 			}
 
 			// Stop immediately if buckets and entries are not in sync (this should never happen, but just in case)
 			ERR_ASSERT((buckets == nullptr && entries == nullptr) || (buckets != nullptr && entries != nullptr),
-				"buckets and entries are out of sync!",
-				FATAL_CRASH("Cannot proceed as Dictionary is in a dangerous state and may have caused memory leak!")
+				u8"buckets and entries are out of sync!",
+				FATAL_CRASH(u8"Cannot proceed as Dictionary is in a dangerous state and may have caused memory leak!")
 			);
 
 			// Get a closest prime to help mod the hash code.
 			int32 desired = HashHelper::GetPrime(capacity);
-			ERR_ASSERT(desired >= capacity, "Failed to find a prime number for capacity!", return false);
+			ERR_ASSERT(desired >= capacity, u8"Failed to find a prime number for capacity!", return false);
 
 			if (buckets == nullptr && entries == nullptr) {
 				this->buckets = MEMNEWARR(int32, desired);
@@ -81,7 +81,7 @@ namespace Engine {
 
 		bool Add(const TKey& key, const TValue& value) {
 			bool result = Insert(key, value, GetKeyHash(key),InsertMode::Add);
-			ERR_ASSERT(result, "Failed to add an entry, the key already exists.", return false);
+			ERR_ASSERT(result, u8"Failed to add an entry, the key already exists.", return false);
 			return true;
 		}
 		void Set(const TKey& key, const TValue& value) {
@@ -145,7 +145,7 @@ namespace Engine {
 		TValue Get(const TKey& key) const {
 			TValue result{};
 			bool succeed = TryGet(key, result);
-			FATAL_ASSERT(succeed, "Entry with key does not exists! Cannot return a value.");
+			FATAL_ASSERT(succeed, u8"Entry with key does not exists! Cannot return a value.");
 			return result;
 		}
 		bool Remove(const TKey& key) {
@@ -213,7 +213,7 @@ namespace Engine {
 				if (entries[i].hashCode == hash && entries[i].key == key) {
 					if (mode == InsertMode::Add) {
 						// In add mode, fails.
-						ERR_MSG("Key is already exists.");
+						ERR_MSG(u8"Key is already exists.");
 						return false;
 					} else {
 						// In set mode, overwrite the value.

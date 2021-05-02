@@ -24,7 +24,7 @@ namespace Engine {
 		return children.GetCount();
 	}
 	Node* Node::GetChildByIndex(int32 index) const {
-		ERR_ASSERT(index >= 0 && index < children.GetCount(), "index out of bounds.", return nullptr);
+		ERR_ASSERT(index >= 0 && index < children.GetCount(), u8"index out of bounds.", return nullptr);
 		return children.Get(index);
 	}
 	Node* Node::GetChildByName(const String& name) const {
@@ -54,16 +54,16 @@ namespace Engine {
 	bool Node::AddChild(Node* node,int index) {
 		ERR_ASSERT(
 			CanAddChild(),
-			"The node is busy preparing its children. Try not to add or remove nodes of the parent in OnEnteredTree(), OnReady() or OnExitTree(). If you want to auto-create its depended nodes, do it in the constructor.",
+			u8"The node is busy preparing its children. Try not to add or remove nodes of the parent in OnEnteredTree(), OnReady() or OnExitTree(). If you want to auto-create its depended nodes, do it in the constructor.",
 			return false
 		);
 
-		ERR_ASSERT(node != nullptr, "node is nullptr.", return false);
-		ERR_ASSERT(node != this, "node can't be a child of itself.", return false);
-		ERR_ASSERT(index <= GetChildrenCount(), "index out of bounds", return false);
+		ERR_ASSERT(node != nullptr, u8"node is nullptr.", return false);
+		ERR_ASSERT(node != this, u8"node can't be a child of itself.", return false);
+		ERR_ASSERT(index <= GetChildrenCount(), u8"index out of bounds", return false);
 
 
-		ERR_ASSERT(!node->HasParent(), "node already has a parent.", return false);
+		ERR_ASSERT(!node->HasParent(), u8"node already has a parent.", return false);
 
 		if (index < 0) {
 			index = GetChildrenCount();
@@ -83,8 +83,8 @@ namespace Engine {
 		return true;
 	}
 	bool Node::RemoveChild(Node* child) {
-		ERR_ASSERT(child != nullptr, "child is nullptr.", return false);
-		ERR_ASSERT(child != this, "child can't be itself.", return false);
+		ERR_ASSERT(child != nullptr, u8"child is nullptr.", return false);
+		ERR_ASSERT(child != this, u8"child can't be itself.", return false);
 
 		if (!child->HasParent()) {
 			return false;
@@ -126,7 +126,7 @@ namespace Engine {
 			return;
 		}
 		// Node names that start with @@ is auto names.
-		if (name.StartsWith(STRING_LITERAL("@@"))) {
+		if (name.StartsWith(STRING_LITERAL(u8"@@"))) {
 			return;
 		}
 
@@ -149,7 +149,7 @@ namespace Engine {
 		return tree != nullptr;
 	}
 
-	List<String> Node::invalidChars = { ".","/",":","\r","\n" };
+	List<String> Node::invalidChars = { STRING_LITERAL(u8"."),STRING_LITERAL(u8"/"),STRING_LITERAL(u8":"),STRING_LITERAL(u8"\r"),STRING_LITERAL(u8"\n") };
 	AtomicValue<uint64> Node::autoNameCounter{};
 
 	String Node::ValidateName(const String& name) {
@@ -200,7 +200,7 @@ namespace Engine {
 			split += 1;
 			String part = targetName.Substring(0, targetName.GetCount() - split);
 			for (uint32 i = 1; i <= 25565; i += 1) {
-				String candidate = String::Format(STRING_LITERAL("{0}{1}"), part, i);
+				String candidate = String::Format(STRING_LITERAL(u8"{0}{1}"), part, i);
 				// Stop if the candidate name is the same as the original.
 				if (originalParent == targetParent && candidate == originalName) {
 					return originalName;
@@ -217,7 +217,7 @@ namespace Engine {
 	}
 
 	String Node::GenerateAutoName() {
-		return String::Format(STRING_LITERAL("@@{0}"), autoNameCounter.FetchAdd(1));
+		return String::Format(STRING_LITERAL(u8"@@{0}"), autoNameCounter.FetchAdd(1));
 	}
 
 	void Node::OnEnteredTree() {}
@@ -236,7 +236,7 @@ namespace Engine {
 			}
 		}
 		for (int32 i = 0; i < level; i++) {
-			r = String::Format(STRING_LITERAL("{0}\t{1}"), i < level - 1 && !isLast ? STRING_LITERAL(u8"│  ") : String::GetEmpty(), r);
+			r = String::Format(STRING_LITERAL(u8"{0}\t{1}"), i < level - 1 && !isLast ? STRING_LITERAL(u8"│  ") : String::GetEmpty(), r);
 		}
 		
 		String symbol;
@@ -249,7 +249,7 @@ namespace Engine {
 				symbol = STRING_LITERAL(u8"├  ");
 			}
 		}
-		r = r + String::Format(STRING_LITERAL("{0}{1}: {2} ({3})\n"), symbol,GetIndex(), GetName(), GetReflectionClassName());
+		r = r + String::Format(STRING_LITERAL(u8"{0}{1}: {2} ({3})\n"), symbol,GetIndex(), GetName(), GetReflectionClassName());
 		
 		for (Node* child : children) {
 			r = r + child->GetTreeStructureFormated(level + 1);
@@ -262,7 +262,7 @@ namespace Engine {
 			return;
 		}
 		if (this->tree != nullptr && tree != nullptr) {
-			FATAL_CRASH("Cannot assign the tree when the node is already in another tree! Check the code!!");
+			FATAL_CRASH(u8"Cannot assign the tree when the node is already in another tree! Check the code!!");
 		}
 		
 		if (this->tree == nullptr && tree != nullptr) {

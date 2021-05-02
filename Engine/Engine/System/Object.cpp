@@ -15,7 +15,7 @@ namespace Engine {
 	}
 
 	String Object::ToString() const {
-		return String::Format(STRING_LITERAL("{0} ({1})"), GetReflectionClassName(), GetInstanceId().Get());
+		return String::Format(STRING_LITERAL(u8"{0} ({1})"), GetReflectionClassName(), GetInstanceId().Get());
 	}
 	int32 Object::GetHashCode() const {
 		return ObjectUtil::GetHashCode(instanceId.Get());
@@ -72,7 +72,7 @@ namespace Engine {
 		return GetData().ContainsKey(name);
 	}
 	const ReflectionClass* Reflection::GetClass(const String& name) {
-		ERR_ASSERT(IsClassExists(name), "Class name doesn't exists.", return nullptr);
+		ERR_ASSERT(IsClassExists(name), u8"Class name doesn't exists.", return nullptr);
 		return GetData().Get(name).GetRaw();
 	}
 
@@ -108,7 +108,7 @@ namespace Engine {
 		this->instantiable = instantiable;
 	}
 	UniquePtr<Object> ReflectionClass::Instantiate() const {
-		ERR_ASSERT(IsInstantiatable(), "Trying to instantiate a class which is not instantiable!", return UniquePtr<Object>(nullptr));
+		ERR_ASSERT(IsInstantiatable(), u8"Trying to instantiate a class which is not instantiable!", return UniquePtr<Object>(nullptr));
 
 		return (*instantiator)();
 	}
