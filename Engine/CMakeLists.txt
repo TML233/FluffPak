@@ -103,6 +103,7 @@ if(WIN32)
 	list(APPEND IncludeDir
 	)
 	list(APPEND LinkLibrary
+		Shcore
 	)
 elseif(UNIX AND "${CMAKE_SYSTEM}" MATCHES "Linux")
 	list(APPEND HeaderFile

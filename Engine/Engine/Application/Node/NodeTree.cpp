@@ -14,7 +14,6 @@ namespace Engine {
 		nw->SetTitle(STRING_LITERAL(u8"Rabbik Engine"));
 		nw->SetVisible(true);
 		nw->SetSize(Vector2(640, 480));
-		nw->SetResizable(true);
 
 		GetRoot()->SystemAssignTree(this);
 		running = true;

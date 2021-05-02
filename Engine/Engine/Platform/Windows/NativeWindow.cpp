@@ -1,5 +1,6 @@
 #include "Engine/Platform/Windows/NativeWindow.h"
 #include "Engine/Platform/Windows/UnicodeHelper.h"
+#include <ShellScalingApi.h>
 
 namespace Engine::PlatformSpecific::Windows {
 	typename NativeWindowManager::_Initializer NativeWindowManager::_initializer{};
@@ -7,6 +8,8 @@ namespace Engine::PlatformSpecific::Windows {
 	NativeWindowManager::_Initializer::_Initializer() {
 		// Make console support UTF-8
 		SetConsoleOutputCP(65001);
+
+		SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
 
 		// Register basic window class
 		WNDCLASSW wc = {};
@@ -31,12 +34,11 @@ namespace Engine::PlatformSpecific::Windows {
 
 	void NativeWindowManager::Update() {
 		MSG msg = {};
-		while (PeekMessageW(&msg, NULL, NULL, NULL,PM_REMOVE)) {
-			if (msg.message == WM_QUIT) {
-				break;
+		if (PeekMessageW(&msg, NULL, NULL, NULL,PM_REMOVE)) {
+			if (msg.message != WM_QUIT) {
+				TranslateMessage(&msg);
+				DispatchMessageW(&msg);
 			}
-			TranslateMessage(&msg);
-			DispatchMessageW(&msg);
 		}
 	}
 
@@ -60,7 +62,7 @@ namespace Engine::PlatformSpecific::Windows {
 	}
 
 	bool NativeWindow::Initialize() {
-		const DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+		const DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_BORDER;
 		HWND w = CreateWindowW(GetGlobalWindowClassName(), L"", style, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
 		ERR_ASSERT(IsWindow(w), u8"CreateWindowW failed to create a window!", return false);
 		// Set user data to let hwnd trace back to NativeWindow.
@@ -229,7 +231,13 @@ namespace Engine::PlatformSpecific::Windows {
 	}
 	bool NativeWindow::SetBorder(bool enabled) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		return SetStyleFlag(WS_BORDER, enabled);
+
+		Vector2 pos = GetPosition();
+		Vector2 size = GetSize();
+		bool result = SetStyleFlag(WS_BORDER | WS_CAPTION, enabled);
+		SetSize(size);
+		SetPosition(pos);
+		return result;
 	}
 	bool NativeWindow::IsResizable() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
