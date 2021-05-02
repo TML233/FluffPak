@@ -11,8 +11,8 @@
 
 namespace Engine {
 #pragma region ContentData
-	String::ContentData::ContentData(const strchar* data, int32 length) :data(data), length(length), staticData(true) {}
-	String::ContentData::ContentData(UniquePtr<strchar[]>&& data, int32 length) : data(data.Release()), length(length), staticData(false) {}
+	String::ContentData::ContentData(const u8char* data, int32 length) :data(data), length(length), staticData(true) {}
+	String::ContentData::ContentData(UniquePtr<u8char[]>&& data, int32 length) : data(data.Release()), length(length), staticData(false) {}
 
 	String::ContentData::~ContentData() {
 		if (!staticData) {
@@ -45,7 +45,7 @@ namespace Engine {
 	}
 #pragma endregion
 
-	int32 String::SearcherSunday::Search(const strchar* target, int32 lenTarget, const strchar* pattern, int32 lenPattern) {
+	int32 String::SearcherSunday::Search(const u8char* target, int32 lenTarget, const u8char* pattern, int32 lenPattern) {
 		//Prepare charPos
 		std::memset(charPos, -1, 256 * sizeof(int32));
 		for (int32 i = 0; i < lenPattern; i += 1) {
@@ -86,19 +86,19 @@ namespace Engine {
 		return String(ReferencePtr<ContentData>(ContentData::GetEmpty()));
 	}
 
-	String::String(const strchar* string,int32 count) {
+	String::String(const u8char* string,int32 count) {
 		if (count < 0) {
 			count = static_cast<int32>(std::strlen(reinterpret_cast<const char*>(string)));
 		}
 		PrepareData(string, count);
 	}
-	String& String::operator=(const strchar* string) {
+	String& String::operator=(const u8char* string) {
 		PrepareData(string, static_cast<int32>(std::strlen(reinterpret_cast<const char*>(string))));
 		return *this;
 	}
 
 	String::String(const std::string& string) {
-		PrepareData(reinterpret_cast<const strchar*>(string.c_str()), static_cast<int32>(string.length()));
+		PrepareData(reinterpret_cast<const u8char*>(string.c_str()), static_cast<int32>(string.length()));
 	}
 	String::String(const std::u8string& string) {
 		PrepareData(string.c_str(), static_cast<int32>(string.length()));
@@ -106,7 +106,7 @@ namespace Engine {
 
 	String::String(ReferencePtr<ContentData> dataPtr, int32 start, int32 count) :data(dataPtr), refStart(start), refCount(count < 0 ? dataPtr->length - 1 : count) {}
 
-	void String::PrepareData(const strchar* string, sizeint count) {
+	void String::PrepareData(const u8char* string, sizeint count) {
 		// Use public empty string.
 		if (count <= 0) {
 			data = ContentData::GetEmpty();
@@ -116,7 +116,7 @@ namespace Engine {
 		}
 
 		sizeint len = count + 1;
-		UniquePtr<strchar[]> strData = UniquePtr<strchar[]>::Create(len);
+		UniquePtr<u8char[]> strData = UniquePtr<u8char[]>::Create(len);
 		std::memcpy(strData.GetRaw(), string, count);
 		std::memset(strData.GetRaw() + len-1, '\0', 1);
 
@@ -136,17 +136,17 @@ namespace Engine {
 		return String(data->data + refStart, refCount);
 	}
 
-	ReadonlyIterator<strchar> String::operator[](int32 index) const {
-		ERR_ASSERT(index >= 0 && index <= GetCount(), u8"index out of bounds.", return ReadonlyIterator<strchar>(const_cast<strchar*>(u8"")));
+	ReadonlyIterator<u8char> String::operator[](int32 index) const {
+		ERR_ASSERT(index >= 0 && index <= GetCount(), u8"index out of bounds.", return ReadonlyIterator<u8char>(const_cast<u8char*>(u8"")));
 		
-		return ReadonlyIterator<strchar>(data->data + refStart + index);
+		return ReadonlyIterator<u8char>(data->data + refStart + index);
 	}
 
 	int32 String::GetCount() const {
 		return refCount;
 	}
 
-	const strchar* String::GetRawArray() const {
+	const u8char* String::GetRawArray() const {
 		return data->data;
 	}
 
@@ -206,8 +206,8 @@ namespace Engine {
 		}
 
 		sizeint rawlen = GetCount() + (-from.GetCount() + to.GetCount()) * times + 1;
-		UniquePtr<strchar[]> rawptr = UniquePtr<strchar[]>::Create(rawlen);
-		strchar* raw = rawptr.GetRaw();
+		UniquePtr<u8char[]> rawptr = UniquePtr<u8char[]>::Create(rawlen);
+		u8char* raw = rawptr.GetRaw();
 
 		// Fill the string.
 		sizeint rawi = 0;
@@ -254,8 +254,8 @@ namespace Engine {
 			return false;
 		}
 
-		const strchar* ptrA = GetStartPtr();
-		const strchar* ptrB = obj.GetStartPtr();
+		const u8char* ptrA = GetStartPtr();
+		const u8char* ptrB = obj.GetStartPtr();
 		for (int i = 0; i < GetCount(); i += 1, ptrA += 1, ptrB += 1) {
 			if (*ptrA != *ptrB) {
 				return false;
@@ -282,7 +282,7 @@ namespace Engine {
 	int32 String::GetStartIndex() const {
 		return refStart;
 	}
-	const strchar* String::GetStartPtr() const {
+	const u8char* String::GetStartPtr() const {
 		return data->data + refStart;
 	}
 

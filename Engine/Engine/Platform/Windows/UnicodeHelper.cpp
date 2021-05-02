@@ -19,7 +19,7 @@ namespace Engine::PlatformSpecific::Windows {
 		int32 len = WideCharToMultiByte(CP_UTF8, NULL, unicode, -1, NULL, 0, NULL, NULL);
 		ERR_ASSERT(len > 0, u8"WideCharToMultiByte failed to calculate required char[] length!", return false);
 		
-		UniquePtr<strchar[]> chars = UniquePtr<strchar[]>::Create(len);
+		UniquePtr<u8char[]> chars = UniquePtr<u8char[]>::Create(len);
 
 		int32 converted = WideCharToMultiByte(CP_UTF8, NULL, unicode, -1, reinterpret_cast<char*>(chars.GetRaw()), len, NULL, NULL);
 		ERR_ASSERT(converted > 0, u8"WideCharToMultiByte failed to convert!", return false);

@@ -26,10 +26,10 @@
 #define FATAL_ASSERT(expr,msg) if (!(expr)) { ::Engine::DebugPrintFatalAssert(__func__,__FILE__,__LINE__,#expr,msg);FATAL_CRASH_IMMEDIATELY();}
 
 namespace Engine {
-	void DebugPrintInfo(const strchar* message);
-	void DebugPrintWarn(const char* func, const char* file, int line, const strchar* message);
-	void DebugPrintError(const char* func, const char* file, int line, const strchar* message);
-	void DebugPrintErrorAssert(const char* func, const char* file, int line, const char* expr, const strchar* message, const char* action);
-	void DebugPrintFatal(const char* func, const char* file, int line, const strchar* message);
-	void DebugPrintFatalAssert(const char* func, const char* file, int line, const char* expr, const strchar* message);
+	void DebugPrintInfo(const u8char* message);
+	void DebugPrintWarn(const char* func, const char* file, int line, const u8char* message);
+	void DebugPrintError(const char* func, const char* file, int line, const u8char* message);
+	void DebugPrintErrorAssert(const char* func, const char* file, int line, const char* expr, const u8char* message, const char* action);
+	void DebugPrintFatal(const char* func, const char* file, int line, const u8char* message);
+	void DebugPrintFatalAssert(const char* func, const char* file, int line, const char* expr, const u8char* message);
 }

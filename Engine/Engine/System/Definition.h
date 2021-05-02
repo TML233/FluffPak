@@ -13,7 +13,7 @@ name& operator=(name&&) = delete
 
 namespace Engine {
 	/// @brief Represents a char used for texts.
-	using strchar = char8_t;
+	using u8char = char8_t;
 	/// @brief Represents a signed 8-bit integer.
 	using sbyte = std::int8_t;
 	/// @brief Represents an unsigned 8-bit integer.

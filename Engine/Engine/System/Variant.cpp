@@ -128,7 +128,7 @@ namespace Engine {
 	Variant::Variant(const String& value) {
 		ConstructString(value);
 	}
-	Variant::Variant(const strchar* value) {
+	Variant::Variant(const u8char* value) {
 		ConstructString(String(value));
 	}
 	Variant::Variant(const Vector2& value) {

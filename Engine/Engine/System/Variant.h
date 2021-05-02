@@ -92,7 +92,7 @@ namespace Engine {
 		Variant(double value);
 		Variant(const String& value);
 		Variant(const Vector2& value);
-		Variant(const strchar* value);
+		Variant(const u8char* value);
 		Variant(Object* value);
 #pragma endregion
 
