@@ -4,6 +4,8 @@
 #include "Engine/Application/Node/Node.h"
 
 namespace Engine{
+	/// @brief Default AppLoop of the engine. Manages a tree of game nodes.\n
+	/// Only the nodes that are joined in the tree are active.
 	class NodeTree final:public AppLoop {
 		REFLECTION_CLASS(::Engine::NodeTree, ::Engine::AppLoop) {}
 

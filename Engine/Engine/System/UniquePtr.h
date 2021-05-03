@@ -3,7 +3,7 @@
 #include "Engine/System/Memory.h"
 
 namespace Engine {
-	// Default deleter which calls delete
+	/// @brief Default heap object deleter for single pointer.
 	template<typename T>
 	class DefaultDeleter {
 	public:
@@ -12,7 +12,7 @@ namespace Engine {
 		}
 	};
 
-	// Default deleter for arrays which calls delete[]
+	/// @brief Default heap object deleter for pointer of array.
 	template<typename T>
 	class DefaultDeleter<T[]> {
 	public:
@@ -21,7 +21,8 @@ namespace Engine {
 		}
 	};
 
-	// UniquePtr
+	/// @brief Smart pointer for managing exclusive heap pointers.\n
+	/// Cannot be copied, but can be moved.
 	template<typename T, typename TDeleter = DefaultDeleter<T>>
 	class UniquePtr final {
 	public:
@@ -86,7 +87,8 @@ namespace Engine {
 		TDeleter deleter;
 	};
 
-	// UniquePtr for arrays
+	/// @brief Smart pointer for managing exclusive heap array pointers.\n
+	/// Cannot be copied, but can be moved.
 	template<typename T, typename TDeleter>
 	class UniquePtr<T[], TDeleter> {
 	public:

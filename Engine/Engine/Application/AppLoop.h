@@ -10,7 +10,8 @@ namespace Engine {
 	public:
 		virtual ~AppLoop();
 
-		/// @brief Called right before the first frame update.
+		/// @brief Called when the AppLoop is being started.\n
+		/// Do the initialization work here.
 		virtual void OnStart() = 0;
 
 		/// @brief Called every frame update.
@@ -20,9 +21,13 @@ namespace Engine {
 		
 		//virtual void Input(const InputEvent& event)=0;
 
-		/// @brief Called right after the loop stopped.
+		/// @brief Called when the AppLoop is being shutdown.\n
+		/// It is called after IsRunning() returns false.\n
+		/// Do deinitialization work here.
 		virtual void OnStop() = 0;
 		
+		/// @brief Used to indicate the engine whether to keep running.\n
+		/// If return false, the engine will enter the shutdown state and then call OnStop().
 		virtual bool IsRunning() const = 0;
 	};
 }

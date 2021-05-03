@@ -5,6 +5,7 @@
 #include "Engine/System/String.h"
 
 namespace Engine {
+	/// @brief Stores a parsed node path.
 	class NodePath {
 	public:
 		NodePath(String path = u8"");
