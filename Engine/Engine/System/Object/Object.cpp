@@ -1,8 +1,6 @@
 #include "Engine/System/Object/Object.h"
 #include "Engine/System/Object/ObjectUtil.h"
 #include "Engine/System/String.h"
-#include <string>
-#include <typeinfo>
 
 namespace Engine {
 #pragma region Object

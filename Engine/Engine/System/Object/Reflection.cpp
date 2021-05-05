@@ -10,6 +10,14 @@ namespace Engine{
 	bool Reflection::IsClassExists(const String& name) {
 		return GetData().ContainsKey(name);
 	}
+	ReflectionClass* Reflection::AddClass(const String& name, const String& parent) {
+		SharedPtr<ReflectionClass> data = SharedPtr<ReflectionClass>::Create();
+
+		data->name = name;
+		data->parentName = parent;
+
+		return (GetData().Add(name, data) ? data.GetRaw() : nullptr);
+	}
 	const ReflectionClass* Reflection::GetClass(const String& name) {
 		ERR_ASSERT(IsClassExists(name), u8"Class name doesn't exists.", return nullptr);
 		return GetData().Get(name).GetRaw();
