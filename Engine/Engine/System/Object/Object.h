@@ -12,38 +12,6 @@
 
 #pragma region Reflection macros
 
-#pragma region Common name getter for root class.
-#define _REFLECTION_CLASS_NAME_GETTERS_ROOT(name)									\
-static ::Engine::String GetReflectionClassNameStatic(){								\
-	return STRING_LITERAL(name);													\
-}																					\
-virtual ::Engine::String GetReflectionClassName() const{							\
-	return STRING_LITERAL(name);													\
-}																					\
-static ::Engine::String GetReflectionParentClassNameStatic(){						\
-	return STRING_LITERAL(u8"");													\
-}																					\
-virtual ::Engine::String GetReflectionParentClassName() const{						\
-	return STRING_LITERAL(u8"");													\
-}
-#pragma endregion
-
-#pragma region Common name getter.
-#define _REFLECTION_CLASS_NAME_GETTERS(name,parent)									\
-static ::Engine::String GetReflectionClassNameStatic(){								\
-	return STRING_LITERAL(name);													\
-}																					\
-virtual ::Engine::String GetReflectionClassName() const override{					\
-	return STRING_LITERAL(name);													\
-}																					\
-static ::Engine::String GetReflectionParentClassNameStatic(){						\
-	return STRING_LITERAL(parent);													\
-}																					\
-virtual ::Engine::String GetReflectionParentClassName() const override{				\
-	return STRING_LITERAL(parent);													\
-}
-#pragma endregion
-
 #pragma region Auto register
 #define _REFLECTION_CLASS_AUTO_REGISTER()											\
 	class _ReflectionInitializerCaller{												\
@@ -55,45 +23,40 @@ virtual ::Engine::String GetReflectionParentClassName() const override{				\
 	inline static _ReflectionInitializerCaller _reflectionInitializerCaller{}
 #pragma endregion
 
-#pragma region Initializer components
 
-#pragma region Initializer common head
-#define _REFLECTION_CLASS_INITIALIZER_HEAD()										\
+#pragma region Root class register, not calling parent
+#define REFLECTION_ROOTCLASS(name)													\
+public:																				\
+	static ::Engine::String GetReflectionClassNameStatic(){							\
+		return STRING_LITERAL(u8## #name);											\
+	}																				\
+	virtual ::Engine::String GetReflectionClassName() const{						\
+		return STRING_LITERAL(u8## #name);											\
+	}																				\
+	static ::Engine::String GetReflectionParentClassNameStatic(){					\
+		return String::GetEmpty();													\
+	}																				\
+	virtual ::Engine::String GetReflectionParentClassName() const{					\
+		return String::GetEmpty();													\
+	}																				\
+																					\
+protected:																			\
 	static void _InitializeReflection(){											\
 		static bool inited=false;													\
 		if(inited){																	\
 			return;																	\
-		}
-#pragma endregion
-
-#define _REFLECTION_CLASS_INITIALIZER_CALL_PARENT(parent) parent::_InitializeReflection()
-
-#pragma region Initializer common tail
-#define _REFLECTION_CLASS_INITIALIZER_TAIL(name)									\
+		}																			\
+																					\
 		::Engine::ReflectionClass* ptr=::Engine::Reflection::AddClass<name>();		\
 		FATAL_ASSERT(ptr!=nullptr,u8"Failed to register class.");					\
 		_InitializeCustomReflection(ptr);											\
 																					\
 		inited=true;																\
-	}
-#pragma endregion
-
-#define _REFLECTION_CLASS_INITIALIZER_CUSTOM() static void _InitializeCustomReflection(::Engine::ReflectionClass* c)
-
-#pragma endregion
-
-#pragma region Root class register, not calling parent
-#define REFLECTION_ROOTCLASS(name)													\
-public:																				\
-	_REFLECTION_CLASS_NAME_GETTERS_ROOT(u8## #name)									\
-																					\
-protected:																			\
-	_REFLECTION_CLASS_INITIALIZER_HEAD()											\
-	_REFLECTION_CLASS_INITIALIZER_TAIL(name)										\
+	}																				\
 																					\
 private:																			\
 	_REFLECTION_CLASS_AUTO_REGISTER();												\
-	_REFLECTION_CLASS_INITIALIZER_CUSTOM()
+	static void _InitializeCustomReflection(::Engine::ReflectionClass* c)
 
 #pragma endregion
 
@@ -102,19 +65,44 @@ private:																			\
 // e.g. Object should be Engine::Object
 #define REFLECTION_CLASS(name,parent)												\
 public:																				\
-	_REFLECTION_CLASS_NAME_GETTERS(u8## #name,u8## #parent)							\
+	static ::Engine::String GetReflectionClassNameStatic(){							\
+		return STRING_LITERAL(u8## #name);											\
+	}																				\
+	virtual ::Engine::String GetReflectionClassName() const override{				\
+		return STRING_LITERAL(u8## #name);											\
+	}																				\
+	static ::Engine::String GetReflectionParentClassNameStatic(){					\
+		return STRING_LITERAL(u8## #parent);										\
+	}																				\
+	virtual ::Engine::String GetReflectionParentClassName() const override{			\
+		return STRING_LITERAL(u8## #parent);										\
+	}																				\
 																					\
 protected:																			\
-	_REFLECTION_CLASS_INITIALIZER_HEAD()											\
-	_REFLECTION_CLASS_INITIALIZER_CALL_PARENT(parent);								\
-	_REFLECTION_CLASS_INITIALIZER_TAIL(name)										\
+	static void _InitializeReflection(){											\
+		static bool inited=false;													\
+		if(inited){																	\
+			return;																	\
+		}																			\
+																					\
+		parent::_InitializeReflection();											\
+																					\
+		::Engine::ReflectionClass* ptr=::Engine::Reflection::AddClass<name>();		\
+		FATAL_ASSERT(ptr!=nullptr,u8"Failed to register class.");					\
+		_InitializeCustomReflection(ptr);											\
+																					\
+		inited=true;																\
+	}																				\
 																					\
 private:																			\
 	_REFLECTION_CLASS_AUTO_REGISTER();												\
-	_REFLECTION_CLASS_INITIALIZER_CUSTOM()
+	static void _InitializeCustomReflection(::Engine::ReflectionClass* c)
+
 #pragma endregion
 
 #define REFLECTION_CLASS_INSTANTIABLE(instantiable) c->SetInstantiable(instantiable)
+//#define REFLECTION_CLASS_METHOD(...) ::Reflection::RegisterMethod(__VA_ARGS__)
+//#define REFLECTION_CLASS_STATIC_METHOD(...) ::Reflection::RegisterStaticMethod(__VA_ARGS__)
 
 #pragma endregion
 
