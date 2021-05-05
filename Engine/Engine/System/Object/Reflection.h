@@ -117,6 +117,7 @@ namespace Engine {
 	class Reflection;
 	class ReflectionClass;
 	class ReflectionMethod;
+	class ReflectionMethodBind;
 	class ReflectionProperty;
 	class ReflectionSignal;
 
@@ -161,10 +162,8 @@ namespace Engine {
 		using MethodData = Dictionary<String, SharedPtr<ReflectionMethod>>;
 	};
 
-	class ReflectionMethod {
+	class ReflectionMethod final {
 	public:
-		virtual ~ReflectionMethod();
-
 		enum class InvokeResult {
 			OK,
 			ArgumentCountNotMatching,
@@ -177,5 +176,19 @@ namespace Engine {
 
 		String name;
 		List<String> argumentNames;
+		SharedPtr<ReflectionMethodBind> bind;
+	};
+
+	class ReflectionMethodBind {
+		virtual ~ReflectionMethodBind() = default;
+		virtual int32 GetArgumentCount() const = 0;
+	};
+	template<typename TReturn,typename ... TArgs>
+	class ReflectionMethodBindStaticReturn final:public ReflectionMethodBind {
+	public:
+		int32 GetArgumentCount() const override {
+			return (int32)sizeof(TArgs...);
+		}
+		TReturn(*method)(TArgs...);
 	};
 }

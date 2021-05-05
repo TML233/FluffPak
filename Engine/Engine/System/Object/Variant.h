@@ -4,10 +4,12 @@
 #include "Engine/System/String.h"
 #include "Engine/System/Object/InstanceId.h"
 #include "Engine/Math/Vector2.h"
+#include <type_traits>
 
 namespace Engine {
 	class Object;
-	
+	class ReferencedObject;
+
 	class Variant final {
 	public:
 		// !! AddTypeHint 0.0: To add a new type, search for "AddTypeHint" for the guide.
@@ -201,5 +203,175 @@ namespace Engine {
 		};
 		inline static Initializer _initializer{};
 
+	public:
+#pragma region GetTypeFromNative
+		template<typename T, typename = void>
+		struct GetTypeFromNative;
+		template<>
+		struct GetTypeFromNative<bool> {
+			static const Type type = Type::Bool;
+		};
+		template<>
+		struct GetTypeFromNative<byte> {
+			static const Type type = Type::Int64;
+		};
+		template<>
+		struct GetTypeFromNative<sbyte> {
+			static const Type type = Type::Int64;
+		};
+		template<>
+		struct GetTypeFromNative<int16> {
+			static const Type type = Type::Int64;
+		};
+		template<>
+		struct GetTypeFromNative<uint16> {
+			static const Type type = Type::Int64;
+		};
+		template<>
+		struct GetTypeFromNative<int32> {
+			static const Type type = Type::Int64;
+		};
+		template<>
+		struct GetTypeFromNative<uint32> {
+			static const Type type = Type::Int64;
+		};
+		template<>
+		struct GetTypeFromNative<int64> {
+			static const Type type = Type::Int64;
+		};
+		template<>
+		struct GetTypeFromNative<uint64> {
+			static const Type type = Type::Int64;
+		};
+		template<>
+		struct GetTypeFromNative<float> {
+			static const Type type = Type::Double;
+		};
+		template<>
+		struct GetTypeFromNative<double> {
+			static const Type type = Type::Double;
+		};
+		template<>
+		struct GetTypeFromNative<String> {
+			static const Type type = Type::String;
+		};
+		template<>
+		struct GetTypeFromNative<Vector2> {
+			static const Type type = Type::Vector2;
+		};
+		template<typename T>
+		struct GetTypeFromNative<T*, typename std::enable_if_t<std::is_base_of_v<Object, T>>> {
+			static const Type type = Type::Object;
+		};
+		template<typename T>
+		struct GetTypeFromNative<const T*, typename std::enable_if_t<std::is_base_of_v<Object, T>>> {
+			static const Type type = Type::Object;
+		};
+		template<typename T>
+		struct GetTypeFromNative<ReferencePtr<T>, typename std::enable_if_t<std::is_base_of_v<ReferencedObject, T>>> {
+			static const Type type = Type::Object;
+		};
+#pragma endregion
+
+#pragma region CastToNative
+		template<typename T, typename = void>
+		struct CastToNative;
+		template<>
+		struct CastToNative<bool> {
+			static bool Cast(const Variant& obj) {
+				return obj.AsBool();
+			}
+		};
+		template<>
+		struct CastToNative<byte> {
+			static byte Cast(const Variant& obj) {
+				return (byte)obj.AsInt64();
+			}
+		};
+		template<>
+		struct CastToNative<sbyte> {
+			static sbyte Cast(const Variant& obj) {
+				return (sbyte)obj.AsInt64();
+			}
+		};
+		template<>
+		struct CastToNative<int16> {
+			static int16 Cast(const Variant& obj) {
+				return (int16)obj.AsInt64();
+			}
+		};
+		template<>
+		struct CastToNative<uint16> {
+			static uint16 Cast(const Variant& obj) {
+				return (uint16)obj.AsInt64();
+			}
+		};
+		template<>
+		struct CastToNative<int32> {
+			static int32 Cast(const Variant& obj) {
+				return (int32)obj.AsInt64();
+			}
+		};
+		template<>
+		struct CastToNative<uint32> {
+			static uint32 Cast(const Variant& obj) {
+				return (uint32)obj.AsInt64();
+			}
+		};
+		template<>
+		struct CastToNative<int64> {
+			static int64 Cast(const Variant& obj) {
+				return (int64)obj.AsInt64();
+			}
+		};
+		template<>
+		struct CastToNative<uint64> {
+			static uint64 Cast(const Variant& obj) {
+				return (uint64)obj.AsInt64();
+			}
+		};
+		template<>
+		struct CastToNative<String> {
+			static String Cast(const Variant& obj) {
+				return obj.AsString();
+			}
+		};
+		template<>
+		struct CastToNative<const String&> {
+			static String Cast(const Variant& obj) {
+				return obj.AsString();
+			}
+		};
+		template<>
+		struct CastToNative<Vector2> {
+			static Vector2 Cast(const Variant& obj) {
+				return obj.AsVector2();
+			}
+		};
+		template<>
+		struct CastToNative<const Vector2&> {
+			static Vector2 Cast(const Variant& obj) {
+				return obj.AsVector2();
+			}
+		};
+		template<typename T>
+		struct CastToNative<T*, typename std::enable_if_t<std::is_base_of_v<Object, T>>> {
+			static T* Cast(const Variant& obj) {
+				return (T*)obj.AsObject();
+			}
+		};
+		template<typename T>
+		struct CastToNative<const T*, typename std::enable_if_t<std::is_base_of_v<Object, T>>> {
+			static const T* Cast(const Variant& obj) {
+				return (const T*)obj.AsObject();
+			}
+		};
+		template<typename T>
+		struct CastToNative<ReferencePtr<T>, typename std::enable_if_t<std::is_base_of_v<ReferencedObject, T>>> {
+			static ReferencePtr<T> Cast(const Variant& obj) {
+				return ReferencePtr<T>((T*)obj.AsObject());
+			}
+		};
+#pragma endregion
 	};
 }
