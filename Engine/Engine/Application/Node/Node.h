@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/System/Definition.h"
-#include "Engine/System/Object.h"
+#include "Engine/System/Object/Object.h"
 #include "Engine/Collection/List.h"
 #include "Engine/Application/Node/NodePath.h"
 

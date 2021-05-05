@@ -1,5 +1,5 @@
 #include "doctest.h"
-#include "Engine/System/Object.h"
+#include "Engine/System/Object/Object.h"
 
 using namespace Engine;
 TEST_CASE("Reflection") {

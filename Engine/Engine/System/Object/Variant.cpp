@@ -1,5 +1,5 @@
-#include "Engine/System/Variant.h"
-#include "Engine/System/Object.h"
+#include "Engine/System/Object/Variant.h"
+#include "Engine/System/Object/Object.h"
 #include "Engine/System/Debug.h"
 
 namespace Engine {

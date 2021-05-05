@@ -1,5 +1,5 @@
-#include "Engine/System/InstanceId.h"
-#include "Engine/System/ObjectUtil.h"
+#include "Engine/System/Object/InstanceId.h"
+#include "Engine/System/Object/ObjectUtil.h"
 
 namespace Engine {
 	AtomicValue<uint64> InstanceId::lastManual{};

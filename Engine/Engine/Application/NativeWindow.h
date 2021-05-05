@@ -1,11 +1,11 @@
 #pragma once
 #include "Engine/System/Definition.h"
-#include "Engine/System/Object.h"
+#include "Engine/System/Object/Object.h"
 #include "Engine/System/String.h"
 #include "Engine/Math/Vector2.h"
 #include "Engine/Collection/Dictionary.h"
 #include "Engine/System/Atomic.h"
-#include "Engine/System/SharedPtr.h"
+#include "Engine/System/Memory/SharedPtr.h"
 
 namespace Engine{
 	class NativeWindowManager;

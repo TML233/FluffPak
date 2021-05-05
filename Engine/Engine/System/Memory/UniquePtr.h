@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/System/Memory.h"
+#include "Engine/System/Memory/Memory.h"
 
 namespace Engine {
 	/// @brief Default heap object deleter for single pointer.

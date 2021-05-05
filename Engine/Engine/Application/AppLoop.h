@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/System/Object.h"
+#include "Engine/System/Object/Object.h"
 #include "Engine/Application/Time.h"
 
 namespace Engine {

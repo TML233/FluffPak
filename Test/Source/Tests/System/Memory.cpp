@@ -1,6 +1,6 @@
 #include "doctest.h"
-#include "Engine/System/Memory.h"
-#include "Engine/System/SharedPtr.h"
+#include "Engine/System/Memory/Memory.h"
+#include "Engine/System/Memory/SharedPtr.h"
 
 using namespace Engine;
 

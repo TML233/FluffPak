@@ -1,7 +1,7 @@
 #include "Engine/System/Debug.h"
 #include "Engine/Application/Engine.h"
 #include "Engine/Application/Node/NodeTree.h"
-#include "Engine/System/Variant.h"
+#include "Engine/System/Object/Variant.h"
 #include "Engine/Application/Node/TestNode.h"
 
 using namespace Engine;

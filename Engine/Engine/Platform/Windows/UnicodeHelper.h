@@ -2,7 +2,7 @@
 
 #include "Engine/Platform/Windows/BetterWindows.h"
 #include "Engine/System/String.h"
-#include "Engine/System/UniquePtr.h"
+#include "Engine/System/Memory/UniquePtr.h"
 
 namespace Engine::PlatformSpecific::Windows {
 	class UnicodeHelper final {

@@ -4,8 +4,8 @@
 #include "fmt/format.h"
 #include "Engine/Collection/Iterator.h"
 #include "Engine/System/Atomic.h"
-#include "Engine/System/UniquePtr.h"
-#include "Engine/System/ReferencePtr.h"
+#include "Engine/System/Memory/UniquePtr.h"
+#include "Engine/System/Object/ReferencePtr.h"
 #include "Engine/Collection/List.h"
 #include <string_view>
 

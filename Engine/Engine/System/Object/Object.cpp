@@ -1,5 +1,5 @@
-#include "Engine/System/Object.h"
-#include "Engine/System/ObjectUtil.h"
+#include "Engine/System/Object/Object.h"
+#include "Engine/System/Object/ObjectUtil.h"
 #include "Engine/System/String.h"
 #include <string>
 #include <typeinfo>

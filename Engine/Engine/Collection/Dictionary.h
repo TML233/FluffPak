@@ -1,7 +1,7 @@
 #pragma once
-#include "Engine/System/ObjectUtil.h"
+#include "Engine/System/Object/ObjectUtil.h"
 #include "Engine/Collection/HashHelper.h"
-#include "Engine/System/Memory.h"
+#include "Engine/System/Memory/Memory.h"
 #include "Engine/System/Debug.h"
 
 namespace Engine {

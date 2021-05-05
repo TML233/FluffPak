@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/System/Object.h"
-#include "Engine/System/UniquePtr.h"
+#include "Engine/System/Object/Object.h"
+#include "Engine/System/Memory/UniquePtr.h"
 #include "Engine/Application/AppLoop.h"
 #include "Engine/Application/Time.h"
 #include "Engine/Application/NativeWindow.h"
