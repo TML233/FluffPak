@@ -29,8 +29,11 @@ TEST_SUITE("Reflection") {
 		static int32 Fuck(int32 a, int32 b) {
 			return a + b;
 		}
+		int32 FuckWhy(int32 a, int32 b) const {
+			return a + b;
+		}
 	};
-	TEST_CASE("ReflectionMethodBind") {
+	TEST_CASE("ReflectionMethodBind Static") {
 		auto foo = ReflectionMethodBindHelper::Create(Test::Fuck);
 		CHECK(foo->IsStatic() == true);
 		CHECK(foo->GetReturnType() == Variant::Type::Int64);
@@ -46,28 +49,43 @@ TEST_SUITE("Reflection") {
 		CHECK(returnValue.AsInt64() == 7);
 	}
 
+	TEST_CASE("ReflectionMethodBind Object") {
+		auto foo = ReflectionMethodBindHelper::Create(&Test::FuckWhy);
+		CHECK(foo->IsStatic() == false);
+		CHECK(foo->IsConst() == true);
+	}
 
 	class Bar :public ManualObject {
 		REFLECTION_CLASS(::Bar, ::Engine::ManualObject) {
 			REFLECTION_CLASS_STATIC_METHOD(STRL(u8"SetStatic"), SetStatic, { STRL(u8"value") }, { 114514 });
 			REFLECTION_CLASS_STATIC_METHOD(STRL(u8"GetStatic"), GetStatic, {}, {});
+
+			REFLECTION_CLASS_METHOD(STRL(u8"Set"), Bar::Set, { STRL(u8"value") }, { STRL(u8"YJSP") });
+			REFLECTION_CLASS_METHOD(STRL(u8"Get"), Bar::Get, {}, {});
 		}
 	public:
+		static int32 staticValue;
 		static void SetStatic(int32 value) {
-			Bar::value = value;
+			Bar::staticValue = value;
 		}
 		static int32 GetStatic() {
+			return staticValue;
+		}
+
+		String value;
+		void Set(const String& value) {
+			this->value = value;
+		}
+		String Get() const {
 			return value;
 		}
 
-		static int32 value;
 	};
-	int32 Bar::value = 999;
+	int32 Bar::staticValue = 999;
 
 	TEST_CASE("ReflectionMethod Static") {
 		auto cl = Reflection::GetClass(STRING_LITERAL(u8"::Bar"));
-		auto mSet = cl->GetMethod(STRING_LITERAL(u8"SetStatic"));
-		auto mGet = cl->GetMethod(STRING_LITERAL(u8"GetStatic"));
+		auto mSetStatic = cl->GetMethod(STRING_LITERAL(u8"SetStatic"));
 
 #pragma region SetStatic full argument
 		{
@@ -75,11 +93,11 @@ TEST_SUITE("Reflection") {
 			Variant* args[1] = { &argValue };
 
 			Variant returnValue = 0;
-			auto result = mSet->Invoke(nullptr, (const Variant**)args, 1, returnValue);
+			auto result = mSetStatic->Invoke(nullptr, (const Variant**)args, 1, returnValue);
 			CHECK(result == ReflectionMethod::InvokeResult::OK);
 			CHECK(returnValue.GetType() == Variant::Type::Null);
 
-			CHECK(Bar::value == 3);
+			CHECK(Bar::staticValue == 3);
 		}
 #pragma endregion
 
@@ -88,12 +106,51 @@ TEST_SUITE("Reflection") {
 			Variant* args[1] = { nullptr };
 
 			Variant returnValue = 0;
-			auto result = mSet->Invoke(nullptr, (const Variant**)args, 0, returnValue);
+			auto result = mSetStatic->Invoke(nullptr, (const Variant**)args, 0, returnValue);
 			CHECK(result == ReflectionMethod::InvokeResult::OK);
 			CHECK(returnValue.GetType() == Variant::Type::Null);
 
-			CHECK(Bar::value == 114514);
+			CHECK(Bar::staticValue == 114514);
 		}
 #pragma endregion
+
+		auto mGetStatic = cl->GetMethod(STRING_LITERAL(u8"GetStatic"));
+
+#pragma region GetStatic
+		{
+			Variant returnValue = 0;
+			auto result = mGetStatic->Invoke(nullptr, nullptr, 0, returnValue);
+			CHECK(result == ReflectionMethod::InvokeResult::OK);
+			CHECK(returnValue.AsInt64() == 114514);
+		}
+#pragma endregion
+
+		Bar obj;
+		auto mSet = cl->GetMethod(STRING_LITERAL(u8"Set"));
+
+#pragma region Set
+		{
+			Variant value = STRING_LITERAL(u8"MUR");
+			Variant* args[1] = { &value };
+			Variant returnValue = 0;
+
+			auto result = mSet->Invoke(&obj, (const Variant**)args, 1, returnValue);
+
+			CHECK(result == ReflectionMethod::InvokeResult::OK);
+			CHECK(returnValue.GetType() == Variant::Type::Null);
+		}
+#pragma endregion
+		
+		auto mGet = cl->GetMethod(STRING_LITERAL(u8"Get"));
+#pragma region Get
+		{
+			Variant returnValue = 0;
+			auto result = mGet->Invoke(&obj, nullptr, 0, returnValue);
+			CHECK(result == ReflectionMethod::InvokeResult::OK);
+			CHECK(returnValue.AsString() == STRING_LITERAL(u8"MUR"));
+		}
+#pragma endregion
+
+
 	}
 }

@@ -214,6 +214,8 @@ namespace Engine {
 
 
 #pragma region GetTypeFromNative
+	//! AddTypeHint 10.0: Add necessary GetTypeFromNative.
+
 	template<>
 	struct Variant::GetTypeFromNative<bool> {
 		static const Type type = Type::Bool;
@@ -281,6 +283,8 @@ namespace Engine {
 #pragma endregion
 
 #pragma region CastToNative
+	//! AddTypeHint 11.0: Add necessary CastToNative.
+
 	template<>
 	struct Variant::CastToNative<bool> {
 		static bool Cast(const Variant& obj) {

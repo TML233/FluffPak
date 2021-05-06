@@ -67,7 +67,8 @@ namespace Engine{
 	}
 
 	ReflectionMethod* ReflectionClass::AddMethod(SharedPtr<ReflectionMethod> method) {
-		methods.Add(method->GetName(), method);
+		bool succeeded = methods.Add(method->GetName(), method);
+		FATAL_ASSERT(succeeded, String::Format(u8"{0}::{1} is already registered!", name, method->GetName()).GetRawArray());
 		return method.GetRaw();
 	}
 #pragma endregion

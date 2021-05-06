@@ -109,13 +109,18 @@ private:																								\
 #define REFLECTION_CLASS_METHOD(name,func,argNames,defaultArgs)					\
 c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(			\
 	name,																		\
-	ReflectionMethodBindHelper::Create(func),									\
+	ReflectionMethodBindHelper::Create(&func),									\
 	std::initializer_list<::Engine::String> argNames,							\
 	std::initializer_list<::Engine::Variant> defaultArgs						\
 ))
 
-#define REFLECTION_CLASS_STATIC_METHOD(name,func,argNames,defaultArgs) REFLECTION_CLASS_METHOD(name,func,argNames,defaultArgs)
-
+#define REFLECTION_CLASS_STATIC_METHOD(name,func,argNames,defaultArgs)			\
+c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(			\
+	name,																		\
+	ReflectionMethodBindHelper::Create(func),									\
+	std::initializer_list<::Engine::String> argNames,							\
+	std::initializer_list<::Engine::Variant> defaultArgs						\
+))
 #pragma endregion
 
 namespace Engine {
@@ -302,9 +307,163 @@ namespace Engine {
 		void (*method)(TArgs...);
 	};
 
+	// Object, return a value.
+	template<typename TClass,typename TReturn, typename ... TArgs>
+	class ReflectionMethodBindReturn final :public ReflectionMethodBind {
+	public:
+		ReflectionMethodBindReturn(TReturn(TClass::*method)(TArgs...)) :method(method) {}
 
+		bool IsConst() const override {
+			return false;
+		}
+		bool IsStatic() const override {
+			return false;
+		}
+		Variant::Type GetReturnType() const override {
+			return Variant::GetTypeFromNative<TReturn>::type;
+		}
+		int32 GetArgumentCount() const override {
+			return (int32)sizeof...(TArgs);
+		}
 
+		template<sizeint...Index>
+		ReflectionMethod::InvokeResult InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
+			result = (((TClass*)target)->*method)(Variant::CastToNative<TArgs>::Cast(*(arguments[Index]))...);
+			return ReflectionMethod::InvokeResult::OK;
+		}
+		ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments, Variant& result) const override {
+			const Variant* args[sizeof...(TArgs) == 0 ? 1 : sizeof...(TArgs)] = { nullptr };
+			for (int32 i = 0; i < GetArgumentCount(); i += 1) {
+				if (i < argumentCount) {
+					args[i] = arguments[i];
+				} else {
+					args[i] = defaultArguments.begin().GetPointer() + (i - argumentCount);
+				}
+			}
+			return InternalInvoke(target, args, result, std::make_index_sequence<sizeof...(TArgs)>());
+		}
 
+		TReturn(TClass::*method)(TArgs...);
+	};
+
+	// Object, const, return a value.
+	template<typename TClass, typename TReturn, typename ... TArgs>
+	class ReflectionMethodBindReturnConst final :public ReflectionMethodBind {
+	public:
+		ReflectionMethodBindReturnConst(TReturn(TClass::*method)(TArgs...) const) :method(method) {}
+
+		bool IsConst() const override {
+			return true;
+		}
+		bool IsStatic() const override {
+			return false;
+		}
+		Variant::Type GetReturnType() const override {
+			return Variant::GetTypeFromNative<TReturn>::type;
+		}
+		int32 GetArgumentCount() const override {
+			return (int32)sizeof...(TArgs);
+		}
+
+		template<sizeint...Index>
+		ReflectionMethod::InvokeResult InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
+			result = (((TClass*)target)->*method)(Variant::CastToNative<TArgs>::Cast(*(arguments[Index]))...);
+			return ReflectionMethod::InvokeResult::OK;
+		}
+		ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments, Variant& result) const override {
+			const Variant* args[sizeof...(TArgs) == 0 ? 1 : sizeof...(TArgs)] = { nullptr };
+			for (int32 i = 0; i < GetArgumentCount(); i += 1) {
+				if (i < argumentCount) {
+					args[i] = arguments[i];
+				} else {
+					args[i] = defaultArguments.begin().GetPointer() + (i - argumentCount);
+				}
+			}
+			return InternalInvoke(target, args, result, std::make_index_sequence<sizeof...(TArgs)>());
+		}
+
+		TReturn(TClass::* method)(TArgs...) const;
+	};
+
+	// Object, no return.
+	template<typename TClass, typename ... TArgs>
+	class ReflectionMethodBindVoid final :public ReflectionMethodBind {
+	public:
+		ReflectionMethodBindVoid(void(TClass::* method)(TArgs...)) :method(method) {}
+
+		bool IsConst() const override {
+			return false;
+		}
+		bool IsStatic() const override {
+			return false;
+		}
+		Variant::Type GetReturnType() const override {
+			return Variant::Type::Null;
+		}
+		int32 GetArgumentCount() const override {
+			return (int32)sizeof...(TArgs);
+		}
+
+		template<sizeint...Index>
+		ReflectionMethod::InvokeResult InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
+			(((TClass*)target)->*method)(Variant::CastToNative<TArgs>::Cast(*(arguments[Index]))...);
+			result = Variant();
+			return ReflectionMethod::InvokeResult::OK;
+		}
+		ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments, Variant& result) const override {
+			const Variant* args[sizeof...(TArgs) == 0 ? 1 : sizeof...(TArgs)] = { nullptr };
+			for (int32 i = 0; i < GetArgumentCount(); i += 1) {
+				if (i < argumentCount) {
+					args[i] = arguments[i];
+				} else {
+					args[i] = defaultArguments.begin().GetPointer() + (i - argumentCount);
+				}
+			}
+			return InternalInvoke(target, args, result, std::make_index_sequence<sizeof...(TArgs)>());
+		}
+
+		void(TClass::* method)(TArgs...);
+	};
+
+	// Object, const, no return.
+	template<typename TClass, typename ... TArgs>
+	class ReflectionMethodBindVoidConst final :public ReflectionMethodBind {
+	public:
+		ReflectionMethodBindVoidConst(void(TClass::* method)(TArgs...) const) :method(method) {}
+
+		bool IsConst() const override {
+			return true;
+		}
+		bool IsStatic() const override {
+			return false;
+		}
+		Variant::Type GetReturnType() const override {
+			return Variant::Type::Null;
+		}
+		int32 GetArgumentCount() const override {
+			return (int32)sizeof...(TArgs);
+		}
+
+		template<sizeint...Index>
+		ReflectionMethod::InvokeResult InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
+			(((TClass*)target)->*method)(Variant::CastToNative<TArgs>::Cast(*(arguments[Index]))...);
+			result = Variant();
+			return ReflectionMethod::InvokeResult::OK;
+		}
+		ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments, Variant& result) const override {
+			const Variant* args[sizeof...(TArgs) == 0 ? 1 : sizeof...(TArgs)] = { nullptr };
+			for (int32 i = 0; i < GetArgumentCount(); i += 1) {
+				if (i < argumentCount) {
+					args[i] = arguments[i];
+				} else {
+					args[i] = defaultArguments.begin().GetPointer() + (i - argumentCount);
+				}
+			}
+			return InternalInvoke(target, args, result, std::make_index_sequence<sizeof...(TArgs)>());
+		}
+
+		void(TClass::* method)(TArgs...) const;
+	};
 
 
 
@@ -313,13 +472,36 @@ namespace Engine {
 
 	class ReflectionMethodBindHelper final{
 	public:
+		// Static, no return.
 		template<typename ... TArgs>
 		static SharedPtr<ReflectionMethodBind> Create(void (*method)(TArgs...)) {
 			return SharedPtr<ReflectionMethodBindStaticVoid<TArgs...>>::Create(method);
 		}
+		// Static, return a value.
 		template<typename TReturn, typename ... TArgs>
 		static SharedPtr<ReflectionMethodBind> Create(TReturn(*method)(TArgs...)) {
 			return SharedPtr<ReflectionMethodBindStaticReturn<TReturn, TArgs...>>::Create(method);
+		}
+
+		// Object, no return.
+		template<typename TClass, typename ... TArgs>
+		static SharedPtr<ReflectionMethodBind> Create(void(TClass::* method)(TArgs...)) {
+			return SharedPtr<ReflectionMethodBindVoid<TClass, TArgs...>>::Create(method);
+		}
+		// Object, return a value.
+		template<typename TClass, typename TReturn, typename ... TArgs>
+		static SharedPtr<ReflectionMethodBind> Create(TReturn(TClass::* method)(TArgs...)) {
+			return SharedPtr<ReflectionMethodBindReturn<TClass, TReturn, TArgs...>>::Create(method);
+		}
+		// Object, const, no return.
+		template<typename TClass, typename ... TArgs>
+		static SharedPtr<ReflectionMethodBind> Create(void(TClass::* method)(TArgs...) const) {
+			return SharedPtr<ReflectionMethodBindVoidConst<TClass, TArgs...>>::Create(method);
+		}
+		// Object, const, return a value;
+		template<typename TClass, typename TReturn, typename ... TArgs>
+		static SharedPtr<ReflectionMethodBind> Create(TReturn(TClass::* method)(TArgs...) const) {
+			return SharedPtr<ReflectionMethodBindReturnConst<TClass, TReturn, TArgs...>>::Create(method);
 		}
 	};
 }
