@@ -18,7 +18,7 @@ namespace Engine{
 
 		return (GetData().Add(name, data) ? data.GetRaw() : nullptr);
 	}
-	const ReflectionClass* Reflection::GetClass(const String& name) {
+	ReflectionClass* Reflection::GetClass(const String& name) {
 		ERR_ASSERT(IsClassExists(name), u8"Class name doesn't exists.", return nullptr);
 		return GetData().Get(name).GetRaw();
 	}
@@ -56,14 +56,32 @@ namespace Engine{
 	void ReflectionClass::SetInstantiable(bool instantiable) {
 		this->instantiable = instantiable;
 	}
-	UniquePtr<Object> ReflectionClass::Instantiate() const {
-		ERR_ASSERT(IsInstantiatable(), u8"Trying to instantiate a class which is not instantiable!", return UniquePtr<Object>(nullptr));
 
-		return (*instantiator)();
+	bool ReflectionClass::IsMethodExists(const String& name) const {
+		return methods.ContainsKey(name);
+	}
+
+	ReflectionMethod* ReflectionClass::GetMethod(const String& name) const {
+		ERR_ASSERT(IsMethodExists(name), u8"Method doesn't exists!", return nullptr);
+		return methods.Get(name).GetRaw();
+	}
+
+	ReflectionMethod* ReflectionClass::AddMethod(SharedPtr<ReflectionMethod> method) {
+		methods.Add(method->GetName(), method);
+		return method.GetRaw();
 	}
 #pragma endregion
 
 #pragma region ReflectionMethod
+	ReflectionMethod::ReflectionMethod(const String& name, SharedPtr<ReflectionMethodBind> bind) :name(name), bind(bind) {}
+	ReflectionMethod::ReflectionMethod(
+		const String& name, SharedPtr<ReflectionMethodBind> bind,
+		std::initializer_list<String> argumentNames, std::initializer_list<Variant> defaultArguments
+	) : name(name), bind(bind), argumentNames(argumentNames), defaultArguments(defaultArguments) {}
+
+	String ReflectionMethod::GetName() const {
+		return name;
+	}
 	bool ReflectionMethod::IsConst() const {
 		return bind->IsConst();
 	}
@@ -76,6 +94,21 @@ namespace Engine{
 	Variant::Type ReflectionMethod::GetReturnType() const {
 		return bind->GetReturnType();
 	}
+
+	void ReflectionMethod::SetBind(SharedPtr<ReflectionMethodBind> bind) {
+		this->bind = bind;
+	}
+	SharedPtr<ReflectionMethodBind> ReflectionMethod::GetBind() const {
+		return bind;
+	}
+
+	List<String>& ReflectionMethod::GetArgumentNameList() {
+		return argumentNames;
+	}
+	List<Variant>& ReflectionMethod::GetDefaultArgumentList() {
+		return defaultArguments;
+	}
+
 	ReflectionMethod::InvokeResult ReflectionMethod::Invoke(Object* target, const Variant** arguments, int32 argumentCount, Variant& returnValue) const {
 		ERR_ASSERT(IsStatic() || target != nullptr, u8"target cannot be nullptr for a non-static method.", return InvokeResult::InvalidObject);
 		

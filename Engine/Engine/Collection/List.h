@@ -13,6 +13,10 @@ namespace Engine{
 	public:
 		using ValueType = T;
 
+		List(int32 capacity = 0) {
+			SetCapacity(capacity);
+		}
+
 		List(std::initializer_list<T> values) {
 			if (values.size() <= 0) {
 				return;

@@ -14,9 +14,12 @@
 #define STRING_LITERAL(text)																											\
 ([](){																																	\
 	static const u8char content[]=text;																									\
-	static const ::Engine::String::ContentData data(content, sizeof(text));															\
+	static const ::Engine::String::ContentData data(content, sizeof(text));																\
 	return ::Engine::String(::Engine::ReferencePtr<::Engine::String::ContentData>(const_cast<::Engine::String::ContentData*>(&data)));	\
 })()
+
+/// @brief Short alias for STRING_LITERAL
+#define STRL STRING_LITERAL
 
 namespace Engine {
 	/// @brief A string holding a NULL-termined char array.
