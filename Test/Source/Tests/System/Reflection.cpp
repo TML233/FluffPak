@@ -21,3 +21,22 @@ TEST_CASE("Reflection") {
 	CHECK(cRef->IsChildOf(cObj));
 	CHECK(!cMan->IsChildOf(cRef));
 }
+class Test {
+public:
+	static int32 Fuck(int32 a,int32 b) {
+		return a + b;
+	}
+};
+TEST_CASE("ReflectionMethodBind"){
+	auto foo = MEMNEW(ReflectionMethodBindStaticReturn(Test::Fuck));
+	CHECK(foo->IsStatic() == true);
+	CHECK(foo->GetReturnType() == Variant::Type::Int64);
+	CHECK(foo->GetArgumentCount() == 2);
+
+	Variant a = 3;
+	Variant b = 4;
+	Variant* args[] = { &a,&b };
+	List<Variant> defaultArgs{};
+	Variant result=foo->Invoke(nullptr, (const Variant**)args, 2, defaultArgs);
+	CHECK(result.AsInt64() == 7);
+}

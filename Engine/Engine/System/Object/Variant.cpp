@@ -273,13 +273,7 @@ namespace Engine {
 		return type;
 	}
 
-	Variant& Variant::operator=(const Variant& obj) {
-		if (&obj == this) {
-			return *this;
-		}
-
-		Clear();
-
+	void Variant::AssignValue(const Variant& obj) {
 		type = obj.type;
 
 		// !! AddTypeHint 6.0: Add an entry to call the value constructor.
@@ -303,6 +297,18 @@ namespace Engine {
 				ConstructObject(obj.data.vObject);
 				break;
 		}
+	}
+	Variant::Variant(const Variant& obj) {
+		AssignValue(obj);
+	}
+	Variant& Variant::operator=(const Variant& obj) {
+		if (&obj == this) {
+			return *this;
+		}
+
+		Clear();
+
+		AssignValue(obj);
 
 		return *this;
 	}

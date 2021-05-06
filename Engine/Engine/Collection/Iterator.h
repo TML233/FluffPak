@@ -27,6 +27,10 @@ namespace Engine {
 			return *this;
 		}
 
+		const T* GetPointer() const {
+			return target;
+		}
+
 	private:
 		const T* target;
 	};

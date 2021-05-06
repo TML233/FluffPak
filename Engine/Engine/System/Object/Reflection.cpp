@@ -62,4 +62,33 @@ namespace Engine{
 		return (*instantiator)();
 	}
 #pragma endregion
+
+#pragma region ReflectionMethod
+	bool ReflectionMethod::IsConst() const {
+		return bind->IsConst();
+	}
+	bool ReflectionMethod::IsStatic() const {
+		return bind->IsStatic();
+	}
+	int32 ReflectionMethod::GetArgumentCount() const {
+		return bind->GetArgumentCount();
+	}
+	Variant::Type ReflectionMethod::GetReturnType() const {
+		return bind->GetReturnType();
+	}
+	ReflectionMethod::InvokeResult ReflectionMethod::Invoke(Object* target, const Variant** arguments, int32 argumentCount, Variant& returnValue) const {
+		ERR_ASSERT(IsStatic() || target != nullptr, u8"target cannot be nullptr for a non-static method.", return InvokeResult::InvalidObject);
+		
+		int32 methodArgCount = GetArgumentCount();
+		ERR_ASSERT(argumentCount <= methodArgCount, u8"Too many arguments.", return InvokeResult::TooManyArguments);
+
+		int32 leastCount = GetArgumentCount() - defaultArguments.GetCount();
+		ERR_ASSERT(argumentCount >= leastCount, u8"Not enough arguments.", return InvokeResult::TooFewArguments);
+
+		returnValue = bind->Invoke(target, arguments, argumentCount, defaultArguments);
+
+		return InvokeResult::OK;
+	}
+#pragma endregion
+
 }

@@ -113,6 +113,7 @@ namespace Engine {
 
 		String ToString() const;
 
+		Variant(const Variant& obj);
 		Variant& operator=(const Variant& obj);
 
 #pragma region Operators
@@ -186,6 +187,8 @@ namespace Engine {
 
 		DataUnion data;
 		Type type = Type::Null;
+
+		void AssignValue(const Variant& obj);
 
 
 		typedef Variant(*Evaluator)(const Variant& a, const Variant& b);
