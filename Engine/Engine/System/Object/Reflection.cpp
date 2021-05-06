@@ -118,9 +118,7 @@ namespace Engine{
 		int32 leastCount = GetArgumentCount() - defaultArguments.GetCount();
 		ERR_ASSERT(argumentCount >= leastCount, u8"Not enough arguments.", return InvokeResult::TooFewArguments);
 
-		returnValue = bind->Invoke(target, arguments, argumentCount, defaultArguments);
-
-		return InvokeResult::OK;
+		return bind->Invoke(target, arguments, argumentCount, defaultArguments, returnValue);
 	}
 #pragma endregion
 

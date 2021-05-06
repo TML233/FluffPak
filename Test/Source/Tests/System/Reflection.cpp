@@ -40,8 +40,10 @@ TEST_SUITE("Reflection") {
 		Variant b = 4;
 		Variant* args[] = { &a,&b };
 		List<Variant> defaultArgs{};
-		Variant result = foo->Invoke(nullptr, (const Variant**)args, 2, defaultArgs);
-		CHECK(result.AsInt64() == 7);
+		Variant returnValue;
+		ReflectionMethod::InvokeResult result = foo->Invoke(nullptr, (const Variant**)args, 2, defaultArgs, returnValue);
+		CHECK(result == ReflectionMethod::InvokeResult::OK);
+		CHECK(returnValue.AsInt64() == 7);
 	}
 
 

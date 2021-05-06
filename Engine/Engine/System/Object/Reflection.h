@@ -173,21 +173,9 @@ namespace Engine {
 		MethodData methods{};
 	};
 
-	class ReflectionMethodBind {
-	public:
-		virtual ~ReflectionMethodBind() = default;
-		virtual bool IsConst() const = 0;
-		virtual bool IsStatic() const = 0;
-		virtual Variant::Type GetReturnType() const = 0;
-		virtual int32 GetArgumentCount() const = 0;
-		//virtual Variant::Type GetArgumentType(int32 index) const = 0;
-
-		virtual Variant Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments) const = 0;
-	};
-
 	class ReflectionMethod final {
 	public:
-		ReflectionMethod(const String& name,SharedPtr<ReflectionMethodBind> bind);
+		ReflectionMethod(const String& name, SharedPtr<ReflectionMethodBind> bind);
 		ReflectionMethod(
 			const String& name, SharedPtr<ReflectionMethodBind> bind,
 			std::initializer_list<String> argumentNames, std::initializer_list<Variant> defaultArguments
@@ -210,7 +198,7 @@ namespace Engine {
 
 		List<String>& GetArgumentNameList();
 		List<Variant>& GetDefaultArgumentList();
-		
+
 		InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, Variant& returnValue) const;
 
 	private:
@@ -221,6 +209,18 @@ namespace Engine {
 		List<Variant> defaultArguments;
 
 		SharedPtr<ReflectionMethodBind> bind;
+	};
+
+	class ReflectionMethodBind {
+	public:
+		virtual ~ReflectionMethodBind() = default;
+		virtual bool IsConst() const = 0;
+		virtual bool IsStatic() const = 0;
+		virtual Variant::Type GetReturnType() const = 0;
+		virtual int32 GetArgumentCount() const = 0;
+		//virtual Variant::Type GetArgumentType(int32 index) const = 0;
+
+		virtual ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments,Variant& result) const = 0;
 	};
 
 	// Static, return a value.
@@ -243,10 +243,11 @@ namespace Engine {
 		}
 
 		template<sizeint...Index>
-		Variant InternalInvoke(Object* target, const Variant** arguments, std::index_sequence<Index...>) const {
-			return (*method)(Variant::CastToNative<TArgs>::Cast(*(arguments[Index]))...);
+		ReflectionMethod::InvokeResult InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
+			result = (*method)(Variant::CastToNative<TArgs>::Cast(*(arguments[Index]))...);
+			return ReflectionMethod::InvokeResult::OK;
 		}
-		Variant Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments) const {
+		ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments,Variant& result) const override {
 			const Variant* args[sizeof...(TArgs) == 0 ? 1 : sizeof...(TArgs)] = { nullptr };
 			for (int32 i = 0; i < GetArgumentCount(); i += 1) {
 				if (i < argumentCount) {
@@ -255,7 +256,7 @@ namespace Engine {
 					args[i] = defaultArguments.begin().GetPointer() + (i - argumentCount);
 				}
 			}
-			return InternalInvoke(target, args, std::make_index_sequence<sizeof...(TArgs)>());
+			return InternalInvoke(target, args, result,std::make_index_sequence<sizeof...(TArgs)>());
 		}
 
 		TReturn(*method)(TArgs...);
@@ -281,10 +282,12 @@ namespace Engine {
 		}
 
 		template<sizeint...Index>
-		void InternalInvoke(Object* target, const Variant** arguments, std::index_sequence<Index...>) const {
+		ReflectionMethod::InvokeResult InternalInvoke(Object* target, const Variant** arguments, Variant& result,std::index_sequence<Index...>) const {
 			(*method)(Variant::CastToNative<TArgs>::Cast(*(arguments[Index]))...);
+			result = Variant();
+			return ReflectionMethod::InvokeResult::OK;
 		}
-		Variant Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments) const {
+		ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments,Variant& result) const override {
 			const Variant* args[sizeof...(TArgs) == 0 ? 1 : sizeof...(TArgs)] = { nullptr };
 			for (int32 i = 0; i < GetArgumentCount(); i += 1) {
 				if (i < argumentCount) {
@@ -293,9 +296,7 @@ namespace Engine {
 					args[i] = defaultArguments.begin().GetPointer() + (i - argumentCount);
 				}
 			}
-			InternalInvoke(target, args, std::make_index_sequence<sizeof...(TArgs)>());
-
-			return Variant();
+			return InternalInvoke(target, args, result, std::make_index_sequence<sizeof...(TArgs)>());
 		}
 
 		void (*method)(TArgs...);
