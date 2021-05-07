@@ -10,11 +10,11 @@ namespace Engine{
 		return (int32)obj;
 	}
 	ResultPair<FileSystem::Protocol, int32> FileSystem::GetSplitData(const String& path) const {
-		const String prefix = STRING_LITERAL(u8"://");
+		const String prefix = STRING_LITERAL("://");
 
 		int32 index = path.IndexOf(prefix);
 
-		String protocolName = STRING_LITERAL(u8"file");
+		String protocolName = STRING_LITERAL("file");
 		int32 rIndex = 0;
 
 		if (index >= 0) {
@@ -101,11 +101,11 @@ namespace Engine{
 
 	FileSystem::FileSystem() {
 		using Handler = UniquePtr<FileProtocolHandler>;
-		AddProtocol(STRING_LITERAL(u8"file"), Protocol::File);
+		AddProtocol(STRING_LITERAL("file"), Protocol::File);
 		//AddProtocolHandler(Protocol::File, Handler(MEMNEW(...));
-		AddProtocol(STRING_LITERAL(u8"res"), Protocol::Resource);
+		AddProtocol(STRING_LITERAL("res"), Protocol::Resource);
 		//AddProtocolHandler(Protocol::Resource, Handler(MEMNEW(...));
-		AddProtocol(STRING_LITERAL(u8"user"), Protocol::User);
+		AddProtocol(STRING_LITERAL("user"), Protocol::User);
 		//AddProtocolHandler(Protocol::User, Handler(MEMNEW(...));
 	}
 

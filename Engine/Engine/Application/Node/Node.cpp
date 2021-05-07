@@ -126,7 +126,7 @@ namespace Engine {
 			return;
 		}
 		// Node names that start with @@ is auto names.
-		if (name.StartsWith(STRING_LITERAL(u8"@@"))) {
+		if (name.StartsWith(STRING_LITERAL("@@"))) {
 			return;
 		}
 
@@ -149,7 +149,7 @@ namespace Engine {
 		return tree != nullptr;
 	}
 
-	List<String> Node::invalidChars = { STRING_LITERAL(u8"."),STRING_LITERAL(u8"/"),STRING_LITERAL(u8":"),STRING_LITERAL(u8"\r"),STRING_LITERAL(u8"\n") };
+	List<String> Node::invalidChars = { STRING_LITERAL("."),STRING_LITERAL("/"),STRING_LITERAL(":"),STRING_LITERAL("\r"),STRING_LITERAL("\n") };
 	AtomicValue<uint64> Node::autoNameCounter{};
 
 	String Node::ValidateName(const String& name) {
@@ -200,7 +200,7 @@ namespace Engine {
 			split += 1;
 			String part = targetName.Substring(0, targetName.GetCount() - split);
 			for (uint32 i = 1; i <= 25565; i += 1) {
-				String candidate = String::Format(STRING_LITERAL(u8"{0}{1}"), part, i);
+				String candidate = String::Format(STRING_LITERAL("{0}{1}"), part, i);
 				// Stop if the candidate name is the same as the original.
 				if (originalParent == targetParent && candidate == originalName) {
 					return originalName;
@@ -217,7 +217,7 @@ namespace Engine {
 	}
 
 	String Node::GenerateAutoName() {
-		return String::Format(STRING_LITERAL(u8"@@{0}"), autoNameCounter.FetchAdd(1));
+		return String::Format(STRING_LITERAL("@@{0}"), autoNameCounter.FetchAdd(1));
 	}
 
 	void Node::OnEnteredTree() {}
@@ -236,20 +236,20 @@ namespace Engine {
 			}
 		}
 		for (int32 i = 0; i < level; i++) {
-			r = String::Format(STRING_LITERAL(u8"{0}\t{1}"), i < level - 1 && !isLast ? STRING_LITERAL(u8"│  ") : String::GetEmpty(), r);
+			r = String::Format(STRING_LITERAL("{0}\t{1}"), i < level - 1 && !isLast ? STRING_LITERAL("│  ") : String::GetEmpty(), r);
 		}
 		
 		String symbol;
 		if (level > 0) {
 			if (!HasParent()) {
-				symbol = STRING_LITERAL(u8"┌  ");
+				symbol = STRING_LITERAL("┌  ");
 			} else if (GetIndex() == GetParent()->GetChildrenCount() - 1) {
-				symbol = STRING_LITERAL(u8"└  ");
+				symbol = STRING_LITERAL("└  ");
 			} else {
-				symbol = STRING_LITERAL(u8"├  ");
+				symbol = STRING_LITERAL("├  ");
 			}
 		}
-		r = r + String::Format(STRING_LITERAL(u8"{0}{1}: {2} ({3})\n"), symbol,GetIndex(), GetName(), GetReflectionClassName());
+		r = r + String::Format(STRING_LITERAL("{0}{1}: {2} ({3})\n"), symbol,GetIndex(), GetName(), GetReflectionClassName());
 		
 		for (Node* child : children) {
 			r = r + child->GetTreeStructureFormated(level + 1);

@@ -6,79 +6,79 @@ namespace Engine {
 	String Variant::GetTypeName(Type type) {
 		switch (type) {
 			case Type::Null:
-				return STRING_LITERAL(u8"Null");
+				return STRING_LITERAL("Null");
 
 			case Type::Bool:
-				return STRING_LITERAL(u8"Bool");
+				return STRING_LITERAL("Bool");
 			case Type::Int64:
-				return STRING_LITERAL(u8"Int64");
+				return STRING_LITERAL("Int64");
 			case Type::Double:
-				return STRING_LITERAL(u8"Double");
+				return STRING_LITERAL("Double");
 
 			case Type::String:
-				return STRING_LITERAL(u8"String");
+				return STRING_LITERAL("String");
 
 			case Type::Object:
-				return STRING_LITERAL(u8"Object");
+				return STRING_LITERAL("Object");
 
 			default:
-				return STRING_LITERAL(u8"Undefined Type");
+				return STRING_LITERAL("Undefined Type");
 		}
 	}
 	String Variant::GetOperatorName(Operator op) {
 		switch (op) {
 			case Operator::Equal:
-				return STRING_LITERAL(u8"Equal");
+				return STRING_LITERAL("Equal");
 			case Operator::NotEqual:
-				return STRING_LITERAL(u8"NotEqual");
+				return STRING_LITERAL("NotEqual");
 			case Operator::Less:
-				return STRING_LITERAL(u8"Less");
+				return STRING_LITERAL("Less");
 			case Operator::LessEqual:
-				return STRING_LITERAL(u8"LessEqual");
+				return STRING_LITERAL("LessEqual");
 			case Operator::Greater:
-				return STRING_LITERAL(u8"Greater");
+				return STRING_LITERAL("Greater");
 			case Operator::GreaterEqual:
-				return STRING_LITERAL(u8"GreaterEqual");
+				return STRING_LITERAL("GreaterEqual");
 
 			case Operator::Add:
-				return STRING_LITERAL(u8"Add");
+				return STRING_LITERAL("Add");
 			case Operator::Subtract:
-				return STRING_LITERAL(u8"Subtract");
+				return STRING_LITERAL("Subtract");
 			case Operator::Multiply:
-				return STRING_LITERAL(u8"Multiply");
+				return STRING_LITERAL("Multiply");
 			case Operator::Divide:
-				return STRING_LITERAL(u8"Divide");
+				return STRING_LITERAL("Divide");
 			case Operator::Mod:
-				return STRING_LITERAL(u8"Mod");
+				return STRING_LITERAL("Mod");
 			case Operator::Positive:
-				return STRING_LITERAL(u8"Positive");
+				return STRING_LITERAL("Positive");
 			case Operator::Negative:
-				return STRING_LITERAL(u8"Negative");
+				return STRING_LITERAL("Negative");
 
 			case Operator::LogicAnd:
-				return STRING_LITERAL(u8"LogicAnd");
+				return STRING_LITERAL("LogicAnd");
 			case Operator::LogicOr:
-				return STRING_LITERAL(u8"LogicOr");
+				return STRING_LITERAL("LogicOr");
 			case Operator::LogicXOr:
-				return STRING_LITERAL(u8"LogicXOr");
+				return STRING_LITERAL("LogicXOr");
 			case Operator::LogicNot:
-				return STRING_LITERAL(u8"LogicNot");
+				return STRING_LITERAL("LogicNot");
 
 			case Operator::BitAnd:
-				return STRING_LITERAL(u8"BitAnd");
+				return STRING_LITERAL("BitAnd");
 			case Operator::BitOr:
-				return STRING_LITERAL(u8"BitOr");
+				return STRING_LITERAL("BitOr");
 			case Operator::BitXOr:
-				return STRING_LITERAL(u8"BitXOr");
+				return STRING_LITERAL("BitXOr");
 			case Operator::BitFlip:
-				return STRING_LITERAL(u8"BitFlip");
+				return STRING_LITERAL("BitFlip");
 			case Operator::BitShiftLeft:
-				return STRING_LITERAL(u8"BitShiftLeft");
+				return STRING_LITERAL("BitShiftLeft");
 			case Operator::BitShiftRight:
-				return STRING_LITERAL(u8"BitShiftRight");
+				return STRING_LITERAL("BitShiftRight");
 
 			default:
-				return STRING_LITERAL(u8"Undefined Operator");
+				return STRING_LITERAL("Undefined Operator");
 		}
 	}
 
@@ -179,9 +179,9 @@ namespace Engine {
 		// !! AddTypeHint 5.3: Add a AsString entry.
 		switch (type) {
 			case Type::Null:
-				return STRING_LITERAL(u8"[Null]");
+				return STRING_LITERAL("[Null]");
 			case Type::Bool:
-				return data.vBool ? STRING_LITERAL(u8"True") : STRING_LITERAL(u8"False");
+				return data.vBool ? STRING_LITERAL("True") : STRING_LITERAL("False");
 			case Type::Int64:
 				return ObjectUtil::ToString(data.vInt64);
 			case Type::Double:
@@ -192,10 +192,10 @@ namespace Engine {
 				return data.vVector2.ToString();
 			case Type::Object:
 				if (data.vObject.ptr == nullptr) {
-					return STRING_LITERAL(u8"[Nullptr]");
+					return STRING_LITERAL("[Nullptr]");
 				}
 				if(!Object::IsInstanceValid(data.vObject.id)){
-					return STRING_LITERAL(u8"[Released Object]");
+					return STRING_LITERAL("[Released Object]");
 				}
 				return data.vObject.ptr->ToString();
 		}

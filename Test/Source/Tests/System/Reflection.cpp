@@ -57,16 +57,16 @@ TEST_SUITE("Reflection") {
 
 	class Bar :public ManualObject {
 		REFLECTION_CLASS(::Bar, ::Engine::ManualObject) {
-			REFLECTION_STATIC_METHOD(STRL(u8"SetStatic"), SetStatic, { STRL(u8"value") }, { 114514 });
-			REFLECTION_STATIC_METHOD(STRL(u8"GetStatic"), GetStatic, {}, {});
+			REFLECTION_STATIC_METHOD(STRL("SetStatic"), SetStatic, { STRL("value") }, { 114514 });
+			REFLECTION_STATIC_METHOD(STRL("GetStatic"), GetStatic, {}, {});
 
-			REFLECTION_METHOD(STRL(u8"Set"), Bar::Set, { STRL(u8"value") }, { STRL(u8"YJSP") });
-			REFLECTION_METHOD(STRL(u8"Get"), Bar::Get, {}, {});
+			REFLECTION_METHOD(STRL("Set"), Bar::Set, { STRL("value") }, { STRL("YJSP") });
+			REFLECTION_METHOD(STRL("Get"), Bar::Get, {}, {});
 
-			REFLECTION_PROPERTY(STRL(u8"Value"), STRL(u8"Get"), STRL(u8"Set"));
+			REFLECTION_PROPERTY(STRL("Value"), STRL("Get"), STRL("Set"));
 
-			REFLECTION_SIGNAL(STRL(u8"SignalTest"), { 
-				SIGARGD(STRL(u8"arg0"),Variant::Type::Object,STRL(u8"::Bar")) 
+			REFLECTION_SIGNAL(STRL("SignalTest"), { 
+				SIGARGD(STRL("arg0"),Variant::Type::Object,STRL("::Bar")) 
 			});
 		}
 
@@ -91,8 +91,8 @@ TEST_SUITE("Reflection") {
 	int32 Bar::staticValue = 999;
 
 	TEST_CASE("ReflectionMethod") {
-		auto cl = Reflection::GetClass(STRING_LITERAL(u8"::Bar"));
-		auto mSetStatic = cl->GetMethod(STRING_LITERAL(u8"SetStatic"));
+		auto cl = Reflection::GetClass(STRING_LITERAL("::Bar"));
+		auto mSetStatic = cl->GetMethod(STRING_LITERAL("SetStatic"));
 
 #pragma region SetStatic full argument
 		{
@@ -121,7 +121,7 @@ TEST_SUITE("Reflection") {
 		}
 #pragma endregion
 
-		auto mGetStatic = cl->GetMethod(STRING_LITERAL(u8"GetStatic"));
+		auto mGetStatic = cl->GetMethod(STRING_LITERAL("GetStatic"));
 
 #pragma region GetStatic
 		{
@@ -133,11 +133,11 @@ TEST_SUITE("Reflection") {
 #pragma endregion
 
 		Bar obj;
-		auto mSet = cl->GetMethod(STRING_LITERAL(u8"Set"));
+		auto mSet = cl->GetMethod(STRING_LITERAL("Set"));
 
 #pragma region Set
 		{
-			Variant value = STRING_LITERAL(u8"MUR");
+			Variant value = STRING_LITERAL("MUR");
 			Variant* args[1] = { &value };
 			Variant returnValue = 0;
 
@@ -148,26 +148,26 @@ TEST_SUITE("Reflection") {
 		}
 #pragma endregion
 		
-		auto mGet = cl->GetMethod(STRING_LITERAL(u8"Get"));
+		auto mGet = cl->GetMethod(STRING_LITERAL("Get"));
 #pragma region Get
 		{
 			Variant returnValue = 0;
 			auto result = mGet->Invoke(&obj, nullptr, 0, returnValue);
 			CHECK(result == ReflectionMethod::InvokeResult::OK);
-			CHECK(returnValue.AsString() == STRING_LITERAL(u8"MUR"));
+			CHECK(returnValue.AsString() == STRING_LITERAL("MUR"));
 		}
 #pragma endregion
 	}
 
 	TEST_CASE("ReflectionProperty") {
-		auto cl = Reflection::GetClass(STRL(u8"::Bar"));
-		auto prop = cl->GetProperty(STRL(u8"Value"));
+		auto cl = Reflection::GetClass(STRL("::Bar"));
+		auto prop = cl->GetProperty(STRL("Value"));
 
 		CHECK(prop->GetType() == Variant::Type::String);
 
 		Bar obj;
 
-		String value = STRL(u8"I AM SB");
+		String value = STRL("I AM SB");
 		prop->Set(&obj, value);
 		
 		CHECK(obj.value == value);

@@ -9,12 +9,12 @@
 #include "Engine/Collection/List.h"
 #include <string_view>
 
-/// @brief Make a String literal.
+/// @brief Make a UTF-8 String literal. No need to add u8 prefix.
 /// This prevents allocating heap memory for constant strings.
 #define STRING_LITERAL(text)																											\
 ([](){																																	\
-	static const u8char content[]=text;																									\
-	static const ::Engine::String::ContentData data(content, sizeof(text));																\
+	static const u8char content[]=u8##text;																									\
+	static const ::Engine::String::ContentData data(content, sizeof(u8##text));																\
 	return ::Engine::String(::Engine::ReferencePtr<::Engine::String::ContentData>(const_cast<::Engine::String::ContentData*>(&data)));	\
 })()
 

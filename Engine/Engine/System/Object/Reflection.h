@@ -27,10 +27,10 @@
 #define REFLECTION_ROOTCLASS(name)																		\
 public:																									\
 	static ::Engine::String GetReflectionClassNameStatic(){												\
-		return STRING_LITERAL(u8## #name);																\
+		return STRING_LITERAL(#name);																	\
 	}																									\
 	virtual ::Engine::String GetReflectionClassName() const{											\
-		return STRING_LITERAL(u8## #name);																\
+		return STRING_LITERAL(#name);																	\
 	}																									\
 	static ::Engine::String GetReflectionParentClassNameStatic(){										\
 		return ::Engine::String::GetEmpty();															\
@@ -47,7 +47,7 @@ protected:																								\
 		}																								\
 																										\
 		::Engine::ReflectionClass* ptr=::Engine::Reflection::AddClass(									\
-			STRING_LITERAL(u8## #name),																	\
+			STRING_LITERAL(#name),																		\
 			::Engine::String::GetEmpty()																\
 		);																								\
 		FATAL_ASSERT(ptr!=nullptr,u8"Failed to register class.");										\
@@ -68,16 +68,16 @@ private:																								\
 #define REFLECTION_CLASS(name,parent)																	\
 public:																									\
 	static ::Engine::String GetReflectionClassNameStatic(){												\
-		return STRING_LITERAL(u8## #name);																\
+		return STRING_LITERAL(#name);																	\
 	}																									\
 	virtual ::Engine::String GetReflectionClassName() const override{									\
-		return STRING_LITERAL(u8## #name);																\
+		return STRING_LITERAL(#name);																	\
 	}																									\
 	static ::Engine::String GetReflectionParentClassNameStatic(){										\
-		return STRING_LITERAL(u8## #parent);															\
+		return STRING_LITERAL(#parent);																	\
 	}																									\
 	virtual ::Engine::String GetReflectionParentClassName() const override{								\
-		return STRING_LITERAL(u8## #parent);															\
+		return STRING_LITERAL(#parent);																	\
 	}																									\
 																										\
 protected:																								\
@@ -90,8 +90,8 @@ protected:																								\
 		parent::_InitializeReflection();																\
 																										\
 		::Engine::ReflectionClass* ptr=::Engine::Reflection::AddClass(									\
-			STRING_LITERAL(u8## #name),																	\
-			STRING_LITERAL(u8## #parent)																\
+			STRING_LITERAL(#name),																		\
+			STRING_LITERAL(#parent)																		\
 		);																								\
 		FATAL_ASSERT(ptr!=nullptr,u8"Failed to register class.");										\
 		_InitializeCustomReflection(ptr);																\

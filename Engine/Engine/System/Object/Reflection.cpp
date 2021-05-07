@@ -69,7 +69,7 @@ namespace Engine{
 
 	ReflectionMethod* ReflectionClass::AddMethod(SharedPtr<ReflectionMethod> method) {
 		bool succeeded = methods.Add(method->GetName(), method);
-		FATAL_ASSERT(succeeded, String::Format(STRING_LITERAL(u8"Method {0}::{1} is already registered!"), name, method->GetName()).GetRawArray());
+		FATAL_ASSERT(succeeded, String::Format(STRING_LITERAL("Method {0}::{1} is already registered!"), name, method->GetName()).GetRawArray());
 		return method.GetRaw();
 	}
 
@@ -89,7 +89,7 @@ namespace Engine{
 
 	ReflectionProperty* ReflectionClass::AddProperty(SharedPtr<ReflectionProperty> prop) {
 		bool succeeded = properties.Add(prop->GetName(), prop);
-		FATAL_ASSERT(succeeded, String::Format(STRING_LITERAL(u8"Property {0}::{1} is already registered!"), name, prop->GetName()).GetRawArray());
+		FATAL_ASSERT(succeeded, String::Format(STRING_LITERAL("Property {0}::{1} is already registered!"), name, prop->GetName()).GetRawArray());
 		return prop.GetRaw();
 	}
 
@@ -109,7 +109,7 @@ namespace Engine{
 
 	ReflectionSignal* ReflectionClass::AddSignal(SharedPtr<ReflectionSignal> signal) {
 		bool succeeded = signals.Add(signal->GetName(), signal);
-		FATAL_ASSERT(succeeded, String::Format(STRING_LITERAL(u8"Signal {0}::{1} is already registered!"), name, signal->GetName()).GetRawArray());
+		FATAL_ASSERT(succeeded, String::Format(STRING_LITERAL("Signal {0}::{1} is already registered!"), name, signal->GetName()).GetRawArray());
 		return signal.GetRaw();
 	}
 
@@ -246,7 +246,7 @@ namespace Engine{
 		return arguments.GetCount();
 	}
 	ReflectionSignal::ArgumentInfo ReflectionSignal::GetArgument(int32 index) const {
-		ERR_ASSERT(index >= 0 && index < GetArgumentCount(), u8"index out of bounds.", return ArgumentInfo(STRING_LITERAL(u8"error"), Variant::Type::Null));
+		ERR_ASSERT(index >= 0 && index < GetArgumentCount(), u8"index out of bounds.", return ArgumentInfo(STRING_LITERAL("error"), Variant::Type::Null));
 		return arguments.Get(index);
 	}
 
