@@ -64,6 +64,10 @@ TEST_SUITE("Reflection") {
 			REFLECTION_METHOD(STRL(u8"Get"), Bar::Get, {}, {});
 
 			REFLECTION_PROPERTY(STRL(u8"Value"), STRL(u8"Get"), STRL(u8"Set"));
+
+			REFLECTION_SIGNAL(STRL(u8"SignalTest"), { 
+				SIGARGD(STRL(u8"arg0"),Variant::Type::Object,STRL(u8"::Bar")) 
+			});
 		}
 
 	public:

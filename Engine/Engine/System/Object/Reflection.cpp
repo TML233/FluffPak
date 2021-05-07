@@ -69,7 +69,7 @@ namespace Engine{
 
 	ReflectionMethod* ReflectionClass::AddMethod(SharedPtr<ReflectionMethod> method) {
 		bool succeeded = methods.Add(method->GetName(), method);
-		FATAL_ASSERT(succeeded, String::Format(u8"Method {0}::{1} is already registered!", name, method->GetName()).GetRawArray());
+		FATAL_ASSERT(succeeded, String::Format(STRING_LITERAL(u8"Method {0}::{1} is already registered!"), name, method->GetName()).GetRawArray());
 		return method.GetRaw();
 	}
 
@@ -89,12 +89,32 @@ namespace Engine{
 
 	ReflectionProperty* ReflectionClass::AddProperty(SharedPtr<ReflectionProperty> prop) {
 		bool succeeded = properties.Add(prop->GetName(), prop);
-		FATAL_ASSERT(succeeded, String::Format(u8"Property {0}::{1} is already registered!", name, prop->GetName()).GetRawArray());
+		FATAL_ASSERT(succeeded, String::Format(STRING_LITERAL(u8"Property {0}::{1} is already registered!"), name, prop->GetName()).GetRawArray());
 		return prop.GetRaw();
 	}
 
 	bool ReflectionClass::RemoveProperty(const String& name) {
 		return properties.Remove(name);
+	}
+
+
+	bool ReflectionClass::IsSignalExists(const String& name) const {
+		return signals.ContainsKey(name);
+	}
+
+	ReflectionSignal* ReflectionClass::GetSignal(const String& name) const {
+		ERR_ASSERT(IsSignalExists(name), u8"Signal doesn't exists!", return nullptr);
+		return signals.Get(name).GetRaw();
+	}
+
+	ReflectionSignal* ReflectionClass::AddSignal(SharedPtr<ReflectionSignal> signal) {
+		bool succeeded = signals.Add(signal->GetName(), signal);
+		FATAL_ASSERT(succeeded, String::Format(STRING_LITERAL(u8"Signal {0}::{1} is already registered!"), name, signal->GetName()).GetRawArray());
+		return signal.GetRaw();
+	}
+
+	bool ReflectionClass::RemoveSignal(const String& name) {
+		return signals.Remove(name);
 	}
 #pragma endregion
 

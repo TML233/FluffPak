@@ -133,7 +133,15 @@ c->AddProperty(::Engine::SharedPtr<::Engine::ReflectionProperty>::Create(			\
 	name,c->GetMethod(getterName),c->GetMethod(setterName),hint,hintText			\
 ))
 
-#define SIGARG ::Engine::ReflectionSignal::ArgumentInfo
+#define SIGARG(name,type) ::Engine::ReflectionSignal::ArgumentInfo(name,type)
+#define SIGARGD(name,type,detailedType) ::Engine::ReflectionSignal::ArgumentInfo(name,type,detailedType)
+
+#define REFLECTION_SIGNAL(name,arguments)											\
+c->AddSignal(::Engine::SharedPtr<::Engine::ReflectionSignal>::Create(				\
+	name,																			\
+	std::initializer_list<::Engine::ReflectionSignal::ArgumentInfo> arguments		\
+))
+
 #pragma endregion
 
 namespace Engine {
@@ -186,6 +194,11 @@ namespace Engine {
 		ReflectionProperty* GetProperty(const String& name) const;
 		ReflectionProperty* AddProperty(SharedPtr<ReflectionProperty> prop);
 		bool RemoveProperty(const String& name);
+
+		bool IsSignalExists(const String& name) const;
+		ReflectionSignal* GetSignal(const String& name) const;
+		ReflectionSignal* AddSignal(SharedPtr<ReflectionSignal> signal);
+		bool RemoveSignal(const String& name);
 	private:
 		friend class Reflection;
 
@@ -198,6 +211,9 @@ namespace Engine {
 
 		using PropertyData = Dictionary<String, SharedPtr<ReflectionProperty>>;
 		PropertyData properties{};
+
+		using SignalData = Dictionary<String, SharedPtr<ReflectionSignal>>;
+		SignalData signals{};
 	};
 
 	class ReflectionMethod final {
