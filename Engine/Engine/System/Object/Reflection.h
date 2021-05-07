@@ -7,6 +7,7 @@
 #include "Engine/Collection/Dictionary.h"
 #include "Engine/Collection/List.h"
 #include "Engine/System/Object/Variant.h"
+#include "Engine/System/Object/InstanceId.h"
 
 #pragma region Macros
 
@@ -106,20 +107,30 @@ private:																								\
 
 #define REFLECTION_CLASS_INSTANTIABLE(instantiable) c->SetInstantiable(instantiable)
 
-#define REFLECTION_CLASS_METHOD(name,func,argNames,defaultArgs)					\
-c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(			\
-	name,																		\
-	ReflectionMethodBindHelper::Create(&func),									\
-	std::initializer_list<::Engine::String> argNames,							\
-	std::initializer_list<::Engine::Variant> defaultArgs						\
+#define REFLECTION_CLASS_METHOD(name,func,argNames,defaultArgs)							\
+c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(					\
+	name,																				\
+	ReflectionMethodBindHelper::Create(&func),											\
+	std::initializer_list<::Engine::String> argNames,									\
+	std::initializer_list<::Engine::Variant> defaultArgs								\
 ))
 
-#define REFLECTION_CLASS_STATIC_METHOD(name,func,argNames,defaultArgs)			\
-c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(			\
-	name,																		\
-	ReflectionMethodBindHelper::Create(func),									\
-	std::initializer_list<::Engine::String> argNames,							\
-	std::initializer_list<::Engine::Variant> defaultArgs						\
+#define REFLECTION_CLASS_STATIC_METHOD(name,func,argNames,defaultArgs)					\
+c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(					\
+	name,																				\
+	ReflectionMethodBindHelper::Create(func),											\
+	std::initializer_list<::Engine::String> argNames,									\
+	std::initializer_list<::Engine::Variant> defaultArgs								\
+))
+
+#define REFLECTION_CLASS_PROPERTY(name,getterName,setterName)							\
+c->AddProperty(::Engine::SharedPtr<::Engine::ReflectionProperty>::Create(				\
+	name,c->GetMethod(getterName),c->GetMethod(setterName)								\
+))
+
+#define REFLECTION_CLASS_PROPERTY_HINT(name,getterName,setterName,hint,hintText)		\
+c->AddProperty(::Engine::SharedPtr<::Engine::ReflectionProperty>::Create(				\
+	name,c->GetMethod(getterName),c->GetMethod(setterName),hint,hintText				\
 ))
 #pragma endregion
 
@@ -167,6 +178,12 @@ namespace Engine {
 		bool IsMethodExists(const String& name) const;
 		ReflectionMethod* GetMethod(const String& name) const;
 		ReflectionMethod* AddMethod(SharedPtr<ReflectionMethod> method);
+		bool RemoveMethod(const String& name);
+
+		bool IsPropertyExists(const String& name) const;
+		ReflectionProperty* GetProperty(const String& name) const;
+		ReflectionProperty* AddProperty(SharedPtr<ReflectionProperty> prop);
+		bool RemoveProperty(const String& name);
 	private:
 		friend class Reflection;
 
@@ -176,6 +193,9 @@ namespace Engine {
 
 		using MethodData = Dictionary<String, SharedPtr<ReflectionMethod>>;
 		MethodData methods{};
+
+		using PropertyData = Dictionary<String, SharedPtr<ReflectionProperty>>;
+		PropertyData properties{};
 	};
 
 	class ReflectionMethod final {
@@ -216,6 +236,7 @@ namespace Engine {
 		SharedPtr<ReflectionMethodBind> bind;
 	};
 
+#pragma region MethodBind
 	class ReflectionMethodBind {
 	public:
 		virtual ~ReflectionMethodBind() = default;
@@ -466,10 +487,6 @@ namespace Engine {
 	};
 
 
-
-
-
-
 	class ReflectionMethodBindHelper final{
 	public:
 		// Static, no return.
@@ -503,5 +520,88 @@ namespace Engine {
 		static SharedPtr<ReflectionMethodBind> Create(TReturn(TClass::* method)(TArgs...) const) {
 			return SharedPtr<ReflectionMethodBindReturnConst<TClass, TReturn, TArgs...>>::Create(method);
 		}
+	};
+#pragma endregion
+
+	class ReflectionProperty final {
+	public:
+		/// @brief Describes the style of this property shown in the editor.
+		enum class Hint:byte {
+			/// @brief Default.
+			Null,
+			/// @brief Limit the number value between min and max and. Also shows a slider.\n
+			/// HintText format: "Min,Max,Step"
+			NumberRange,
+			/// @brief Show a dropdown list for enum.\n
+			/// HintText format: "EnumName0,EnumName1,EnumName2..."
+			NumberEnum,
+			/// @brief Show a group of checkboxes for flags.\n
+			/// HintText format: "FlagName0,FlagName1,FlagName2..."
+			NumberFlag,
+			/// @brief Show a big input box for strings.
+			StringMultiline,
+			/// @brief Show a file picker for file path strings.\n
+			/// HintText format: "Protocol|*.filter0,*.filter1..."
+			StringFile,
+			/// @brief Show a directory picker for directory path strings.\n
+			/// HintText format: "Protocol"
+			StringDirectory,
+			/// @brief Show a resource box for creating internal resource or picking existsing resource.\n
+			/// HintText format: "ResourceClassName"
+			ObjectResource,
+			/// @brief End of the enum. Do not use.
+			End
+		};
+
+		ReflectionProperty(
+			const String& name,
+			ReflectionMethod* getter, ReflectionMethod* setter,
+			Hint hint = Hint::Null, const String& hintText = String::GetEmpty()
+		);
+
+		String GetName() const;
+		Variant::Type GetType() const;
+
+		bool CanGet() const;
+		bool CanSet() const;
+		Variant Get(Object* obj) const;
+		void Set(Object* obj, const Variant& value);
+
+		ReflectionMethod* GetGetter() const;
+		void SetGetter(ReflectionMethod* method);
+		ReflectionMethod* GetSetter() const;
+		void SetSetter(ReflectionMethod* method);
+
+		Hint GetHint() const;
+		void SetHint(Hint hint);
+		String GetHintText() const;
+		void SetHintText(const String& hintText);
+
+	private:
+		String name;
+		Hint hint;
+		String hintText;
+		ReflectionMethod* getter;
+		ReflectionMethod* setter;
+	};
+
+	class ReflectionSignal final {
+	public:
+		struct ArgumentInfo final {
+			String name;
+			Variant::Type type;
+			String detailedClass;
+		};
+		
+		struct Connection final {
+			InstanceId object;
+			String methodName;
+		};
+
+		ReflectionSignal(String name, std::initializer_list<ArgumentInfo> arguments);
+
+	private:
+		String name;
+		List<ArgumentInfo> arguments;
 	};
 }

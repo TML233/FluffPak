@@ -62,7 +62,10 @@ TEST_SUITE("Reflection") {
 
 			REFLECTION_CLASS_METHOD(STRL(u8"Set"), Bar::Set, { STRL(u8"value") }, { STRL(u8"YJSP") });
 			REFLECTION_CLASS_METHOD(STRL(u8"Get"), Bar::Get, {}, {});
+
+			REFLECTION_CLASS_PROPERTY(STRL(u8"Value"), STRL(u8"Get"), STRL(u8"Set"));
 		}
+
 	public:
 		static int32 staticValue;
 		static void SetStatic(int32 value) {
@@ -83,7 +86,7 @@ TEST_SUITE("Reflection") {
 	};
 	int32 Bar::staticValue = 999;
 
-	TEST_CASE("ReflectionMethod Static") {
+	TEST_CASE("ReflectionMethod") {
 		auto cl = Reflection::GetClass(STRING_LITERAL(u8"::Bar"));
 		auto mSetStatic = cl->GetMethod(STRING_LITERAL(u8"SetStatic"));
 
@@ -150,7 +153,20 @@ TEST_SUITE("Reflection") {
 			CHECK(returnValue.AsString() == STRING_LITERAL(u8"MUR"));
 		}
 #pragma endregion
+	}
 
+	TEST_CASE("ReflectionProperty") {
+		auto cl = Reflection::GetClass(STRL(u8"::Bar"));
+		auto prop = cl->GetProperty(STRL(u8"Value"));
 
+		CHECK(prop->GetType() == Variant::Type::String);
+
+		Bar obj;
+
+		String value = STRL(u8"I AM SB");
+		prop->Set(&obj, value);
+		
+		CHECK(obj.value == value);
+		CHECK(prop->Get(&obj).AsString() == value);
 	}
 }

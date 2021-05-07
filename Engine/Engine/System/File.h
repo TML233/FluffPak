@@ -37,7 +37,7 @@ namespace Engine {
 #pragma region Protocols
 		enum class Protocol {
 			/// @brief Invalid protocol
-			Null = -1,
+			Null,
 			/// @brief Files on the local machine filesystem.
 			File,
 			/// @brief Files in the resource directory.

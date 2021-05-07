@@ -57,6 +57,7 @@ namespace Engine{
 		this->instantiable = instantiable;
 	}
 
+
 	bool ReflectionClass::IsMethodExists(const String& name) const {
 		return methods.ContainsKey(name);
 	}
@@ -68,8 +69,32 @@ namespace Engine{
 
 	ReflectionMethod* ReflectionClass::AddMethod(SharedPtr<ReflectionMethod> method) {
 		bool succeeded = methods.Add(method->GetName(), method);
-		FATAL_ASSERT(succeeded, String::Format(u8"{0}::{1} is already registered!", name, method->GetName()).GetRawArray());
+		FATAL_ASSERT(succeeded, String::Format(u8"Method {0}::{1} is already registered!", name, method->GetName()).GetRawArray());
 		return method.GetRaw();
+	}
+
+	bool ReflectionClass::RemoveMethod(const String& name) {
+		return methods.Remove(name);
+	}
+
+
+	bool ReflectionClass::IsPropertyExists(const String& name) const {
+		return properties.ContainsKey(name);
+	}
+
+	ReflectionProperty* ReflectionClass::GetProperty(const String& name) const {
+		ERR_ASSERT(IsPropertyExists(name), u8"Method doesn't exists!", return nullptr);
+		return properties.Get(name).GetRaw();
+	}
+
+	ReflectionProperty* ReflectionClass::AddProperty(SharedPtr<ReflectionProperty> prop) {
+		bool succeeded = properties.Add(prop->GetName(), prop);
+		FATAL_ASSERT(succeeded, String::Format(u8"Property {0}::{1} is already registered!", name, prop->GetName()).GetRawArray());
+		return prop.GetRaw();
+	}
+
+	bool ReflectionClass::RemoveProperty(const String& name) {
+		return properties.Remove(name);
 	}
 #pragma endregion
 
@@ -123,4 +148,71 @@ namespace Engine{
 	}
 #pragma endregion
 
+#pragma region ReflectionProperty
+	ReflectionProperty::ReflectionProperty(
+		const String& name,
+		ReflectionMethod* getter, ReflectionMethod* setter,
+		Hint hint, const String& hintText
+	) :name(name), getter(getter), setter(setter), hint(hint), hintText(hintText) {}
+
+	String ReflectionProperty::GetName() const {
+		return name;
+	}
+	Variant::Type ReflectionProperty::GetType() const {
+		if (!CanGet()) {
+			return Variant::Type::Null;
+		}
+		return getter->GetReturnType();
+	}
+	bool ReflectionProperty::CanGet() const {
+		return getter != nullptr;
+	}
+	bool ReflectionProperty::CanSet() const {
+		return setter != nullptr;
+	}
+	Variant ReflectionProperty::Get(Object* obj) const {
+		ERR_ASSERT(CanGet(), u8"The property cannot get.", return Variant());
+		
+		Variant returnValue;
+		auto result = getter->Invoke(obj, nullptr, 0, returnValue);
+		
+		ERR_ASSERT(result == ReflectionMethod::InvokeResult::OK, u8"Failed to invoke getter.", return Variant());
+		return returnValue;
+	}
+	void ReflectionProperty::Set(Object* obj,const Variant& value) {
+		ERR_ASSERT(CanSet(), u8"The property cannot set.", return);
+
+		const Variant* args[1] = { &value };
+		Variant returnValue;
+		auto result = setter->Invoke(obj, (const Variant**)args, 1, returnValue);
+
+		ERR_ASSERT(result == ReflectionMethod::InvokeResult::OK, u8"Failed to invoke setter.", return);
+	}
+
+	ReflectionMethod* ReflectionProperty::GetGetter() const {
+		return getter;
+	}
+	void ReflectionProperty::SetGetter(ReflectionMethod* method) {
+		getter = method;
+	}
+	ReflectionMethod* ReflectionProperty::GetSetter() const {
+		return setter;
+	}
+	void ReflectionProperty::SetSetter(ReflectionMethod* method) {
+		setter = method;
+	}
+
+	ReflectionProperty::Hint ReflectionProperty::GetHint() const {
+		return hint;
+	}
+	void ReflectionProperty::SetHint(Hint hint) {
+		this->hint = hint;
+	}
+	String ReflectionProperty::GetHintText() const {
+		return hintText;
+	}
+	void ReflectionProperty::SetHintText(const String& hintText) {
+		this->hintText = hintText;
+	}
+#pragma endregion
 }
