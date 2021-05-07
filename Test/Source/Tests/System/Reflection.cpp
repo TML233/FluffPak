@@ -57,13 +57,13 @@ TEST_SUITE("Reflection") {
 
 	class Bar :public ManualObject {
 		REFLECTION_CLASS(::Bar, ::Engine::ManualObject) {
-			REFLECTION_CLASS_STATIC_METHOD(STRL(u8"SetStatic"), SetStatic, { STRL(u8"value") }, { 114514 });
-			REFLECTION_CLASS_STATIC_METHOD(STRL(u8"GetStatic"), GetStatic, {}, {});
+			REFLECTION_STATIC_METHOD(STRL(u8"SetStatic"), SetStatic, { STRL(u8"value") }, { 114514 });
+			REFLECTION_STATIC_METHOD(STRL(u8"GetStatic"), GetStatic, {}, {});
 
-			REFLECTION_CLASS_METHOD(STRL(u8"Set"), Bar::Set, { STRL(u8"value") }, { STRL(u8"YJSP") });
-			REFLECTION_CLASS_METHOD(STRL(u8"Get"), Bar::Get, {}, {});
+			REFLECTION_METHOD(STRL(u8"Set"), Bar::Set, { STRL(u8"value") }, { STRL(u8"YJSP") });
+			REFLECTION_METHOD(STRL(u8"Get"), Bar::Get, {}, {});
 
-			REFLECTION_CLASS_PROPERTY(STRL(u8"Value"), STRL(u8"Get"), STRL(u8"Set"));
+			REFLECTION_PROPERTY(STRL(u8"Value"), STRL(u8"Get"), STRL(u8"Set"));
 		}
 
 	public:

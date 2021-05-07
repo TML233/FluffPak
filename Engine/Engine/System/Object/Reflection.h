@@ -107,30 +107,30 @@ private:																								\
 
 #define REFLECTION_CLASS_INSTANTIABLE(instantiable) c->SetInstantiable(instantiable)
 
-#define REFLECTION_CLASS_METHOD(name,func,argNames,defaultArgs)							\
-c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(					\
-	name,																				\
-	ReflectionMethodBindHelper::Create(&func),											\
-	std::initializer_list<::Engine::String> argNames,									\
-	std::initializer_list<::Engine::Variant> defaultArgs								\
+#define REFLECTION_METHOD(name,func,argNames,defaultArgs)							\
+c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(				\
+	name,																			\
+	ReflectionMethodBindHelper::Create(&func),										\
+	std::initializer_list<::Engine::String> argNames,								\
+	std::initializer_list<::Engine::Variant> defaultArgs							\
 ))
 
-#define REFLECTION_CLASS_STATIC_METHOD(name,func,argNames,defaultArgs)					\
-c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(					\
-	name,																				\
-	ReflectionMethodBindHelper::Create(func),											\
-	std::initializer_list<::Engine::String> argNames,									\
-	std::initializer_list<::Engine::Variant> defaultArgs								\
+#define REFLECTION_STATIC_METHOD(name,func,argNames,defaultArgs)					\
+c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(				\
+	name,																			\
+	ReflectionMethodBindHelper::Create(func),										\
+	std::initializer_list<::Engine::String> argNames,								\
+	std::initializer_list<::Engine::Variant> defaultArgs							\
 ))
 
-#define REFLECTION_CLASS_PROPERTY(name,getterName,setterName)							\
-c->AddProperty(::Engine::SharedPtr<::Engine::ReflectionProperty>::Create(				\
-	name,c->GetMethod(getterName),c->GetMethod(setterName)								\
+#define REFLECTION_PROPERTY(name,getterName,setterName)								\
+c->AddProperty(::Engine::SharedPtr<::Engine::ReflectionProperty>::Create(			\
+	name,c->GetMethod(getterName),c->GetMethod(setterName)							\
 ))
 
-#define REFLECTION_CLASS_PROPERTY_HINT(name,getterName,setterName,hint,hintText)		\
-c->AddProperty(::Engine::SharedPtr<::Engine::ReflectionProperty>::Create(				\
-	name,c->GetMethod(getterName),c->GetMethod(setterName),hint,hintText				\
+#define REFLECTION_PROPERTY_HINT(name,getterName,setterName,hint,hintText)			\
+c->AddProperty(::Engine::SharedPtr<::Engine::ReflectionProperty>::Create(			\
+	name,c->GetMethod(getterName),c->GetMethod(setterName),hint,hintText			\
 ))
 
 #define SIGARG ::Engine::ReflectionSignal::ArgumentInfo
