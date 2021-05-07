@@ -249,11 +249,13 @@ namespace Engine {
 		virtual ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments,Variant& result) const = 0;
 	};
 
+	/// @internal
+
 	// Static, return a value.
 	template<typename TReturn,typename ... TArgs>
-	class ReflectionMethodBindStaticReturn final:public ReflectionMethodBind {
+	class _ReflectionMethodBindStaticReturn final:public ReflectionMethodBind {
 	public:
-		ReflectionMethodBindStaticReturn(TReturn(*method)(TArgs...)) :method(method) {}
+		_ReflectionMethodBindStaticReturn(TReturn(*method)(TArgs...)) :method(method) {}
 
 		bool IsConst() const override {
 			return false;
@@ -290,9 +292,9 @@ namespace Engine {
 
 	// Static, No return.
 	template<typename ... TArgs>
-	class ReflectionMethodBindStaticVoid final :public ReflectionMethodBind {
+	class _ReflectionMethodBindStaticVoid final :public ReflectionMethodBind {
 	public:
-		ReflectionMethodBindStaticVoid(void (*method)(TArgs...)) :method(method) {}
+		_ReflectionMethodBindStaticVoid(void (*method)(TArgs...)) :method(method) {}
 
 		bool IsConst() const override {
 			return false;
@@ -330,9 +332,9 @@ namespace Engine {
 
 	// Object, return a value.
 	template<typename TClass,typename TReturn, typename ... TArgs>
-	class ReflectionMethodBindReturn final :public ReflectionMethodBind {
+	class _ReflectionMethodBindReturn final :public ReflectionMethodBind {
 	public:
-		ReflectionMethodBindReturn(TReturn(TClass::*method)(TArgs...)) :method(method) {}
+		_ReflectionMethodBindReturn(TReturn(TClass::*method)(TArgs...)) :method(method) {}
 
 		bool IsConst() const override {
 			return false;
@@ -369,9 +371,9 @@ namespace Engine {
 
 	// Object, const, return a value.
 	template<typename TClass, typename TReturn, typename ... TArgs>
-	class ReflectionMethodBindReturnConst final :public ReflectionMethodBind {
+	class _ReflectionMethodBindReturnConst final :public ReflectionMethodBind {
 	public:
-		ReflectionMethodBindReturnConst(TReturn(TClass::*method)(TArgs...) const) :method(method) {}
+		_ReflectionMethodBindReturnConst(TReturn(TClass::*method)(TArgs...) const) :method(method) {}
 
 		bool IsConst() const override {
 			return true;
@@ -408,9 +410,9 @@ namespace Engine {
 
 	// Object, no return.
 	template<typename TClass, typename ... TArgs>
-	class ReflectionMethodBindVoid final :public ReflectionMethodBind {
+	class _ReflectionMethodBindVoid final :public ReflectionMethodBind {
 	public:
-		ReflectionMethodBindVoid(void(TClass::* method)(TArgs...)) :method(method) {}
+		_ReflectionMethodBindVoid(void(TClass::* method)(TArgs...)) :method(method) {}
 
 		bool IsConst() const override {
 			return false;
@@ -448,9 +450,9 @@ namespace Engine {
 
 	// Object, const, no return.
 	template<typename TClass, typename ... TArgs>
-	class ReflectionMethodBindVoidConst final :public ReflectionMethodBind {
+	class _ReflectionMethodBindVoidConst final :public ReflectionMethodBind {
 	public:
-		ReflectionMethodBindVoidConst(void(TClass::* method)(TArgs...) const) :method(method) {}
+		_ReflectionMethodBindVoidConst(void(TClass::* method)(TArgs...) const) :method(method) {}
 
 		bool IsConst() const override {
 			return true;
@@ -486,39 +488,40 @@ namespace Engine {
 		void(TClass::* method)(TArgs...) const;
 	};
 
+	/// @endinternal
 
 	class ReflectionMethodBindHelper final{
 	public:
 		// Static, no return.
 		template<typename ... TArgs>
 		static SharedPtr<ReflectionMethodBind> Create(void (*method)(TArgs...)) {
-			return SharedPtr<ReflectionMethodBindStaticVoid<TArgs...>>::Create(method);
+			return SharedPtr<_ReflectionMethodBindStaticVoid<TArgs...>>::Create(method);
 		}
 		// Static, return a value.
 		template<typename TReturn, typename ... TArgs>
 		static SharedPtr<ReflectionMethodBind> Create(TReturn(*method)(TArgs...)) {
-			return SharedPtr<ReflectionMethodBindStaticReturn<TReturn, TArgs...>>::Create(method);
+			return SharedPtr<_ReflectionMethodBindStaticReturn<TReturn, TArgs...>>::Create(method);
 		}
 
 		// Object, no return.
 		template<typename TClass, typename ... TArgs>
 		static SharedPtr<ReflectionMethodBind> Create(void(TClass::* method)(TArgs...)) {
-			return SharedPtr<ReflectionMethodBindVoid<TClass, TArgs...>>::Create(method);
+			return SharedPtr<_ReflectionMethodBindVoid<TClass, TArgs...>>::Create(method);
 		}
 		// Object, return a value.
 		template<typename TClass, typename TReturn, typename ... TArgs>
 		static SharedPtr<ReflectionMethodBind> Create(TReturn(TClass::* method)(TArgs...)) {
-			return SharedPtr<ReflectionMethodBindReturn<TClass, TReturn, TArgs...>>::Create(method);
+			return SharedPtr<_ReflectionMethodBindReturn<TClass, TReturn, TArgs...>>::Create(method);
 		}
 		// Object, const, no return.
 		template<typename TClass, typename ... TArgs>
 		static SharedPtr<ReflectionMethodBind> Create(void(TClass::* method)(TArgs...) const) {
-			return SharedPtr<ReflectionMethodBindVoidConst<TClass, TArgs...>>::Create(method);
+			return SharedPtr<_ReflectionMethodBindVoidConst<TClass, TArgs...>>::Create(method);
 		}
 		// Object, const, return a value;
 		template<typename TClass, typename TReturn, typename ... TArgs>
 		static SharedPtr<ReflectionMethodBind> Create(TReturn(TClass::* method)(TArgs...) const) {
-			return SharedPtr<ReflectionMethodBindReturnConst<TClass, TReturn, TArgs...>>::Create(method);
+			return SharedPtr<_ReflectionMethodBindReturnConst<TClass, TReturn, TArgs...>>::Create(method);
 		}
 	};
 #pragma endregion
