@@ -132,6 +132,8 @@ c->AddProperty(::Engine::SharedPtr<::Engine::ReflectionProperty>::Create(				\
 c->AddProperty(::Engine::SharedPtr<::Engine::ReflectionProperty>::Create(				\
 	name,c->GetMethod(getterName),c->GetMethod(setterName),hint,hintText				\
 ))
+
+#define SIGARG ::Engine::ReflectionSignal::ArgumentInfo
 #pragma endregion
 
 namespace Engine {
@@ -591,6 +593,8 @@ namespace Engine {
 	class ReflectionSignal final {
 	public:
 		struct ArgumentInfo final {
+			ArgumentInfo(const String& name, Variant::Type type, const String& detailedClass = String::GetEmpty());
+
 			String name;
 			Variant::Type type;
 			String detailedClass;
@@ -600,6 +604,10 @@ namespace Engine {
 			InstanceId object;
 			String methodName;
 		};
+
+		String GetName() const;
+		int32 GetArgumentCount() const;
+		ArgumentInfo GetArgument(int32 index) const;
 
 		ReflectionSignal(String name, std::initializer_list<ArgumentInfo> arguments);
 

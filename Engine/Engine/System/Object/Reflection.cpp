@@ -215,4 +215,22 @@ namespace Engine{
 		this->hintText = hintText;
 	}
 #pragma endregion
+
+#pragma region ReflectionSignal
+	ReflectionSignal::ArgumentInfo::ArgumentInfo(const String& name, Variant::Type type, const String& detailedClass) :name(name), type(type), detailedClass(detailedClass) {}
+
+	String ReflectionSignal::GetName() const {
+		return name;
+	}
+	int32 ReflectionSignal::GetArgumentCount() const {
+		return arguments.GetCount();
+	}
+	ReflectionSignal::ArgumentInfo ReflectionSignal::GetArgument(int32 index) const {
+		ERR_ASSERT(index >= 0 && index < GetArgumentCount(), u8"index out of bounds.", return ArgumentInfo(STRING_LITERAL(u8"error"), Variant::Type::Null));
+		return arguments.Get(index);
+	}
+
+	ReflectionSignal::ReflectionSignal(String name, std::initializer_list<ArgumentInfo> arguments) :name(name), arguments(arguments) {}
+#pragma endregion
+
 }
