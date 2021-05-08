@@ -609,6 +609,7 @@ namespace Engine {
 	class ReflectionSignal final {
 	public:
 		struct ArgumentInfo final {
+			ArgumentInfo();
 			ArgumentInfo(const String& name, Variant::Type type, const String& detailedClass = String::GetEmpty());
 
 			String name;

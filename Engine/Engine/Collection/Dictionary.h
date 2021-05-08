@@ -27,11 +27,7 @@ namespace Engine {
 				return true;
 			}
 
-			// Stop immediately if buckets and entries are not in sync (this should never happen, but just in case)
-			ERR_ASSERT((buckets == nullptr && entries == nullptr) || (buckets != nullptr && entries != nullptr),
-				u8"buckets and entries are out of sync!",
-				FATAL_CRASH(u8"Cannot proceed as Dictionary is in a dangerous state and may have caused memory leak!")
-			);
+			CheckSyncState();
 
 			// Get a closest prime to help mod the hash code.
 			int32 desired = HashHelper::GetPrime(capacity);
@@ -142,7 +138,7 @@ namespace Engine {
 		TValue Get(const TKey& key) const {
 			TValue result{};
 			bool succeed = TryGet(key, result);
-			FATAL_ASSERT(succeed, u8"Entry with key does not exists! Cannot return a value.");
+			ERR_ASSERT(succeed, u8"Entry with key does not exists!", return TValue());
 			return result;
 		}
 		bool Remove(const TKey& key) {
@@ -304,6 +300,14 @@ namespace Engine {
 		}
 		int32 GetBucketIndex(uint32 hash) const {
 			return (int32)(hash % capacity);
+		}
+
+		void CheckSyncState() const {
+			// Stop immediately if buckets and entries are not in sync (this should never happen, but just in case)
+			ERR_ASSERT((buckets == nullptr && entries == nullptr) || (buckets != nullptr && entries != nullptr),
+				u8"buckets and entries are out of sync!",
+				FATAL_CRASH(u8"Cannot proceed as Dictionary is in a dangerous state and may have caused memory leak!")
+			);
 		}
 
 		int32 capacity = 0;

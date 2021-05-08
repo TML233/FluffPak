@@ -58,7 +58,7 @@ namespace Engine{
 			return count;
 		}
 		T Get(int32 index) const {
-			FATAL_ASSERT(index >= 0 && index < count, u8"index out of bounds. Cannot return a value.");
+			ERR_ASSERT(index >= 0 && index < count, u8"index out of bounds.", return T());
 			return elements[index];
 		}
 		void Set(int32 index, const T& value) {

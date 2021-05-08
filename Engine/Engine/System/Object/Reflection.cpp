@@ -237,6 +237,7 @@ namespace Engine{
 #pragma endregion
 
 #pragma region ReflectionSignal
+	ReflectionSignal::ArgumentInfo::ArgumentInfo() :name(STRING_LITERAL("error")), type(Variant::Type::Null), detailedClass(String::GetEmpty()) {}
 	ReflectionSignal::ArgumentInfo::ArgumentInfo(const String& name, Variant::Type type, const String& detailedClass) :name(name), type(type), detailedClass(detailedClass) {}
 
 	String ReflectionSignal::GetName() const {

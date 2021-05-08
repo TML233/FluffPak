@@ -1,6 +1,7 @@
 #include "Engine/System/Regex.h"
 
 namespace Engine {
+	Regex::MatchRange::MatchRange() :from(-1), to(-1) {}
 	Regex::MatchRange::MatchRange(int32 from, int32 to) :from(from), to(to) {}
 	bool Regex::MatchRange::IsValid() const {
 		return (from >= 0 && to >= from);

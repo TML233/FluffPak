@@ -15,6 +15,7 @@ namespace Engine {
 		};
 
 		struct MatchRange {
+			MatchRange();
 			MatchRange(int32 from, int32 to);
 			int32 from;
 			int32 to;

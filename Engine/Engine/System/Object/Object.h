@@ -9,7 +9,11 @@
 
 namespace Engine{
 	struct InstanceMethod final {
-		InstanceId object;
+		InstanceMethod();
+		InstanceMethod(const InstanceId& object, const String& methodName);
+		InstanceMethod(Object* object, const String& methodName);
+
+		InstanceId instanceId;
 		String methodName;
 		int32 GetHashCode() const;
 		bool operator==(const InstanceMethod& obj) const;
@@ -25,8 +29,8 @@ namespace Engine{
 		}
 
 	public:
-		static bool IsInstanceValid(InstanceId id);
-		static Object* GetInstance(InstanceId id);
+		static bool IsInstanceValid(const InstanceId& id);
+		static Object* GetInstance(const InstanceId& id);
 
 		virtual ~Object() = 0;
 

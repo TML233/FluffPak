@@ -3,11 +3,14 @@
 #include "Engine/System/String.h"
 
 namespace Engine {
+	InstanceMethod::InstanceMethod() :instanceId(InstanceId()), methodName(String::GetEmpty()) {}
+	InstanceMethod::InstanceMethod(const InstanceId& object, const String& methodName) :instanceId(object), methodName(methodName) {}
+	InstanceMethod::InstanceMethod(Object* object, const String& methodName) : instanceId(object->GetInstanceId()), methodName(methodName) {}
 	int32 InstanceMethod::GetHashCode() const {
-		return ObjectUtil::GetHashCode(object) ^ ObjectUtil::GetHashCode(methodName);
+		return ObjectUtil::GetHashCode(instanceId) ^ ObjectUtil::GetHashCode(methodName);
 	}
 	bool InstanceMethod::operator==(const InstanceMethod& obj) const {
-		return (object == obj.object && methodName == obj.methodName);
+		return (instanceId == obj.instanceId && methodName == obj.methodName);
 	}
 
 #pragma region Object
@@ -29,10 +32,10 @@ namespace Engine {
 		return instanceId;
 	}
 
-	bool Object::IsInstanceValid(InstanceId id) {
+	bool Object::IsInstanceValid(const InstanceId& id) {
 		return objectLookup.ContainsKey(id);
 	}
-	Object* Object::GetInstance(InstanceId id) {
+	Object* Object::GetInstance(const InstanceId& id) {
 		Object* obj = nullptr;
 		objectLookup.TryGet(id, obj);
 		return obj;
@@ -64,7 +67,7 @@ namespace Engine {
 			}
 		}
 
-		ERR_ASSERT(IsInstanceValid(method.object), u8"Cannot connect to a non-existing object!", return SignalConnectResult::InvalidObject);
+		ERR_ASSERT(IsInstanceValid(method.instanceId), u8"Cannot connect to a non-existing object!", return SignalConnectResult::InvalidObject);
 
 		group->connections.Set(method, true);
 
