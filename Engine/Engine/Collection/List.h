@@ -11,7 +11,7 @@ namespace Engine{
 	template<typename T>
 	class List {
 	public:
-		using ValueType = T;
+		using Iterator = ReadonlyIterator<T>;
 
 		List(int32 capacity = 0) {
 			SetCapacity(capacity);
@@ -118,11 +118,11 @@ namespace Engine{
 		static const inline int32 DefaultCapacity = 4;
 		static const inline int32 CapacityMultiplier = 2;
 		
-		ReadonlyIterator<T> begin() const {
-			return ReadonlyIterator<T>(elements);
+		Iterator begin() const {
+			return Iterator(elements);
 		}
-		ReadonlyIterator<T> end() const {
-			return ReadonlyIterator<T>(elements + count);
+		Iterator end() const {
+			return Iterator(elements + count);
 		}
 	private:
 		void RequireCapacity(int32 capacity) {

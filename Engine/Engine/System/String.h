@@ -2,7 +2,6 @@
 
 #include "fmt/core.h"
 #include "fmt/format.h"
-#include "Engine/Collection/Iterator.h"
 #include "Engine/System/Atomic.h"
 #include "Engine/System/Memory/UniquePtr.h"
 #include "Engine/System/Object/ReferencePtr.h"
@@ -103,7 +102,7 @@ namespace Engine {
 		String ToIndividual() const;
 
 		/// @brief Get the char at the given index.
-		ReadonlyIterator<u8char> operator[](int32 index) const;
+		u8char operator[](int32 index) const;
 
 		/// @brief FindFind the position of the substring appearance in the string.
 		/// @param pattern The substring to search.

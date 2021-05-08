@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="Engine::Dictionary&lt;*,*&gt;">
+		<DisplayString>{{ Count = { count } }}</DisplayString>
+		<Expand>
+			<Item Name="Count">count</Item>
+			<Item Name="Capacity">capacity</Item>
+			<Item Name="Buckets">buckets, [capacity]</Item>
+			<Item Name="Entries">entries, [capacity]</Item>
+		</Expand>
+	</Type>
+</AutoVisualizer>

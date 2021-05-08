@@ -136,10 +136,10 @@ namespace Engine {
 		return String(data->data + refStart, refCount);
 	}
 
-	ReadonlyIterator<u8char> String::operator[](int32 index) const {
-		ERR_ASSERT(index >= 0 && index <= GetCount(), u8"index out of bounds.", return ReadonlyIterator<u8char>(const_cast<u8char*>(u8"")));
+	u8char String::operator[](int32 index) const {
+		ERR_ASSERT(index >= 0 && index <= GetCount(), u8"index out of bounds.", return '\0');
 		
-		return ReadonlyIterator<u8char>(data->data + refStart + index);
+		return *(data->data + refStart + index);
 	}
 
 	int32 String::GetCount() const {

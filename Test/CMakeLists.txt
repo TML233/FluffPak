@@ -18,3 +18,7 @@ target_sources(Test PRIVATE
 
 	"${CMAKE_CURRENT_LIST_DIR}/Source/Tests/Math/Transform2.cpp"
 )
+
+if(MSVC)
+	target_compile_options(Engine PUBLIC /utf-8)
+endif()

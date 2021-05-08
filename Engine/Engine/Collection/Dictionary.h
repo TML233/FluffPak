@@ -11,9 +11,6 @@ namespace Engine {
 	template<typename TKey,typename TValue>
 	class Dictionary {
 	public:
-		using KeyType = TKey;
-		using ValueType = TValue;
-
 		Dictionary(int32 capacity=0) {
 			SetCapacity(capacity);
 		}
@@ -182,16 +179,70 @@ namespace Engine {
 			return false;
 		}
 
-		static const inline int32 CapacityMultiplier = 2;
-
-	private:
 		struct Entry {
-			Entry(const TKey& key, const TValue& value,uint32 hashCode,int32 next) :key(key), value(value),hashCode(hashCode),next(next) {}
+			Entry(const TKey& key, const TValue& value, uint32 hashCode, int32 next) :key(key), value(value), hashCode(hashCode), next(next) {}
 			TKey key;
 			TValue value;
 			uint32 hashCode;
 			int32 next;
 		};
+
+		class Iterator {
+		public:
+			Iterator(const Dictionary* dic, int bucket) :dic(dic),bucketIndex(bucket) {
+				while (bucketIndex < dic->GetCapacity()&&dic->buckets[bucketIndex]==-1) {
+					bucketIndex += 1;
+				}
+				if (bucketIndex < dic->GetCapacity()) {
+					entryIndex = dic->buckets[bucketIndex];
+				} else {
+					entryIndex = -1;
+				}
+			}
+
+			bool operator!=(const Iterator& obj) const {
+				return bucketIndex != obj.bucketIndex && entryIndex != obj.entryIndex;
+			}
+			const Entry& operator*() const {
+				Entry* entry = dic->entries + entryIndex;
+				return *entry;
+			}
+			Iterator& operator++() {
+				if (entryIndex >= 0) {
+					Entry* entry = dic->entries + entryIndex;
+					if (entry->next >= 0) {
+						entryIndex = entry->next;
+					} else {
+						bucketIndex += 1;
+						while (bucketIndex < dic->GetCapacity() && dic->buckets[bucketIndex] == -1) {
+							bucketIndex += 1;
+						}
+						if (bucketIndex < dic->GetCapacity()) {
+							entryIndex = dic->buckets[bucketIndex];
+						} else {
+							entryIndex = -1;
+						}
+					}
+				}
+				return *this;
+			}
+		private:
+			const Dictionary* dic;
+			int32 bucketIndex;
+			int32 entryIndex;
+		};
+
+		Iterator begin() const {
+			return Iterator(this, 0);
+		}
+		Iterator end() const {
+			return Iterator(this, GetCapacity());
+		}
+
+
+		static const inline int32 CapacityMultiplier = 2;
+
+	private:
 		enum class InsertMode { Add, Set };
 		static uint32 GetKeyHash(const TKey& key) {
 			int32 s_hash = ObjectUtil::GetHashCode(key);
