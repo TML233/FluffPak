@@ -8,14 +8,26 @@
 #include "Engine/System/Object/Reflection.h"
 
 namespace Engine{
+	struct InstanceMethod final {
+		InstanceId object;
+		String methodName;
+		int32 GetHashCode() const;
+		bool operator==(const InstanceMethod& obj) const;
+	};
+
 	// Inherit ManualManagement or AutoManagement instead.
 	class Object {
 		REFLECTION_ROOTCLASS(::Engine::Object) {
 			REFLECTION_CLASS_INSTANTIABLE(false);
+
+			REFLECTION_METHOD(STRL("ToString"), Object::ToString, {}, {});
+			
 		}
 
 	public:
 		static bool IsInstanceValid(InstanceId id);
+		static Object* GetInstance(InstanceId id);
+
 		virtual ~Object() = 0;
 
 		// Indicates if current object is a ReferencedObject
@@ -29,9 +41,25 @@ namespace Engine{
 
 		InstanceId GetInstanceId() const;
 
+		enum class SignalConnectResult {
+			OK,
+			InvalidSignal,
+			InvalidObject
+		};
+		bool IsSignalConnected(const String& signal, const InstanceMethod& method) const;
+		SignalConnectResult ConnectSignal(const String& signal, const InstanceMethod& method);
+		bool DisconnectSignal(const String& signal, const InstanceMethod& method);
+		bool EmitSignal(const String& signal);
+
 	protected:
-		static Dictionary<InstanceId, bool> objectLookup;
+		static Dictionary<InstanceId, Object*> objectLookup;
 		InstanceId instanceId;
+
+	private:
+		struct SignalGroup {
+			Dictionary<InstanceMethod,bool> connections;
+		};
+		Dictionary<String, SharedPtr<SignalGroup>> signalGroups;
 	};
 
 	// Represents a Object which its memory management is done by the user.

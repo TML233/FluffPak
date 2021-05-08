@@ -615,11 +615,6 @@ namespace Engine {
 			Variant::Type type;
 			String detailedClass;
 		};
-		
-		struct Connection final {
-			InstanceId object;
-			String methodName;
-		};
 
 		String GetName() const;
 		int32 GetArgumentCount() const;
