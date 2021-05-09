@@ -6,6 +6,7 @@
 #include "Engine/System/Object/InstanceId.h"
 #include "Engine/Collection/Dictionary.h"
 #include "Engine/System/Object/Reflection.h"
+#include "Engine/System/Memory/CopyOnWrite.h"
 
 namespace Engine{
 	struct InstanceMethod final {

@@ -18,6 +18,7 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory/Memory.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory/UniquePtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory/SharedPtr.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory/CopyOnWrite.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.h"
