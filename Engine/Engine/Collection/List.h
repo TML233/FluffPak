@@ -28,13 +28,48 @@ namespace Engine{
 		}
 
 		~List() {
-			if (elements == nullptr) {
-				return;
+			Destroy();
+		}
+
+		List(const List& obj) :capacity(obj.capacity), count(obj.count) {
+			elements = (T*)Memory::Allocate(sizeof(T) * count);
+			for (sizeint i = 0; i < count; i += 1) {
+				Memory::Construct(elements + i, *(obj.elements + i));
 			}
-			for (int32 i = 0; i < count; i += 1) {
-				Memory::Destruct(elements + i);
+		}
+		List& operator=(const List& obj) {
+			if (this == &obj) {
+				return *this;
 			}
-			Memory::Deallocate(elements);
+
+			Destroy();
+
+			capacity = obj.capacity;
+			count = obj.count;
+			elements = (T*)Memory::Allocate(sizeof(T) * count);
+			for (sizeint i = 0; i < count; i += 1) {
+				Memory::Construct(elements + i, *(obj.elements + i));
+			}
+
+			return *this;
+		}
+
+		List(List&& obj) :elements(obj.elements), capacity(obj.capacity), count(obj.count) {
+			obj.elements = nullptr;
+			obj.capacity = 0;
+			obj.count = 0;
+		}
+		List& operator=(List&& obj) {
+			Destroy();
+
+			elements = obj.elements;
+			obj.elements = nullptr;
+			capacity = obj.capacity;
+			obj.capacity = 0;
+			count = obj.count;
+			obj.count = 0;
+
+			return *this;
 		}
 
 		int32 GetCapacity() const {
@@ -125,6 +160,15 @@ namespace Engine{
 			return Iterator(elements + count);
 		}
 	private:
+		void Destroy() {
+			if (elements == nullptr) {
+				return;
+			}
+			for (int32 i = 0; i < count; i += 1) {
+				Memory::Destruct(elements + i);
+			}
+			Memory::Deallocate(elements);
+		}
 		void RequireCapacity(int32 capacity) {
 			if (capacity <= this->capacity) {
 				return;
