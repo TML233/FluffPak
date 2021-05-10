@@ -185,17 +185,17 @@ namespace Engine {
 		bool IsParentOf(const ReflectionClass* target) const;
 		bool IsChildOf(const ReflectionClass* target) const;
 
-		bool IsMethodExists(const String& name) const;
+		bool HasMethod(const String& name) const;
 		ReflectionMethod* GetMethod(const String& name) const;
 		ReflectionMethod* AddMethod(SharedPtr<ReflectionMethod> method);
 		bool RemoveMethod(const String& name);
 
-		bool IsPropertyExists(const String& name) const;
+		bool HasProperty(const String& name) const;
 		ReflectionProperty* GetProperty(const String& name) const;
 		ReflectionProperty* AddProperty(SharedPtr<ReflectionProperty> prop);
 		bool RemoveProperty(const String& name);
 
-		bool IsSignalExists(const String& name) const;
+		bool HasSignal(const String& name) const;
 		ReflectionSignal* GetSignal(const String& name) const;
 		ReflectionSignal* AddSignal(SharedPtr<ReflectionSignal> signal);
 		bool RemoveSignal(const String& name);
@@ -226,6 +226,7 @@ namespace Engine {
 
 		enum class InvokeResult {
 			OK,
+			InvalidMethod,
 			InvalidObject,
 			TooFewArguments,
 			TooManyArguments,
@@ -615,6 +616,16 @@ namespace Engine {
 			String name;
 			Variant::Type type;
 			String detailedClass;
+		};
+		enum class ConnectResult {
+			OK,
+			InvalidSignal,
+			InvalidObject
+		};
+		enum class ConnectFlag {
+			Null=0b0000,
+			Deferred = 0b0001,
+			Once = 0b0010
 		};
 
 		String GetName() const;

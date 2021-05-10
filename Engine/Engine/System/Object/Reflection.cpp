@@ -19,8 +19,9 @@ namespace Engine{
 		return (GetData().Add(name, data) ? data.GetRaw() : nullptr);
 	}
 	ReflectionClass* Reflection::GetClass(const String& name) {
-		ERR_ASSERT(IsClassExists(name), u8"Class name doesn't exists.", return nullptr);
-		return GetData().Get(name).GetRaw();
+		SharedPtr<ReflectionClass> result;
+		GetData().TryGet(name, result);
+		return result.GetRaw();
 	}
 #pragma endregion
 
@@ -58,13 +59,14 @@ namespace Engine{
 	}
 
 
-	bool ReflectionClass::IsMethodExists(const String& name) const {
+	bool ReflectionClass::HasMethod(const String& name) const {
 		return methods.ContainsKey(name);
 	}
 
 	ReflectionMethod* ReflectionClass::GetMethod(const String& name) const {
-		ERR_ASSERT(IsMethodExists(name), u8"Method doesn't exists!", return nullptr);
-		return methods.Get(name).GetRaw();
+		SharedPtr<ReflectionMethod> result;
+		methods.TryGet(name, result);
+		return result.GetRaw();
 	}
 
 	ReflectionMethod* ReflectionClass::AddMethod(SharedPtr<ReflectionMethod> method) {
@@ -78,13 +80,14 @@ namespace Engine{
 	}
 
 
-	bool ReflectionClass::IsPropertyExists(const String& name) const {
+	bool ReflectionClass::HasProperty(const String& name) const {
 		return properties.ContainsKey(name);
 	}
 
 	ReflectionProperty* ReflectionClass::GetProperty(const String& name) const {
-		ERR_ASSERT(IsPropertyExists(name), u8"Method doesn't exists!", return nullptr);
-		return properties.Get(name).GetRaw();
+		SharedPtr<ReflectionProperty> result;
+		properties.TryGet(name, result);
+		return result.GetRaw();
 	}
 
 	ReflectionProperty* ReflectionClass::AddProperty(SharedPtr<ReflectionProperty> prop) {
@@ -98,13 +101,14 @@ namespace Engine{
 	}
 
 
-	bool ReflectionClass::IsSignalExists(const String& name) const {
+	bool ReflectionClass::HasSignal(const String& name) const {
 		return signals.ContainsKey(name);
 	}
 
 	ReflectionSignal* ReflectionClass::GetSignal(const String& name) const {
-		ERR_ASSERT(IsSignalExists(name), u8"Signal doesn't exists!", return nullptr);
-		return signals.Get(name).GetRaw();
+		SharedPtr<ReflectionSignal> result;
+		signals.TryGet(name, result);
+		return result.GetRaw();
 	}
 
 	ReflectionSignal* ReflectionClass::AddSignal(SharedPtr<ReflectionSignal> signal) {

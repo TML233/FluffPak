@@ -9,15 +9,15 @@
 #include "Engine/System/Memory/CopyOnWrite.h"
 
 namespace Engine{
-	struct InstanceMethod final {
-		InstanceMethod();
-		InstanceMethod(const InstanceId& object, const String& methodName);
-		InstanceMethod(Object* object, const String& methodName);
+	struct Invokable final {
+		Invokable();
+		Invokable(const InstanceId& object, const String& methodName);
+		Invokable(Object* object, const String& methodName);
 
 		InstanceId instanceId;
 		String methodName;
 		int32 GetHashCode() const;
-		bool operator==(const InstanceMethod& obj) const;
+		bool operator==(const Invokable& obj) const;
 	};
 
 	// Inherit ManualManagement or AutoManagement instead.
@@ -46,25 +46,25 @@ namespace Engine{
 
 		InstanceId GetInstanceId() const;
 
-		enum class SignalConnectResult {
-			OK,
-			InvalidSignal,
-			InvalidObject
-		};
-		bool IsSignalConnected(const String& signal, const InstanceMethod& method) const;
-		SignalConnectResult ConnectSignal(const String& signal, const InstanceMethod& method);
-		bool DisconnectSignal(const String& signal, const InstanceMethod& method);
-		bool EmitSignal(const String& signal);
+		bool HasSignal(const String& name) const;
+		bool HasMethod(const String& name) const;
+		ReflectionMethod::InvokeResult InvokeMethod(const String& name, const Variant** arguments, int32 argumentCount, Variant& result);
+
+		bool IsSignalConnected(const String& signal, const Invokable& invokable) const;
+		ReflectionSignal::ConnectResult ConnectSignal(const String& signal, const Invokable& invokable, ReflectionSignal::ConnectFlag flag=ReflectionSignal::ConnectFlag::Null);
+		bool DisconnectSignal(const String& signal, const Invokable& invokable);
+		bool EmitSignal(const String& signal,const Variant** arguments,int32 argumentCount);
 
 	protected:
 		static Dictionary<InstanceId, Object*> objectLookup;
 		InstanceId instanceId;
 
 	private:
-		struct SignalGroup {
-			Dictionary<InstanceMethod,bool> connections;
+		struct SignalConnectionGroup {
+			using ConnectionsType = CopyOnWrite<Dictionary<Invokable, ReflectionSignal::ConnectFlag>>;
+			ConnectionsType connections;
 		};
-		Dictionary<String, SharedPtr<SignalGroup>> signalGroups;
+		Dictionary<String, SharedPtr<SignalConnectionGroup>> signalConnections;
 	};
 
 	// Represents a Object which its memory management is done by the user.

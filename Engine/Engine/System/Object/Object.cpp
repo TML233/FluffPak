@@ -3,13 +3,13 @@
 #include "Engine/System/String.h"
 
 namespace Engine {
-	InstanceMethod::InstanceMethod() :instanceId(InstanceId()), methodName(String::GetEmpty()) {}
-	InstanceMethod::InstanceMethod(const InstanceId& object, const String& methodName) :instanceId(object), methodName(methodName) {}
-	InstanceMethod::InstanceMethod(Object* object, const String& methodName) : instanceId(object->GetInstanceId()), methodName(methodName) {}
-	int32 InstanceMethod::GetHashCode() const {
+	Invokable::Invokable() :instanceId(InstanceId()), methodName(String::GetEmpty()) {}
+	Invokable::Invokable(const InstanceId& object, const String& methodName) :instanceId(object), methodName(methodName) {}
+	Invokable::Invokable(Object* object, const String& methodName) : instanceId(object->GetInstanceId()), methodName(methodName) {}
+	int32 Invokable::GetHashCode() const {
 		return ObjectUtil::GetHashCode(instanceId) ^ ObjectUtil::GetHashCode(methodName);
 	}
-	bool InstanceMethod::operator==(const InstanceMethod& obj) const {
+	bool Invokable::operator==(const Invokable& obj) const {
 		return (instanceId == obj.instanceId && methodName == obj.methodName);
 	}
 
@@ -41,59 +41,90 @@ namespace Engine {
 		return obj;
 	}
 
-	bool Object::IsSignalConnected(const String& signal, const InstanceMethod& method) const {
-		SharedPtr<SignalGroup> group;
-		bool found = signalGroups.TryGet(signal, group);
+	bool Object::HasSignal(const String& name) const {
+		return Reflection::GetClass(GetReflectionClassName())->HasSignal(name);
+	}
+	bool Object::HasMethod(const String& name) const {
+		return Reflection::GetClass(GetReflectionClassName())->HasMethod(name);
+	}
+	ReflectionMethod::InvokeResult Object::InvokeMethod(const String& name, const Variant** arguments, int32 argumentCount, Variant& result) {
+		ReflectionMethod* method = Reflection::GetClass(GetReflectionClassName())->GetMethod(name);
+		ERR_ASSERT(method != nullptr, String::Format(STRING_LITERAL("Method {0}::{1} not found!"), GetReflectionClassName(), name).GetRawArray(), return ReflectionMethod::InvokeResult::InvalidMethod);
+		return method->Invoke(this, arguments, argumentCount, result);
+	}
+
+	bool Object::IsSignalConnected(const String& signal, const Invokable& invokable) const {
+		SharedPtr<SignalConnectionGroup> group;
+		bool found = signalConnections.TryGet(signal, group);
 		if (!found) {
 			return false;
 		}
-		return group->connections.ContainsKey(method);
+		return group->connections.DoRead()->ContainsKey(invokable);
 	}
 
-	Object::SignalConnectResult Object::ConnectSignal(const String& signal, const InstanceMethod& method) {
-		SharedPtr<SignalGroup> group;
-		
-		bool found = signalGroups.TryGet(signal, group);
+	ReflectionSignal::ConnectResult Object::ConnectSignal(const String& signal, const Invokable& invokable, ReflectionSignal::ConnectFlag flag) {
+		SharedPtr<SignalConnectionGroup> group;
+		bool found = signalConnections.TryGet(signal, group);
 		// Not found, try to add.
 		if (!found) {
-			auto cl = Reflection::GetClass(GetReflectionClassName());
-			FATAL_ASSERT(cl != nullptr, u8"ReflectionClass not found! Be sure to register the class when declaring!");
-			
-			if (cl->IsSignalExists(signal)) {
-				group = SharedPtr<SignalGroup>::Create();
-				signalGroups.Add(signal, group);
+			if (HasSignal(signal)) {
+				group = SharedPtr<SignalConnectionGroup>::Create();
+				signalConnections.Add(signal, group);
 			} else {
-				ERR_ASSERT(group != nullptr, u8"Signal doesn't exist.", return SignalConnectResult::InvalidSignal);
+				ERR_ASSERT(group != nullptr, String::Format(STRING_LITERAL("Signal {0}::{1} doesn't exist."), GetReflectionClassName(), signal).GetRawArray(), return ReflectionSignal::ConnectResult::InvalidSignal);
 			}
 		}
 
-		ERR_ASSERT(IsInstanceValid(method.instanceId), u8"Cannot connect to a non-existing object!", return SignalConnectResult::InvalidObject);
+		ERR_ASSERT(IsInstanceValid(invokable.instanceId), u8"Cannot connect to a non-existing object!", return ReflectionSignal::ConnectResult::InvalidObject);
 
-		group->connections.Set(method, true);
+		group->connections.DoWrite()->Add(invokable, flag);
 
-		return SignalConnectResult::OK;
+		return ReflectionSignal::ConnectResult::OK;
 	}
 
-	bool Object::DisconnectSignal(const String& signal, const InstanceMethod& method) {
-		SharedPtr<SignalGroup> group;
-
-		bool found = signalGroups.TryGet(signal, group);
+	bool Object::DisconnectSignal(const String& signal, const Invokable& invokable) {
+		SharedPtr<SignalConnectionGroup> group;
+		bool found = signalConnections.TryGet(signal, group);
 		if (!found) {
 			return false;
 		}
 
-		return group->connections.Remove(method);
+		return group->connections.DoWrite()->Remove(invokable);
 	}
 
-	bool Object::EmitSignal(const String& signal) {
-		SharedPtr<SignalGroup> group;
-
-		bool found = signalGroups.TryGet(signal, group);
+	bool Object::EmitSignal(const String& signal,const Variant** arguments,int32 argumentCount) {
+		SharedPtr<SignalConnectionGroup> group;
+		bool found = signalConnections.TryGet(signal, group);
 		if (!found) {
 			return false;
 		}
 
-		// TODO: Iterate the dictionary.
+		// Get the COW Dictionary.
+		// When other connection functions are operating the dictionary, COW will make a new copy.
+		SignalConnectionGroup::ConnectionsType cow = group->connections;
+		
+		// Iterate the dictionary.
+		for (const auto& entry : *(cow.DoRead())) {
+			const Invokable& invokable = entry.key;
+			ReflectionSignal::ConnectFlag flag = entry.value;
+			
+
+			Object* target = Object::GetInstance(invokable.instanceId);
+
+			// Disconnect the connection if the object doesn't exists anymore.
+			if (target == nullptr) {
+				ERR_MSG(String::Format(
+					STRING_LITERAL("Signal {0}::{1}, Connection {2}::{3}. Object doesn't exist anymore."),
+					GetReflectionClassName(), signal, invokable.instanceId.Get(), invokable.methodName
+				).GetRawArray());
+
+				DisconnectSignal(signal, invokable);
+				continue;
+			}
+
+			Variant temp;
+			target->InvokeMethod(invokable.methodName, arguments, argumentCount, temp);
+		}
 
 		return true;
 	}
