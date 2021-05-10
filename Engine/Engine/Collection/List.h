@@ -31,11 +31,8 @@ namespace Engine{
 			Destroy();
 		}
 
-		List(const List& obj) :capacity(obj.capacity), count(obj.count) {
-			elements = (T*)Memory::Allocate(sizeof(T) * count);
-			for (sizeint i = 0; i < count; i += 1) {
-				Memory::Construct(elements + i, *(obj.elements + i));
-			}
+		List(const List& obj) {
+			CopyFromOther(obj);
 		}
 		List& operator=(const List& obj) {
 			if (this == &obj) {
@@ -44,12 +41,7 @@ namespace Engine{
 
 			Destroy();
 
-			capacity = obj.capacity;
-			count = obj.count;
-			elements = (T*)Memory::Allocate(sizeof(T) * count);
-			for (sizeint i = 0; i < count; i += 1) {
-				Memory::Construct(elements + i, *(obj.elements + i));
-			}
+			CopyFromOther(obj);
 
 			return *this;
 		}
@@ -160,6 +152,14 @@ namespace Engine{
 			return Iterator(elements + count);
 		}
 	private:
+		void CopyFromOther(const List& obj) {
+			capacity = obj.capacity;
+			count = obj.count;
+			elements = (T*)Memory::Allocate(sizeof(T) * count);
+			for (sizeint i = 0; i < count; i += 1) {
+				Memory::Construct(elements + i, *(obj.elements + i));
+			}
+		}
 		void Destroy() {
 			if (elements == nullptr) {
 				return;

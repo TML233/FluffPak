@@ -33,6 +33,12 @@ TEST_SUITE("Collections") {
 			CHECK(dic.Add(2, 'a'));
 
 			CHECK(dic.Get(2) == 'a');
+
+			Dictionary<int, char> dic2 = dic;
+			Dictionary<int, char> dic3{};
+			dic3 = dic2;
+
+			Dictionary<int, char> dic4 = Memory::Move(dic);
 		}
 
 		{

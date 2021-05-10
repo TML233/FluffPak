@@ -21,6 +21,45 @@ namespace Engine {
 			Memory::Deallocate(entries);
 		}
 
+		Dictionary(const Dictionary& obj) {
+			CopyFromOther(obj);
+		}
+		Dictionary& operator=(const Dictionary& obj) {
+			if (this == &obj) {
+				return *this;
+			}
+
+			CopyFromOther(obj);
+
+			return *this;
+		}
+
+		Dictionary(Dictionary&& obj) :buckets(obj.buckets), entries(obj.entries), capacity(obj.capacity), count(obj.count), freeIndex(obj.freeIndex) {
+			obj.buckets = nullptr;
+			obj.entries = nullptr;
+			obj.capacity = 0;
+			obj.count = 0;
+			obj.freeIndex = -1;
+		}
+		Dictionary& operator=(Dictionary&& obj) {
+			if (this == &obj) {
+				return *this;
+			}
+
+			buckets = obj.buckets;
+			obj.buckets = nullptr;
+			entries = obj.entries;
+			obj.entries = nullptr;
+			capacity = obj.capacity;
+			obj.capacity = 0;
+			count = obj.count;
+			obj.count = 0;
+			freeIndex = obj.freeIndex;
+			obj.freeIndex = -1;
+
+			return *this;
+		}
+
 		bool SetCapacity(int32 capacity) {
 			ERR_ASSERT(capacity >= count, u8"capacity cannot be smaller than element count.", return false);
 			if (capacity == count) {
@@ -51,9 +90,6 @@ namespace Engine {
 
 				// Re-index the elements in the old container into the new one and destroy the old element.
 				for (int32 i = 0; i < oldCapacity; i += 1) {
-					if (oldBuckets[i] < 0) {
-						continue;
-					}
 					for (int32 j = oldBuckets[i]; j >= 0; j = oldEntries[j].next) {
 						Insert(oldEntries[j].key, oldEntries[j].value, oldEntries[j].hashCode, InsertMode::Set);
 						Memory::Destruct(oldEntries + j);
@@ -62,6 +98,8 @@ namespace Engine {
 
 				MEMDELARR(oldBuckets);
 				Memory::Deallocate(oldEntries);
+
+				freeIndex = -1;
 			}
 			return true;
 		}
@@ -105,9 +143,6 @@ namespace Engine {
 
 			// Do destruction
 			for (int32 i = 0; i < capacity; i += 1) {
-				if (buckets[i] < 0) {
-					continue;
-				}
 				for (int32 j = buckets[i]; j >= 0; j = entries[j].next) {
 					Memory::Destruct(entries + j);
 				}
@@ -239,6 +274,25 @@ namespace Engine {
 		static const inline int32 CapacityMultiplier = 2;
 
 	private:
+		void CopyFromOther(const Dictionary& obj) {
+			capacity = obj.capacity;
+			count = obj.count;
+			freeIndex = obj.freeIndex;
+			buckets = MEMNEWARR(int32, capacity);
+			entries = (Entry*)Memory::Allocate(capacity * sizeof(Entry));
+			// Copy entries
+			for (int32 i = 0; i < obj.capacity; i += 1) {
+				buckets[i] = obj.buckets[i];
+				for (int j = obj.buckets[i]; j >= 0; j = obj.entries[j].next) {
+					entries[j] = obj.entries[j];
+				}
+			}
+			// Copy free indexes
+			for (int32 i = freeIndex; i >= 0; i = obj.entries[i].next) {
+				entries[i].next = obj.entries[i].next;
+			}
+		}
+
 		enum class InsertMode { Add, Set };
 		static uint32 GetKeyHash(const TKey& key) {
 			int32 s_hash = ObjectUtil::GetHashCode(key);
@@ -314,6 +368,6 @@ namespace Engine {
 		int32 count = 0;
 		int32* buckets = nullptr;
 		Entry* entries = nullptr;
-		int freeIndex = -1;
+		int32 freeIndex = -1;
 	};
 }

@@ -46,7 +46,5 @@ TEST_SUITE("Collections") {
 		list3 = list2;
 
 		List<int32> list4 = Memory::Move(list);
-		CHECK(list4.GetCount() == 10);
-		CHECK(list.GetCount() == 0);
 	}
 }
