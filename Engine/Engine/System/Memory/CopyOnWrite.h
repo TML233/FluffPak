@@ -28,7 +28,7 @@ namespace Engine {
 			return ptr.GetRaw();
 		}
 		bool IsExclusive() const {
-			return ptr == nullptr || ptr->GetReferenceCount() <= 1;
+			return ptr == nullptr || ptr.GetReferenceCount() <= 1;
 		}
 	private:
 		SharedPtr<T> ptr;
