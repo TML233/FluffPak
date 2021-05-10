@@ -12,6 +12,7 @@ target_sources(Test PRIVATE
 	"${CMAKE_CURRENT_LIST_DIR}/Source/Tests/System/Variant.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Source/Tests/System/Reflection.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Source/Tests/System/Regex.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Source/Tests/System/Object.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Source/Tests/Collection/List.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Source/Tests/Collection/Dictionary.cpp"

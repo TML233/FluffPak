@@ -62,7 +62,7 @@ namespace Engine{
 	private:
 		struct SignalConnectionGroup {
 			using ConnectionsType = CopyOnWrite<Dictionary<Invokable, ReflectionSignal::ConnectFlag>>;
-			ConnectionsType connections;
+			ConnectionsType connections = ConnectionsType::Create();
 		};
 		Dictionary<String, SharedPtr<SignalConnectionGroup>> signalConnections;
 	};
