@@ -277,7 +277,7 @@ namespace Engine {
 		static const Type type = Type::Object;
 	};
 	template<typename T>
-	struct Variant::GetTypeFromNative<ReferencePtr<T>, typename std::enable_if_t<std::is_base_of_v<ReferencedObject, T>>> {
+	struct Variant::GetTypeFromNative<IntrusivePtr<T>, typename std::enable_if_t<std::is_base_of_v<ReferencedObject, T>>> {
 		static const Type type = Type::Object;
 	};
 #pragma endregion
@@ -376,9 +376,9 @@ namespace Engine {
 		}
 	};
 	template<typename T>
-	struct Variant::CastToNative<ReferencePtr<T>, typename std::enable_if_t<std::is_base_of_v<ReferencedObject, T>>> {
-		static ReferencePtr<T> Cast(const Variant& obj) {
-			return ReferencePtr<T>((T*)obj.AsObject());
+	struct Variant::CastToNative<IntrusivePtr<T>, typename std::enable_if_t<std::is_base_of_v<ReferencedObject, T>>> {
+		static IntrusivePtr<T> Cast(const Variant& obj) {
+			return IntrusivePtr<T>((T*)obj.AsObject());
 		}
 	};
 #pragma endregion

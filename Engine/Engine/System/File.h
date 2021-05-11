@@ -90,7 +90,7 @@ namespace Engine {
 		Result CreateDirectory(const String& path);
 
 		/// @brief Open the file at the given path. Will fail if the file doesn't exist.
-		ResultPair<Result, ReferencePtr<File>> OpenFile(const String& path, OpenMode mode);
+		ResultPair<Result, IntrusivePtr<File>> OpenFile(const String& path, OpenMode mode);
 
 		/// @brief Delete a file.
 		Result RemoveFile(const String& path);
@@ -105,7 +105,7 @@ namespace Engine {
 
 	private:
 		using ResultBool = ResultPair<Result, bool>;
-		using ResultFile = ResultPair<Result, ReferencePtr<File>>;
+		using ResultFile = ResultPair<Result, IntrusivePtr<File>>;
 
 		void AddProtocol(const String& name, Protocol protocol);
 		void AddProtocolHandler(Protocol protocol, UniquePtr<FileProtocolHandler>&& handler);
@@ -129,7 +129,7 @@ namespace Engine {
 		virtual FileSystem::Result CreateFile(const String& path)=0;
 		virtual FileSystem::Result CreateDirectory(const String& path)=0;
 
-		virtual ResultPair<FileSystem::Result, ReferencePtr<File>> OpenFile(const String& path, FileSystem::OpenMode mode)=0;
+		virtual ResultPair<FileSystem::Result, IntrusivePtr<File>> OpenFile(const String& path, FileSystem::OpenMode mode)=0;
 
 		virtual FileSystem::Result RemoveFile(const String& path) = 0;
 		virtual FileSystem::Result RemoveDirectory(const String& path) = 0;

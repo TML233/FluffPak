@@ -5,26 +5,34 @@
 
 namespace Engine {
 	template<typename T>
-	class ReferencePtr {
+	class IntrusivePtr {
 	public:
 		// Create a SharedPtr from the given arguments.
 		template<typename ... Args>
-		static ReferencePtr Create(Args&& ... args) {
-			return ReferencePtr(MEMNEW(T(Memory::Forward<Args>(args)...)));
+		static IntrusivePtr Create(Args&& ... args) {
+			return IntrusivePtr(MEMNEW(T(Memory::Forward<Args>(args)...)));
 		}
 
-		ReferencePtr() {}
-		explicit ReferencePtr(T* ptr) :ptr(ptr) {
+		IntrusivePtr() {}
+		explicit IntrusivePtr(T* ptr) :ptr(ptr) {
 			if (ptr == nullptr) {
 				return;
 			}
 			Reference();
 		}
 
-		ReferencePtr(const ReferencePtr& shared) :ptr(shared.ptr) {
+		IntrusivePtr(const IntrusivePtr& shared) :ptr(shared.ptr) {
 			Reference();
 		}
-		ReferencePtr& operator=(const ReferencePtr& obj) {
+
+		template<typename U, typename = std::is_convertible<U, T>>
+		IntrusivePtr(const IntrusivePtr<U>& shared) : ptr(shared.ptr){
+			Reference();
+		}
+		template<typename U>
+		friend class IntrusivePtr;
+
+		IntrusivePtr& operator=(const IntrusivePtr& obj) {
 			if (&obj == this) {
 				return *this;
 			}
@@ -36,14 +44,14 @@ namespace Engine {
 
 			return *this;
 		}
-		~ReferencePtr() {
+		~IntrusivePtr() {
 			Dereference();
 		}
 
-		ReferencePtr(ReferencePtr&& obj) :ptr(obj.ptr) {
+		IntrusivePtr(IntrusivePtr&& obj) :ptr(obj.ptr) {
 			obj.ptr = nullptr;
 		}
-		ReferencePtr& operator=(ReferencePtr&& obj) {
+		IntrusivePtr& operator=(IntrusivePtr&& obj) {
 			if (&obj == this) {
 				return *this;
 			}
@@ -70,12 +78,12 @@ namespace Engine {
 		}
 
 		template<typename U>
-		ReferencePtr<U> StaticCastTo() {
-			return ReferencePtr<U>(static_cast<U*>(ptr));
+		IntrusivePtr<U> StaticCastTo() {
+			return IntrusivePtr<U>(static_cast<U*>(ptr));
 		}
 		template<typename U>
-		ReferencePtr<U> DynamicCastTo() {
-			return ReferencePtr<U>(dynamic_cast<U*>(ptr));
+		IntrusivePtr<U> DynamicCastTo() {
+			return IntrusivePtr<U>(dynamic_cast<U*>(ptr));
 		}
 	private:
 		void Reference() {

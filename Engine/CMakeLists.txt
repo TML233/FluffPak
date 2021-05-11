@@ -11,13 +11,13 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object/Object.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object/ObjectUtil.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object/InstanceId.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object/ReferencePtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object/Reflection.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object/Variant.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory/Memory.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory/UniquePtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory/SharedPtr.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory/IntrusivePtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory/CopyOnWrite.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.h"

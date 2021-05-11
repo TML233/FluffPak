@@ -152,9 +152,9 @@ namespace Engine{
 		return handler->CreateDirectory(handlerPath);
 	}
 
-	ResultPair<FileSystem::Result, ReferencePtr<File>> FileSystem::OpenFile(const String& path, OpenMode mode) {
+	ResultPair<FileSystem::Result, IntrusivePtr<File>> FileSystem::OpenFile(const String& path, OpenMode mode) {
 		auto data = GetSplitData(path);
-		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return ResultFile(Result::InvalidProtocol, ReferencePtr<File>(nullptr)));
+		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return ResultFile(Result::InvalidProtocol, IntrusivePtr<File>(nullptr)));
 
 		FileProtocolHandler* handler = GetProtocolHandler(data.result);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");

@@ -38,9 +38,9 @@ namespace Engine {
 		return referenceCount.Get();
 	}
 	
-	ReferencePtr<String::ContentData> String::ContentData::GetEmpty() {
+	IntrusivePtr<String::ContentData> String::ContentData::GetEmpty() {
 		static const ContentData empty(u8"", 1);
-		static ReferencePtr<ContentData> ptr{ const_cast<ContentData*>(&empty) };
+		static IntrusivePtr<ContentData> ptr{ const_cast<ContentData*>(&empty) };
 		return ptr;
 	}
 #pragma endregion
@@ -83,7 +83,7 @@ namespace Engine {
 
 
 	String String::GetEmpty() {
-		return String(ReferencePtr<ContentData>(ContentData::GetEmpty()));
+		return String(IntrusivePtr<ContentData>(ContentData::GetEmpty()));
 	}
 
 	String::String(const u8char* string,int32 count) {
@@ -104,7 +104,7 @@ namespace Engine {
 		PrepareData(string.c_str(), static_cast<int32>(string.length()));
 	}
 
-	String::String(ReferencePtr<ContentData> dataPtr, int32 start, int32 count) :data(dataPtr), refStart(start), refCount(count < 0 ? dataPtr->length - 1 : count) {}
+	String::String(IntrusivePtr<ContentData> dataPtr, int32 start, int32 count) :data(dataPtr), refStart(start), refCount(count < 0 ? dataPtr->length - 1 : count) {}
 
 	void String::PrepareData(const u8char* string, sizeint count) {
 		// Use public empty string.
@@ -120,7 +120,7 @@ namespace Engine {
 		std::memcpy(strData.GetRaw(), string, count);
 		std::memset(strData.GetRaw() + len-1, '\0', 1);
 
-		data = ReferencePtr<ContentData>::Create(Memory::Move(strData), len);
+		data = IntrusivePtr<ContentData>::Create(Memory::Move(strData), len);
 		refStart = 0;
 		refCount = count;
 	}
@@ -225,7 +225,7 @@ namespace Engine {
 		std::memcpy(raw + rawi, GetStartPtr() + (end + 1), GetCount() - (end + 1));
 		std::memset(raw + rawlen - 1, '\0', 1);
 
-		return String(ReferencePtr<ContentData>::Create(Memory::Move(rawptr), rawlen));
+		return String(IntrusivePtr<ContentData>::Create(Memory::Move(rawptr), rawlen));
 	}
 
 	bool String::StartsWith(const String& pattern) const {

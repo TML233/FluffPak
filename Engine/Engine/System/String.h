@@ -4,7 +4,7 @@
 #include "fmt/format.h"
 #include "Engine/System/Atomic.h"
 #include "Engine/System/Memory/UniquePtr.h"
-#include "Engine/System/Object/ReferencePtr.h"
+#include "Engine/System/Memory/IntrusivePtr.h"
 #include "Engine/Collection/List.h"
 #include <string_view>
 
@@ -14,7 +14,7 @@
 ([](){																																	\
 	static const u8char content[]=u8##text;																									\
 	static const ::Engine::String::ContentData data(content, sizeof(u8##text));																\
-	return ::Engine::String(::Engine::ReferencePtr<::Engine::String::ContentData>(const_cast<::Engine::String::ContentData*>(&data)));	\
+	return ::Engine::String(::Engine::IntrusivePtr<::Engine::String::ContentData>(const_cast<::Engine::String::ContentData*>(&data)));	\
 })()
 
 /// @brief Short alias for STRING_LITERAL
@@ -50,7 +50,7 @@ namespace Engine {
 			uint32 GetReferenceCount() const;
 
 			/// @brief Get the global empty content data.
-			static ReferencePtr<ContentData> GetEmpty();
+			static IntrusivePtr<ContentData> GetEmpty();
 		private:
 			bool staticData;
 			mutable ReferenceCount referenceCount;
@@ -83,7 +83,7 @@ namespace Engine {
 		/// @param dataPtr The pre-allocated ContentData.
 		/// @param start The start index of referencing content.
 		/// @param count The char count for referencing content. NULL NOT included. -1 for auto detection.
-		String(ReferencePtr<ContentData> dataPtr, int32 start = 0, int32 count = -1);
+		String(IntrusivePtr<ContentData> dataPtr, int32 start = 0, int32 count = -1);
 #pragma endregion
 
 #pragma region Tool functions
@@ -162,7 +162,7 @@ namespace Engine {
 		/// Count does not accept -1.
 		void PrepareData(const u8char* string, sizeint count);
 
-		ReferencePtr<ContentData> data;
+		IntrusivePtr<ContentData> data;
 
 		int32 refStart = 0;
 		int32 refCount = 0;

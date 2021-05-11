@@ -24,7 +24,7 @@ namespace Engine::PlatformSpecific::Windows {
 		int32 converted = WideCharToMultiByte(CP_UTF8, NULL, unicode, -1, reinterpret_cast<char*>(chars.GetRaw()), len, NULL, NULL);
 		ERR_ASSERT(converted > 0, u8"WideCharToMultiByte failed to convert!", return false);
 
-		result = String(ReferencePtr<String::ContentData>::Create(Memory::Move(chars), len));
+		result = String(IntrusivePtr<String::ContentData>::Create(Memory::Move(chars), len));
 		return true;
 	}
 }
