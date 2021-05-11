@@ -5,7 +5,7 @@
 namespace Engine {
 	Invokable::Invokable() :instanceId(InstanceId()), methodName(String::GetEmpty()) {}
 	Invokable::Invokable(const InstanceId& object, const String& methodName) :instanceId(object), methodName(methodName) {}
-	Invokable::Invokable(Object* object, const String& methodName) : instanceId(object->GetInstanceId()), methodName(methodName) {}
+	Invokable::Invokable(Object* object, const String& methodName) : instanceId(object == nullptr ? InstanceId() : object->GetInstanceId()), methodName(methodName) {}
 	int32 Invokable::GetHashCode() const {
 		return ObjectUtil::GetHashCode(instanceId) ^ ObjectUtil::GetHashCode(methodName);
 	}
