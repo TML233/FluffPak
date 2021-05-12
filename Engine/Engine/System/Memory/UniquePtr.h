@@ -3,27 +3,9 @@
 #include "Engine/System/Memory/Memory.h"
 
 namespace Engine {
-	/// @brief Default heap object deleter for single pointer.
-	template<typename T>
-	class DefaultDeleter {
-	public:
-		void operator()(T* ptr) {
-			MEMDEL(ptr);
-		}
-	};
-
-	/// @brief Default heap object deleter for pointer of array.
-	template<typename T>
-	class DefaultDeleter<T[]> {
-	public:
-		void operator()(T* ptr) {
-			MEMDELARR(ptr);
-		}
-	};
-
 	/// @brief Smart pointer for managing exclusive heap pointers.\n
 	/// Cannot be copied, but can be moved.
-	template<typename T, typename TDeleter = DefaultDeleter<T>>
+	template<typename T>
 	class UniquePtr final {
 	public:
 		template<typename ... Args>
@@ -63,7 +45,7 @@ namespace Engine {
 		}
 		void Reset(T* ptr = nullptr) {
 			if (this->ptr != nullptr) {
-				deleter(this->ptr);
+				MEMDEL(this->ptr);
 			}
 			this->ptr = ptr;
 		}
@@ -84,13 +66,12 @@ namespace Engine {
 		}
 	private:
 		T* ptr = nullptr;
-		TDeleter deleter;
 	};
 
 	/// @brief Smart pointer for managing exclusive heap array pointers.\n
 	/// Cannot be copied, but can be moved.
-	template<typename T, typename TDeleter>
-	class UniquePtr<T[], TDeleter> {
+	template<typename T>
+	class UniquePtr<T[]> {
 	public:
 		static UniquePtr Create(sizeint length) {
 			return UniquePtr(MEMNEWARR(T, length));
@@ -128,7 +109,7 @@ namespace Engine {
 		}
 		void Reset(T* ptr = nullptr) {
 			if (this->ptr != nullptr) {
-				deleter(this->ptr);
+				MEMDELARR(this->ptr);
 			}
 			this->ptr = ptr;
 		}
@@ -143,6 +124,5 @@ namespace Engine {
 		}
 	private:
 		T* ptr = nullptr;
-		TDeleter deleter;
 	};
 }
