@@ -16,6 +16,7 @@ target_sources(Test PRIVATE
 
 	"${CMAKE_CURRENT_LIST_DIR}/Source/Tests/Collection/List.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Source/Tests/Collection/Dictionary.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Source/Tests/Collection/Deque.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Source/Tests/Math/Transform2.cpp"
 )

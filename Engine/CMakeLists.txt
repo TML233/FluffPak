@@ -38,6 +38,7 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/List.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Dictionary.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Deque.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Definition.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Platform.h"

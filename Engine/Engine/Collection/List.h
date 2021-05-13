@@ -109,7 +109,11 @@ namespace Engine{
 			
 			// Move objects.
 			for (int32 i = count; i > index; i -= 1) {
-				*(elements + i) = *(elements + i - 1);
+				if (i == count) {
+					Memory::Construct(elements + i, *(elements + i - 1));
+				} else {
+					*(elements + i) = *(elements + i - 1);
+				}
 			}
 
 			// Assign
