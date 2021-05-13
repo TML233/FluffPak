@@ -124,19 +124,15 @@ namespace Engine{
 		void RemoveAt(int32 index) {
 			ERR_ASSERT(index >= 0 && index < count, u8"index out of bounds", return);
 
-			// Destruct.
-			Memory::Destruct(elements + index);
-
 			// Move object routine.
 			if (index < count - 1) {
-				// Move objects.
-				for (int32 i = index; i < count; i += 1) {
+				for (int32 i = index; i < count - 1; i += 1) {
 					*(elements + i) = *(elements + i + 1);
 				}
-
-				// Destruct the last element.
-				Memory::Destruct(elements + count - 1);
 			}
+
+			// Destruct the last element.
+			Memory::Destruct(elements + count - 1);
 
 			count -= 1;
 		}

@@ -2,33 +2,8 @@
 #include "Engine/System/Memory/Memory.h"
 #include "Engine/System/Memory/SharedPtr.h"
 #include "Engine/System/Memory/CopyOnWrite.h"
-
+#include "MemoryObject.h"
 using namespace Engine;
-
-class ComplexClass {
-public:
-	ComplexClass(int32 v=0) {
-		heap = MEMNEW(int32);
-		*heap = v;
-	}
-	~ComplexClass() {
-		MEMDEL(heap);
-	}
-	ComplexClass(const ComplexClass& obj) {
-		heap = MEMNEW(int32);
-		*heap = *(obj.heap);
-	}
-	ComplexClass& operator=(const ComplexClass& obj) {
-		MEMDEL(heap);
-		heap = MEMNEW(int32);
-		*heap = *(obj.heap);
-	}
-	int32 Get() const {
-		return *heap;
-	}
-private:
-	int32* heap = nullptr;
-};
 
 class Base {
 
@@ -40,7 +15,7 @@ class Derived :public Base {
 TEST_SUITE("Memory"){
 	TEST_CASE("Necessary destruction check") {
 		CHECK(!Memory::IsDestructionNeeded<int>());
-		CHECK(Memory::IsDestructionNeeded<ComplexClass>());
+		CHECK(Memory::IsDestructionNeeded<MemoryObject>());
 	}
 
 	TEST_CASE("C Style Management") {
@@ -48,7 +23,7 @@ TEST_SUITE("Memory"){
 		*ptr = 114514;
 		Memory::Deallocate(ptr);
 
-		ComplexClass* c = (ComplexClass*)Memory::Allocate(sizeof(ComplexClass));
+		MemoryObject* c = (MemoryObject*)Memory::Allocate(sizeof(MemoryObject));
 		Memory::Construct(c, 1234);
 		CHECK(c->Get() == 1234);
 		Memory::Destruct(c);
@@ -62,7 +37,7 @@ TEST_SUITE("Memory"){
 		MEMDEL(ptr);
 
 		// Class type
-		ComplexClass* classptr = MEMNEW(ComplexClass(893));
+		MemoryObject* classptr = MEMNEW(MemoryObject(893));
 		CHECK(classptr->Get() == 893);
 		MEMDEL(classptr);
 
@@ -78,7 +53,7 @@ TEST_SUITE("Memory"){
 	}
 
 	TEST_CASE("CopyOnWrite") {
-		using Type = CopyOnWrite<ComplexClass>;
+		using Type = CopyOnWrite<MemoryObject>;
 		Type a = Type::Create();
 		CHECK(a.IsExclusive());
 		
