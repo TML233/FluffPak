@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="Engine::SharedPtr&lt;*&gt;">
+		<DisplayString>{{ RefCount = {data->refCount.count.value}, WeakCount = {data->weakCount.count.value} }}</DisplayString>
+		<Expand>
+			<Item Name="Pointer">ptr</Item>
+			<Item Name="Reference Count">data->refCount.count.value</Item>
+			<Item Name="Weak Count">data->weakCount.count.value</Item>
+		</Expand>
+	</Type>
+</AutoVisualizer>
