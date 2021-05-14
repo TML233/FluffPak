@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/System/Object/ObjectUtil.h"
-#include "Engine/Collection/HashHelper.h"
+#include "Engine/System/Collection/HashHelper.h"
 #include "Engine/System/Memory/Memory.h"
 #include "Engine/System/Debug.h"
 

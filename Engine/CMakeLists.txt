@@ -30,17 +30,17 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.h"
 	
 	
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Vector2.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Rect2.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Transform2.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Math.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Random.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Vector2.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Rect2.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Transform2.h"
 
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Iterator.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/List.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Dictionary.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Deque.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/Iterator.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/HashHelper.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/List.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/Dictionary.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/Deque.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Definition.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Platform.h"
@@ -70,13 +70,13 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.cpp"
 
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Vector2.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Rect2.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Transform2.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Math.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Random.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Vector2.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Rect2.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Transform2.cpp"
 	
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/HashHelper.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Engine.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Time.cpp"

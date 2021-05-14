@@ -2,8 +2,8 @@
 #include "Engine/System/Definition.h"
 #include "Engine/System/Object/Object.h"
 #include "Engine/System/String.h"
-#include "Engine/Math/Vector2.h"
-#include "Engine/Collection/Dictionary.h"
+#include "Engine/System/Math/Vector2.h"
+#include "Engine/System/Collection/Dictionary.h"
 #include "Engine/System/Thread/Atomic.h"
 #include "Engine/System/Memory/SharedPtr.h"
 

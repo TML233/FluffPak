@@ -4,8 +4,8 @@
 #include "Engine/System/String.h"
 #include "Engine/System/Memory/UniquePtr.h"
 #include "Engine/System/Memory/SharedPtr.h"
-#include "Engine/Collection/Dictionary.h"
-#include "Engine/Collection/List.h"
+#include "Engine/System/Collection/Dictionary.h"
+#include "Engine/System/Collection/List.h"
 #include "Engine/System/Object/Variant.h"
 #include "Engine/System/Object/InstanceId.h"
 

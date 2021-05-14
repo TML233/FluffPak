@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/System/String.h"
 #include "Engine/System/Object/Object.h"
-#include "Engine/Collection/Dictionary.h"
+#include "Engine/System/Collection/Dictionary.h"
 #include <bit>
 
 namespace Engine {

@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/System/Definition.h"
-#include "Engine/Math/Math.h"
-#include "Engine/Math/Vector2.h"
+#include "Engine/System/Math/Math.h"
+#include "Engine/System/Math/Vector2.h"
 
 namespace Engine {
 	struct Transform2 final {

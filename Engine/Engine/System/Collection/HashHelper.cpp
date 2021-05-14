@@ -1,5 +1,5 @@
-#include "Engine/Collection/HashHelper.h"
-#include "Engine/Math/Math.h"
+#include "Engine/System/Collection/HashHelper.h"
+#include "Engine/System/Math/Math.h"
 #include "Engine/System/Debug.h"
 
 namespace Engine {

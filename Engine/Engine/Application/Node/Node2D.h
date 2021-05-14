@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Engine/Application/Node/Node.h"
-#include "Engine/Math/Vector2.h"
-#include "Engine/Math/Transform2.h"
+#include "Engine/System/Math/Vector2.h"
+#include "Engine/System/Math/Transform2.h"
 
 namespace Engine {
 	class Node2D :public Node {
