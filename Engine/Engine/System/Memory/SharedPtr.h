@@ -2,7 +2,7 @@
 
 #include "Engine/System/Definition.h"
 #include "Engine/System/Memory/Memory.h"
-#include "Engine/System/Atomic.h"
+#include "Engine/System/Thread/Atomic.h"
 
 namespace Engine {
 	struct SharedPtrCounter {

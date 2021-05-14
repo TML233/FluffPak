@@ -4,7 +4,7 @@
 #include "Engine/System/String.h"
 #include "Engine/Math/Vector2.h"
 #include "Engine/Collection/Dictionary.h"
-#include "Engine/System/Atomic.h"
+#include "Engine/System/Thread/Atomic.h"
 #include "Engine/System/Memory/SharedPtr.h"
 
 namespace Engine{

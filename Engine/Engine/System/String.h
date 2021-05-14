@@ -2,7 +2,7 @@
 
 #include "fmt/core.h"
 #include "fmt/format.h"
-#include "Engine/System/Atomic.h"
+#include "Engine/System/Thread/Atomic.h"
 #include "Engine/System/Memory/UniquePtr.h"
 #include "Engine/System/Memory/IntrusivePtr.h"
 #include "Engine/Collection/List.h"

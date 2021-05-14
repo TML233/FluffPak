@@ -20,9 +20,11 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory/IntrusivePtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory/CopyOnWrite.h"
 
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/Atomic.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/JobSystem.h"
+
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Atomic.h"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.h"
@@ -67,7 +69,6 @@ set(SourceFile
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.cpp"
-	
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.cpp"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/System/Definition.h"
-#include "Engine/System/Atomic.h"
+#include "Engine/System/Thread/Atomic.h"
 
 namespace Engine{
 	struct InstanceId{
