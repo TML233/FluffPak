@@ -24,6 +24,13 @@ public:
 	::Engine::int32 Get() const {
 		return *heap;
 	}
+
+	::Engine::int32 GetHashCode() const {
+		return *heap;
+	}
+	bool operator==(const MemoryObject& obj) {
+		return *heap == *(obj.heap);
+	}
 private:
 	::Engine::int32* heap = nullptr;
 };

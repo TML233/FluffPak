@@ -284,7 +284,7 @@ namespace Engine {
 			for (int32 i = 0; i < obj.capacity; i += 1) {
 				buckets[i] = obj.buckets[i];
 				for (int j = obj.buckets[i]; j >= 0; j = obj.entries[j].next) {
-					entries[j] = obj.entries[j];
+					Memory::Construct(entries + j, obj.entries[j]);
 				}
 			}
 			// Copy free indexes

@@ -1,44 +1,45 @@
 #include "doctest.h"
 #include "Engine/Collection/Dictionary.h"
 #include "Engine/System/String.h"
+#include "../System/MemoryObject.h"
 
 using namespace Engine;
 
 TEST_SUITE("Collections") {
 	TEST_CASE("Dictionary") {
 		{
-			Dictionary<int, char> dic{};
-			CHECK(dic.Add(1, 'f'));
-			CHECK(dic.Add(2, 'u'));
-			CHECK(dic.Add(3, 'c'));
-			CHECK(dic.Add(4, 'k'));
-			CHECK(dic.Add(5, ' '));
-			CHECK(dic.Add(6, 'y'));
-			CHECK(dic.Add(7, 'o'));
-			CHECK(dic.Add(8, 'u'));
-			CHECK(dic.Add(9, '!'));
+			Dictionary<MemoryObject, String> dic{};
+			CHECK(dic.Add(MemoryObject(1), u8"f"));
+			CHECK(dic.Add(MemoryObject(2), u8"u"));
+			CHECK(dic.Add(MemoryObject(3), u8"c"));
+			CHECK(dic.Add(MemoryObject(4), u8"k"));
+			CHECK(dic.Add(MemoryObject(5), u8" "));
+			CHECK(dic.Add(MemoryObject(6), u8"y"));
+			CHECK(dic.Add(MemoryObject(7), u8"o"));
+			CHECK(dic.Add(MemoryObject(8), u8"u"));
+			CHECK(dic.Add(MemoryObject(9), u8"!"));
 
 			CHECK(dic.GetCount() == 9);
-			CHECK(dic.ContainsKey(3));
-			CHECK(dic.ContainsKey(9));
-			CHECK(dic.Get(1) == 'f');
-			CHECK(dic.Get(2) == 'u');
-			CHECK(dic.Get(9) == '!');
+			CHECK(dic.ContainsKey(MemoryObject(3)));
+			CHECK(dic.ContainsKey(MemoryObject(9)));
+			CHECK(dic.Get(MemoryObject(1)) == u8"f");
+			CHECK(dic.Get(MemoryObject(2)) == u8"u");
+			CHECK(dic.Get(MemoryObject(9)) == u8"!");
 
-			CHECK(dic.Remove(2));
+			CHECK(dic.Remove(MemoryObject(2)));
 
-			CHECK(!dic.ContainsKey(2));
-			CHECK(dic.ContainsKey(3));
+			CHECK(!dic.ContainsKey(MemoryObject(2)));
+			CHECK(dic.ContainsKey(MemoryObject(3)));
 
-			CHECK(dic.Add(2, 'a'));
+			CHECK(dic.Add(MemoryObject(2), u8"a"));
 
-			CHECK(dic.Get(2) == 'a');
+			CHECK(dic.Get(MemoryObject(2)) == u8"a");
 
-			Dictionary<int, char> dic2 = dic;
-			Dictionary<int, char> dic3{};
+			Dictionary<MemoryObject, String> dic2 = dic;
+			Dictionary<MemoryObject, String> dic3{};
 			dic3 = dic2;
 
-			Dictionary<int, char> dic4 = Memory::Move(dic);
+			Dictionary<MemoryObject, String> dic4 = Memory::Move(dic);
 		}
 
 		{
