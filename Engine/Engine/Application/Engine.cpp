@@ -2,6 +2,9 @@
 #include "Engine/System/Memory/Memory.h"
 #include <chrono>
 #include "Engine/Platform/NativeWindow.h"
+#include "Engine/System/File.h"
+#include "Engine/System/Thread/JobSystem.h"
+#include "Engine/Application/AppLoop.h"
 
 namespace Engine {
 	Engine* Engine::instance = nullptr;
@@ -13,7 +16,10 @@ namespace Engine {
 		instance = this;
 
 		nativeWindowManager.Reset(MEMNEW(PLATFORM_SPECIFIC_CLASS_NATIVEWINDOWMANAGER));
+		
 		fileSystem.Reset(MEMNEW(FileSystem()));
+
+		jobSystem.Reset(MEMNEW(JobSystem()));
 	}
 	Engine::~Engine() {
 		if (instance == this) {
@@ -41,6 +47,9 @@ namespace Engine {
 	FileSystem* Engine::GetFileSystem() const {
 		return fileSystem.GetRaw();
 	}
+	JobSystem* Engine::GetJobSystem() const {
+		return jobSystem.GetRaw();
+	}
 
 	void Engine::Run() {
 #pragma region Start
@@ -49,6 +58,7 @@ namespace Engine {
 			return;
 		}
 
+		jobSystem->Start();
 		appLoop->OnStart();
 #pragma endregion
 
@@ -91,6 +101,7 @@ namespace Engine {
 
 #pragma region Stop
 		appLoop->OnStop();
+		jobSystem->Stop();
 
 		INFO_MSG(u8"AppLoop finished running.");
 #pragma endregion

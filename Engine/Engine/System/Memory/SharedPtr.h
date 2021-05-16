@@ -35,12 +35,13 @@ namespace Engine {
 			Reference();
 		}
 
+		template<typename U>
+		friend class SharedPtr;
+
 		template<typename U,typename = std::is_convertible<U,T>>
 		SharedPtr(const SharedPtr<U>& shared):ptr(shared.ptr),data(shared.data) {
 			Reference();
 		}
-		template<typename U>
-		friend class SharedPtr;
 
 		SharedPtr& operator=(const SharedPtr& obj) {
 			if (&obj == this) {

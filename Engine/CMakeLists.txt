@@ -70,6 +70,8 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.cpp"
 
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/JobSystem.cpp"
+
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Math.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Random.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Vector2.cpp"

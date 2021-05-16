@@ -22,7 +22,9 @@ namespace Engine::PlatformSpecific::Windows {
 	};
 
 	class NativeWindow final:public ::Engine::NativeWindow {
-		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::NativeWindow, ::Engine::NativeWindow) {}
+		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::NativeWindow, ::Engine::NativeWindow) {
+			REFLECTION_SIGNAL(STRL("KeyDown"), { SIGARG(STRL("keyCode"),Variant::Type::Int64) });
+		}
 
 	public:
 		~NativeWindow();

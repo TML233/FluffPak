@@ -269,7 +269,7 @@ namespace Engine {
 			// Current has no tree, assigning into a tree.
 			this->tree = tree;
 			
-			// Lock the current node to prevent the child from adding or removing nodes into the current node.
+			// Mutex the current node to prevent the child from adding or removing nodes into the current node.
 			childrenAddLocked = true;
 
 			OnEnteredTree();

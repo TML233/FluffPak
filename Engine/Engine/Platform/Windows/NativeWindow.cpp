@@ -96,6 +96,17 @@ namespace Engine::PlatformSpecific::Windows {
 			case WM_DESTROY:
 				PostQuitMessage(0);
 				return 0;
+
+			case WM_KEYDOWN:
+			{
+				NativeWindow* nw = NativeWindow::GetFromHWnd(hWnd);
+				if (nw != nullptr) {
+					Variant key = wParam;
+					const Variant* args[1] = { &key };
+					nw->EmitSignal(STRL("KeyDown"), (const Variant**)args, 1);
+				}
+				break;
+			}
 		}
 		return DefWindowProcW(hWnd, message, wParam, lParam);
 	}
