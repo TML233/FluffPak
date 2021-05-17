@@ -37,7 +37,12 @@ namespace Engine {
 		INFO_MSG(String::Format(u8"Key {0} down!", keyCode).GetRawArray());
 		if (keyCode == 65) {
 			for (int32 i = 0; i < 100; i += 1) {
-				::Engine::Engine::GetInstance()->GetJobSystem()->AddJob([](auto job, auto data) {INFO_MSG(u8"Job ran!"); });
+				::Engine::Engine::GetInstance()->GetJobSystem()->AddJob(
+					[](auto job, auto data, auto worker) {
+						INFO_MSG(String::Format(STRL("Job {0} ran on worker {1}!"), *((int32*)data), worker->GetId()).GetRawArray());
+					},
+					&i, sizeof(i)
+				);
 			}
 		}
 	}

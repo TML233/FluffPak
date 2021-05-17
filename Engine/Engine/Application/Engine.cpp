@@ -84,11 +84,12 @@ namespace Engine {
 		TimePoint nextUpdate = Clock::now();
 
 		while (appLoop->IsRunning()) {
-			GetNativeWindowManager()->Update();
-
 			TimePoint now = Clock::now();
 
 			if (now >= nextUpdate) {
+				NativeWindowManager* nwm = nativeWindowManager.GetRaw();
+				nwm->Update();
+
 				time.unscaledDelta = std::chrono::duration_cast<Duration>(now - lastUpdate).count();
 				
 				time.unscaledTotal += time.GetUnscaledDelta();
@@ -103,6 +104,8 @@ namespace Engine {
 
 				lastUpdate = now;
 				nextUpdate += std::chrono::microseconds(static_cast<int64>(1.0 / GetTargetFps() * 1000000));
+				now = Clock::now();
+				std::this_thread::sleep_for(nextUpdate - now - Duration(0.005));
 			}
 
 			lastTime = now;

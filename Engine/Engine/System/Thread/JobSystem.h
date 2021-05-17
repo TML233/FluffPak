@@ -1,12 +1,11 @@
 #pragma once
 #include "Engine/System/Definition.h"
 #include "Engine/System/Collection/List.h"
-#include "Engine/System/Collection/Deque.h"
+#include "Engine/System/Collection/Dictionary.h"
 #include "Engine/System/Memory/SharedPtr.h"
-#include <thread>
+#include "Engine/System/Thread/ThreadUtils.h"
 #include <mutex>
 #include <condition_variable>
-#include <new>
 
 #undef GetJob
 
@@ -24,26 +23,42 @@ namespace Engine {
 	struct Job;
 
 	struct Job {
-		using WorkFunction = void (*)(Job* job, void* data);
+		using WorkFunction = void (*)(Job* job, void* data, JobWorker* worker);
+		static inline constexpr sizeint DataLength = 64 - 8 - 1;
 
 		WorkFunction function;
 		bool finished = false;
-		// avoid false sharing
-		byte padding[64-8-1];
+		// Data zone, also prevents false sharing.
+		byte data[DataLength];
 	};
 
 	class JobWorker final {
 	public:
+		enum class Preference :byte {
+			Null,
+			Window
+		};
+
 		JobWorker(JobSystem* manager,int32 id);
 
 		void Start();
 		static void ThreadFunction(JobWorker* worker);
+		bool ShouldRun() const;
 		bool IsRunning() const;
+
+		bool HasJob() const;
+		SharedPtr<Job> GetJob();
+		void AddExclusiveJob(SharedPtr<Job> job);
+
+		int32 GetId() const;
 
 	private:
 		JobSystem* manager;
 		std::thread thread;
 		volatile bool running = false;
+
+		List<SharedPtr<Job>> exclusiveJobs{ 30 };
+		mutable Mutex exclusiveJobMutex;
 
 		int32 id;
 	};
@@ -52,12 +67,9 @@ namespace Engine {
 	public:
 		JobSystem();
 
-		static int32 GetHardwareThreadCount();
-		//static inline constexpr sizeint CacheLineSize = std::hardware_destructive_interference_size;
-
 		void Start();
 		void Stop();
-		void AddJob(Job::WorkFunction function);
+		void AddJob(Job::WorkFunction function, void* data = nullptr, sizeint dataLength = 0, JobWorker::Preference preference = JobWorker::Preference::Null);
 		SharedPtr<Job> GetJob();
 		bool HasJob() const;
 		bool IsRunning() const;
@@ -73,6 +85,8 @@ namespace Engine {
 		mutable Mutex jobsMutex;
 		ConditionVariable jobsCond;
 		mutable Mutex jobsCondMutex;
+
+		Dictionary<JobWorker::Preference, int32> preferenceToWorker;
 
 		int32 lastId = -1;
 	};
