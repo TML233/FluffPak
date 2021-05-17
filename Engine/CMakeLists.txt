@@ -135,7 +135,7 @@ elseif(UNIX AND "${CMAKE_SYSTEM}" MATCHES "Linux")
 		"${GTK_INCLUDE_DIRS}"
 	)
 	list(APPEND LinkLibrary
-		"${GTK_LIBRARIES}"
+		"${GTK_LIBRARIES}" pthread
 	)
 endif()
 

@@ -33,18 +33,11 @@ namespace Engine {
 		INFO_MSG(String::Format(u8"{0}: Exiting tree.", GetName()).GetRawArray());
 	}
 
-	class TestJob final:public Job {
-	public:
-		void Run() override {
-			WARN_MSG(u8"Job ran!");
-		}
-	};
-
 	void TestNode::OnKeyDown(int32 keyCode) {
 		INFO_MSG(String::Format(u8"Key {0} down!", keyCode).GetRawArray());
 		if (keyCode == 65) {
 			for (int32 i = 0; i < 100; i += 1) {
-				::Engine::Engine::GetInstance()->GetJobSystem()->AddJob(SharedPtr<TestJob>::Create());
+				::Engine::Engine::GetInstance()->GetJobSystem()->AddJob([](auto job, auto data) {INFO_MSG(u8"Job ran!"); });
 			}
 		}
 	}

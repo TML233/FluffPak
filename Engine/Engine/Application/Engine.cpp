@@ -52,6 +52,16 @@ namespace Engine {
 	}
 
 	void Engine::Run() {
+#pragma region Info messages
+		INFO_MSG(u8"Rabbik Engine Development");
+		INFO_MSG(u8"Under MIT public license. TML 2020-2021");
+#if defined(_MSC_VER)
+		INFO_MSG(String::Format(STRING_LITERAL("Compiled by Microsoft Visual C++ {0}"), _MSC_VER).GetRawArray());
+#elif defined(__GNUC__)
+		INFO_MSG(String::Format(STRING_LITERAL("Compiled by GNU C++ {0}.{1}.{2}"), __GNUC__,__GNUC_MINOR__,__GNUC_PATCHLEVEL__).GetRawArray());
+#endif
+#pragma endregion
+
 #pragma region Start
 		if (appLoop == nullptr) {
 			FATAL_MSG(u8"No AppLoop has been assigned.");

@@ -2,7 +2,7 @@
 #include "Engine/System/String.h"
 
 namespace Engine {
-	JobWorker::JobWorker(JobSystem* manager) :manager(manager) {}
+	JobWorker::JobWorker(JobSystem* manager,int32 id) :manager(manager),id(id) {}
 
 	void JobWorker::Start() {
 		thread = std::thread(ThreadFunction, this);
@@ -10,29 +10,29 @@ namespace Engine {
 	}
 
 	void JobWorker::ThreadFunction(JobWorker* worker) {
-		while (true) {
+		worker->running = true;
+		INFO_MSG(String::Format(STRL("Job worker {0} started."), worker->id).GetRawArray());
+
+		while (worker->manager->IsRunning()) {
 			auto lock = AdvanceLock<Mutex>(worker->manager->jobsCondMutex);
-			while (!worker->manager->HasJob()) {
-			//	INFO_MSG(u8"Worker is waiting...");
+			while (worker->manager->IsRunning()&&!worker->manager->HasJob()) {
 				worker->manager->jobsCond.wait(lock);
-			//	INFO_MSG(u8"Worker awake!");
 			}
-			//INFO_MSG(u8"Worker got out of the wait loop!");
 
 			auto job = worker->manager->GetJob();
 			if (job != nullptr) {
-				//INFO_MSG(u8"Worker has a job, running.");
-				job->Run();
-			//} else {
-			//	INFO_MSG(u8"Worker has no job!");
+				job->function(job.GetRaw(), nullptr);
+				job->finished = true;
 			}
 		}
+
+		INFO_MSG(String::Format(STRL("Job worker {0} stopped."), worker->id).GetRawArray());
+		worker->running = false;
 	}
 
-	void JobWorker::Stop() {
-
+	bool JobWorker::IsRunning() const {
+		return running;
 	}
-
 
 
 
@@ -40,9 +40,13 @@ namespace Engine {
 	JobSystem::JobSystem() {
 		int32 hardware = GetHardwareThreadCount();
 		INFO_MSG(String::Format(STRING_LITERAL("{0} hardware threads, creating {1} job workers."), hardware, hardware - 1).GetRawArray());
+		//INFO_MSG(String::Format(STRING_LITERAL("L1 cache line size: {0} bytes."), CacheLineSize).GetRawArray());
+		INFO_MSG(String::Format(STRING_LITERAL("Job struct size: {0} bytes."), sizeof(Job)).GetRawArray());
 
 		for (int32 i = 0; i < hardware - 1; i += 1) {
-			workers.Add(SharedPtr<JobWorker>::Create(this));
+			lastId += 1;
+			auto worker = SharedPtr<JobWorker>::Create(this,lastId);
+			workers.Add(worker);
 		}
 	}
 	
@@ -51,18 +55,40 @@ namespace Engine {
 	}
 
 	void JobSystem::Start() {
+		running = true;
+
 		for (const auto& worker : workers) {
 			worker->Start();
 		}
 	}
 
 	void JobSystem::Stop() {
+		running = false;
 
+		// Wait for all threads stop.
+		bool stop = true;
+		do {
+			stop = true;
+			jobsCond.notify_all();
+
+			for (const auto& worker : workers) {
+				if (worker->IsRunning()) {
+					stop = false;
+					break;
+				}
+			}
+		} while (!stop);
 	}
 
-	void JobSystem::AddJob(const SharedPtr<Job>& job) {
-		auto lock = AdvanceLock<Mutex>(jobsCondMutex);
-		jobs.Add(job);
+	void JobSystem::AddJob(Job::WorkFunction function) {
+		auto job = SharedPtr<Job>::Create();
+		job->function = function;
+
+		{
+			auto lock = SimpleLock<Mutex>(jobsMutex);
+			jobs.Add(job);
+		}
+
 		//INFO_MSG(u8"JobSystem fed a job, notifing one.");
 		jobsCond.notify_one();
 	}
@@ -79,5 +105,8 @@ namespace Engine {
 	}
 	bool JobSystem::HasJob() const {
 		return jobs.GetCount() > 0;
+	}
+	bool JobSystem::IsRunning() const {
+		return running;
 	}
 }
