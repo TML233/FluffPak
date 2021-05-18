@@ -87,8 +87,7 @@ namespace Engine {
 			TimePoint now = Clock::now();
 
 			if (now >= nextUpdate) {
-				NativeWindowManager* nwm = nativeWindowManager.GetRaw();
-				nwm->Update();
+				nativeWindowManager->Update();
 
 				time.unscaledDelta = std::chrono::duration_cast<Duration>(now - lastUpdate).count();
 				

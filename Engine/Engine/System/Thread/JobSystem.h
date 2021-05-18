@@ -23,13 +23,13 @@ namespace Engine {
 	struct Job;
 
 	struct Job {
-		using WorkFunction = void (*)(Job* job, int32 workerId);
+		using WorkFunction = void (*)(Job* job);
 		static inline constexpr sizeint DataLength = 64 - 8 - 1;
 
 		WorkFunction function;
 		volatile bool finished = false;
 		// Data zone, also prevents false sharing.
-		byte data[DataLength];
+		volatile byte data[DataLength];
 	};
 
 	class JobWorker final {
@@ -55,7 +55,7 @@ namespace Engine {
 		/// @brief Job worker thread function. 
 		static void ThreadFunction(JobWorker* worker);
 		/// @brief Job running sequence.
-		static void RunJob(SharedPtr<Job>& job,int32 workerId);
+		static void RunJob(SharedPtr<Job>& job);
 
 		int32 GetId() const;
 

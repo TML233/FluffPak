@@ -1,6 +1,8 @@
 #include "Engine/Platform/Windows/NativeWindow.h"
 #include "Engine/Platform/Windows/UnicodeHelper.h"
 #include <ShellScalingApi.h>
+#include "Engine/Application/Engine.h"
+#include "Engine/System/Thread/JobSystem.h"
 
 namespace Engine::PlatformSpecific::Windows {
 	typename NativeWindowManager::_Initializer NativeWindowManager::_initializer{};
@@ -13,7 +15,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 		// Register basic window class
 		WNDCLASSW wc = {};
-		wc.lpszClassName = NativeWindow::GetGlobalWindowClassName();
+		wc.lpszClassName = NativeWindow::GlobalWindowClassName;
 		wc.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
 		wc.cbClsExtra = NULL;
 		wc.cbWndExtra = NULL;
@@ -29,21 +31,20 @@ namespace Engine::PlatformSpecific::Windows {
 	}
 
 	NativeWindowManager::_Initializer::~_Initializer() {
-		UnregisterClassW(NativeWindow::GetGlobalWindowClassName(), NULL);
+		UnregisterClassW(NativeWindow::GlobalWindowClassName, NULL);
 	}
 
 	void NativeWindowManager::Update() {
-		MSG msg = {};
-		if (PeekMessageW(&msg, NULL, NULL, NULL,PM_REMOVE)) {
-			if (msg.message != WM_QUIT) {
-				TranslateMessage(&msg);
-				DispatchMessageW(&msg);
+		auto func = [](Job* job) {
+			MSG msg = {};
+			if (PeekMessageW(&msg, NULL, NULL, NULL, PM_REMOVE)) {
+				if (msg.message != WM_QUIT) {
+					TranslateMessage(&msg);
+					DispatchMessageW(&msg);
+				}
 			}
-		}
-	}
-
-	const WCHAR* NativeWindow::GetGlobalWindowClassName() {
-		return L"EngineBasicWindowClass";
+		};
+		ENGINEINST->GetJobSystem()->AddJob(func, nullptr, 0, JobWorker::Preference::Window);
 	}
 
 	NativeWindow* NativeWindow::GetFromHWnd(HWND hWnd) {
@@ -61,15 +62,38 @@ namespace Engine::PlatformSpecific::Windows {
 		return wp;
 	}
 
+	struct _NWWindowsInitJobData {
+		LONG_PTR userDataPtr;
+		HWND result;
+	};
 	bool NativeWindow::Initialize() {
-		const DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_BORDER;
-		HWND w = CreateWindowW(GetGlobalWindowClassName(), L"", style, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
+		auto func = [](Job* job) {
+			auto data = (volatile _NWWindowsInitJobData*)(&job->data);
+
+			constexpr DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_BORDER;
+			HWND w = CreateWindowW(GlobalWindowClassName, L"", style, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
+			if (!IsWindow(w)) {
+				data->result = NULL;
+				return;
+			}
+			// Set user data to let hwnd trace back to NativeWindow.
+			SetWindowLongPtrW(w, GWLP_USERDATA, data->userDataPtr);
+
+			data->result = w;
+		};
+		
+		// Job data
+		_NWWindowsInitJobData data = {};
+		data.userDataPtr = (LONG_PTR)this;
+		// Start job
+		auto js = ENGINEINST->GetJobSystem();
+		auto job=js->AddJob(func, &data, sizeof(data), JobWorker::Preference::Window);
+		// Wait for the result
+		js->WaitJob(job);
+
+		HWND w = ((volatile _NWWindowsInitJobData*)(&job->data))->result;
 		ERR_ASSERT(IsWindow(w), u8"CreateWindowW failed to create a window!", return false);
-		// Set user data to let hwnd trace back to NativeWindow.
-		SetWindowLongPtrW(w, GWLP_USERDATA, (LONG_PTR)this);
-
 		hWnd = w;
-
 		return true;
 	}
 	NativeWindow::~NativeWindow() {
@@ -134,6 +158,12 @@ namespace Engine::PlatformSpecific::Windows {
 
 		return result;
 	}
+
+	struct _NWWSetTitleData {
+		HWND hWnd;
+		WCHAR* title;
+		bool result;
+	};
 	bool NativeWindow::SetTitle(const String& title) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
@@ -142,7 +172,26 @@ namespace Engine::PlatformSpecific::Windows {
 		
 		ERR_ASSERT(succeeded, u8"Failed to convert engine string to Windows wide string!", return false);
 
-		succeeded=SetWindowTextW(hWnd, buffer.GetRaw());
+
+		// Job
+		auto func = [](Job* job) {
+			_NWWSetTitleData* data = (_NWWSetTitleData*)(&job->data);
+			bool succeeded = SetWindowTextW(data->hWnd, data->title);
+			data->result = succeeded;
+		};
+
+		// Job data
+		_NWWSetTitleData data = {};
+		data.hWnd = hWnd;
+		data.title = buffer.GetRaw();
+
+		// Do job
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), JobWorker::Preference::Window);
+		js->WaitJob(job);
+
+		// Job done
+		succeeded = ((_NWWSetTitleData*)(&job->data))->result;
 		ERR_ASSERT(succeeded, u8"SetWindowTextW failed to set window title!", return false);
 		return true;
 	}

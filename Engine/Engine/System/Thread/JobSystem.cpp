@@ -34,15 +34,15 @@ namespace Engine {
 			auto job = worker->GetJob();
 			if (job != nullptr) {
 				//INFO_MSG(String::Format(STRL("Worker {0} start working..."), worker->GetId()).GetRawArray());
-				RunJob(job,worker->GetId());
+				RunJob(job);
 			}
 		}
 
 		INFO_MSG(String::Format(STRL("Job worker {0} stopped."), worker->id).GetRawArray());
 		worker->running = false;
 	}
-	void JobWorker::RunJob(SharedPtr<Job>& job,int32 workerId) {
-		job->function(job.GetRaw(), workerId);
+	void JobWorker::RunJob(SharedPtr<Job>& job) {
+		job->function(job.GetRaw());
 		job->finished = true;
 	}
 	bool JobWorker::HasJob() const {
@@ -128,7 +128,9 @@ namespace Engine {
 		auto job = SharedPtr<Job>::Create();
 		job->function = function;
 		if (data != nullptr) {
-			std::memcpy(job->data, data, dataLength);
+			for (sizeint i = 0; i < dataLength; i += 1) {
+				job->data[i] = ((byte*)data)[i];
+			}
 		}
 
 		// Exclusive job targeting
@@ -175,7 +177,7 @@ namespace Engine {
 			// Help run jobs when waiting.
 			if (HasJob()) {
 				auto job = GetJob();
-				JobWorker::RunJob(job, -1);
+				JobWorker::RunJob(job);
 			}
 		}
 	}

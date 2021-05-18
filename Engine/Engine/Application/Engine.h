@@ -2,6 +2,8 @@
 #include "Engine/System/Memory/UniquePtr.h"
 #include "Engine/Application/Time.h"
 
+#define ENGINEINST ::Engine::Engine::GetInstance()
+
 namespace Engine {
 	class NativeWindowManager;
 	class FileSystem;
