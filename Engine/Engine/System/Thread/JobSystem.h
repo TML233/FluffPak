@@ -25,6 +25,14 @@ namespace Engine {
 	struct Job {
 		using WorkFunction = void (*)(Job* job);
 		static inline constexpr sizeint DataLength = 64 - 8 - 1;
+		enum class Preference :byte {
+			Null,
+			Window
+		};
+		template<typename T>
+		volatile T* GetDataAs() {
+			return (volatile T*)(&data);
+		}
 
 		WorkFunction function;
 		volatile bool finished = false;
@@ -34,11 +42,6 @@ namespace Engine {
 
 	class JobWorker final {
 	public:
-		enum class Preference :byte {
-			Null,
-			Window
-		};
-
 		JobWorker(JobSystem* manager,int32 id);
 
 		/// @brief Start the worker.
@@ -87,7 +90,7 @@ namespace Engine {
 		/// Will block until all the worker threads stop.
 		void Stop();
 		/// @brief Add a job.
-		SharedPtr<Job> AddJob(Job::WorkFunction function, void* data = nullptr, sizeint dataLength = 0, JobWorker::Preference preference = JobWorker::Preference::Null);
+		SharedPtr<Job> AddJob(Job::WorkFunction function, void* data = nullptr, sizeint dataLength = 0, Job::Preference preference = Job::Preference::Null);
 		/// @brief Indicates if the job system has job waiting for running.
 		bool HasJob() const;
 		/// @brief Indicates if the job system is still running.
@@ -110,7 +113,7 @@ namespace Engine {
 		ConditionVariable jobsCond;
 		mutable Mutex jobsCondMutex;
 
-		Dictionary<JobWorker::Preference, int32> preferenceToWorker;
+		Dictionary<Job::Preference, int32> preferenceToWorker;
 
 		int32 lastId = -1;
 	};

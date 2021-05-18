@@ -4,7 +4,7 @@
 namespace Engine {
 #pragma region JobWorker
 	template<>
-	int32 ObjectUtil::GetHashCode<>(const JobWorker::Preference& obj) {
+	int32 ObjectUtil::GetHashCode<>(const Job::Preference& obj) {
 		return (int32)obj;
 	}
 
@@ -80,7 +80,7 @@ namespace Engine {
 		//INFO_MSG(String::Format(STRING_LITERAL("L1 cache line size: {0} bytes."), CacheLineSize).GetRawArray());
 		INFO_MSG(String::Format(STRING_LITERAL("Job struct size: {0} bytes."), sizeof(Job)).GetRawArray());
 
-		preferenceToWorker.Add(JobWorker::Preference::Window, 0);
+		preferenceToWorker.Add(Job::Preference::Window, 0);
 
 		for (int32 i = 0; i < hardware - 1; i += 1) {
 			lastId += 1;
@@ -119,7 +119,7 @@ namespace Engine {
 		running = false;
 	}
 
-	SharedPtr<Job> JobSystem::AddJob(Job::WorkFunction function,void* data,sizeint dataLength,JobWorker::Preference preference) {
+	SharedPtr<Job> JobSystem::AddJob(Job::WorkFunction function,void* data,sizeint dataLength,Job::Preference preference) {
 		if (data != nullptr) {
 			FATAL_ASSERT(dataLength <= Job::DataLength, u8"data is too large to put into a job! Consider putting a pointer to the actual data.");
 		}
@@ -135,7 +135,7 @@ namespace Engine {
 
 		// Exclusive job targeting
 		int32 worker = -1;
-		if (preference != JobWorker::Preference::Null) {
+		if (preference != Job::Preference::Null) {
 			preferenceToWorker.TryGet(preference, worker);
 		}
 		

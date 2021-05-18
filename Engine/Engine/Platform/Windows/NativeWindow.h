@@ -61,13 +61,15 @@ namespace Engine::PlatformSpecific::Windows {
 
 		static NativeWindow* GetFromHWnd(HWND hWnd);
 
+		DWORD GetStyle() const;
+		bool HasStyleFlag(DWORD style) const;
+		bool SetStyleFlag(DWORD style, bool enabled);
+		HWND GetHWnd() const;
+
 	protected:
 		bool Initialize() override;
 
 	private:
 		HWND hWnd = NULL;
-		DWORD GetStyle() const;
-		bool HasStyleFlag(DWORD style) const;
-		bool SetStyleFlag(DWORD style, bool enabled);
 	};
 }

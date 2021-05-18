@@ -44,7 +44,7 @@ namespace Engine::PlatformSpecific::Windows {
 				}
 			}
 		};
-		ENGINEINST->GetJobSystem()->AddJob(func, nullptr, 0, JobWorker::Preference::Window);
+		ENGINEINST->GetJobSystem()->AddJob(func, nullptr, 0, Job::Preference::Window);
 	}
 
 	NativeWindow* NativeWindow::GetFromHWnd(HWND hWnd) {
@@ -62,13 +62,13 @@ namespace Engine::PlatformSpecific::Windows {
 		return wp;
 	}
 
-	struct _NWWindowsInitJobData {
+	struct _NWWInitJobData {
 		LONG_PTR userDataPtr;
 		HWND result;
 	};
 	bool NativeWindow::Initialize() {
 		auto func = [](Job* job) {
-			auto data = (volatile _NWWindowsInitJobData*)(&job->data);
+			auto data = job->GetDataAs<_NWWInitJobData>();
 
 			constexpr DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_BORDER;
 			HWND w = CreateWindowW(GlobalWindowClassName, L"", style, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
@@ -83,15 +83,15 @@ namespace Engine::PlatformSpecific::Windows {
 		};
 		
 		// Job data
-		_NWWindowsInitJobData data = {};
+		_NWWInitJobData data = {};
 		data.userDataPtr = (LONG_PTR)this;
 		// Start job
 		auto js = ENGINEINST->GetJobSystem();
-		auto job=js->AddJob(func, &data, sizeof(data), JobWorker::Preference::Window);
+		auto job=js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
 		// Wait for the result
 		js->WaitJob(job);
 
-		HWND w = ((volatile _NWWindowsInitJobData*)(&job->data))->result;
+		HWND w = job->GetDataAs<_NWWInitJobData>()->result;
 		ERR_ASSERT(IsWindow(w), u8"CreateWindowW failed to create a window!", return false);
 		hWnd = w;
 		return true;
@@ -175,7 +175,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 		// Job
 		auto func = [](Job* job) {
-			_NWWSetTitleData* data = (_NWWSetTitleData*)(&job->data);
+			auto data = job->GetDataAs<_NWWSetTitleData>();
 			bool succeeded = SetWindowTextW(data->hWnd, data->title);
 			data->result = succeeded;
 		};
@@ -187,11 +187,11 @@ namespace Engine::PlatformSpecific::Windows {
 
 		// Do job
 		auto js = ENGINEINST->GetJobSystem();
-		auto job = js->AddJob(func, &data, sizeof(data), JobWorker::Preference::Window);
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
 		js->WaitJob(job);
 
 		// Job done
-		succeeded = ((_NWWSetTitleData*)(&job->data))->result;
+		succeeded = job->GetDataAs<_NWWSetTitleData>()->result;
 		ERR_ASSERT(succeeded, u8"SetWindowTextW failed to set window title!", return false);
 		return true;
 	}
@@ -204,6 +204,13 @@ namespace Engine::PlatformSpecific::Windows {
 
 		return Vector2((float)pos.x, (float)pos.y);
 	}
+
+	struct _NWWSetVec2 {
+		HWND hWnd;
+		int32 x;
+		int32 y;
+		bool result;
+	};
 	bool NativeWindow::SetPosition(const Vector2& position) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
@@ -215,7 +222,24 @@ namespace Engine::PlatformSpecific::Windows {
 		bool succeeded = AdjustWindowRect(&rect, GetStyle(), FALSE);
 		ERR_ASSERT(succeeded, u8"AdjustWindowRect failed to calculate window rect!", return false);
 
-		succeeded=SetWindowPos(hWnd, NULL, rect.left, rect.top, 0, 0, SWP_NOREPOSITION | SWP_NOSIZE);
+		// Job
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWSetVec2>();
+			bool succeeded = SetWindowPos(data->hWnd, NULL, data->x, data->y, 0, 0, SWP_NOREPOSITION | SWP_NOSIZE);
+			data->result = succeeded;
+		};
+
+		_NWWSetVec2 data = {};
+		data.hWnd = hWnd;
+		data.x = rect.left;
+		data.y = rect.top;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+
+		js->WaitJob(job);
+
+		succeeded = job->GetDataAs<_NWWSetVec2>()->result;
 		ERR_ASSERT(succeeded, u8"SetWindowPos failed to set window rect!", return false);
 		return true;
 	}
@@ -237,7 +261,25 @@ namespace Engine::PlatformSpecific::Windows {
 		rect.bottom = (int)size.y;
 		AdjustWindowRect(&rect, GetStyle(), FALSE);
 
-		SetWindowPos(hWnd, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOREPOSITION | SWP_NOMOVE);
+		// Job
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWSetVec2>();
+			bool succeeded = SetWindowPos(data->hWnd, NULL, 0, 0, data->x, data->y, SWP_NOREPOSITION | SWP_NOMOVE);
+			data->result = succeeded;
+		};
+
+		_NWWSetVec2 data = {};
+		data.hWnd = hWnd;
+		data.x = rect.right - rect.left;
+		data.y = rect.bottom - rect.top;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+
+		js->WaitJob(job);
+
+		bool succeeded = job->GetDataAs<_NWWSetVec2>()->result;
+		ERR_ASSERT(succeeded, u8"SetWindowPos failed to set window rect!", return false);
 		return true;
 	}
 
@@ -245,11 +287,32 @@ namespace Engine::PlatformSpecific::Windows {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return HasStyleFlag(WS_VISIBLE);
 	}
+
+	struct _NWWStyleFlagData {
+		NativeWindow* window;
+		bool enabled;
+		bool result;
+	};
 	bool NativeWindow::SetVisible(bool visible) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		bool succeed = SetStyleFlag(WS_VISIBLE, visible);
-		UpdateWindow(hWnd);
-		return succeed;
+		
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWStyleFlagData>();
+			bool succeeded = data->window->SetStyleFlag(WS_VISIBLE, data->enabled);
+			UpdateWindow(data->window->GetHWnd());
+			data->result = succeeded;
+		};
+		_NWWStyleFlagData data = {};
+		data.window = this;
+		data.enabled = visible;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+
+		js->WaitJob(job);
+
+		bool succeeded = job->GetDataAs<_NWWStyleFlagData>()->result;
+		return succeeded;
 	}
 	
 	bool NativeWindow::IsMinimized() const {
@@ -323,5 +386,8 @@ namespace Engine::PlatformSpecific::Windows {
 		}
 		SetWindowLongW(hWnd, GWL_STYLE, s);
 		return true;
+	}
+	HWND NativeWindow::GetHWnd() const {
+		return hWnd;
 	}
 }
