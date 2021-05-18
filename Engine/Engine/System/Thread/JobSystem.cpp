@@ -11,8 +11,13 @@ namespace Engine {
 	JobWorker::JobWorker(JobSystem* manager, int32 id) :manager(manager), id(id) {}
 
 	void JobWorker::Start() {
+		shouldRun = true;
+
 		thread = std::thread(ThreadFunction, this);
 		thread.detach();
+	}
+	void JobWorker::RequireStop() {
+		shouldRun = false;
 	}
 
 	void JobWorker::ThreadFunction(JobWorker* worker) {
@@ -29,13 +34,16 @@ namespace Engine {
 			auto job = worker->GetJob();
 			if (job != nullptr) {
 				//INFO_MSG(String::Format(STRL("Worker {0} start working..."), worker->GetId()).GetRawArray());
-				job->function(job.GetRaw(), job->data, worker);
-				job->finished = true;
+				RunJob(job,worker->GetId());
 			}
 		}
 
 		INFO_MSG(String::Format(STRL("Job worker {0} stopped."), worker->id).GetRawArray());
 		worker->running = false;
+	}
+	void JobWorker::RunJob(SharedPtr<Job>& job,int32 workerId) {
+		job->function(job.GetRaw(), workerId);
+		job->finished = true;
 	}
 	bool JobWorker::HasJob() const {
 		return exclusiveJobs.GetCount() > 0 || manager->HasJob();
@@ -54,7 +62,7 @@ namespace Engine {
 		exclusiveJobs.Add(job);
 	}
 	bool JobWorker::ShouldRun() const {
-		return manager->IsRunning();
+		return shouldRun;
 	}
 	bool JobWorker::IsRunning() const {
 		return running;
@@ -90,7 +98,9 @@ namespace Engine {
 	}
 
 	void JobSystem::Stop() {
-		running = false;
+		for (const auto& worker : workers) {
+			worker->RequireStop();
+		}
 
 		// Wait for all threads stop.
 		bool stop = true;
@@ -105,9 +115,11 @@ namespace Engine {
 				}
 			}
 		} while (!stop);
+
+		running = false;
 	}
 
-	void JobSystem::AddJob(Job::WorkFunction function,void* data,sizeint dataLength,JobWorker::Preference preference) {
+	SharedPtr<Job> JobSystem::AddJob(Job::WorkFunction function,void* data,sizeint dataLength,JobWorker::Preference preference) {
 		if (data != nullptr) {
 			FATAL_ASSERT(dataLength <= Job::DataLength, u8"data is too large to put into a job! Consider putting a pointer to the actual data.");
 		}
@@ -137,6 +149,8 @@ namespace Engine {
 
 		//INFO_MSG(u8"JobSystem fed a job, notifing one.");
 		jobsCond.notify_all();
+
+		return job;
 	}
 	SharedPtr<Job> JobSystem::GetJob() {
 		auto lock = SimpleLock<Mutex>(jobsMutex);
@@ -154,6 +168,16 @@ namespace Engine {
 	}
 	bool JobSystem::IsRunning() const {
 		return running;
+	}
+
+	void JobSystem::WaitJob(SharedPtr<Job> job) {
+		while (!job->finished) {
+			// Help run jobs when waiting.
+			if (HasJob()) {
+				auto job = GetJob();
+				JobWorker::RunJob(job, -1);
+			}
+		}
 	}
 #pragma endregion
 }

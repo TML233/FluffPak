@@ -23,11 +23,11 @@ namespace Engine {
 	struct Job;
 
 	struct Job {
-		using WorkFunction = void (*)(Job* job, void* data, JobWorker* worker);
+		using WorkFunction = void (*)(Job* job, int32 workerId);
 		static inline constexpr sizeint DataLength = 64 - 8 - 1;
 
 		WorkFunction function;
-		bool finished = false;
+		volatile bool finished = false;
 		// Data zone, also prevents false sharing.
 		byte data[DataLength];
 	};
@@ -41,21 +41,35 @@ namespace Engine {
 
 		JobWorker(JobSystem* manager,int32 id);
 
+		/// @brief Start the worker.
 		void Start();
-		static void ThreadFunction(JobWorker* worker);
+		/// @brief Require the worker to stop.\n
+		/// Use JobWorker::IsRunning() to check if the worker has stopped.
+		void RequireStop();
+
+		/// @brief Indicates that should this worker continue running.
 		bool ShouldRun() const;
+		/// @brief Indicates that if the thread of this worker is still running.
 		bool IsRunning() const;
+
+		/// @brief Job worker thread function. 
+		static void ThreadFunction(JobWorker* worker);
+		/// @brief Job running sequence.
+		static void RunJob(SharedPtr<Job>& job,int32 workerId);
+
+		int32 GetId() const;
+
+	private:
+		friend class JobSystem;
 
 		bool HasJob() const;
 		SharedPtr<Job> GetJob();
 		void AddExclusiveJob(SharedPtr<Job> job);
 
-		int32 GetId() const;
-
-	private:
 		JobSystem* manager;
 		std::thread thread;
 		volatile bool running = false;
+		volatile bool shouldRun = false;
 
 		List<SharedPtr<Job>> exclusiveJobs{ 30 };
 		mutable Mutex exclusiveJobMutex;
@@ -67,15 +81,25 @@ namespace Engine {
 	public:
 		JobSystem();
 
+		/// @brief Start the job system.
 		void Start();
+		/// @brief Stop the job system.\n
+		/// Will block until all the worker threads stop.
 		void Stop();
-		void AddJob(Job::WorkFunction function, void* data = nullptr, sizeint dataLength = 0, JobWorker::Preference preference = JobWorker::Preference::Null);
-		SharedPtr<Job> GetJob();
+		/// @brief Add a job.
+		SharedPtr<Job> AddJob(Job::WorkFunction function, void* data = nullptr, sizeint dataLength = 0, JobWorker::Preference preference = JobWorker::Preference::Null);
+		/// @brief Indicates if the job system has job waiting for running.
 		bool HasJob() const;
+		/// @brief Indicates if the job system is still running.
 		bool IsRunning() const;
+		/// @brief Wait for a job stop. Will help run other jobs while waiting.
+		void WaitJob(SharedPtr<Job> job);
 
 	private:
 		friend class JobWorker;
+
+		/// @brief Get a job from the public job queue.
+		SharedPtr<Job> GetJob();
 
 		volatile bool running = false;
 
