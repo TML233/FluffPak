@@ -4,20 +4,11 @@
 #include "Engine/System/Collection/Dictionary.h"
 #include "Engine/System/Memory/SharedPtr.h"
 #include "Engine/System/Thread/ThreadUtils.h"
-#include <mutex>
-#include <condition_variable>
+#include <thread>
 
 #undef GetJob
 
 namespace Engine {
-	using Mutex = std::mutex;
-	template<typename T>
-	using SimpleLock = std::lock_guard<T>;
-	template<typename T>
-	using AdvanceLock = std::unique_lock<T>;
-
-	using ConditionVariable = std::condition_variable;
-
 	class JobSystem;
 	class JobWorker;
 	struct Job;
