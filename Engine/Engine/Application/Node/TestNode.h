@@ -18,5 +18,6 @@ namespace Engine {
 		void OnKeyDown(int32 keyCode);
 	private:
 		double next = 1;
+		bool border = true;
 	};
 }

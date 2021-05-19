@@ -55,16 +55,26 @@ namespace Engine::PlatformSpecific::Windows {
 		bool IsResizable() const override;
 		bool SetResizable(bool resizable) override;
 
+		HWND GetHWnd() const;
+
+		DWORD GetStyle() const;
+		DWORD GetExStyle() const;
+		bool HasStyleFlag(DWORD style) const;
+		bool SetStyleFlag(DWORD style, bool enabled);
+
 		static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 		static inline constexpr const WCHAR* GlobalWindowClassName = L"EngineBasicWindowClass";
+		static inline constexpr DWORD DefaultWindowStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_BORDER;
+		static inline constexpr DWORD DefaultWindowExStyle = WS_EX_ACCEPTFILES;
 
 		static NativeWindow* GetFromHWnd(HWND hWnd);
 
-		DWORD GetStyle() const;
-		bool HasStyleFlag(DWORD style) const;
-		bool SetStyleFlag(DWORD style, bool enabled);
-		HWND GetHWnd() const;
+		static DWORD GetStyle(HWND hWnd);
+		static DWORD GetExStyle(HWND hWnd);
+		static bool HasStyleFlag(HWND hWnd, DWORD style);
+		static bool SetStyleFlag(HWND hWnd, DWORD style,bool enabled);
+		
 
 	protected:
 		bool Initialize() override;

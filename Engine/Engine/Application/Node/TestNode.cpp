@@ -27,6 +27,9 @@ namespace Engine {
 		if (elapsed > next) {
 			INFO_MSG(String::Format(u8"{0}: {1} seconds elapsed!.", GetName(),elapsed).GetRawArray());
 			next += 1;
+			border = !border;
+
+			ENGINEINST->GetNativeWindowManager()->Get(1)->SetBorder(border);
 		}
 	}
 	void TestNode::OnExitingTree() {

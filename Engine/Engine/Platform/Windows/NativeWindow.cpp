@@ -62,16 +62,52 @@ namespace Engine::PlatformSpecific::Windows {
 		return wp;
 	}
 
-	struct _NWWInitJobData {
+
+
+
+	struct _NWWInit {
 		LONG_PTR userDataPtr;
 		HWND result;
 	};
+	struct _NWWDestroy {
+		HWND hWnd;
+	};
+	struct _NWWGetTitle {
+		HWND hWnd;
+		UniquePtr<WCHAR[]>* buffer;
+	};
+	struct _NWWSetTitle {
+		HWND hWnd;
+		WCHAR* title;
+		bool result;
+	};
+	struct _NWWGetVector2 {
+		HWND hWnd;
+		int32 x;
+		int32 y;
+	};
+	struct _NWWSetVector2 {
+		HWND hWnd;
+		int32 x;
+		int32 y;
+		bool result;
+	};
+	struct _NWWHasStyleFlag {
+		HWND hWnd;
+		bool result;
+	};
+	struct _NWWSetStyleFlag {
+		HWND hWnd;
+		bool enabled;
+		bool result;
+	};
+
+
 	bool NativeWindow::Initialize() {
 		auto func = [](Job* job) {
-			auto data = job->GetDataAs<_NWWInitJobData>();
+			auto data = job->GetDataAs<_NWWInit>();
 
-			constexpr DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_BORDER;
-			HWND w = CreateWindowW(GlobalWindowClassName, L"", style, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
+			HWND w = CreateWindowExW(DefaultWindowExStyle,GlobalWindowClassName, L"", DefaultWindowStyle, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
 			if (!IsWindow(w)) {
 				data->result = NULL;
 				return;
@@ -83,7 +119,7 @@ namespace Engine::PlatformSpecific::Windows {
 		};
 		
 		// Job data
-		_NWWInitJobData data = {};
+		_NWWInit data = {};
 		data.userDataPtr = (LONG_PTR)this;
 		// Start job
 		auto js = ENGINEINST->GetJobSystem();
@@ -91,16 +127,26 @@ namespace Engine::PlatformSpecific::Windows {
 		// Wait for the result
 		js->WaitJob(job);
 
-		HWND w = job->GetDataAs<_NWWInitJobData>()->result;
+		HWND w = job->GetDataAs<_NWWInit>()->result;
 		ERR_ASSERT(IsWindow(w), u8"CreateWindowW failed to create a window!", return false);
 		hWnd = w;
 		return true;
 	}
+
 	NativeWindow::~NativeWindow() {
 		if (!IsWindow(hWnd)) {
 			return;
 		}
-		DestroyWindow(hWnd);
+
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWDestroy>();
+			DestroyWindow(data->hWnd);
+		};
+		_NWWDestroy data = {};
+		data.hWnd = hWnd;
+
+		auto js = ENGINEINST->GetJobSystem();
+		js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
 	}
 
 	LRESULT CALLBACK NativeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -138,32 +184,44 @@ namespace Engine::PlatformSpecific::Windows {
 	bool NativeWindow::IsValid() const {
 		return IsWindow(hWnd);
 	}
-
+	
 	String NativeWindow::GetTitle() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return String::GetEmpty());
 
-		int len = GetWindowTextLengthW(hWnd);
-		if (len <= 0) {
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWGetTitle>();
+			HWND hWnd = data->hWnd;
+			int len = GetWindowTextLengthW(hWnd);
+			if (len <= 0) {
+				return;
+			}
+			len += 1;
+
+			UniquePtr<WCHAR[]> buffer = UniquePtr<WCHAR[]>::Create(len);
+			GetWindowTextW(hWnd, buffer.GetRaw(), len);
+
+			*(data->buffer) = Memory::Move(buffer);
+		};
+
+		UniquePtr<WCHAR[]> buffer;
+
+		_NWWGetTitle data = {};
+		data.hWnd = hWnd;
+		data.buffer = &buffer;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+		js->WaitJob(job);
+
+		if (buffer == nullptr) {
 			return String::GetEmpty();
 		}
-		len += 1;
-
-		UniquePtr<WCHAR[]> buffer = UniquePtr<WCHAR[]>::Create(len);
-		GetWindowTextW(hWnd, buffer.GetRaw(), len);
-
 		String result;
 		bool succeeded = UnicodeHelper::UnicodeToUTF8(buffer.GetRaw(), result);
-
 		ERR_ASSERT(succeeded, u8"Failed to convert Windows wide string to engine string!", return String::GetEmpty());
 
 		return result;
 	}
-
-	struct _NWWSetTitleData {
-		HWND hWnd;
-		WCHAR* title;
-		bool result;
-	};
 	bool NativeWindow::SetTitle(const String& title) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
@@ -172,45 +230,50 @@ namespace Engine::PlatformSpecific::Windows {
 		
 		ERR_ASSERT(succeeded, u8"Failed to convert engine string to Windows wide string!", return false);
 
-
-		// Job
 		auto func = [](Job* job) {
-			auto data = job->GetDataAs<_NWWSetTitleData>();
+			auto data = job->GetDataAs<_NWWSetTitle>();
 			bool succeeded = SetWindowTextW(data->hWnd, data->title);
 			data->result = succeeded;
 		};
 
-		// Job data
-		_NWWSetTitleData data = {};
+		_NWWSetTitle data = {};
 		data.hWnd = hWnd;
 		data.title = buffer.GetRaw();
 
-		// Do job
 		auto js = ENGINEINST->GetJobSystem();
 		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
 		js->WaitJob(job);
 
-		// Job done
-		succeeded = job->GetDataAs<_NWWSetTitleData>()->result;
+		succeeded = job->GetDataAs<_NWWSetTitle>()->result;
 		ERR_ASSERT(succeeded, u8"SetWindowTextW failed to set window title!", return false);
+		
 		return true;
 	}
 
 	Vector2 NativeWindow::GetPosition() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return Vector2());
 
-		POINT pos{};
-		ClientToScreen(hWnd, &pos);
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWGetVector2>();
 
-		return Vector2((float)pos.x, (float)pos.y);
+			POINT pos{};
+			ClientToScreen(data->hWnd, &pos);
+
+			data->x = pos.x;
+			data->y = pos.y;
+		};
+
+		_NWWGetVector2 data = {};
+		data.hWnd = hWnd;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+		js->WaitJob(job);
+
+		auto rdata = job->GetDataAs<_NWWGetVector2>();
+
+		return Vector2(rdata->x, rdata->y);
 	}
-
-	struct _NWWSetVec2 {
-		HWND hWnd;
-		int32 x;
-		int32 y;
-		bool result;
-	};
 	bool NativeWindow::SetPosition(const Vector2& position) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
@@ -219,17 +282,17 @@ namespace Engine::PlatformSpecific::Windows {
 		rect.top = (int)position.y;
 		rect.right = 100;
 		rect.bottom = 100;
-		bool succeeded = AdjustWindowRect(&rect, GetStyle(), FALSE);
+		bool succeeded = AdjustWindowRectEx(&rect, GetStyle(), FALSE,GetExStyle());
 		ERR_ASSERT(succeeded, u8"AdjustWindowRect failed to calculate window rect!", return false);
 
 		// Job
 		auto func = [](Job* job) {
-			auto data = job->GetDataAs<_NWWSetVec2>();
+			auto data = job->GetDataAs<_NWWSetVector2>();
 			bool succeeded = SetWindowPos(data->hWnd, NULL, data->x, data->y, 0, 0, SWP_NOREPOSITION | SWP_NOSIZE);
 			data->result = succeeded;
 		};
 
-		_NWWSetVec2 data = {};
+		_NWWSetVector2 data = {};
 		data.hWnd = hWnd;
 		data.x = rect.left;
 		data.y = rect.top;
@@ -239,17 +302,34 @@ namespace Engine::PlatformSpecific::Windows {
 
 		js->WaitJob(job);
 
-		succeeded = job->GetDataAs<_NWWSetVec2>()->result;
+		succeeded = job->GetDataAs<_NWWSetVector2>()->result;
 		ERR_ASSERT(succeeded, u8"SetWindowPos failed to set window rect!", return false);
 		return true;
 	}
+	
 	Vector2 NativeWindow::GetSize() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return Vector2());
 
-		RECT rect = {};
-		GetClientRect(hWnd, &rect);
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWGetVector2>();
+			
+			RECT rect = {};
+			GetClientRect(data->hWnd, &rect);
 
-		return Vector2((float)(rect.right - rect.left), (float)(rect.bottom - rect.top));
+			data->x = rect.right - rect.left;
+			data->y = rect.bottom - rect.top;
+		};
+		
+		_NWWGetVector2 data = {};
+		data.hWnd = hWnd;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+		js->WaitJob(job);
+
+		auto rdata = job->GetDataAs<_NWWGetVector2>();
+
+		return Vector2(rdata->x, rdata->y);
 	}
 	bool NativeWindow::SetSize(const Vector2& size) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
@@ -259,16 +339,16 @@ namespace Engine::PlatformSpecific::Windows {
 		rect.top = 0;
 		rect.right = (int)size.x;
 		rect.bottom = (int)size.y;
-		AdjustWindowRect(&rect, GetStyle(), FALSE);
+		AdjustWindowRectEx(&rect, GetStyle(), FALSE,GetExStyle());
 
 		// Job
 		auto func = [](Job* job) {
-			auto data = job->GetDataAs<_NWWSetVec2>();
+			auto data = job->GetDataAs<_NWWSetVector2>();
 			bool succeeded = SetWindowPos(data->hWnd, NULL, 0, 0, data->x, data->y, SWP_NOREPOSITION | SWP_NOMOVE);
 			data->result = succeeded;
 		};
 
-		_NWWSetVec2 data = {};
+		_NWWSetVector2 data = {};
 		data.hWnd = hWnd;
 		data.x = rect.right - rect.left;
 		data.y = rect.bottom - rect.top;
@@ -278,32 +358,40 @@ namespace Engine::PlatformSpecific::Windows {
 
 		js->WaitJob(job);
 
-		bool succeeded = job->GetDataAs<_NWWSetVec2>()->result;
+		bool succeeded = job->GetDataAs<_NWWSetVector2>()->result;
 		ERR_ASSERT(succeeded, u8"SetWindowPos failed to set window rect!", return false);
 		return true;
 	}
 
 	bool NativeWindow::IsVisible() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		return HasStyleFlag(WS_VISIBLE);
-	}
 
-	struct _NWWStyleFlagData {
-		NativeWindow* window;
-		bool enabled;
-		bool result;
-	};
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWHasStyleFlag>();
+			bool result = NativeWindow::HasStyleFlag(data->hWnd, WS_VISIBLE);
+			data->result = result;
+		};
+		_NWWHasStyleFlag data = {};
+		data.hWnd = hWnd;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+		js->WaitJob(job);
+
+		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
+		return result;
+	}
 	bool NativeWindow::SetVisible(bool visible) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		
 		auto func = [](Job* job) {
-			auto data = job->GetDataAs<_NWWStyleFlagData>();
-			bool succeeded = data->window->SetStyleFlag(WS_VISIBLE, data->enabled);
-			UpdateWindow(data->window->GetHWnd());
+			auto data = job->GetDataAs<_NWWSetStyleFlag>();
+			bool succeeded = NativeWindow::SetStyleFlag(data->hWnd, WS_VISIBLE, data->enabled);
+			UpdateWindow(data->hWnd);
 			data->result = succeeded;
 		};
-		_NWWStyleFlagData data = {};
-		data.window = this;
+		_NWWSetStyleFlag data = {};
+		data.hWnd = hWnd;
 		data.enabled = visible;
 
 		auto js = ENGINEINST->GetJobSystem();
@@ -311,74 +399,284 @@ namespace Engine::PlatformSpecific::Windows {
 
 		js->WaitJob(job);
 
-		bool succeeded = job->GetDataAs<_NWWStyleFlagData>()->result;
+		bool succeeded = job->GetDataAs<_NWWSetStyleFlag>()->result;
 		return succeeded;
 	}
 	
 	bool NativeWindow::IsMinimized() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		return HasStyleFlag(WS_MINIMIZE);
+
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWHasStyleFlag>();
+			bool result = NativeWindow::HasStyleFlag(data->hWnd, WS_MINIMIZE);
+			data->result = result;
+		};
+		_NWWHasStyleFlag data = {};
+		data.hWnd = hWnd;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+		js->WaitJob(job);
+
+		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
+		return result;
 	}
 	bool NativeWindow::SetMinimized(bool minimized) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		return SetStyleFlag(WS_MINIMIZE, minimized);
+
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWSetStyleFlag>();
+			bool succeeded = NativeWindow::SetStyleFlag(data->hWnd, WS_MINIMIZE, data->enabled);
+			data->result = succeeded;
+		};
+		_NWWSetStyleFlag data = {};
+		data.hWnd = hWnd;
+		data.enabled = minimized;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+
+		js->WaitJob(job);
+
+		bool succeeded = job->GetDataAs<_NWWSetStyleFlag>()->result;
+		return succeeded;
 	}
 	bool NativeWindow::IsMaximized() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		return HasStyleFlag(WS_MAXIMIZE);
+
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWHasStyleFlag>();
+			bool result = NativeWindow::HasStyleFlag(data->hWnd, WS_MAXIMIZE);
+			data->result = result;
+		};
+		_NWWHasStyleFlag data = {};
+		data.hWnd = hWnd;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+		js->WaitJob(job);
+
+		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
+		return result;
 	}
 	bool NativeWindow::SetMaximized(bool maximized) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		return SetStyleFlag(WS_MAXIMIZE, maximized);
+
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWSetStyleFlag>();
+			bool succeeded = NativeWindow::SetStyleFlag(data->hWnd, WS_MAXIMIZE, data->enabled);
+			data->result = succeeded;
+		};
+		_NWWSetStyleFlag data = {};
+		data.hWnd = hWnd;
+		data.enabled = maximized;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+
+		js->WaitJob(job);
+
+		bool succeeded = job->GetDataAs<_NWWSetStyleFlag>()->result;
+		return succeeded;
 	}
 	bool NativeWindow::HasMinimizeButton() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		return HasStyleFlag(WS_MINIMIZEBOX);
+
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWHasStyleFlag>();
+			bool result = NativeWindow::HasStyleFlag(data->hWnd, WS_MINIMIZEBOX);
+			data->result = result;
+		};
+		_NWWHasStyleFlag data = {};
+		data.hWnd = hWnd;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+		js->WaitJob(job);
+
+		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
+		return result;
 	}
 	bool NativeWindow::SetMinimizeButton(bool enabled) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		return SetStyleFlag(WS_MINIMIZEBOX, enabled);
+
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWSetStyleFlag>();
+			bool succeeded = NativeWindow::SetStyleFlag(data->hWnd, WS_MINIMIZEBOX, data->enabled);
+			data->result = succeeded;
+		};
+		_NWWSetStyleFlag data = {};
+		data.hWnd = hWnd;
+		data.enabled = enabled;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+
+		js->WaitJob(job);
+
+		bool succeeded = job->GetDataAs<_NWWSetStyleFlag>()->result;
+		return succeeded;
 	}
 	bool NativeWindow::HasMaximizeButton() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		return HasStyleFlag(WS_MAXIMIZEBOX);
+
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWHasStyleFlag>();
+			bool result = NativeWindow::HasStyleFlag(data->hWnd, WS_MAXIMIZEBOX);
+			data->result = result;
+		};
+		_NWWHasStyleFlag data = {};
+		data.hWnd = hWnd;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+		js->WaitJob(job);
+
+		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
+		return result;
 	}
 	bool NativeWindow::SetMaximizeButton(bool enabled) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		return SetStyleFlag(WS_MAXIMIZEBOX, enabled);
+
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWSetStyleFlag>();
+			bool succeeded = NativeWindow::SetStyleFlag(data->hWnd, WS_MAXIMIZEBOX, data->enabled);
+			data->result = succeeded;
+		};
+		_NWWSetStyleFlag data = {};
+		data.hWnd = hWnd;
+		data.enabled = enabled;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+
+		js->WaitJob(job);
+
+		bool succeeded = job->GetDataAs<_NWWSetStyleFlag>()->result;
+		return succeeded;
 	}
 
 	bool NativeWindow::HasBorder() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		return HasStyleFlag(WS_BORDER);
+
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWHasStyleFlag>();
+			bool result = NativeWindow::HasStyleFlag(data->hWnd, WS_BORDER);
+			data->result = result;
+		};
+		_NWWHasStyleFlag data = {};
+		data.hWnd = hWnd;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+		js->WaitJob(job);
+
+		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
+		return result;
 	}
 	bool NativeWindow::SetBorder(bool enabled) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
-		Vector2 pos = GetPosition();
-		Vector2 size = GetSize();
-		bool result = SetStyleFlag(WS_BORDER | WS_CAPTION, enabled);
-		SetSize(size);
-		SetPosition(pos);
-		return result;
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWSetStyleFlag>();
+			HWND hWnd = data->hWnd;
+
+			POINT pos{};
+			ClientToScreen(hWnd, &pos);
+			RECT rect = {};
+			GetClientRect(hWnd, &rect);
+			rect.right += rect.left + pos.x;
+			rect.bottom += rect.top + pos.y;
+			rect.left = pos.x;
+			rect.top = pos.y;
+
+			bool succeeded = NativeWindow::SetStyleFlag(hWnd, WS_BORDER | WS_CAPTION, data->enabled);
+			
+			bool adjusted = AdjustWindowRectEx(&rect, NativeWindow::GetStyle(hWnd), FALSE, NativeWindow::GetExStyle(hWnd));
+			if (adjusted) {
+				SetWindowPos(hWnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOREPOSITION);
+			}
+			data->result = succeeded;
+		};
+		_NWWSetStyleFlag data = {};
+		data.hWnd = hWnd;
+		data.enabled = enabled;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+
+		js->WaitJob(job);
+
+		bool succeeded = job->GetDataAs<_NWWSetStyleFlag>()->result;
+		return succeeded;
 	}
+
 	bool NativeWindow::IsResizable() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		return HasStyleFlag(WS_SIZEBOX);
+
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWHasStyleFlag>();
+			bool result = NativeWindow::HasStyleFlag(data->hWnd, WS_SIZEBOX);
+			data->result = result;
+		};
+		_NWWHasStyleFlag data = {};
+		data.hWnd = hWnd;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+		js->WaitJob(job);
+
+		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
+		return result;
 	}
 	bool NativeWindow::SetResizable(bool resizable) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		return SetStyleFlag(WS_SIZEBOX, resizable);
+
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWSetStyleFlag>();
+			bool succeeded = NativeWindow::SetStyleFlag(data->hWnd, WS_SIZEBOX, data->enabled);
+			data->result = succeeded;
+		};
+		_NWWSetStyleFlag data = {};
+		data.hWnd = hWnd;
+		data.enabled = resizable;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+
+		js->WaitJob(job);
+
+		bool succeeded = job->GetDataAs<_NWWSetStyleFlag>()->result;
+		return succeeded;
 	}
 
-	DWORD NativeWindow::GetStyle() const {
+	HWND NativeWindow::GetHWnd() const {
+		return hWnd;
+	}
+
+	DWORD NativeWindow::GetStyle(HWND hWnd) {
 		return GetWindowLongW(hWnd, GWL_STYLE);
 	}
-	bool NativeWindow::HasStyleFlag(DWORD style) const {
-		return GetStyle() & style;
+	DWORD NativeWindow::GetStyle() const {
+		return GetStyle(hWnd);
 	}
-	bool NativeWindow::SetStyleFlag(DWORD style, bool enabled) {
-		DWORD s = GetStyle();
+
+	DWORD NativeWindow::GetExStyle(HWND hWnd) {
+		return GetWindowLongW(hWnd, GWL_EXSTYLE);
+	}
+	DWORD NativeWindow::GetExStyle() const {
+		return GetExStyle(hWnd);
+	}
+
+	bool NativeWindow::HasStyleFlag(HWND hWnd,DWORD style) {
+		return GetStyle(hWnd) & style;
+	}
+	bool NativeWindow::HasStyleFlag(DWORD style) const {
+		return HasStyleFlag(hWnd, style);
+	}
+
+	bool NativeWindow::SetStyleFlag(HWND hWnd, DWORD style, bool enabled) {
+		DWORD s = GetStyle(hWnd);
 		if (enabled) {
 			s |= style;
 		} else {
@@ -387,7 +685,7 @@ namespace Engine::PlatformSpecific::Windows {
 		SetWindowLongW(hWnd, GWL_STYLE, s);
 		return true;
 	}
-	HWND NativeWindow::GetHWnd() const {
-		return hWnd;
+	bool NativeWindow::SetStyleFlag(DWORD style, bool enabled) {
+		return SetStyleFlag(hWnd, style, enabled);
 	}
 }

@@ -92,6 +92,8 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node2D.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/TestNode.cpp"
 )
+set(InterfaceFile
+)
 set(IncludeDir
 	"${CMAKE_CURRENT_LIST_DIR}"
 )
@@ -102,20 +104,20 @@ set(LinkLibrary
 # Add platform-depended header/source files.
 if(WIN32)
 	list(APPEND HeaderFile
-		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/Resource.h"
-		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/TargetVer.h"
-
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/BetterWindows.h"
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.h"
 
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.h"
 	)
 	list(APPEND SourceFile
-		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/Resource.rc"
-
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.cpp"
 
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.cpp"
+	)
+	list(APPEND InterfaceFile
+		#"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/Resource.h"
+		#"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/TargetVer.h"
+		#"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/Resource.rc"
 	)
 	list(APPEND IncludeDir
 	)
@@ -129,7 +131,8 @@ elseif(UNIX AND "${CMAKE_SYSTEM}" MATCHES "Linux")
 	list(APPEND SourceFile
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/NativeWindow.cpp"
 	)
-
+	list(APPEND InterfaceFile
+	)
 	find_package(PkgConfig REQUIRED)
 	pkg_check_modules(GTK REQUIRED gtk+-3.0)
 
@@ -163,4 +166,5 @@ target_link_libraries(Engine PUBLIC ${LinkLibrary})
 target_sources(Engine
 	PUBLIC ${HeaderFile}
 	PRIVATE ${SourceFile}
+	INTERFACE ${InterfaceFile}
 )
