@@ -1,5 +1,5 @@
 #include "doctest.h"
-#include "Engine/Collection/Dictionary.h"
+#include "Engine/System/Collection/Dictionary.h"
 #include "Engine/System/String.h"
 #include "../System/MemoryObject.h"
 

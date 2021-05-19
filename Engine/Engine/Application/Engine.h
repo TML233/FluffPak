@@ -1,13 +1,15 @@
 #pragma once
-
-#include "Engine/System/Object/Object.h"
 #include "Engine/System/Memory/UniquePtr.h"
-#include "Engine/Application/AppLoop.h"
 #include "Engine/Application/Time.h"
-#include "Engine/Application/NativeWindow.h"
-#include "Engine/System/File.h"
+
+#define ENGINEINST ::Engine::Engine::GetInstance()
 
 namespace Engine {
+	class NativeWindowManager;
+	class FileSystem;
+	class JobSystem;
+	class AppLoop;
+
 	/// @brief The engine application manager. Contains every information necessary for a application to run.
 	class Engine final{
 	public:
@@ -35,6 +37,7 @@ namespace Engine {
 
 		NativeWindowManager* GetNativeWindowManager() const;
 		FileSystem* GetFileSystem() const;
+		JobSystem* GetJobSystem() const;
 
 	private:
 		static Engine* instance;
@@ -43,6 +46,7 @@ namespace Engine {
 		Time time{};
 		UniquePtr<NativeWindowManager> nativeWindowManager;
 		UniquePtr<FileSystem> fileSystem;
+		UniquePtr<JobSystem> jobSystem;
 
 		int32 targetFps = 60;
 	};

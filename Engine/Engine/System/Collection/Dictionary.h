@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/System/Object/ObjectUtil.h"
-#include "Engine/Collection/HashHelper.h"
+#include "Engine/System/Collection/HashHelper.h"
 #include "Engine/System/Memory/Memory.h"
 #include "Engine/System/Debug.h"
 
@@ -271,7 +271,7 @@ namespace Engine {
 		}
 
 
-		static const inline int32 CapacityMultiplier = 2;
+		static inline constexpr int32 CapacityMultiplier = 2;
 
 	private:
 		void CopyFromOther(const Dictionary& obj) {

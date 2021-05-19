@@ -5,7 +5,7 @@ namespace Engine::PlatformSpecific::Linux {
 
 	NativeWindowManager::_Initializer::_Initializer() {
 		bool inited = gtk_init_check(0, NULL);
-		FATAL_ASSERT(inited, u8"gtk_init_check returned false. Cannot initialize window framework!");
+		FATAL_ASSERT(inited, u8"Cannot initialize window framework!");
 	}
 
 	NativeWindowManager::_Initializer::~_Initializer() {
@@ -175,7 +175,7 @@ namespace Engine::PlatformSpecific::Linux {
 	}
 
 	void NativeWindow::OnCallbackClose() {
-		Destroy();
+		GetManager()->Destroy(GetId());
 	}
 	gboolean NativeWindow::OnGtkCloseWindow(GtkWidget* widget, GdkEvent* event, gpointer data){
 		NativeWindow* nw = (NativeWindow*)g_object_get_data(G_OBJECT(widget), "NativeWindowPtr");

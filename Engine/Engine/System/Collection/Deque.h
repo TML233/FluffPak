@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/System/Definition.h"
-#include "Engine/Collection/List.h"
+#include "Engine/System/Collection/List.h"
 #include "Engine/System/Memory/SharedPtr.h"
 
 namespace Engine {
@@ -86,7 +86,7 @@ namespace Engine {
 			backIndex = 0;
 		}
 
-		static const inline int32 ChunkSize = 8;
+		static inline constexpr int32 ChunkSize = 8;
 
 	private:
 		struct ElementChunk {

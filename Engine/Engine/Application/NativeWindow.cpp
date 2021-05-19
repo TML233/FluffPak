@@ -6,9 +6,6 @@ namespace Engine {
 	uint64 NativeWindow::GetId() const {
 		return id;
 	}
-	void NativeWindow::Destroy() {
-		manager->Destory(id);
-	}
 	NativeWindowManager* NativeWindow::GetManager() const {
 		return manager;
 	}
@@ -21,36 +18,46 @@ namespace Engine {
 		window->id = idCounter.FetchAdd(1);
 		window->manager = this;
 
-		windows.Add(window->id, window);
+		{
+			auto lock = SimpleLock<Mutex>(windowsMutex);
+			windows.Add(window->id, window);
+		}
 
 		bool succeeded = window->Initialize();
 		if (!succeeded) {
 			ERR_MSG(u8"Failed to initialize a NativeWindow!");
-			window->Destroy();
+			Destroy(window->GetId());
 			return nullptr;
 		} else {
 			return window.GetRaw();
 		}
 	}
 	bool NativeWindowManager::IsExists(NativeWindow::ID id) const {
+		auto lock = SimpleLock<Mutex>(windowsMutex);
 		return windows.ContainsKey(id);
 	}
-	bool NativeWindowManager::Destory(NativeWindow::ID id) {
+	bool NativeWindowManager::Destroy(NativeWindow::ID id) {
 		ERR_ASSERT(IsExists(id), u8"Specified window id not found!", return false);
 
-		windows.Remove(id);
+		{
+			auto lock = SimpleLock<Mutex>(windowsMutex);
+			windows.Remove(id);
+		}
 		return true;
 	}
 	NativeWindow* NativeWindowManager::Get(NativeWindow::ID id) const {
-		if (!IsExists(id)) {
-			return nullptr;
+		SharedPtr<NativeWindow> ptr;
+		{
+			auto lock = SimpleLock<Mutex>(windowsMutex);
+			windows.TryGet(id, ptr);
 		}
-		return windows.Get(id).GetRaw();
+		return ptr.GetRaw();
 	}
 	int32 NativeWindowManager::GetCount() const {
 		return windows.GetCount();
 	}
 	void NativeWindowManager::Clear() {
+		auto lock = SimpleLock<Mutex>(windowsMutex);
 		windows.Clear();
 	}
 }

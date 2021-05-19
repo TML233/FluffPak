@@ -2,9 +2,9 @@
 
 #include "Engine/System/Definition.h"
 #include "Engine/System/String.h"
-#include "Engine/System/Atomic.h"
+#include "Engine/System/Thread/Atomic.h"
 #include "Engine/System/Object/InstanceId.h"
-#include "Engine/Collection/Dictionary.h"
+#include "Engine/System/Collection/Dictionary.h"
 #include "Engine/System/Object/Reflection.h"
 #include "Engine/System/Memory/CopyOnWrite.h"
 

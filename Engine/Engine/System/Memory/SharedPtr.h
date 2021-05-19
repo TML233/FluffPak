@@ -2,7 +2,7 @@
 
 #include "Engine/System/Definition.h"
 #include "Engine/System/Memory/Memory.h"
-#include "Engine/System/Atomic.h"
+#include "Engine/System/Thread/Atomic.h"
 
 namespace Engine {
 	struct SharedPtrCounter {
@@ -35,12 +35,13 @@ namespace Engine {
 			Reference();
 		}
 
+		template<typename U>
+		friend class SharedPtr;
+
 		template<typename U,typename = std::is_convertible<U,T>>
 		SharedPtr(const SharedPtr<U>& shared):ptr(shared.ptr),data(shared.data) {
 			Reference();
 		}
-		template<typename U>
-		friend class SharedPtr;
 
 		SharedPtr& operator=(const SharedPtr& obj) {
 			if (&obj == this) {

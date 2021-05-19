@@ -22,7 +22,9 @@ namespace Engine::PlatformSpecific::Windows {
 	};
 
 	class NativeWindow final:public ::Engine::NativeWindow {
-		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::NativeWindow, ::Engine::NativeWindow) {}
+		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::NativeWindow, ::Engine::NativeWindow) {
+			REFLECTION_SIGNAL(STRL("KeyDown"), { SIGARG(STRL("keyCode"),Variant::Type::Int64) });
+		}
 
 	public:
 		~NativeWindow();
@@ -43,6 +45,8 @@ namespace Engine::PlatformSpecific::Windows {
 		bool SetMinimized(bool minimized) override;
 		bool IsMaximized() const override;
 		bool SetMaximized(bool maximized) override;
+		bool HasCloseButton() const override;
+		bool SetCloseButton(bool enabled) override;
 		bool HasMinimizeButton() const override;
 		bool SetMinimizeButton(bool enabled) override;
 		bool HasMaximizeButton() const override;
@@ -53,18 +57,31 @@ namespace Engine::PlatformSpecific::Windows {
 		bool IsResizable() const override;
 		bool SetResizable(bool resizable) override;
 
+		HWND GetHWnd() const;
+
+		DWORD GetStyle() const;
+		DWORD GetExStyle() const;
+		bool HasStyleFlag(DWORD style) const;
+		bool SetStyleFlag(DWORD style, bool enabled);
+
 		static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-		static const WCHAR* GetGlobalWindowClassName();
+
+		static inline constexpr const WCHAR* GlobalWindowClassName = L"EngineBasicWindowClass";
+		static inline constexpr DWORD DefaultWindowStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_BORDER;
+		static inline constexpr DWORD DefaultWindowExStyle = WS_EX_ACCEPTFILES;
 
 		static NativeWindow* GetFromHWnd(HWND hWnd);
+
+		static DWORD GetStyle(HWND hWnd);
+		static DWORD GetExStyle(HWND hWnd);
+		static bool HasStyleFlag(HWND hWnd, DWORD style);
+		static bool SetStyleFlag(HWND hWnd, DWORD style,bool enabled);
+		
 
 	protected:
 		bool Initialize() override;
 
 	private:
 		HWND hWnd = NULL;
-		DWORD GetStyle() const;
-		bool HasStyleFlag(DWORD style) const;
-		bool SetStyleFlag(DWORD style, bool enabled);
 	};
 }

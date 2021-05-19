@@ -20,25 +20,28 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory/IntrusivePtr.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory/CopyOnWrite.h"
 
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/ThreadUtils.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/Atomic.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/JobSystem.h"
+
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Atomic.h"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.h"
 	
 	
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Vector2.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Rect2.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Transform2.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Math.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Random.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Vector2.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Rect2.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Transform2.h"
 
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Iterator.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/List.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Dictionary.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/Deque.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/Iterator.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/HashHelper.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/List.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/Dictionary.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/Deque.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Definition.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Platform.h"
@@ -67,15 +70,17 @@ set(SourceFile
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.cpp"
-	
 
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Math.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Random.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Vector2.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Rect2.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Math/Transform2.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/ThreadUtils.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/JobSystem.cpp"
+
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Math.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Random.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Vector2.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Rect2.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Transform2.cpp"
 	
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Collection/HashHelper.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/HashHelper.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Engine.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Time.cpp"
@@ -87,6 +92,8 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node2D.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/TestNode.cpp"
 )
+set(InterfaceFile
+)
 set(IncludeDir
 	"${CMAKE_CURRENT_LIST_DIR}"
 )
@@ -97,20 +104,20 @@ set(LinkLibrary
 # Add platform-depended header/source files.
 if(WIN32)
 	list(APPEND HeaderFile
-		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/Resource.h"
-		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/TargetVer.h"
-
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/BetterWindows.h"
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.h"
 
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.h"
 	)
 	list(APPEND SourceFile
-		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/Resource.rc"
-
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.cpp"
 
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.cpp"
+	)
+	list(APPEND InterfaceFile
+		#"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/Resource.h"
+		#"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/TargetVer.h"
+		#"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/Resource.rc"
 	)
 	list(APPEND IncludeDir
 	)
@@ -124,7 +131,8 @@ elseif(UNIX AND "${CMAKE_SYSTEM}" MATCHES "Linux")
 	list(APPEND SourceFile
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/NativeWindow.cpp"
 	)
-
+	list(APPEND InterfaceFile
+	)
 	find_package(PkgConfig REQUIRED)
 	pkg_check_modules(GTK REQUIRED gtk+-3.0)
 
@@ -132,7 +140,7 @@ elseif(UNIX AND "${CMAKE_SYSTEM}" MATCHES "Linux")
 		"${GTK_INCLUDE_DIRS}"
 	)
 	list(APPEND LinkLibrary
-		"${GTK_LIBRARIES}"
+		"${GTK_LIBRARIES}" pthread
 	)
 endif()
 
@@ -158,4 +166,5 @@ target_link_libraries(Engine PUBLIC ${LinkLibrary})
 target_sources(Engine
 	PUBLIC ${HeaderFile}
 	PRIVATE ${SourceFile}
+	INTERFACE ${InterfaceFile}
 )

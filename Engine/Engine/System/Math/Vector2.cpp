@@ -1,5 +1,5 @@
-#include "Engine/Math/Vector2.h"
-#include "Engine/Math/Math.h"
+#include "Engine/System/Math/Vector2.h"
+#include "Engine/System/Math/Math.h"
 #include "Engine/System/String.h"
 
 namespace Engine {

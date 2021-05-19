@@ -1,5 +1,6 @@
 #include "Engine/Application/Node/NodeTree.h"
 #include "Engine/Application/Engine.h"
+#include "Engine/Application/NativeWindow.h"
 
 namespace Engine {
 	NodeTree::NodeTree() {
