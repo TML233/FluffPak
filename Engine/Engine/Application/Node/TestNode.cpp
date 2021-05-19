@@ -29,7 +29,7 @@ namespace Engine {
 			next += 1;
 			border = !border;
 
-			ENGINEINST->GetNativeWindowManager()->Get(1)->SetBorder(border);
+			//ENGINEINST->GetNativeWindowManager()->Get(1)->SetBorder(border);
 		}
 	}
 	void TestNode::OnExitingTree() {

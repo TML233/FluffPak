@@ -24,14 +24,24 @@ namespace Engine {
 		worker->running = true;
 		//INFO_MSG(String::Format(STRL("Job worker {0} started."), worker->id).GetRawArray());
 
+		SharedPtr<Job> job;
 		while (worker->ShouldRun()) {
-			while (worker->ShouldRun() && !worker->HasJob()) {
-				auto lock = AdvanceLock<Mutex>(worker->manager->jobsCondMutex);
-				worker->manager->jobsCond.wait(lock);
-			}
-			auto job = worker->GetJob();
 			if (job != nullptr) {
 				RunJob(job);
+				job = SharedPtr<Job>(nullptr);
+			}
+
+			{
+				auto lock = AdvanceLock<Mutex>(worker->manager->jobsCondMutex);
+				worker->manager->jobsCond.wait(lock, [worker, &job]() {
+					if (!worker->ShouldRun()) {
+						return true;
+					}
+					if (job == nullptr) {
+						job = worker->GetJob();
+					}
+					return job != nullptr;
+				});
 			}
 		}
 
@@ -42,15 +52,14 @@ namespace Engine {
 		job->function(job.GetRaw());
 		job->finished = true;
 	}
-	bool JobWorker::HasJob() const {
-		return exclusiveJobs.GetCount() > 0 || manager->HasJob();
-	}
 	SharedPtr<Job> JobWorker::GetJob() {
-		if (exclusiveJobs.GetCount() > 0) {
+		{
 			auto lock = SimpleLock<Mutex>(exclusiveJobMutex);
-			auto job = exclusiveJobs.Get(exclusiveJobs.GetCount() - 1);
-			exclusiveJobs.RemoveAt(exclusiveJobs.GetCount() - 1);
-			return job;
+			if (exclusiveJobs.GetCount() > 0) {
+				auto job = exclusiveJobs.Get(exclusiveJobs.GetCount() - 1);
+				exclusiveJobs.RemoveAt(exclusiveJobs.GetCount() - 1);
+				return job;
+			}
 		}
 		return manager->GetJob();
 	}
@@ -72,7 +81,7 @@ namespace Engine {
 
 #pragma region JobSystem
 	JobSystem::JobSystem() {
-		int32 hardware = ThreadUtils::GetHardwareThreadCount();
+		int32 hardware = 2;//ThreadUtils::GetHardwareThreadCount();
 		INFO_MSG(String::Format(STRING_LITERAL("{0} hardware threads, creating {1} job workers."), hardware, hardware - 1).GetRawArray());
 		//INFO_MSG(String::Format(STRING_LITERAL("L1 cache line size: {0} bytes."), CacheLineSize).GetRawArray());
 		INFO_MSG(String::Format(STRING_LITERAL("Job struct size: {0} bytes."), sizeof(Job)).GetRawArray());
@@ -154,16 +163,13 @@ namespace Engine {
 	SharedPtr<Job> JobSystem::GetJob() {
 		auto lock = SimpleLock<Mutex>(jobsMutex);
 
-		if (HasJob()) {
+		if (jobs.GetCount()>0) {
 			auto job = jobs.Get(jobs.GetCount() - 1);
 			jobs.RemoveAt(jobs.GetCount() - 1);
 			return job;
 		} else {
 			return SharedPtr<Job>(nullptr);
 		}
-	}
-	bool JobSystem::HasJob() const {
-		return jobs.GetCount() > 0;
 	}
 	bool JobSystem::IsRunning() const {
 		return running;
@@ -172,10 +178,10 @@ namespace Engine {
 	void JobSystem::WaitJob(SharedPtr<Job> job) {
 		while (!job->finished) {
 			// Help run jobs when waiting.
-			if (HasJob()) {
-				auto job = GetJob();
-				JobWorker::RunJob(job);
-			}
+			//auto job = GetJob();
+			//if (job!=nullptr) {
+			//	JobWorker::RunJob(job);
+			//}
 		}
 	}
 #pragma endregion

@@ -56,7 +56,6 @@ namespace Engine {
 	private:
 		friend class JobSystem;
 
-		bool HasJob() const;
 		SharedPtr<Job> GetJob();
 		void AddExclusiveJob(SharedPtr<Job> job);
 
@@ -82,8 +81,6 @@ namespace Engine {
 		void Stop();
 		/// @brief Add a job.
 		SharedPtr<Job> AddJob(Job::WorkFunction function, void* data = nullptr, sizeint dataLength = 0, Job::Preference preference = Job::Preference::Null);
-		/// @brief Indicates if the job system has job waiting for running.
-		bool HasJob() const;
 		/// @brief Indicates if the job system is still running.
 		bool IsRunning() const;
 		/// @brief Wait for a job stop. Will help run other jobs while waiting.
