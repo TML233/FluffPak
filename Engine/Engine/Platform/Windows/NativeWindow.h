@@ -45,6 +45,8 @@ namespace Engine::PlatformSpecific::Windows {
 		bool SetMinimized(bool minimized) override;
 		bool IsMaximized() const override;
 		bool SetMaximized(bool maximized) override;
+		bool HasCloseButton() const override;
+		bool SetCloseButton(bool enabled) override;
 		bool HasMinimizeButton() const override;
 		bool SetMinimizeButton(bool enabled) override;
 		bool HasMaximizeButton() const override;

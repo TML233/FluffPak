@@ -26,14 +26,11 @@ namespace Engine {
 
 		while (worker->ShouldRun()) {
 			while (worker->ShouldRun() && !worker->HasJob()) {
-				//INFO_MSG(String::Format(STRL("Worker {0} waiting for job..."),worker->GetId()).GetRawArray());
 				auto lock = AdvanceLock<Mutex>(worker->manager->jobsCondMutex);
 				worker->manager->jobsCond.wait(lock);
 			}
-			//INFO_MSG(String::Format(STRL("Worker {0} exited wait loop."), worker->GetId()).GetRawArray());
 			auto job = worker->GetJob();
 			if (job != nullptr) {
-				//INFO_MSG(String::Format(STRL("Worker {0} start working..."), worker->GetId()).GetRawArray());
 				RunJob(job);
 			}
 		}

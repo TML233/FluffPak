@@ -479,6 +479,45 @@ namespace Engine::PlatformSpecific::Windows {
 		bool succeeded = job->GetDataAs<_NWWSetStyleFlag>()->result;
 		return succeeded;
 	}
+	bool NativeWindow::HasCloseButton() const {
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
+
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWHasStyleFlag>();
+			bool result = GetMenuState(GetSystemMenu(data->hWnd, false), SC_CLOSE, MF_BYCOMMAND) & MF_ENABLED;
+			data->result = result;
+		};
+		_NWWHasStyleFlag data = {};
+		data.hWnd = hWnd;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+		js->WaitJob(job);
+
+		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
+		return result;
+	}
+	bool NativeWindow::SetCloseButton(bool enabled) {
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
+
+		auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWSetStyleFlag>();
+			DWORD flag = (data->enabled ? MF_ENABLED : MF_DISABLED | MF_GRAYED);
+			bool succeeded = EnableMenuItem(GetSystemMenu(data->hWnd, false), SC_CLOSE, MF_BYCOMMAND | flag);
+			data->result = succeeded;
+		};
+		_NWWSetStyleFlag data = {};
+		data.hWnd = hWnd;
+		data.enabled = enabled;
+
+		auto js = ENGINEINST->GetJobSystem();
+		auto job = js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+
+		js->WaitJob(job);
+
+		bool succeeded = job->GetDataAs<_NWWSetStyleFlag>()->result;
+		return succeeded;
+	}
 	bool NativeWindow::HasMinimizeButton() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 

@@ -69,7 +69,9 @@ namespace Engine {
 		}
 
 		jobSystem->Start();
+		INFO_MSG(u8"Job system started.");
 		appLoop->OnStart();
+		INFO_MSG(u8"App loop started.");
 #pragma endregion
 
 #pragma region Loop

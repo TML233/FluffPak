@@ -41,6 +41,8 @@ namespace Engine{
 		virtual bool SetMinimized(bool minimized) = 0;
 		virtual bool IsMaximized() const = 0;
 		virtual bool SetMaximized(bool maximized) = 0;
+		virtual bool HasCloseButton() const = 0;
+		virtual bool SetCloseButton(bool enabled) = 0;
 		virtual bool HasMaximizeButton() const = 0;
 		virtual bool SetMaximizeButton(bool enabled) = 0;
 		virtual bool HasMinimizeButton() const = 0;
