@@ -109,7 +109,7 @@ namespace Engine::PlatformSpecific::Windows {
 			{
 				NativeWindow* nw = NativeWindow::GetFromHWnd(hWnd);
 				if (nw != nullptr) {
-					nw->Destroy();
+					nw->GetManager()->Destroy(nw->GetId());
 				} else {
 					ERR_MSG(u8"User data in hWnd is not a NativeWindow ptr! This shouldn't happen!");
 					DestroyWindow(hWnd);

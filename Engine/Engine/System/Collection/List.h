@@ -142,8 +142,8 @@ namespace Engine{
 			}
 			count = 0;
 		}
-		static const inline int32 DefaultCapacity = 4;
-		static const inline int32 CapacityMultiplier = 2;
+		static inline constexpr int32 DefaultCapacity = 4;
+		static inline constexpr int32 CapacityMultiplier = 2;
 		
 		Iterator begin() const {
 			return Iterator(elements);

@@ -22,7 +22,7 @@ namespace Engine {
 
 	void JobWorker::ThreadFunction(JobWorker* worker) {
 		worker->running = true;
-		INFO_MSG(String::Format(STRL("Job worker {0} started."), worker->id).GetRawArray());
+		//INFO_MSG(String::Format(STRL("Job worker {0} started."), worker->id).GetRawArray());
 
 		while (worker->ShouldRun()) {
 			while (worker->ShouldRun() && !worker->HasJob()) {
@@ -38,7 +38,7 @@ namespace Engine {
 			}
 		}
 
-		INFO_MSG(String::Format(STRL("Job worker {0} stopped."), worker->id).GetRawArray());
+		//INFO_MSG(String::Format(STRL("Job worker {0} stopped."), worker->id).GetRawArray());
 		worker->running = false;
 	}
 	void JobWorker::RunJob(SharedPtr<Job>& job) {

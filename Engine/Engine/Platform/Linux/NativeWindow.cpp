@@ -175,7 +175,7 @@ namespace Engine::PlatformSpecific::Linux {
 	}
 
 	void NativeWindow::OnCallbackClose() {
-		Destroy();
+		GetManager()->Destroy(GetId());
 	}
 	gboolean NativeWindow::OnGtkCloseWindow(GtkWidget* widget, GdkEvent* event, gpointer data){
 		NativeWindow* nw = (NativeWindow*)g_object_get_data(G_OBJECT(widget), "NativeWindowPtr");

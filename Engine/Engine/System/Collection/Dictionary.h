@@ -271,7 +271,7 @@ namespace Engine {
 		}
 
 
-		static const inline int32 CapacityMultiplier = 2;
+		static inline constexpr int32 CapacityMultiplier = 2;
 
 	private:
 		void CopyFromOther(const Dictionary& obj) {

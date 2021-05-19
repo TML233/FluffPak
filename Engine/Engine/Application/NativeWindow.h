@@ -6,9 +6,12 @@
 #include "Engine/System/Collection/Dictionary.h"
 #include "Engine/System/Thread/Atomic.h"
 #include "Engine/System/Memory/SharedPtr.h"
+#include "Engine/System/Thread/ThreadUtils.h"
 
 namespace Engine{
 	class NativeWindowManager;
+
+	/// @brief A native window of the platform.
 	class NativeWindow: public ManualObject {
 		REFLECTION_CLASS(::Engine::NativeWindow, ::Engine::ManualObject) {
 			REFLECTION_CLASS_INSTANTIABLE(false);
@@ -16,8 +19,10 @@ namespace Engine{
 
 	public:
 		using ID = uint64;
-		const static inline ID NullId = 0;
+		static inline constexpr ID NullId = 0;
 
+		/// @brief Deinitialize the native window here.\n
+		/// The dtor ensures that the deinitialization is definitely executed.
 		virtual ~NativeWindow() = default;
 
 		virtual bool IsValid() const = 0;
@@ -46,7 +51,6 @@ namespace Engine{
 		virtual bool IsResizable() const = 0;
 		virtual bool SetResizable(bool resizable) = 0;
 
-		void Destroy();
 		ID GetId() const;
 		NativeWindowManager* GetManager() const;
 
@@ -59,6 +63,7 @@ namespace Engine{
 		friend class NativeWindowManager;
 	};
 
+	/// @brief Controls the native window of the platform.
 	class NativeWindowManager :public ManualObject {
 		REFLECTION_CLASS(::Engine::NativeWindowManager, ::Engine::ManualObject) {
 			REFLECTION_CLASS_INSTANTIABLE(false);
@@ -66,16 +71,26 @@ namespace Engine{
 
 	public:
 		virtual ~NativeWindowManager();
+		/// @brief Create a native window with default style, and hidden.
+		/// @return nullptr when failed.
 		NativeWindow* Create();
+		/// @brief Get a native window by ID.
+		/// @return nullptr when not found.
 		NativeWindow* Get(NativeWindow::ID id) const;
+		/// @brief Get the count of current existing native windows.
 		int32 GetCount() const;
+		/// @brief Check if the native window exists.
 		bool IsExists(NativeWindow::ID id) const;
-		bool Destory(NativeWindow::ID id);
+		/// @brief Destroy a native window.
+		bool Destroy(NativeWindow::ID id);
+		/// @brief Destroy all native windows.
 		void Clear();
+
 		virtual void Update() = 0;
 
 	private:
 		AtomicValue<NativeWindow::ID> idCounter{ 1 };
 		Dictionary<NativeWindow::ID, SharedPtr<NativeWindow>> windows;
+		mutable Mutex windowsMutex;
 	};
 }
