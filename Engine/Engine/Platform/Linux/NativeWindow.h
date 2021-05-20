@@ -44,6 +44,8 @@ namespace Engine::PlatformSpecific::Linux{
 		bool SetMinimized(bool minimized) override;
 		bool IsMaximized() const override;
 		bool SetMaximized(bool maximized) override;
+		bool HasCloseButton() const override;
+		bool SetCloseButton(bool enabled) override;
 		bool HasMaximizeButton() const override;
 		bool SetMaximizeButton(bool enabled) override;
 		bool HasMinimizeButton() const override;

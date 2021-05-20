@@ -128,6 +128,15 @@ namespace Engine::PlatformSpecific::Linux {
 		}
 		return true;
 	}
+	bool NativeWindow::HasCloseButton() const {
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
+		return gtk_window_get_deletable(GTK_WINDOW(window));
+	}
+	bool NativeWindow::SetCloseButton(bool enabled) {
+		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
+		gtk_window_set_deletable(GTK_WINDOW(window), enabled);
+		return true;
+	}
 	bool NativeWindow::HasMinimizeButton() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
