@@ -1,15 +1,15 @@
 #pragma once
-#include "Engine/Application/NativeWindow.h"
+#include "Engine/Application/Window.h"
 #include <gtk/gtk.h>
 
-#define PLATFORM_SPECIFIC_CLASS_NATIVEWINDOWMANAGER ::Engine::PlatformSpecific::Linux::NativeWindowManager
-#define PLATFORM_SPECIFIC_CLASS_NATIVEWINDOW ::Engine::PlatformSpecific::Linux::NativeWindow
+#define PLATFORM_SPECIFIC_CLASS_WINDOWMANAGER ::Engine::PlatformSpecific::Linux::WindowManager
+#define PLATFORM_SPECIFIC_CLASS_WINDOW ::Engine::PlatformSpecific::Linux::Window
 
 namespace Engine::PlatformSpecific::Linux{
-	class NativeWindow;
+	class Window;
 
-	class NativeWindowManager final :public ::Engine::NativeWindowManager {
-		REFLECTION_CLASS(::Engine::PlatformSpecific::Linux::NativeWindowManager, ::Engine::NativeWindowManager) {}
+	class WindowManager final :public ::Engine::WindowManager {
+		REFLECTION_CLASS(::Engine::PlatformSpecific::Linux::WindowManager, ::Engine::WindowManager) {}
 
 	public:
 		void Update() override;
@@ -22,11 +22,11 @@ namespace Engine::PlatformSpecific::Linux{
 		};
 		static _Initializer _initializer;
 	};
-	class NativeWindow final :public ::Engine::NativeWindow {
+	class Window final :public ::Engine::Window {
 	public:
-		~NativeWindow();
+		~Window();
 
-		NativeWindowManager* GetDetailedManager() const;
+		WindowManager* GetDetailedManager() const;
 		
 		bool IsValid() const override;
 

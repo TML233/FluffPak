@@ -9,11 +9,11 @@
 #include "Engine/System/Thread/ThreadUtil.h"
 
 namespace Engine{
-	class NativeWindowManager;
+	class WindowManager;
 
 	/// @brief A native window of the platform.
-	class NativeWindow: public ManualObject {
-		REFLECTION_CLASS(::Engine::NativeWindow, ::Engine::ManualObject) {
+	class Window: public ManualObject {
+		REFLECTION_CLASS(::Engine::Window, ::Engine::ManualObject) {
 			REFLECTION_CLASS_INSTANTIABLE(false);
 		}
 
@@ -23,7 +23,7 @@ namespace Engine{
 
 		/// @brief Deinitialize the native window here.\n
 		/// The dtor ensures that the deinitialization is definitely executed.
-		virtual ~NativeWindow() = default;
+		virtual ~Window() = default;
 
 		virtual bool IsValid() const = 0;
 
@@ -54,7 +54,7 @@ namespace Engine{
 		virtual bool SetResizable(bool resizable) = 0;
 
 		ID GetId() const;
-		NativeWindowManager* GetManager() const;
+		WindowManager* GetManager() const;
 
 		void* GetRenderContext() const;
 
@@ -64,38 +64,38 @@ namespace Engine{
 
 	private:
 		ID id = -1;
-		NativeWindowManager* manager = nullptr;
-		friend class NativeWindowManager;
+		WindowManager* manager = nullptr;
+		friend class WindowManager;
 	};
 
 	/// @brief Controls the native window of the platform.
-	class NativeWindowManager :public ManualObject {
-		REFLECTION_CLASS(::Engine::NativeWindowManager, ::Engine::ManualObject) {
+	class WindowManager :public ManualObject {
+		REFLECTION_CLASS(::Engine::WindowManager, ::Engine::ManualObject) {
 			REFLECTION_CLASS_INSTANTIABLE(false);
 		}
 
 	public:
-		virtual ~NativeWindowManager();
+		virtual ~WindowManager();
 		/// @brief Create a native window with default style, and hidden.
 		/// @return nullptr when failed.
-		NativeWindow* Create();
+		Window* Create();
 		/// @brief Get a native window by ID.
 		/// @return nullptr when not found.
-		NativeWindow* Get(NativeWindow::ID id) const;
+		Window* Get(Window::ID id) const;
 		/// @brief Get the count of current existing native windows.
 		int32 GetCount() const;
 		/// @brief Check if the native window exists.
-		bool IsExists(NativeWindow::ID id) const;
+		bool IsExists(Window::ID id) const;
 		/// @brief Destroy a native window.
-		bool Destroy(NativeWindow::ID id);
+		bool Destroy(Window::ID id);
 		/// @brief Destroy all native windows.
 		void Clear();
 
 		virtual void Update() = 0;
 
 	private:
-		AtomicValue<NativeWindow::ID> idCounter{ 1 };
-		Dictionary<NativeWindow::ID, SharedPtr<NativeWindow>> windows;
+		AtomicValue<Window::ID> idCounter{ 1 };
+		Dictionary<Window::ID, SharedPtr<Window>> windows;
 		mutable Mutex windowsMutex;
 	};
 }

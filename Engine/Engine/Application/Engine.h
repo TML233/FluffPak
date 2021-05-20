@@ -5,7 +5,7 @@
 #define ENGINEINST ::Engine::Engine::GetInstance()
 
 namespace Engine {
-	class NativeWindowManager;
+	class WindowManager;
 	class FileSystem;
 	class JobSystem;
 	class AppLoop;
@@ -35,7 +35,7 @@ namespace Engine {
 		/// @brief Get the FPS limit.
 		int32 GetTargetFps() const;
 
-		NativeWindowManager* GetNativeWindowManager() const;
+		WindowManager* GetWindowManager() const;
 		FileSystem* GetFileSystem() const;
 		JobSystem* GetJobSystem() const;
 
@@ -44,7 +44,7 @@ namespace Engine {
 
 		UniquePtr<AppLoop> appLoop{};
 		Time time{};
-		UniquePtr<NativeWindowManager> nativeWindowManager;
+		UniquePtr<WindowManager> windowManager;
 		UniquePtr<FileSystem> fileSystem;
 		UniquePtr<JobSystem> jobSystem;
 

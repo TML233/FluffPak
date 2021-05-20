@@ -1,41 +1,41 @@
-#include "Engine/Platform/Linux/NativeWindow.h"
+#include "Engine/Platform/Linux/Window.h"
 
 namespace Engine::PlatformSpecific::Linux {
-	typename NativeWindowManager::_Initializer NativeWindowManager::_initializer{};
+	typename WindowManager::_Initializer WindowManager::_initializer{};
 
-	NativeWindowManager::_Initializer::_Initializer() {
+	WindowManager::_Initializer::_Initializer() {
 		bool inited = gtk_init_check(0, NULL);
 		FATAL_ASSERT(inited, u8"Cannot initialize window framework!");
 	}
 
-	NativeWindowManager::_Initializer::~_Initializer() {
+	WindowManager::_Initializer::~_Initializer() {
 		
 	}
 
-	void NativeWindowManager::Update(){
+	void WindowManager::Update(){
 		gtk_main_iteration_do(false);
 	}
 
-	bool NativeWindow::Initialize() {
+	bool Window::Initialize() {
 		window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-		g_object_set_data(G_OBJECT(window), "NativeWindowPtr", this);
+		g_object_set_data(G_OBJECT(window), "WindowPtr", this);
 		g_signal_connect(window, "delete-event",G_CALLBACK(OnGtkCloseWindow), NULL);
 		
 		return true;
 	}
-	NativeWindow::~NativeWindow() {
+	Window::~Window() {
 		
 	}
-	NativeWindowManager* NativeWindow::GetDetailedManager() const{
-		return (NativeWindowManager*)GetManager();
+	WindowManager* Window::GetDetailedManager() const{
+		return (WindowManager*)GetManager();
 	}
 	
-	bool NativeWindow::IsValid() const {
+	bool Window::IsValid() const {
 		return GTK_IS_WIDGET(window);
 	}
 
-	String NativeWindow::GetTitle() const {
+	String Window::GetTitle() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return String::GetEmpty());
 		
 		const gchar* title=gtk_window_get_title(GTK_WINDOW(window));
@@ -46,14 +46,14 @@ namespace Engine::PlatformSpecific::Linux {
 			return String::GetEmpty();
 		}
 	}
-	bool NativeWindow::SetTitle(const String& title) {
+	bool Window::SetTitle(const String& title) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		
 		gtk_window_set_title(GTK_WINDOW(window), reinterpret_cast<const char*>(title.ToIndividual().GetRawArray()));
 		return true;
 	}
 
-	Vector2 NativeWindow::GetPosition() const {
+	Vector2 Window::GetPosition() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return Vector2());
 
 		gint x = 0;
@@ -62,12 +62,12 @@ namespace Engine::PlatformSpecific::Linux {
 
 		return Vector2(x, y);
 	}
-	bool NativeWindow::SetPosition(const Vector2& position) {
+	bool Window::SetPosition(const Vector2& position) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		
 		return true;
 	}
-	Vector2 NativeWindow::GetSize() const {
+	Vector2 Window::GetSize() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return Vector2());
 
 		int w = 0;
@@ -76,19 +76,19 @@ namespace Engine::PlatformSpecific::Linux {
 	
 		return Vector2(w, h);
 	}
-	bool NativeWindow::SetSize(const Vector2& size) {
+	bool Window::SetSize(const Vector2& size) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		
 		gtk_window_resize(GTK_WINDOW(window), (gint)size.x, (gint)size.y);
 		return true;
 	}
 
-	bool NativeWindow::IsVisible() const {
+	bool Window::IsVisible() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		return gtk_widget_is_visible(window);
 	}
-	bool NativeWindow::SetVisible(bool visible) {
+	bool Window::SetVisible(bool visible) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		if (visible) {
@@ -99,13 +99,13 @@ namespace Engine::PlatformSpecific::Linux {
 		return true;
 	}
 	
-	bool NativeWindow::IsMinimized() const {
+	bool Window::IsMinimized() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		WARN_MSG(u8"This function is not available for Linux. Will always return false.");
 		return false;
 	}
-	bool NativeWindow::SetMinimized(bool minimized) {
+	bool Window::SetMinimized(bool minimized) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		
 		if (minimized) {
@@ -115,11 +115,11 @@ namespace Engine::PlatformSpecific::Linux {
 		}
 		return true;
 	}
-	bool NativeWindow::IsMaximized() const {
+	bool Window::IsMaximized() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return gtk_window_is_maximized(GTK_WINDOW(window));
 	}
-	bool NativeWindow::SetMaximized(bool maximized) {
+	bool Window::SetMaximized(bool maximized) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		if (maximized) {
 			gtk_window_maximize(GTK_WINDOW(window));
@@ -128,68 +128,68 @@ namespace Engine::PlatformSpecific::Linux {
 		}
 		return true;
 	}
-	bool NativeWindow::HasCloseButton() const {
+	bool Window::HasCloseButton() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		return gtk_window_get_deletable(GTK_WINDOW(window));
 	}
-	bool NativeWindow::SetCloseButton(bool enabled) {
+	bool Window::SetCloseButton(bool enabled) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		gtk_window_set_deletable(GTK_WINDOW(window), enabled);
 		return true;
 	}
-	bool NativeWindow::HasMinimizeButton() const {
+	bool Window::HasMinimizeButton() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		WARN_MSG(u8"This function is not available for Linux. Will always return true.");
 		return true;
 	}
-	bool NativeWindow::SetMinimizeButton(bool enabled) {
+	bool Window::SetMinimizeButton(bool enabled) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		WARN_MSG(u8"This function is not available for Linux. Will always return false.");
 		return false;
 	}
-	bool NativeWindow::HasMaximizeButton() const {
+	bool Window::HasMaximizeButton() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		return true;
 	}
-	bool NativeWindow::SetMaximizeButton(bool enabled) {
+	bool Window::SetMaximizeButton(bool enabled) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		return true;
 	}
 
-	bool NativeWindow::HasBorder() const {
+	bool Window::HasBorder() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		return gtk_window_get_decorated(GTK_WINDOW(window));
 	}
-	bool NativeWindow::SetBorder(bool enabled) {
+	bool Window::SetBorder(bool enabled) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		gtk_window_set_decorated(GTK_WINDOW(window), enabled);
 		return true;
 	}
-	bool NativeWindow::IsResizable() const {
+	bool Window::IsResizable() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		return gtk_window_get_resizable(GTK_WINDOW(window));
 	}
-	bool NativeWindow::SetResizable(bool resizable) {
+	bool Window::SetResizable(bool resizable) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		gtk_window_set_resizable(GTK_WINDOW(window), resizable);
 		return true;
 	}
 
-	void NativeWindow::OnCallbackClose() {
+	void Window::OnCallbackClose() {
 		GetManager()->Destroy(GetId());
 	}
-	gboolean NativeWindow::OnGtkCloseWindow(GtkWidget* widget, GdkEvent* event, gpointer data){
-		NativeWindow* nw = (NativeWindow*)g_object_get_data(G_OBJECT(widget), "NativeWindowPtr");
+	gboolean Window::OnGtkCloseWindow(GtkWidget* widget, GdkEvent* event, gpointer data){
+		Window* nw = (Window*)g_object_get_data(G_OBJECT(widget), "WindowPtr");
 		if (nw == nullptr) {
-			ERR_MSG(u8"NativeWindow ptr in GTK object data is nullptr! This shouldn't happen!");
+			ERR_MSG(u8"Window ptr in GTK object data is nullptr! This shouldn't happen!");
 		} else {
 			nw->OnCallbackClose();
 		}

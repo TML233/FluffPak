@@ -1,23 +1,23 @@
-#include "Engine/Application/NativeWindow.h"
-#include "Engine/Platform/NativeWindow.h"
+#include "Engine/Application/Window.h"
+#include "Engine/Platform/Window.h"
 
 namespace Engine {
-	//NativeWindow::~NativeWindow() {}
-	uint64 NativeWindow::GetId() const {
+	//Window::~Window() {}
+	uint64 Window::GetId() const {
 		return id;
 	}
-	NativeWindowManager* NativeWindow::GetManager() const {
+	WindowManager* Window::GetManager() const {
 		return manager;
 	}
 
-	void* NativeWindow::GetRenderContext() const {
+	void* Window::GetRenderContext() const {
 		return renderContext;
 	}
 
-	NativeWindowManager::~NativeWindowManager() {}
+	WindowManager::~WindowManager() {}
 
-	NativeWindow* NativeWindowManager::Create() {
-		SharedPtr<NativeWindow> window = SharedPtr<PLATFORM_SPECIFIC_CLASS_NATIVEWINDOW>::Create();
+	Window* WindowManager::Create() {
+		SharedPtr<Window> window = SharedPtr<PLATFORM_SPECIFIC_CLASS_WINDOW>::Create();
 
 		window->id = idCounter.FetchAdd(1);
 		window->manager = this;
@@ -29,18 +29,18 @@ namespace Engine {
 
 		bool succeeded = window->Initialize();
 		if (!succeeded) {
-			ERR_MSG(u8"Failed to initialize a NativeWindow!");
+			ERR_MSG(u8"Failed to initialize a Window!");
 			Destroy(window->GetId());
 			return nullptr;
 		} else {
 			return window.GetRaw();
 		}
 	}
-	bool NativeWindowManager::IsExists(NativeWindow::ID id) const {
+	bool WindowManager::IsExists(Window::ID id) const {
 		auto lock = SimpleLock<Mutex>(windowsMutex);
 		return windows.ContainsKey(id);
 	}
-	bool NativeWindowManager::Destroy(NativeWindow::ID id) {
+	bool WindowManager::Destroy(Window::ID id) {
 		ERR_ASSERT(IsExists(id), u8"Specified window id not found!", return false);
 
 		{
@@ -49,18 +49,18 @@ namespace Engine {
 		}
 		return true;
 	}
-	NativeWindow* NativeWindowManager::Get(NativeWindow::ID id) const {
-		SharedPtr<NativeWindow> ptr;
+	Window* WindowManager::Get(Window::ID id) const {
+		SharedPtr<Window> ptr;
 		{
 			auto lock = SimpleLock<Mutex>(windowsMutex);
 			windows.TryGet(id, ptr);
 		}
 		return ptr.GetRaw();
 	}
-	int32 NativeWindowManager::GetCount() const {
+	int32 WindowManager::GetCount() const {
 		return windows.GetCount();
 	}
-	void NativeWindowManager::Clear() {
+	void WindowManager::Clear() {
 		auto lock = SimpleLock<Mutex>(windowsMutex);
 		windows.Clear();
 	}

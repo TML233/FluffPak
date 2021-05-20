@@ -1,7 +1,7 @@
 #include "Engine/Application/Engine.h"
 #include "Engine/System/Memory/Memory.h"
 #include <chrono>
-#include "Engine/Platform/NativeWindow.h"
+#include "Engine/Platform/Window.h"
 #include "Engine/System/File.h"
 #include "Engine/System/Thread/JobSystem.h"
 #include "Engine/Application/AppLoop.h"
@@ -15,7 +15,7 @@ namespace Engine {
 	Engine::Engine() {
 		instance = this;
 
-		nativeWindowManager.Reset(MEMNEW(PLATFORM_SPECIFIC_CLASS_NATIVEWINDOWMANAGER));
+		windowManager.Reset(MEMNEW(PLATFORM_SPECIFIC_CLASS_WINDOWMANAGER));
 		
 		fileSystem.Reset(MEMNEW(FileSystem()));
 
@@ -41,8 +41,8 @@ namespace Engine {
 	Time& Engine::GetTime() {
 		return time;
 	}
-	NativeWindowManager* Engine::GetNativeWindowManager() const {
-		return nativeWindowManager.GetRaw();
+	WindowManager* Engine::GetWindowManager() const {
+		return windowManager.GetRaw();
 	}
 	FileSystem* Engine::GetFileSystem() const {
 		return fileSystem.GetRaw();
@@ -89,7 +89,7 @@ namespace Engine {
 			TimePoint now = Clock::now();
 
 			if (now >= nextUpdate) {
-				nativeWindowManager->Update();
+				windowManager->Update();
 
 				time.unscaledDelta = std::chrono::duration_cast<Duration>(now - lastUpdate).count();
 				

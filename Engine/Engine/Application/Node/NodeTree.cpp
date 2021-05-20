@@ -1,6 +1,6 @@
 #include "Engine/Application/Node/NodeTree.h"
 #include "Engine/Application/Engine.h"
-#include "Engine/Application/NativeWindow.h"
+#include "Engine/Application/Window.h"
 
 namespace Engine {
 	NodeTree::NodeTree() {
@@ -10,8 +10,8 @@ namespace Engine {
 
 	void NodeTree::OnStart() {
 		// Create the first window.
-		NativeWindowManager* nwm = ::Engine::Engine::GetInstance()->GetNativeWindowManager();
-		NativeWindow* nw = nwm->Create();
+		WindowManager* nwm = ::Engine::Engine::GetInstance()->GetWindowManager();
+		Window* nw = nwm->Create();
 		nw->SetTitle(STRING_LITERAL("Rabbik Engine"));
 		nw->SetSize(Vector2(640, 480));
 		nw->SetVisible(true);
@@ -25,14 +25,14 @@ namespace Engine {
 	void NodeTree::OnUpdate(const Time& time) {
 		GetRoot()->SystemUpdate(time.GetDelta());
 
-		if (stopWhenNoWindow && ::Engine::Engine::GetInstance()->GetNativeWindowManager()->GetCount() <= 0) {
+		if (stopWhenNoWindow && ::Engine::Engine::GetInstance()->GetWindowManager()->GetCount() <= 0) {
 			running = false;
 		}
 	}
 	void NodeTree::OnPhysicsUpdate(const Time& time) {
 		GetRoot()->SystemPhysicsUpdate(time.GetDelta());
 
-		if (stopWhenNoWindow && ::Engine::Engine::GetInstance()->GetNativeWindowManager()->GetCount() <= 0) {
+		if (stopWhenNoWindow && ::Engine::Engine::GetInstance()->GetWindowManager()->GetCount() <= 0) {
 			running = false;
 		}
 	}

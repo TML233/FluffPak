@@ -45,12 +45,12 @@ set(HeaderFile
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Definition.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Platform.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/NativeWindow.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Window.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Engine.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Time.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/AppLoop.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/NativeWindow.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Window.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodeTree.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodePath.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node.h"
@@ -85,7 +85,7 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Engine.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Time.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/AppLoop.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/NativeWindow.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Window.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodeTree.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodePath.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node.cpp"
@@ -107,12 +107,12 @@ if(WIN32)
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/BetterWindows.h"
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.h"
 
-		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.h"
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Window.h"
 	)
 	list(APPEND SourceFile
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.cpp"
 
-		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NativeWindow.cpp"
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Window.cpp"
 	)
 	list(APPEND InterfaceFile
 		#"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Resource/Resource.h"
@@ -126,10 +126,10 @@ if(WIN32)
 	)
 elseif(UNIX AND "${CMAKE_SYSTEM}" MATCHES "Linux")
 	list(APPEND HeaderFile
-		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/NativeWindow.h"
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/Window.h"
 	)
 	list(APPEND SourceFile
-		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/NativeWindow.cpp"
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/Window.cpp"
 	)
 	list(APPEND InterfaceFile
 	)

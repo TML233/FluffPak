@@ -2,7 +2,7 @@
 #include "Engine/Application/Engine.h"
 #include "Engine/System/Math/Math.h"
 #include "Engine/Application/Node/NodeTree.h"
-#include "Engine/Application/NativeWindow.h"
+#include "Engine/Application/Window.h"
 #include "Engine/System/Thread/JobSystem.h"
 
 namespace Engine {
@@ -18,7 +18,7 @@ namespace Engine {
 
 		::Engine::Engine::
 			GetInstance()->
-			GetNativeWindowManager()->
+			GetWindowManager()->
 			Get(1)->
 			ConnectSignal(STRL("KeyDown"), Invokable(this, STRL("OnKeyDown")));
 	}
@@ -29,7 +29,7 @@ namespace Engine {
 			next += 1;
 			border = !border;
 
-			//ENGINEINST->GetNativeWindowManager()->Get(1)->SetBorder(border);
+			//ENGINEINST->GetWindowManager()->Get(1)->SetBorder(border);
 		}
 	}
 	void TestNode::OnExitingTree() {
