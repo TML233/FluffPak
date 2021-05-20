@@ -13,8 +13,8 @@ namespace Engine {
 		NativeWindowManager* nwm = ::Engine::Engine::GetInstance()->GetNativeWindowManager();
 		NativeWindow* nw = nwm->Create();
 		nw->SetTitle(STRING_LITERAL("Rabbik Engine"));
-		nw->SetVisible(true);
 		nw->SetSize(Vector2(640, 480));
+		nw->SetVisible(true);
 
 		GetRoot()->SystemAssignTree(this);
 		running = true;

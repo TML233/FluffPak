@@ -13,8 +13,8 @@ namespace Engine{
 
 	using ConditionVariable = std::condition_variable;
 
-	class ThreadUtils final{
-		STATIC_CLASS(ThreadUtils);
+	class ThreadUtil final{
+		STATIC_CLASS(ThreadUtil);
 
 	public:
 		static int32 GetHardwareThreadCount();

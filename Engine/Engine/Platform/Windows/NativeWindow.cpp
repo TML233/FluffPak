@@ -386,9 +386,8 @@ namespace Engine::PlatformSpecific::Windows {
 		
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWSetStyleFlag>();
-			bool succeeded = NativeWindow::SetStyleFlag(data->hWnd, WS_VISIBLE, data->enabled);
-			UpdateWindow(data->hWnd);
-			data->result = succeeded;
+			ShowWindow(data->hWnd, data->enabled ? SW_SHOW : SW_HIDE);
+			//UpdateWindow(data->hWnd);
 		};
 		_NWWSetStyleFlag data = {};
 		data.hWnd = hWnd;
@@ -399,8 +398,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 		js->WaitJob(job);
 
-		bool succeeded = job->GetDataAs<_NWWSetStyleFlag>()->result;
-		return succeeded;
+		return true;
 	}
 	
 	bool NativeWindow::IsMinimized() const {
@@ -426,8 +424,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWSetStyleFlag>();
-			bool succeeded = NativeWindow::SetStyleFlag(data->hWnd, WS_MINIMIZE, data->enabled);
-			data->result = succeeded;
+			ShowWindow(data->hWnd, data->enabled ? SW_MINIMIZE : SW_RESTORE);
 		};
 		_NWWSetStyleFlag data = {};
 		data.hWnd = hWnd;
@@ -438,8 +435,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 		js->WaitJob(job);
 
-		bool succeeded = job->GetDataAs<_NWWSetStyleFlag>()->result;
-		return succeeded;
+		return true;
 	}
 	bool NativeWindow::IsMaximized() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
@@ -464,8 +460,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWSetStyleFlag>();
-			bool succeeded = NativeWindow::SetStyleFlag(data->hWnd, WS_MAXIMIZE, data->enabled);
-			data->result = succeeded;
+			ShowWindow(data->hWnd, data->enabled ? SW_MAXIMIZE : SW_RESTORE);
 		};
 		_NWWSetStyleFlag data = {};
 		data.hWnd = hWnd;
@@ -476,8 +471,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 		js->WaitJob(job);
 
-		bool succeeded = job->GetDataAs<_NWWSetStyleFlag>()->result;
-		return succeeded;
+		return true;
 	}
 	bool NativeWindow::HasCloseButton() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);

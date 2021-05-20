@@ -81,7 +81,7 @@ namespace Engine {
 
 #pragma region JobSystem
 	JobSystem::JobSystem() {
-		int32 hardware = ThreadUtils::GetHardwareThreadCount();
+		int32 hardware = ThreadUtil::GetHardwareThreadCount();
 		INFO_MSG(String::Format(STRING_LITERAL("{0} hardware threads, creating {1} job workers."), hardware, hardware - 1).GetRawArray());
 		//INFO_MSG(String::Format(STRING_LITERAL("L1 cache line size: {0} bytes."), CacheLineSize).GetRawArray());
 		INFO_MSG(String::Format(STRING_LITERAL("Job struct size: {0} bytes."), sizeof(Job)).GetRawArray());
