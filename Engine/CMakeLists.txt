@@ -98,7 +98,7 @@ set(IncludeDir
 	"${CMAKE_CURRENT_LIST_DIR}"
 )
 set(LinkLibrary
-	fmt
+	fmt glad
 )
 
 # Add platform-depended header/source files.
@@ -122,7 +122,7 @@ if(WIN32)
 	list(APPEND IncludeDir
 	)
 	list(APPEND LinkLibrary
-		Shcore
+		Shcore Opengl32
 	)
 elseif(UNIX AND "${CMAKE_SYSTEM}" MATCHES "Linux")
 	list(APPEND HeaderFile

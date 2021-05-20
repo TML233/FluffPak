@@ -3,6 +3,7 @@
 #include <ShellScalingApi.h>
 #include "Engine/Application/Engine.h"
 #include "Engine/System/Thread/JobSystem.h"
+#include "glad/glad.h"
 
 namespace Engine::PlatformSpecific::Windows {
 	typename NativeWindowManager::_Initializer NativeWindowManager::_initializer{};
@@ -67,10 +68,13 @@ namespace Engine::PlatformSpecific::Windows {
 
 	struct _NWWInit {
 		LONG_PTR userDataPtr;
-		HWND result;
+		bool result;
+		HWND rHWnd;
+		HGLRC rHGLRC;
 	};
 	struct _NWWDestroy {
 		HWND hWnd;
+		HGLRC hGLRC;
 	};
 	struct _NWWGetTitle {
 		HWND hWnd;
@@ -107,15 +111,57 @@ namespace Engine::PlatformSpecific::Windows {
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWInit>();
 
-			HWND w = CreateWindowExW(DefaultWindowExStyle,GlobalWindowClassName, L"", DefaultWindowStyle, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
-			if (!IsWindow(w)) {
-				data->result = NULL;
+			constexpr int32 DefaultSizeX = 640;
+			constexpr int32 DefaultSizeY = 480;
+
+#pragma region Set up hWnd
+			HWND hWnd = CreateWindowExW(DefaultWindowExStyle,GlobalWindowClassName, L"", DefaultWindowStyle, CW_USEDEFAULT, CW_USEDEFAULT, DefaultSizeX, DefaultSizeY, NULL, NULL, NULL, NULL);
+			if (!IsWindow(hWnd)) {
+				data->result = false;
+				ERR_MSG(u8"CreateWindowExW failed to create a window.");
 				return;
 			}
 			// Set user data to let hwnd trace back to NativeWindow.
-			SetWindowLongPtrW(w, GWLP_USERDATA, data->userDataPtr);
+			SetWindowLongPtrW(hWnd, GWLP_USERDATA, data->userDataPtr);
+#pragma endregion
 
-			data->result = w;
+#pragma region Set up OpenGL
+			auto hDC = GetDC(hWnd);
+
+			// Set pixel format
+			PIXELFORMATDESCRIPTOR pfd = {
+				sizeof(PIXELFORMATDESCRIPTOR),1,
+				PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,    // Flags
+				PFD_TYPE_RGBA,        // The kind of framebuffer. RGBA or palette.
+				32,                   // Colordepth of the framebuffer.
+				0, 0, 0, 0, 0, 0,0,0,0,0, 0, 0, 0,
+				24,                   // Number of bits for the depthbuffer
+				8,                    // Number of bits for the stencilbuffer
+				0,                    // Number of Aux buffers in the framebuffer.
+				PFD_MAIN_PLANE,
+				0,0, 0, 0
+			};
+			int pixelFormat = ChoosePixelFormat(hDC, &pfd);
+			SetPixelFormat(hDC, pixelFormat, &pfd);
+
+			// Create context
+			HGLRC hGLRC = wglCreateContext(hDC);
+			bool succeeded = wglMakeCurrent(hDC, hGLRC);
+			FATAL_ASSERT(succeeded, u8"wglMakeCurrent failed!");
+			
+
+			// Init glad
+			succeeded = gladLoadGL();
+			FATAL_ASSERT(succeeded, u8"Failed to initialize GLAD!");
+
+			glViewport(0, 0, DefaultSizeX, DefaultSizeY);
+
+			INFO_MSG(String::Format(STRL("OpenGL Device: {0}"), glGetString(GL_RENDERER)).GetRawArray());
+#pragma endregion
+
+			data->result = true;
+			data->rHWnd = hWnd;
+			data->rHGLRC = hGLRC;
 		};
 		
 		// Job data
@@ -127,9 +173,11 @@ namespace Engine::PlatformSpecific::Windows {
 		// Wait for the result
 		js->WaitJob(job);
 
-		HWND w = job->GetDataAs<_NWWInit>()->result;
-		ERR_ASSERT(IsWindow(w), u8"CreateWindowW failed to create a window!", return false);
-		hWnd = w;
+		auto result = job->GetDataAs<_NWWInit>();
+		ERR_ASSERT(result->result, u8"Window creation routine failed!", return false);
+
+		hWnd = result->rHWnd;
+		renderContext = result->rHGLRC;
 		return true;
 	}
 
@@ -140,10 +188,15 @@ namespace Engine::PlatformSpecific::Windows {
 
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWDestroy>();
-			DestroyWindow(data->hWnd);
+			HWND hWnd = data->hWnd;
+			HGLRC hGLRC = data->hGLRC;
+			wglMakeCurrent(GetDC(hWnd), NULL);
+			wglDeleteContext(hGLRC);
+			DestroyWindow(hWnd);
 		};
 		_NWWDestroy data = {};
 		data.hWnd = hWnd;
+		data.hGLRC = (HGLRC)renderContext;
 
 		auto js = ENGINEINST->GetJobSystem();
 		js->AddJob(func, &data, sizeof(data), Job::Preference::Window);

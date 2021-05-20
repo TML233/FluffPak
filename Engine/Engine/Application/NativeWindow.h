@@ -56,8 +56,11 @@ namespace Engine{
 		ID GetId() const;
 		NativeWindowManager* GetManager() const;
 
+		void* GetRenderContext() const;
+
 	protected:
 		virtual bool Initialize() = 0;
+		void* renderContext = nullptr;
 
 	private:
 		ID id = -1;

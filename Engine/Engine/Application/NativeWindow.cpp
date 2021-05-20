@@ -10,6 +10,10 @@ namespace Engine {
 		return manager;
 	}
 
+	void* NativeWindow::GetRenderContext() const {
+		return renderContext;
+	}
+
 	NativeWindowManager::~NativeWindowManager() {}
 
 	NativeWindow* NativeWindowManager::Create() {
