@@ -6,7 +6,7 @@
 #include "Engine/System/Collection/Dictionary.h"
 #include "Engine/System/Thread/Atomic.h"
 #include "Engine/System/Memory/SharedPtr.h"
-#include "Engine/System/Thread/ThreadUtils.h"
+#include "Engine/System/Thread/ThreadUtil.h"
 
 namespace Engine{
 	class NativeWindowManager;

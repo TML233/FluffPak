@@ -3,7 +3,7 @@
 #include "Engine/System/Collection/List.h"
 #include "Engine/System/Collection/Dictionary.h"
 #include "Engine/System/Memory/SharedPtr.h"
-#include "Engine/System/Thread/ThreadUtils.h"
+#include "Engine/System/Thread/ThreadUtil.h"
 #include <thread>
 
 #undef GetJob
