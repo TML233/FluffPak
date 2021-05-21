@@ -1,7 +1,7 @@
 #include "Engine/Application/Engine.h"
 #include "Engine/System/Memory/Memory.h"
 #include <chrono>
-#include "Engine/Platform/NativeWindow.h"
+#include "Engine/Platform/Window.h"
 #include "Engine/System/File.h"
 #include "Engine/System/Thread/JobSystem.h"
 #include "Engine/Application/AppLoop.h"
@@ -15,7 +15,7 @@ namespace Engine {
 	Engine::Engine() {
 		instance = this;
 
-		nativeWindowManager.Reset(MEMNEW(PLATFORM_SPECIFIC_CLASS_NATIVEWINDOWMANAGER));
+		nativeWindowManager.Reset(MEMNEW(PLATFORM_SPECIFIC_CLASS_WINDOWMANAGER));
 		
 		fileSystem.Reset(MEMNEW(FileSystem()));
 
@@ -41,7 +41,7 @@ namespace Engine {
 	Time& Engine::GetTime() {
 		return time;
 	}
-	NativeWindowManager* Engine::GetNativeWindowManager() const {
+	WindowManager* Engine::GetWindowManager() const {
 		return nativeWindowManager.GetRaw();
 	}
 	FileSystem* Engine::GetFileSystem() const {

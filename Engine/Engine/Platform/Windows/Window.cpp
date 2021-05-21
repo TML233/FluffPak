@@ -1,13 +1,13 @@
-#include "Engine/Platform/Windows/NativeWindow.h"
+#include "Engine/Platform/Windows/Window.h"
 #include "Engine/Platform/Windows/UnicodeHelper.h"
 #include <ShellScalingApi.h>
 #include "Engine/Application/Engine.h"
 #include "Engine/System/Thread/JobSystem.h"
 
 namespace Engine::PlatformSpecific::Windows {
-	typename NativeWindowManager::_Initializer NativeWindowManager::_initializer{};
+	typename WindowManager::_Initializer WindowManager::_initializer{};
 
-	NativeWindowManager::_Initializer::_Initializer() {
+	WindowManager::_Initializer::_Initializer() {
 		// Make console support UTF-8
 		SetConsoleOutputCP(65001);
 
@@ -15,7 +15,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 		// Register basic window class
 		WNDCLASSW wc = {};
-		wc.lpszClassName = NativeWindow::GlobalWindowClassName;
+		wc.lpszClassName = Window::GlobalWindowClassName;
 		wc.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
 		wc.cbClsExtra = NULL;
 		wc.cbWndExtra = NULL;
@@ -24,17 +24,17 @@ namespace Engine::PlatformSpecific::Windows {
 		wc.hbrBackground = (HBRUSH)(GetStockObject(GRAY_BRUSH));
 		wc.lpszMenuName = NULL;
 		wc.hInstance = NULL;
-		wc.lpfnWndProc = NativeWindow::WndProc;
+		wc.lpfnWndProc = Window::WndProc;
 
 		bool succeeded = RegisterClassW(&wc);
 		FATAL_ASSERT(succeeded, u8"RegisterClassW failed to register window class!");
 	}
 
-	NativeWindowManager::_Initializer::~_Initializer() {
-		UnregisterClassW(NativeWindow::GlobalWindowClassName, NULL);
+	WindowManager::_Initializer::~_Initializer() {
+		UnregisterClassW(Window::GlobalWindowClassName, NULL);
 	}
 
-	void NativeWindowManager::Update() {
+	void WindowManager::Update() {
 		auto func = [](Job* job) {
 			MSG msg = {};
 			if (PeekMessageW(&msg, NULL, NULL, NULL, PM_REMOVE)) {
@@ -47,7 +47,7 @@ namespace Engine::PlatformSpecific::Windows {
 		ENGINEINST->GetJobSystem()->AddJob(func, nullptr, 0, Job::Preference::Window);
 	}
 
-	NativeWindow* NativeWindow::GetFromHWnd(HWND hWnd) {
+	Window* Window::GetFromHWnd(HWND hWnd) {
 		if (!IsWindow(hWnd)) {
 			return nullptr;
 		}
@@ -57,7 +57,7 @@ namespace Engine::PlatformSpecific::Windows {
 			return nullptr;
 		}
 
-		NativeWindow* wp = (NativeWindow*)p;
+		Window* wp = (Window*)p;
 
 		return wp;
 	}
@@ -103,7 +103,7 @@ namespace Engine::PlatformSpecific::Windows {
 	};
 
 
-	bool NativeWindow::Initialize() {
+	bool Window::Initialize() {
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWInit>();
 
@@ -112,7 +112,7 @@ namespace Engine::PlatformSpecific::Windows {
 				data->result = NULL;
 				return;
 			}
-			// Set user data to let hwnd trace back to NativeWindow.
+			// Set user data to let hwnd trace back to Window.
 			SetWindowLongPtrW(w, GWLP_USERDATA, data->userDataPtr);
 
 			data->result = w;
@@ -133,7 +133,7 @@ namespace Engine::PlatformSpecific::Windows {
 		return true;
 	}
 
-	NativeWindow::~NativeWindow() {
+	Window::~Window() {
 		if (!IsWindow(hWnd)) {
 			return;
 		}
@@ -149,15 +149,15 @@ namespace Engine::PlatformSpecific::Windows {
 		js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
 	}
 
-	LRESULT CALLBACK NativeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+	LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 		switch (message) {
 			case WM_CLOSE:
 			{
-				NativeWindow* nw = NativeWindow::GetFromHWnd(hWnd);
+				Window* nw = Window::GetFromHWnd(hWnd);
 				if (nw != nullptr) {
 					nw->GetManager()->Destroy(nw->GetId());
 				} else {
-					ERR_MSG(u8"User data in hWnd is not a NativeWindow ptr! This shouldn't happen!");
+					ERR_MSG(u8"User data in hWnd is not a Window ptr! This shouldn't happen!");
 					DestroyWindow(hWnd);
 				}
 			}
@@ -169,7 +169,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 			case WM_KEYDOWN:
 			{
-				NativeWindow* nw = NativeWindow::GetFromHWnd(hWnd);
+				Window* nw = Window::GetFromHWnd(hWnd);
 				if (nw != nullptr) {
 					Variant key = wParam;
 					const Variant* args[1] = { &key };
@@ -181,11 +181,11 @@ namespace Engine::PlatformSpecific::Windows {
 		return DefWindowProcW(hWnd, message, wParam, lParam);
 	}
 
-	bool NativeWindow::IsValid() const {
+	bool Window::IsValid() const {
 		return IsWindow(hWnd);
 	}
 	
-	String NativeWindow::GetTitle() const {
+	String Window::GetTitle() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return String::GetEmpty());
 
 		auto func = [](Job* job) {
@@ -222,7 +222,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 		return result;
 	}
-	bool NativeWindow::SetTitle(const String& title) {
+	bool Window::SetTitle(const String& title) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		UniquePtr<WCHAR[]> buffer;
@@ -250,7 +250,7 @@ namespace Engine::PlatformSpecific::Windows {
 		return true;
 	}
 
-	Vector2 NativeWindow::GetPosition() const {
+	Vector2 Window::GetPosition() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return Vector2());
 
 		auto func = [](Job* job) {
@@ -274,7 +274,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 		return Vector2(rdata->x, rdata->y);
 	}
-	bool NativeWindow::SetPosition(const Vector2& position) {
+	bool Window::SetPosition(const Vector2& position) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		RECT rect = {};
@@ -307,7 +307,7 @@ namespace Engine::PlatformSpecific::Windows {
 		return true;
 	}
 	
-	Vector2 NativeWindow::GetSize() const {
+	Vector2 Window::GetSize() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return Vector2());
 
 		auto func = [](Job* job) {
@@ -331,7 +331,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 		return Vector2(rdata->x, rdata->y);
 	}
-	bool NativeWindow::SetSize(const Vector2& size) {
+	bool Window::SetSize(const Vector2& size) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		RECT rect = {};
@@ -363,12 +363,12 @@ namespace Engine::PlatformSpecific::Windows {
 		return true;
 	}
 
-	bool NativeWindow::IsVisible() const {
+	bool Window::IsVisible() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWHasStyleFlag>();
-			bool result = NativeWindow::HasStyleFlag(data->hWnd, WS_VISIBLE);
+			bool result = Window::HasStyleFlag(data->hWnd, WS_VISIBLE);
 			data->result = result;
 		};
 		_NWWHasStyleFlag data = {};
@@ -381,7 +381,7 @@ namespace Engine::PlatformSpecific::Windows {
 		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
 		return result;
 	}
-	bool NativeWindow::SetVisible(bool visible) {
+	bool Window::SetVisible(bool visible) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 		
 		auto func = [](Job* job) {
@@ -401,12 +401,12 @@ namespace Engine::PlatformSpecific::Windows {
 		return true;
 	}
 	
-	bool NativeWindow::IsMinimized() const {
+	bool Window::IsMinimized() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWHasStyleFlag>();
-			bool result = NativeWindow::HasStyleFlag(data->hWnd, WS_MINIMIZE);
+			bool result = Window::HasStyleFlag(data->hWnd, WS_MINIMIZE);
 			data->result = result;
 		};
 		_NWWHasStyleFlag data = {};
@@ -419,7 +419,7 @@ namespace Engine::PlatformSpecific::Windows {
 		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
 		return result;
 	}
-	bool NativeWindow::SetMinimized(bool minimized) {
+	bool Window::SetMinimized(bool minimized) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
@@ -437,12 +437,12 @@ namespace Engine::PlatformSpecific::Windows {
 
 		return true;
 	}
-	bool NativeWindow::IsMaximized() const {
+	bool Window::IsMaximized() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWHasStyleFlag>();
-			bool result = NativeWindow::HasStyleFlag(data->hWnd, WS_MAXIMIZE);
+			bool result = Window::HasStyleFlag(data->hWnd, WS_MAXIMIZE);
 			data->result = result;
 		};
 		_NWWHasStyleFlag data = {};
@@ -455,7 +455,7 @@ namespace Engine::PlatformSpecific::Windows {
 		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
 		return result;
 	}
-	bool NativeWindow::SetMaximized(bool maximized) {
+	bool Window::SetMaximized(bool maximized) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
@@ -473,7 +473,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 		return true;
 	}
-	bool NativeWindow::HasCloseButton() const {
+	bool Window::HasCloseButton() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
@@ -491,7 +491,7 @@ namespace Engine::PlatformSpecific::Windows {
 		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
 		return result;
 	}
-	bool NativeWindow::SetCloseButton(bool enabled) {
+	bool Window::SetCloseButton(bool enabled) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
@@ -512,12 +512,12 @@ namespace Engine::PlatformSpecific::Windows {
 		bool succeeded = job->GetDataAs<_NWWSetStyleFlag>()->result;
 		return succeeded;
 	}
-	bool NativeWindow::HasMinimizeButton() const {
+	bool Window::HasMinimizeButton() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWHasStyleFlag>();
-			bool result = NativeWindow::HasStyleFlag(data->hWnd, WS_MINIMIZEBOX);
+			bool result = Window::HasStyleFlag(data->hWnd, WS_MINIMIZEBOX);
 			data->result = result;
 		};
 		_NWWHasStyleFlag data = {};
@@ -530,12 +530,12 @@ namespace Engine::PlatformSpecific::Windows {
 		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
 		return result;
 	}
-	bool NativeWindow::SetMinimizeButton(bool enabled) {
+	bool Window::SetMinimizeButton(bool enabled) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWSetStyleFlag>();
-			bool succeeded = NativeWindow::SetStyleFlag(data->hWnd, WS_MINIMIZEBOX, data->enabled);
+			bool succeeded = Window::SetStyleFlag(data->hWnd, WS_MINIMIZEBOX, data->enabled);
 			data->result = succeeded;
 		};
 		_NWWSetStyleFlag data = {};
@@ -550,12 +550,12 @@ namespace Engine::PlatformSpecific::Windows {
 		bool succeeded = job->GetDataAs<_NWWSetStyleFlag>()->result;
 		return succeeded;
 	}
-	bool NativeWindow::HasMaximizeButton() const {
+	bool Window::HasMaximizeButton() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWHasStyleFlag>();
-			bool result = NativeWindow::HasStyleFlag(data->hWnd, WS_MAXIMIZEBOX);
+			bool result = Window::HasStyleFlag(data->hWnd, WS_MAXIMIZEBOX);
 			data->result = result;
 		};
 		_NWWHasStyleFlag data = {};
@@ -568,12 +568,12 @@ namespace Engine::PlatformSpecific::Windows {
 		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
 		return result;
 	}
-	bool NativeWindow::SetMaximizeButton(bool enabled) {
+	bool Window::SetMaximizeButton(bool enabled) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWSetStyleFlag>();
-			bool succeeded = NativeWindow::SetStyleFlag(data->hWnd, WS_MAXIMIZEBOX, data->enabled);
+			bool succeeded = Window::SetStyleFlag(data->hWnd, WS_MAXIMIZEBOX, data->enabled);
 			data->result = succeeded;
 		};
 		_NWWSetStyleFlag data = {};
@@ -589,12 +589,12 @@ namespace Engine::PlatformSpecific::Windows {
 		return succeeded;
 	}
 
-	bool NativeWindow::HasBorder() const {
+	bool Window::HasBorder() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWHasStyleFlag>();
-			bool result = NativeWindow::HasStyleFlag(data->hWnd, WS_BORDER);
+			bool result = Window::HasStyleFlag(data->hWnd, WS_BORDER);
 			data->result = result;
 		};
 		_NWWHasStyleFlag data = {};
@@ -607,7 +607,7 @@ namespace Engine::PlatformSpecific::Windows {
 		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
 		return result;
 	}
-	bool NativeWindow::SetBorder(bool enabled) {
+	bool Window::SetBorder(bool enabled) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
@@ -623,9 +623,9 @@ namespace Engine::PlatformSpecific::Windows {
 			rect.left = pos.x;
 			rect.top = pos.y;
 
-			bool succeeded = NativeWindow::SetStyleFlag(hWnd, WS_BORDER | WS_CAPTION, data->enabled);
+			bool succeeded = Window::SetStyleFlag(hWnd, WS_BORDER | WS_CAPTION, data->enabled);
 			
-			bool adjusted = AdjustWindowRectEx(&rect, NativeWindow::GetStyle(hWnd), FALSE, NativeWindow::GetExStyle(hWnd));
+			bool adjusted = AdjustWindowRectEx(&rect, Window::GetStyle(hWnd), FALSE, Window::GetExStyle(hWnd));
 			if (adjusted) {
 				SetWindowPos(hWnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOREPOSITION);
 			}
@@ -644,12 +644,12 @@ namespace Engine::PlatformSpecific::Windows {
 		return succeeded;
 	}
 
-	bool NativeWindow::IsResizable() const {
+	bool Window::IsResizable() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWHasStyleFlag>();
-			bool result = NativeWindow::HasStyleFlag(data->hWnd, WS_SIZEBOX);
+			bool result = Window::HasStyleFlag(data->hWnd, WS_SIZEBOX);
 			data->result = result;
 		};
 		_NWWHasStyleFlag data = {};
@@ -662,12 +662,12 @@ namespace Engine::PlatformSpecific::Windows {
 		bool result = job->GetDataAs<_NWWHasStyleFlag>()->result;
 		return result;
 	}
-	bool NativeWindow::SetResizable(bool resizable) {
+	bool Window::SetResizable(bool resizable) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWSetStyleFlag>();
-			bool succeeded = NativeWindow::SetStyleFlag(data->hWnd, WS_SIZEBOX, data->enabled);
+			bool succeeded = Window::SetStyleFlag(data->hWnd, WS_SIZEBOX, data->enabled);
 			data->result = succeeded;
 		};
 		_NWWSetStyleFlag data = {};
@@ -683,32 +683,32 @@ namespace Engine::PlatformSpecific::Windows {
 		return succeeded;
 	}
 
-	HWND NativeWindow::GetHWnd() const {
+	HWND Window::GetHWnd() const {
 		return hWnd;
 	}
 
-	DWORD NativeWindow::GetStyle(HWND hWnd) {
+	DWORD Window::GetStyle(HWND hWnd) {
 		return GetWindowLongW(hWnd, GWL_STYLE);
 	}
-	DWORD NativeWindow::GetStyle() const {
+	DWORD Window::GetStyle() const {
 		return GetStyle(hWnd);
 	}
 
-	DWORD NativeWindow::GetExStyle(HWND hWnd) {
+	DWORD Window::GetExStyle(HWND hWnd) {
 		return GetWindowLongW(hWnd, GWL_EXSTYLE);
 	}
-	DWORD NativeWindow::GetExStyle() const {
+	DWORD Window::GetExStyle() const {
 		return GetExStyle(hWnd);
 	}
 
-	bool NativeWindow::HasStyleFlag(HWND hWnd,DWORD style) {
+	bool Window::HasStyleFlag(HWND hWnd,DWORD style) {
 		return GetStyle(hWnd) & style;
 	}
-	bool NativeWindow::HasStyleFlag(DWORD style) const {
+	bool Window::HasStyleFlag(DWORD style) const {
 		return HasStyleFlag(hWnd, style);
 	}
 
-	bool NativeWindow::SetStyleFlag(HWND hWnd, DWORD style, bool enabled) {
+	bool Window::SetStyleFlag(HWND hWnd, DWORD style, bool enabled) {
 		DWORD s = GetStyle(hWnd);
 		if (enabled) {
 			s |= style;
@@ -718,7 +718,7 @@ namespace Engine::PlatformSpecific::Windows {
 		SetWindowLongW(hWnd, GWL_STYLE, s);
 		return true;
 	}
-	bool NativeWindow::SetStyleFlag(DWORD style, bool enabled) {
+	bool Window::SetStyleFlag(DWORD style, bool enabled) {
 		return SetStyleFlag(hWnd, style, enabled);
 	}
 }

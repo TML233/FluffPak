@@ -1,13 +1,13 @@
 #pragma once
-#include "Engine/Application/NativeWindow.h"
+#include "Engine/Application/Window.h"
 #include "Engine/Platform/Windows/BetterWindows.h"
 
-#define PLATFORM_SPECIFIC_CLASS_NATIVEWINDOWMANAGER ::Engine::PlatformSpecific::Windows::NativeWindowManager
-#define PLATFORM_SPECIFIC_CLASS_NATIVEWINDOW ::Engine::PlatformSpecific::Windows::NativeWindow
+#define PLATFORM_SPECIFIC_CLASS_WINDOWMANAGER ::Engine::PlatformSpecific::Windows::WindowManager
+#define PLATFORM_SPECIFIC_CLASS_WINDOW ::Engine::PlatformSpecific::Windows::Window
 
 namespace Engine::PlatformSpecific::Windows {
-	class NativeWindowManager final :public ::Engine::NativeWindowManager {
-		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::NativeWindowManager, ::Engine::NativeWindowManager) {}
+	class WindowManager final :public ::Engine::WindowManager {
+		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::WindowManager, ::Engine::WindowManager) {}
 
 	public:
 		void Update() override;
@@ -21,13 +21,13 @@ namespace Engine::PlatformSpecific::Windows {
 		static _Initializer _initializer;
 	};
 
-	class NativeWindow final:public ::Engine::NativeWindow {
-		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::NativeWindow, ::Engine::NativeWindow) {
+	class Window final:public ::Engine::Window {
+		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::Window, ::Engine::Window) {
 			REFLECTION_SIGNAL(STRL("KeyDown"), { SIGARG(STRL("keyCode"),Variant::Type::Int64) });
 		}
 
 	public:
-		~NativeWindow();
+		~Window();
 
 		bool IsValid() const override;
 
@@ -70,7 +70,7 @@ namespace Engine::PlatformSpecific::Windows {
 		static inline constexpr DWORD DefaultWindowStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_BORDER;
 		static inline constexpr DWORD DefaultWindowExStyle = WS_EX_ACCEPTFILES;
 
-		static NativeWindow* GetFromHWnd(HWND hWnd);
+		static Window* GetFromHWnd(HWND hWnd);
 
 		static DWORD GetStyle(HWND hWnd);
 		static DWORD GetExStyle(HWND hWnd);
