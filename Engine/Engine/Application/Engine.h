@@ -44,7 +44,7 @@ namespace Engine {
 
 		UniquePtr<AppLoop> appLoop{};
 		Time time{};
-		UniquePtr<WindowManager> nativeWindowManager;
+		UniquePtr<WindowManager> windowManager;
 		UniquePtr<FileSystem> fileSystem;
 		UniquePtr<JobSystem> jobSystem;
 
