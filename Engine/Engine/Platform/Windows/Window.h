@@ -57,6 +57,13 @@ namespace Engine::PlatformSpecific::Windows {
 		bool IsResizable() const override;
 		bool SetResizable(bool resizable) override;
 
+		void OnRender() override;
+
+		HGLRC InitRender(HWND hWnd);
+		void PrepareRender();
+		void DoRender();
+		void UninitRender(HWND hWnd,HGLRC hGLRC);
+
 		HWND GetHWnd() const;
 
 		DWORD GetStyle() const;
@@ -69,6 +76,8 @@ namespace Engine::PlatformSpecific::Windows {
 		static inline constexpr const WCHAR* GlobalWindowClassName = L"EngineBasicWindowClass";
 		static inline constexpr DWORD DefaultWindowStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_BORDER;
 		static inline constexpr DWORD DefaultWindowExStyle = WS_EX_ACCEPTFILES;
+		static inline constexpr int32 DefaultSizeX = 640;
+		static inline constexpr int32 DefaultSizeY = 480;
 
 		static Window* GetFromHWnd(HWND hWnd);
 

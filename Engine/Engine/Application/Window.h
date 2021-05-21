@@ -58,6 +58,8 @@ namespace Engine{
 
 		void* GetRenderContext() const;
 
+		virtual void OnRender() = 0;
+
 	protected:
 		virtual bool Initialize() = 0;
 		void* renderContext = nullptr;
@@ -90,6 +92,8 @@ namespace Engine{
 		bool Destroy(Window::ID id);
 		/// @brief Destroy all native windows.
 		void Clear();
+
+		void RenderAll();
 
 		virtual void Update() = 0;
 

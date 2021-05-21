@@ -102,6 +102,7 @@ namespace Engine {
 
 				appLoop->OnUpdate(time);
 				appLoop->OnPhysicsUpdate(time);
+				windowManager->RenderAll();
 
 				lastUpdate = now;
 				nextUpdate += std::chrono::microseconds(static_cast<int64>(1.0 / GetTargetFps() * 1000000));

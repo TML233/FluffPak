@@ -67,7 +67,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 
 	struct _NWWInit {
-		LONG_PTR userDataPtr;
+		Window* window;
 		bool result;
 		HWND rHWnd;
 		HGLRC rHGLRC;
@@ -111,8 +111,7 @@ namespace Engine::PlatformSpecific::Windows {
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWInit>();
 
-			constexpr int32 DefaultSizeX = 640;
-			constexpr int32 DefaultSizeY = 480;
+			Window* window = data->window;
 
 #pragma region Set up hWnd
 			HWND hWnd = CreateWindowExW(DefaultWindowExStyle,GlobalWindowClassName, L"", DefaultWindowStyle, CW_USEDEFAULT, CW_USEDEFAULT, DefaultSizeX, DefaultSizeY, NULL, NULL, NULL, NULL);
@@ -122,51 +121,17 @@ namespace Engine::PlatformSpecific::Windows {
 				return;
 			}
 			// Set user data to let hwnd trace back to Window.
-			SetWindowLongPtrW(hWnd, GWLP_USERDATA, data->userDataPtr);
-#pragma endregion
-
-#pragma region Set up OpenGL
-			auto hDC = GetDC(hWnd);
-
-			// Set pixel format
-			PIXELFORMATDESCRIPTOR pfd = {
-				sizeof(PIXELFORMATDESCRIPTOR),1,
-				PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,    // Flags
-				PFD_TYPE_RGBA,        // The kind of framebuffer. RGBA or palette.
-				32,                   // Colordepth of the framebuffer.
-				0, 0, 0, 0, 0, 0,0,0,0,0, 0, 0, 0,
-				24,                   // Number of bits for the depthbuffer
-				8,                    // Number of bits for the stencilbuffer
-				0,                    // Number of Aux buffers in the framebuffer.
-				PFD_MAIN_PLANE,
-				0,0, 0, 0
-			};
-			int pixelFormat = ChoosePixelFormat(hDC, &pfd);
-			SetPixelFormat(hDC, pixelFormat, &pfd);
-
-			// Create context
-			HGLRC hGLRC = wglCreateContext(hDC);
-			bool succeeded = wglMakeCurrent(hDC, hGLRC);
-			FATAL_ASSERT(succeeded, u8"wglMakeCurrent failed!");
-			
-
-			// Init glad
-			succeeded = gladLoadGL();
-			FATAL_ASSERT(succeeded, u8"Failed to initialize GLAD!");
-
-			glViewport(0, 0, DefaultSizeX, DefaultSizeY);
-
-			INFO_MSG(String::Format(STRL("OpenGL Device: {0}"), glGetString(GL_RENDERER)).GetRawArray());
+			SetWindowLongPtrW(hWnd, GWLP_USERDATA, (LONG_PTR)window);
 #pragma endregion
 
 			data->result = true;
 			data->rHWnd = hWnd;
-			data->rHGLRC = hGLRC;
+			//data->rHGLRC = hGLRC;
 		};
 		
 		// Job data
 		_NWWInit data = {};
-		data.userDataPtr = (LONG_PTR)this;
+		data.window = this;
 		// Start job
 		auto js = ENGINEINST->GetJobSystem();
 		auto job=js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
@@ -177,7 +142,9 @@ namespace Engine::PlatformSpecific::Windows {
 		ERR_ASSERT(result->result, u8"Window creation routine failed!", return false);
 
 		hWnd = result->rHWnd;
-		renderContext = result->rHGLRC;
+		//renderContext = result->rHGLRC;
+		renderContext = InitRender(hWnd);
+		PrepareRender();
 		return true;
 	}
 
@@ -186,22 +153,25 @@ namespace Engine::PlatformSpecific::Windows {
 			return;
 		}
 
+		UninitRender(hWnd, (HGLRC)renderContext);
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWDestroy>();
 			HWND hWnd = data->hWnd;
-			HGLRC hGLRC = data->hGLRC;
-			wglMakeCurrent(GetDC(hWnd), NULL);
-			wglDeleteContext(hGLRC);
+			//HGLRC hGLRC = data->hGLRC;
+
+			//auto w = Window::GetFromHWnd(hWnd);
+			//w->UninitRender(hWnd, hGLRC);
 			DestroyWindow(hWnd);
 		};
 		_NWWDestroy data = {};
 		data.hWnd = hWnd;
-		data.hGLRC = (HGLRC)renderContext;
+		//data.hGLRC = (HGLRC)renderContext;
 
 		auto js = ENGINEINST->GetJobSystem();
 		js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
 	}
 
+#pragma region Craps
 	LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 		switch (message) {
 			case WM_CLOSE:
@@ -398,6 +368,7 @@ namespace Engine::PlatformSpecific::Windows {
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWSetVector2>();
 			bool succeeded = SetWindowPos(data->hWnd, NULL, 0, 0, data->x, data->y, SWP_NOREPOSITION | SWP_NOMOVE);
+			glViewport(0, 0, data->x, data->y);
 			data->result = succeeded;
 		};
 
@@ -773,5 +744,71 @@ namespace Engine::PlatformSpecific::Windows {
 	}
 	bool Window::SetStyleFlag(DWORD style, bool enabled) {
 		return SetStyleFlag(hWnd, style, enabled);
+	}
+#pragma endregion
+
+	struct _NWWRender {
+		Window* wnd;
+	};
+
+	void Window::OnRender() {
+		/*auto func = [](Job* job) {
+			auto data = job->GetDataAs<_NWWRender>();
+			data->wnd->DoRender();
+		};
+		_NWWRender data = {};
+		data.wnd = this;
+		auto js = ENGINEINST->GetJobSystem();
+		auto job=js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+		//js->WaitJob(job);*/
+		DoRender();
+	}
+
+	HGLRC Window::InitRender(HWND hWnd) {
+		auto hDC = GetDC(hWnd);
+
+		// Set pixel format
+		PIXELFORMATDESCRIPTOR pfd = {
+			sizeof(PIXELFORMATDESCRIPTOR),1,
+			PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,    // Flags
+			PFD_TYPE_RGBA,        // The kind of framebuffer. RGBA or palette.
+			32,                   // Colordepth of the framebuffer.
+			0, 0, 0, 0, 0, 0,0,0,0,0, 0, 0, 0,
+			24,                   // Number of bits for the depthbuffer
+			8,                    // Number of bits for the stencilbuffer
+			0,                    // Number of Aux buffers in the framebuffer.
+			PFD_MAIN_PLANE,
+			0,0, 0, 0
+		};
+		int pixelFormat = ChoosePixelFormat(hDC, &pfd);
+		SetPixelFormat(hDC, pixelFormat, &pfd);
+
+		// Create context
+		HGLRC hGLRC = wglCreateContext(hDC);
+		bool succeeded = wglMakeCurrent(hDC, hGLRC);
+		FATAL_ASSERT(succeeded, u8"wglMakeCurrent failed!");
+
+
+		// Init glad
+		succeeded = gladLoadGL();
+		FATAL_ASSERT(succeeded, u8"Failed to initialize GLAD!");
+
+		glViewport(0, 0, DefaultSizeX, DefaultSizeY);
+
+		INFO_MSG(String::Format(STRL("OpenGL Device: {0}"), glGetString(GL_RENDERER)).GetRawArray());
+
+		return hGLRC;
+	}
+	void Window::PrepareRender() {
+
+	}
+	void Window::DoRender() {
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		SwapBuffers(GetDC(hWnd));
+	}
+	void Window::UninitRender(HWND hWnd,HGLRC hGLRC) {
+		wglMakeCurrent(GetDC(hWnd), NULL);
+		wglDeleteContext(hGLRC);
 	}
 }

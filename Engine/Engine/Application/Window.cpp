@@ -64,4 +64,15 @@ namespace Engine {
 		auto lock = SimpleLock<Mutex>(windowsMutex);
 		windows.Clear();
 	}
+
+	struct _NWRender {
+		Window* window;
+	};
+
+	void WindowManager::RenderAll() {
+		for (const auto& w : windows) {
+			Window* ptr = w.value.GetRaw();
+			w.value->OnRender();
+		}
+	}
 }
