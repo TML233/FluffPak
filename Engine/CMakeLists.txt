@@ -28,6 +28,7 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.h"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/FileProtocolNative.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.h"
 	
 	
@@ -69,6 +70,7 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.cpp"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/FileProtocolNative.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/ThreadUtil.cpp"

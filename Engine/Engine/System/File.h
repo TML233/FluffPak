@@ -6,7 +6,7 @@
 
 namespace Engine {
 	class FileSystem;
-	class FileProtocolHandler;
+	class FileProtocol;
 	class File;
 
 	class FileSystem final {
@@ -39,11 +39,11 @@ namespace Engine {
 			/// @brief Invalid protocol
 			Null,
 			/// @brief Files on the local machine filesystem.
-			File,
+			Native,
 			/// @brief Files in the resource directory.
 			Resource,
 			/// @brief Files in the user presistent data directory.
-			User,
+			Persistent,
 			/// @brief End of the protocol enum.
 			End,
 		};
@@ -53,7 +53,7 @@ namespace Engine {
 		Protocol GetProtocol(const String& name) const;
 		/// @brief Get a protocol handler.
 		/// @return nullptr when not found.
-		FileProtocolHandler* GetProtocolHandler(Protocol protocol) const;
+		FileProtocol* GetProtocolHandler(Protocol protocol) const;
 #pragma endregion
 
 #pragma region Open modes
@@ -80,9 +80,9 @@ namespace Engine {
 
 #pragma region File operations
 		/// @brief Check if the file exists.
-		ResultPair<Result, bool> IsFileExists(const String& path) const;
+		bool IsFileExists(const String& path) const;
 		/// @brief Check if the directory exists.
-		ResultPair<Result, bool> IsDirectoryExists(const String& path) const;
+		bool IsDirectoryExists(const String& path) const;
 
 		/// @brief Create a empty file at the given path.
 		Result CreateFile(const String& path);
@@ -108,23 +108,23 @@ namespace Engine {
 		using ResultFile = ResultPair<Result, IntrusivePtr<File>>;
 
 		void AddProtocol(const String& name, Protocol protocol);
-		void AddProtocolHandler(Protocol protocol, UniquePtr<FileProtocolHandler>&& handler);
+		void AddProtocolHandler(Protocol protocol, UniquePtr<FileProtocol>&& handler);
 
 		ResultPair<Protocol, int32> GetSplitData(const String& path) const;
 
 		Dictionary<String, Protocol> protocols{};
-		Dictionary<Protocol, SharedPtr<FileProtocolHandler>> protocolHandlers{};
+		Dictionary<Protocol, SharedPtr<FileProtocol>> protocolHandlers{};
 	};
 
 	/// @brief Protocol handler abstract layer for FileSystem.
-	class FileProtocolHandler:public ManualObject {
-		REFLECTION_CLASS(::Engine::FileProtocolHandler, ::Engine::ManualObject) {
+	class FileProtocol:public ManualObject {
+		REFLECTION_CLASS(::Engine::FileProtocol, ::Engine::ManualObject) {
 			REFLECTION_CLASS_INSTANTIABLE(false);
 		}
 	public:
-		virtual ~FileProtocolHandler() = default;
-		virtual ResultPair<FileSystem::Result, bool> IsFileExists(const String& path) const = 0;
-		virtual ResultPair<FileSystem::Result, bool> IsDirectoryExists(const String& path) const = 0;
+		virtual ~FileProtocol() = default;
+		virtual bool IsFileExists(const String& path) const = 0;
+		virtual bool IsDirectoryExists(const String& path) const = 0;
 
 		virtual FileSystem::Result CreateFile(const String& path)=0;
 		virtual FileSystem::Result CreateDirectory(const String& path)=0;
@@ -154,11 +154,12 @@ namespace Engine {
 		/// This only indicates that how this File instance deal with data.\n
 		/// Does not check whether the original file is small-endian or big-endian. (And there's no way.)
 		/// Default endianness will always be small-endian,
-		FileSystem::Endianness GetCurrentEndianness();
+		FileSystem::Endianness GetCurrentEndianness() const;
 		/// @brief Set current endianness.\n
 		/// This affects how this File instance deal with data.
 		/// Default endianness will always be small-endian.
 		void SetCurrentEndianness(FileSystem::Endianness endian);
+
 
 		virtual void Close() = 0;
 		virtual bool IsValid() const = 0;
@@ -182,6 +183,7 @@ namespace Engine {
 		virtual FileSystem::Result WriteFloat(int16 value) = 0;
 		virtual FileSystem::Result WriteDouble(uint16 value) = 0;
 		virtual FileSystem::Result WriteString(const String& value) = 0;
+
 
 	private:
 		FileSystem::Endianness currentEndianness = FileSystem::Endianness::Little;

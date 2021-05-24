@@ -1,6 +1,14 @@
 #include "Engine/System/File.h"
+#include "Engine/System/FileProtocolNative.h"
 
 namespace Engine{
+	FileSystem::Endianness File::GetCurrentEndianness() const {
+		return currentEndianness;
+	}
+	void File::SetCurrentEndianness(FileSystem::Endianness endianness) {
+		currentEndianness = endianness;
+	}
+
 #pragma region Protocols
 	bool FileSystem::IsProtocolValid(Protocol protocol) {
 		return protocol > Protocol::Null && protocol < Protocol::End;
@@ -14,7 +22,7 @@ namespace Engine{
 
 		int32 index = path.IndexOf(prefix);
 
-		String protocolName = STRING_LITERAL("file");
+		String protocolName;
 		int32 rIndex = 0;
 
 		if (index >= 0) {
@@ -22,7 +30,7 @@ namespace Engine{
 			rIndex = index + prefix.GetCount();
 		}
 
-		Protocol rProtocol = GetProtocol(protocolName);
+		Protocol rProtocol = protocolName.GetCount() > 0 ? GetProtocol(protocolName) : Protocol::Native;
 
 		return ResultPair<Protocol, int32>(rProtocol, rIndex);
 	}
@@ -32,8 +40,8 @@ namespace Engine{
 		protocols.TryGet(name, r);
 		return r;
 	}
-	FileProtocolHandler* FileSystem::GetProtocolHandler(Protocol protocol) const {
-		SharedPtr<FileProtocolHandler> p{};
+	FileProtocol* FileSystem::GetProtocolHandler(Protocol protocol) const {
+		SharedPtr<FileProtocol> p{};
 		if (protocolHandlers.TryGet(protocol, p)) {
 			return p.GetRaw();
 		} else {
@@ -44,9 +52,9 @@ namespace Engine{
 	void FileSystem::AddProtocol(const String& name, FileSystem::Protocol protocol) {
 		protocols.Set(name, protocol);
 	}
-	void FileSystem::AddProtocolHandler(Protocol protocol, UniquePtr<FileProtocolHandler>&& handler) {
+	void FileSystem::AddProtocolHandler(Protocol protocol, UniquePtr<FileProtocol>&& handler) {
 		handler->owner = this;
-		protocolHandlers.Set(protocol, SharedPtr<FileProtocolHandler>(handler.Release()));
+		protocolHandlers.Set(protocol, SharedPtr<FileProtocol>(handler.Release()));
 	}
 
 #pragma endregion
@@ -100,31 +108,31 @@ namespace Engine{
 #pragma endregion
 
 	FileSystem::FileSystem() {
-		using Handler = UniquePtr<FileProtocolHandler>;
-		AddProtocol(STRING_LITERAL("file"), Protocol::File);
-		//AddProtocolHandler(Protocol::File, Handler(MEMNEW(...));
+		using Handler = UniquePtr<FileProtocol>;
+		AddProtocol(STRING_LITERAL("file"), Protocol::Native);
+		AddProtocolHandler(Protocol::Native, Handler(MEMNEW(FileProtocolNative)));
 		AddProtocol(STRING_LITERAL("res"), Protocol::Resource);
 		//AddProtocolHandler(Protocol::Resource, Handler(MEMNEW(...));
-		AddProtocol(STRING_LITERAL("user"), Protocol::User);
+		AddProtocol(STRING_LITERAL("user"), Protocol::Persistent);
 		//AddProtocolHandler(Protocol::User, Handler(MEMNEW(...));
 	}
 
 #pragma region File operations
-	ResultPair<FileSystem::Result, bool> FileSystem::IsFileExists(const String& path) const {
+	bool FileSystem::IsFileExists(const String& path) const {
 		auto data = GetSplitData(path);
-		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return ResultBool(Result::InvalidProtocol, false));
+		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return false);
 
-		FileProtocolHandler* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.result);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
 		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
 		return handler->IsFileExists(handlerPath);
 	}
-	ResultPair<FileSystem::Result, bool> FileSystem::IsDirectoryExists(const String& path) const {
+	bool FileSystem::IsDirectoryExists(const String& path) const {
 		auto data = GetSplitData(path);
-		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return ResultBool(Result::InvalidProtocol, false));
+		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return false);
 
-		FileProtocolHandler* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.result);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
 		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
@@ -135,7 +143,7 @@ namespace Engine{
 		auto data = GetSplitData(path);
 		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return Result::InvalidProtocol);
 
-		FileProtocolHandler* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.result);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
 		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
@@ -145,7 +153,7 @@ namespace Engine{
 		auto data = GetSplitData(path);
 		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return Result::InvalidProtocol);
 
-		FileProtocolHandler* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.result);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
 		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
@@ -156,7 +164,7 @@ namespace Engine{
 		auto data = GetSplitData(path);
 		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return ResultFile(Result::InvalidProtocol, IntrusivePtr<File>(nullptr)));
 
-		FileProtocolHandler* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.result);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
 		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
@@ -167,7 +175,7 @@ namespace Engine{
 		auto data = GetSplitData(path);
 		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return Result::InvalidProtocol);
 
-		FileProtocolHandler* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.result);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
 		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
@@ -177,7 +185,7 @@ namespace Engine{
 		auto data = GetSplitData(path);
 		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return Result::InvalidProtocol);
 
-		FileProtocolHandler* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.result);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
 		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
@@ -188,7 +196,7 @@ namespace Engine{
 		auto data = GetSplitData(path);
 		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return Result::InvalidProtocol);
 
-		FileProtocolHandler* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.result);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
 		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
@@ -198,7 +206,7 @@ namespace Engine{
 		auto data = GetSplitData(path);
 		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return Result::InvalidProtocol);
 
-		FileProtocolHandler* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.result);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
 		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
