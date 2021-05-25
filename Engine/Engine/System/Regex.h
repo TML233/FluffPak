@@ -6,14 +6,6 @@
 namespace Engine {
 	class Regex final {
 	public:
-		enum class Result {
-			OK,
-			UnknownError,
-			ExpressionError,
-			ExpressionTooComplex,
-			OutOfMemory,
-		};
-
 		struct MatchRange {
 			MatchRange();
 			MatchRange(int32 from, int32 to);
@@ -22,10 +14,10 @@ namespace Engine {
 			bool IsValid() const;
 		};
 
-		//static ResultPair<Result,bool> IsMatch(const String& content, const String& pattern);
-		static Result Match(const String& content, const String& pattern, List<MatchRange>& results);
+
+		static ResultCode Match(const String& content, const String& pattern, List<MatchRange>& results);
 
 	private:
-		static Result CreateRegex(const String& pattern, std::regex& result);
+		static ResultCode CreateRegex(const String& pattern, std::regex& result);
 	};
 }

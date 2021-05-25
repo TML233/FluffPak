@@ -64,96 +64,96 @@ namespace Engine {
 #pragma region File operations
 	bool FileSystem::IsFileExists(const String& path) const {
 		auto data = GetSplitData(path);
-		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return false);
+		ERR_ASSERT(IsProtocolValid(data.protocol), u8"Invalid path protocol!", return false);
 
-		FileProtocol* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.protocol);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
-		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
+		String handlerPath = path.Substring(data.index, path.GetCount() - data.index);
 		return handler->IsFileExists(handlerPath);
 	}
 	bool FileSystem::IsDirectoryExists(const String& path) const {
 		auto data = GetSplitData(path);
-		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return false);
+		ERR_ASSERT(IsProtocolValid(data.protocol), u8"Invalid path protocol!", return false);
 
-		FileProtocol* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.protocol);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
-		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
+		String handlerPath = path.Substring(data.index, path.GetCount() - data.index);
 		return handler->IsDirectoryExists(handlerPath);
 	}
 
-	FileSystem::Result FileSystem::CreateFile(const String& path) {
+	ResultCode FileSystem::CreateFile(const String& path) {
 		auto data = GetSplitData(path);
-		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return Result::InvalidProtocol);
+		ERR_ASSERT(IsProtocolValid(data.protocol), u8"Invalid path protocol!", return ResultCode::InvalidArgument);
 
-		FileProtocol* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.protocol);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
-		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
+		String handlerPath = path.Substring(data.index, path.GetCount() - data.index);
 		return handler->CreateFile(handlerPath);
 	}
-	FileSystem::Result FileSystem::CreateDirectory(const String& path) {
+	ResultCode FileSystem::CreateDirectory(const String& path) {
 		auto data = GetSplitData(path);
-		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return Result::InvalidProtocol);
+		ERR_ASSERT(IsProtocolValid(data.protocol), u8"Invalid path protocol!", return ResultCode::InvalidArgument);
 
-		FileProtocol* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.protocol);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
-		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
+		String handlerPath = path.Substring(data.index, path.GetCount() - data.index);
 		return handler->CreateDirectory(handlerPath);
 	}
 
-	FileSystem::ResultFile FileSystem::OpenFile(const String& path, OpenMode mode) {
+	ResultPair<IntrusivePtr<FileStream>> FileSystem::OpenFile(const String& path, OpenMode mode) {
 		auto data = GetSplitData(path);
-		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return ResultFile(Result::InvalidProtocol, IntrusivePtr<FileStream>(nullptr)));
+		ERR_ASSERT(IsProtocolValid(data.protocol), u8"Invalid path protocol!", return ResultPair<IntrusivePtr<FileStream>>(ResultCode::InvalidArgument, IntrusivePtr<FileStream>(nullptr)));
 
-		FileProtocol* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.protocol);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
-		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
+		String handlerPath = path.Substring(data.index, path.GetCount() - data.index);
 		return handler->OpenFile(handlerPath, mode);
 	}
 
-	FileSystem::Result FileSystem::RemoveFile(const String& path) {
+	ResultCode FileSystem::RemoveFile(const String& path) {
 		auto data = GetSplitData(path);
-		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return Result::InvalidProtocol);
+		ERR_ASSERT(IsProtocolValid(data.protocol), u8"Invalid path protocol!", return ResultCode::InvalidArgument);
 
-		FileProtocol* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.protocol);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
-		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
+		String handlerPath = path.Substring(data.index, path.GetCount() - data.index);
 		return handler->RemoveFile(handlerPath);
 	}
-	FileSystem::Result FileSystem::RemoveDirectory(const String& path) {
+	ResultCode FileSystem::RemoveDirectory(const String& path) {
 		auto data = GetSplitData(path);
-		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return Result::InvalidProtocol);
+		ERR_ASSERT(IsProtocolValid(data.protocol), u8"Invalid path protocol!", return ResultCode::InvalidArgument);
 
-		FileProtocol* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.protocol);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
-		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
+		String handlerPath = path.Substring(data.index, path.GetCount() - data.index);
 		return handler->RemoveDirectory(handlerPath);
 	}
 
-	FileSystem::Result FileSystem::GetAllFiles(const String& path, List<String>& result) const {
+	ResultCode FileSystem::GetAllFiles(const String& path, List<String>& result) const {
 		auto data = GetSplitData(path);
-		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return Result::InvalidProtocol);
+		ERR_ASSERT(IsProtocolValid(data.protocol), u8"Invalid path protocol!", return ResultCode::InvalidArgument);
 
-		FileProtocol* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.protocol);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
-		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
+		String handlerPath = path.Substring(data.index, path.GetCount() - data.index);
 		return handler->GetAllFiles(handlerPath, result);
 	}
-	FileSystem::Result FileSystem::GetAllDirectories(const String& path, List<String>& result) const {
+	ResultCode FileSystem::GetAllDirectories(const String& path, List<String>& result) const {
 		auto data = GetSplitData(path);
-		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return Result::InvalidProtocol);
+		ERR_ASSERT(IsProtocolValid(data.protocol), u8"Invalid path protocol!", return ResultCode::InvalidArgument);
 
-		FileProtocol* handler = GetProtocolHandler(data.result);
+		FileProtocol* handler = GetProtocolHandler(data.protocol);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
-		String handlerPath = path.Substring(data.value, path.GetCount() - data.value);
+		String handlerPath = path.Substring(data.index, path.GetCount() - data.index);
 		return handler->GetAllDirectories(handlerPath, result);
 	}
 #pragma endregion

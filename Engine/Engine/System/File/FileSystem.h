@@ -2,7 +2,6 @@
 #include "Engine/System/String.h"
 #include "Engine/System/Object/Object.h"
 #include "Engine/System/Collection/Dictionary.h"
-#include <bit>
 
 
 namespace Engine {
@@ -12,31 +11,6 @@ namespace Engine {
 	class FileSystem final {
 	public:
 		FileSystem();
-
-		enum class Endianness {
-			Little,
-			Big
-		};
-		static constexpr Endianness LocalEndianness = (std::endian::native == std::endian::little ? Endianness::Little : Endianness::Big);
-
-		enum class Result {
-			/// @brief Succeeded.
-			OK,
-			/// @brief Error that cannot be categoried.
-			UnknownError,
-			/// @brief Protocol doesn't exist.
-			InvalidProtocol,
-			/// @brief Open mode is invalid.
-			InvalidOpenMode,
-			/// @brief File or directory is not found.
-			NotFound,
-			/// @brief Not enough permission for the operation.
-			NoPermission,
-			/// @brief File or directory is already exists.
-			AlreadyExists,
-			/// @brief FileStream is invalid, e.g. FileStream is already closed.
-			InvalidStream,
-		};
 
 #pragma region Protocols
 		enum class Protocol {
@@ -82,7 +56,6 @@ namespace Engine {
 		static bool IsOpenModeAppend(OpenMode mode);
 #pragma endregion
 
-		using ResultFile = ResultPair<Result, IntrusivePtr<FileStream>>;
 #pragma region File operations
 		/// @brief Check if the file exists.
 		bool IsFileExists(const String& path) const;
@@ -90,30 +63,35 @@ namespace Engine {
 		bool IsDirectoryExists(const String& path) const;
 
 		/// @brief Create a empty file at the given path.
-		Result CreateFile(const String& path);
+		ResultCode CreateFile(const String& path);
 		/// @brief Create a empty directory at the given path.
-		Result CreateDirectory(const String& path);
+		ResultCode CreateDirectory(const String& path);
 
 		/// @brief Open the file at the given path with the given mode.\n
 		/// If the mode is read-only, and the file doesn't exists, the operation will fail.
-		ResultFile OpenFile(const String& path, OpenMode mode);
+		ResultPair<IntrusivePtr<FileStream>> OpenFile(const String& path, OpenMode mode);
 
 		/// @brief Delete a file.
-		Result RemoveFile(const String& path);
+		ResultCode RemoveFile(const String& path);
 		/// @brief Delete a directory.
-		Result RemoveDirectory(const String& path);
+		ResultCode RemoveDirectory(const String& path);
 
 		/// @brief Enumerate all files only in the given path.
-		FileSystem::Result GetAllFiles(const String& path, List<String>& result) const;
+		ResultCode GetAllFiles(const String& path, List<String>& result) const;
 		/// @brief Enumerate all directories only in the given path.
-		FileSystem::Result GetAllDirectories(const String& path, List<String>& result) const;
+		ResultCode GetAllDirectories(const String& path, List<String>& result) const;
 #pragma endregion
-	private:
 
+	private:
 		void AddProtocol(const String& name, Protocol protocol);
 		void AddProtocolHandler(Protocol protocol, UniquePtr<FileProtocol>&& handler);
 
-		ResultPair<Protocol, int32> GetSplitData(const String& path) const;
+		struct SplitData {
+			SplitData(Protocol protocol, int32 index) :protocol(protocol), index(index) {}
+			Protocol protocol;
+			int32 index;
+		};
+		SplitData GetSplitData(const String& path) const;
 
 		Dictionary<String, Protocol> protocols{};
 		Dictionary<Protocol, SharedPtr<FileProtocol>> protocolHandlers{};

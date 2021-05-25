@@ -1,19 +1,20 @@
 #include "Engine/System/File/Protocol/Native.h"
 #include <filesystem>
+#include "Engine/System/Collection/List.h"
 
 namespace fs = std::filesystem;
 
 namespace Engine {
 #pragma region Protocol
-	FileSystem::Result FileProtocolNative::GetResult(const std::error_code& err) {
+	ResultCode FileProtocolNative::GetResult(const std::error_code& err) {
 		if (err == std::errc::permission_denied) {
-			return FileSystem::Result::NoPermission;
+			return ResultCode::NoPermission;
 		} else if (err == std::errc::no_such_file_or_directory) {
-			return FileSystem::Result::NotFound;
+			return ResultCode::NotFound;
 		} else if (err == std::errc::file_exists) {
-			return FileSystem::Result::AlreadyExists;
+			return ResultCode::AlreadyExists;
 		} else {
-			return FileSystem::Result::OK;
+			return ResultCode::OK;
 		}
 	}
 
@@ -44,30 +45,30 @@ namespace Engine {
 		return st.type() == fs::file_type::directory;
 	}
 
-	FileSystem::Result FileProtocolNative::CreateFile(const String& path) {
+	ResultCode FileProtocolNative::CreateFile(const String& path) {
 		if (IsFileExists(path)) {
-			return FileSystem::Result::AlreadyExists;
+			return ResultCode::AlreadyExists;
 		}
 		FILE* f = fopen((char*)path.ToIndividual().GetRawArray(), "wb");
-		ERR_ASSERT(f != nullptr, u8"Failed to create file!", return FileSystem::Result::UnknownError);
+		ERR_ASSERT(f != nullptr, u8"Failed to create file!", return ResultCode::UnknownError);
 
 		fclose(f);
-		return FileSystem::Result::OK;
+		return ResultCode::OK;
 	}
 
-	FileSystem::Result FileProtocolNative::CreateDirectory(const String& path) {
+	ResultCode FileProtocolNative::CreateDirectory(const String& path) {
 		std::error_code err;
 		fs::create_directories(fs::u8path(path.GetStringView()), err);
 		return GetResult(err);
 	}
 
-	FileSystem::ResultFile FileProtocolNative::OpenFile(const String& path, FileSystem::OpenMode mode) {
-		ERR_ASSERT(FileSystem::IsOpenModeValid(mode), u8"mode is invalid!", return FileSystem::ResultFile(FileSystem::Result::InvalidOpenMode, IntrusivePtr<FileStream>(nullptr)));
+	ResultPair<IntrusivePtr<FileStream>> FileProtocolNative::OpenFile(const String& path, FileSystem::OpenMode mode) {
+		ERR_ASSERT(FileSystem::IsOpenModeValid(mode), u8"mode is invalid!", return ResultPair<IntrusivePtr<FileStream>>(ResultCode::InvalidArgument, IntrusivePtr<FileStream>(nullptr)));
 		// make sure the file exists when read-only.
 		if (FileSystem::IsOpenModeReadOnly(mode)) {
 			ERR_ASSERT(
 				IsFileExists(path), u8"Attemped to open a non-existing file in read-only mode!",
-				return FileSystem::ResultFile(FileSystem::Result::NotFound, IntrusivePtr<FileStream>(nullptr));
+				return ResultPair<IntrusivePtr<FileStream>>(ResultCode::NotFound, IntrusivePtr<FileStream>(nullptr));
 			);
 		}
 		static const char* modes[] = { // See FileSystem::OpenMode, must be matched
@@ -79,28 +80,28 @@ namespace Engine {
 		};
 		FILE* file = std::fopen((char*)path.ToIndividual().GetRawArray(), modes[(byte)mode]);
 		ERR_ASSERT(file != nullptr, u8"Failed to open the file!",
-			return FileSystem::ResultFile(FileSystem::Result::UnknownError, IntrusivePtr<FileStream>(nullptr))
+			return ResultPair<IntrusivePtr<FileStream>>(ResultCode::UnknownError, IntrusivePtr<FileStream>(nullptr))
 		);
 
 		auto fileStream = IntrusivePtr<FileStreamNative>::Create(file, mode);
-		return ResultPair<FileSystem::Result, IntrusivePtr<FileStream>>(FileSystem::Result::OK, fileStream);
+		return ResultPair<IntrusivePtr<FileStream>>(ResultCode::OK, fileStream);
 	}
 
-	FileSystem::Result FileProtocolNative::RemoveFile(const String& path) {
+	ResultCode FileProtocolNative::RemoveFile(const String& path) {
 		std::error_code err;
 		fs::remove(fs::u8path(path.GetStringView()), err);
 		return GetResult(err);
 	}
 
-	FileSystem::Result FileProtocolNative::RemoveDirectory(const String& path) {
+	ResultCode FileProtocolNative::RemoveDirectory(const String& path) {
 		std::error_code err;
 		fs::remove_all(fs::u8path(path.GetStringView()), err);
 		return GetResult(err);
 	}
 
-	FileSystem::Result FileProtocolNative::GetAllFiles(const String& path, List<String>& result) const {
+	ResultCode FileProtocolNative::GetAllFiles(const String& path, List<String>& result) const {
 		if (!IsDirectoryExists(path)) {
-			return FileSystem::Result::NotFound;
+			return ResultCode::NotFound;
 		}
 
 		auto iter = fs::directory_iterator(fs::u8path(path.GetStringView()));
@@ -109,12 +110,12 @@ namespace Engine {
 				result.Add(one.path().u8string());
 			}
 		}
-		return FileSystem::Result::OK;
+		return ResultCode::OK;
 	}
 
-	FileSystem::Result FileProtocolNative::GetAllDirectories(const String& path, List<String>& result) const {
+	ResultCode FileProtocolNative::GetAllDirectories(const String& path, List<String>& result) const {
 		if (!IsDirectoryExists(path)) {
-			return FileSystem::Result::NotFound;
+			return ResultCode::NotFound;
 		}
 
 		auto iter = fs::directory_iterator(fs::u8path(path.GetStringView()));
@@ -123,7 +124,7 @@ namespace Engine {
 				result.Add(one.path().u8string());
 			}
 		}
-		return FileSystem::Result::OK;
+		return ResultCode::OK;
 	}
 #pragma endregion
 
@@ -153,12 +154,12 @@ namespace Engine {
 		return canWrite;
 	}
 
-	FileSystem::Result FileStreamNative::SetPosition(int64 position) {
-		ERR_ASSERT(IsValid(), u8"Attempted to operate an invalid FileStream!", return FileSystem::Result::InvalidStream);
+	ResultCode FileStreamNative::SetPosition(int64 position) {
+		ERR_ASSERT(IsValid(), u8"Attempted to operate an invalid FileStream!", return ResultCode::InvalidStream);
 
 		int result = std::fseek(file, position, SEEK_SET);
-		ERR_ASSERT(result == 0, u8"Failed to set current pointer position.", return FileSystem::Result::UnknownError);
-		return FileSystem::Result::OK;
+		ERR_ASSERT(result == 0, u8"Failed to set current pointer position.", return ResultCode::UnknownError);
+		return ResultCode::OK;
 	}
 	int64 FileStreamNative::GetPosition() const {
 		ERR_ASSERT(IsValid(), u8"Attempted to operate an invalid FileStream!", return -1);
@@ -181,70 +182,30 @@ namespace Engine {
 		return length;
 	}
 
-	FileSystem::Result FileStreamNative::WriteBytes(const byte* valuePtr, int64 length) {
-		ERR_ASSERT(IsValid(), u8"Attempted to operate an invalid FileStream!", return FileSystem::Result::InvalidStream);
-		ERR_ASSERT(CanWrite(), u8"This FileStream cannot write.", return FileSystem::Result::NoPermission);
+	ResultCode FileStreamNative::WriteBytes(const byte* valuePtr, int64 length) {
+		ERR_ASSERT(IsValid(), u8"Attempted to operate an invalid FileStream!", return ResultCode::InvalidStream);
+		ERR_ASSERT(CanWrite(), u8"This FileStream cannot write.", return ResultCode::NoPermission);
 
 		fwrite(valuePtr, sizeof(byte), length, file);
-		return FileSystem::Result::OK;
+		return ResultCode::OK;
 	}
-	FileSystem::Result FileStreamNative::WriteBytesEndian(const byte* valuePtr, int64 length) {
-		ERR_ASSERT(IsValid(), u8"Attempted to operate an invalid FileStream!", return FileSystem::Result::InvalidStream);
-		ERR_ASSERT(CanWrite(), u8"This FileStream cannot write.", return FileSystem::Result::NoPermission);
+	ResultCode FileStreamNative::WriteBytesEndian(const byte* valuePtr, int64 length) {
+		ERR_ASSERT(IsValid(), u8"Attempted to operate an invalid FileStream!", return ResultCode::InvalidStream);
+		ERR_ASSERT(CanWrite(), u8"This FileStream cannot write.", return ResultCode::NoPermission);
 
-		if (FileSystem::LocalEndianness == GetCurrentEndianness()) {
+		if (Stream::LocalEndianness == GetCurrentEndianness()) {
 			return WriteBytes(valuePtr, length);
 		}
 
 		for (int64 i = length - 1; i >= 0; i += 1) {
 			fwrite(valuePtr + i, sizeof(byte), 1, file);
 		}
-		return FileSystem::Result::OK;
+		return ResultCode::OK;
 	}
 
-	FileSystem::Result FileStreamNative::WriteByte(byte value) {
-		return WriteBytes(&value, sizeof(byte));
-	}
-	FileSystem::Result FileStreamNative::WriteBytes(const List<byte>& value) {
-		return WriteBytes(value.begin().GetPointer(), value.GetCount());
-	}
-	FileSystem::Result FileStreamNative::WriteSByte(sbyte value) {
-		return WriteBytes((byte*)&value, sizeof(sbyte));
-	}
-	FileSystem::Result FileStreamNative::WriteInt16(int16 value) {
-		return WriteBytesEndian((byte*)&value, sizeof(int16));
-	}
-	FileSystem::Result FileStreamNative::WriteUInt16(uint16 value) {
-		return WriteBytesEndian((byte*)&value, sizeof(uint16));
-	}
-	FileSystem::Result FileStreamNative::WriteInt32(int32 value) {
-		return WriteBytesEndian((byte*)&value, sizeof(int32));
-	}
-	FileSystem::Result FileStreamNative::WriteUInt32(uint32 value) {
-		return WriteBytesEndian((byte*)&value, sizeof(uint32));
-	}
-	FileSystem::Result FileStreamNative::WriteInt64(int64 value) {
-		return WriteBytesEndian((byte*)&value, sizeof(int64));
-	}
-	FileSystem::Result FileStreamNative::WriteUInt64(uint64 value) {
-		return WriteBytesEndian((byte*)&value, sizeof(uint64));
-	}
-	FileSystem::Result FileStreamNative::WriteFloat(float value) {
-		return WriteBytesEndian((byte*)&value, sizeof(float));
-	}
-	FileSystem::Result FileStreamNative::WriteDouble(double value) {
-		return WriteBytesEndian((byte*)&value, sizeof(double));
-	}
-	FileSystem::Result FileStreamNative::WriteString(const String& value) {
-		return WriteBytes((byte*)value.GetStartPtr(), value.GetCount());
-	}
-	FileSystem::Result FileStreamNative::WriteStringLine(const String& value) {
-		auto result = WriteString(value);
-		WriteByte((byte)'\n');
-		return result;
-	}
+	int64 FileStreamNative::ReadBytes(int64 length, List<byte>& result) {
 
-	
+	}
 #pragma endregion
 
 }

@@ -8,7 +8,7 @@ namespace Engine {
 	int32 ObjectUtil::GetHashCode<FileSystem::Protocol>(const FileSystem::Protocol& obj) {
 		return (int32)obj;
 	}
-	ResultPair<FileSystem::Protocol, int32> FileSystem::GetSplitData(const String& path) const {
+	FileSystem::SplitData FileSystem::GetSplitData(const String& path) const {
 		const String prefix = STRING_LITERAL("://");
 
 		int32 index = path.IndexOf(prefix);
@@ -23,7 +23,7 @@ namespace Engine {
 
 		Protocol rProtocol = protocolName.GetCount() > 0 ? GetProtocol(protocolName) : Protocol::Native;
 
-		return ResultPair<Protocol, int32>(rProtocol, rIndex);
+		return SplitData(rProtocol, rIndex);
 	}
 
 	FileSystem::Protocol FileSystem::GetProtocol(const String& name) const {

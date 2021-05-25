@@ -12,16 +12,16 @@ namespace Engine {
 		virtual bool IsFileExists(const String& path) const = 0;
 		virtual bool IsDirectoryExists(const String& path) const = 0;
 
-		virtual FileSystem::Result CreateFile(const String& path) = 0;
-		virtual FileSystem::Result CreateDirectory(const String& path) = 0;
+		virtual ResultCode CreateFile(const String& path) = 0;
+		virtual ResultCode CreateDirectory(const String& path) = 0;
 
-		virtual ResultPair<FileSystem::Result, IntrusivePtr<FileStream>> OpenFile(const String& path, FileSystem::OpenMode mode) = 0;
+		virtual ResultPair<IntrusivePtr<FileStream>> OpenFile(const String& path, FileSystem::OpenMode mode) = 0;
 
-		virtual FileSystem::Result RemoveFile(const String& path) = 0;
-		virtual FileSystem::Result RemoveDirectory(const String& path) = 0;
+		virtual ResultCode RemoveFile(const String& path) = 0;
+		virtual ResultCode RemoveDirectory(const String& path) = 0;
 
-		virtual FileSystem::Result GetAllFiles(const String& path, List<String>& result) const = 0;
-		virtual FileSystem::Result GetAllDirectories(const String& path, List<String>& result) const = 0;
+		virtual ResultCode GetAllFiles(const String& path, List<String>& result) const = 0;
+		virtual ResultCode GetAllDirectories(const String& path, List<String>& result) const = 0;
 
 	private:
 		friend class FileSystem;

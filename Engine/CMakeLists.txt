@@ -24,6 +24,7 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/Atomic.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/JobSystem.h"
 
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Stream.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.h"
@@ -72,6 +73,7 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/ThreadUtil.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/JobSystem.cpp"
 
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Stream.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.cpp"
