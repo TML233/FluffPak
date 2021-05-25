@@ -26,10 +26,12 @@ set(HeaderFile
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.h"
-	
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/FileProtocolNative.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.h"
+	
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileSystem.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileProtocol.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileStream.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/Protocol/Native.h"
 	
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Math.h"
@@ -65,16 +67,19 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object/Reflection.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object/Variant.cpp"
 	
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Memory/Memory.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.cpp"
-	
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/FileProtocolNative.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/ThreadUtil.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/JobSystem.cpp"
+
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.cpp"
+	
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileSystem.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileProtocol.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileStream.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/Protocol/Native.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Math.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Random.cpp"

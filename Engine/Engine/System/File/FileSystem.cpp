@@ -1,64 +1,8 @@
-#include "Engine/System/File.h"
-#include "Engine/System/FileProtocolNative.h"
+#include "Engine/System/File/FileSystem.h"
+#include "Engine/System/File/FileProtocol.h"
+#include "Engine/System/File/Protocol/Native.h"
 
-namespace Engine{
-	FileSystem::Endianness File::GetCurrentEndianness() const {
-		return currentEndianness;
-	}
-	void File::SetCurrentEndianness(FileSystem::Endianness endianness) {
-		currentEndianness = endianness;
-	}
-
-#pragma region Protocols
-	bool FileSystem::IsProtocolValid(Protocol protocol) {
-		return protocol > Protocol::Null && protocol < Protocol::End;
-	}
-	template<>
-	int32 ObjectUtil::GetHashCode<FileSystem::Protocol>(const FileSystem::Protocol& obj) {
-		return (int32)obj;
-	}
-	ResultPair<FileSystem::Protocol, int32> FileSystem::GetSplitData(const String& path) const {
-		const String prefix = STRING_LITERAL("://");
-
-		int32 index = path.IndexOf(prefix);
-
-		String protocolName;
-		int32 rIndex = 0;
-
-		if (index >= 0) {
-			protocolName = path.Substring(0, index);
-			rIndex = index + prefix.GetCount();
-		}
-
-		Protocol rProtocol = protocolName.GetCount() > 0 ? GetProtocol(protocolName) : Protocol::Native;
-
-		return ResultPair<Protocol, int32>(rProtocol, rIndex);
-	}
-
-	FileSystem::Protocol FileSystem::GetProtocol(const String& name) const {
-		Protocol r = Protocol::Null;
-		protocols.TryGet(name, r);
-		return r;
-	}
-	FileProtocol* FileSystem::GetProtocolHandler(Protocol protocol) const {
-		SharedPtr<FileProtocol> p{};
-		if (protocolHandlers.TryGet(protocol, p)) {
-			return p.GetRaw();
-		} else {
-			return nullptr;
-		}
-	}
-
-	void FileSystem::AddProtocol(const String& name, FileSystem::Protocol protocol) {
-		protocols.Set(name, protocol);
-	}
-	void FileSystem::AddProtocolHandler(Protocol protocol, UniquePtr<FileProtocol>&& handler) {
-		handler->owner = this;
-		protocolHandlers.Set(protocol, SharedPtr<FileProtocol>(handler.Release()));
-	}
-
-#pragma endregion
-
+namespace Engine {
 #pragma region Open modes
 	bool FileSystem::IsOpenModeValid(OpenMode mode) {
 		return (mode >= OpenMode::ReadOnly && mode <= OpenMode::ReadWriteAppend);
@@ -160,9 +104,9 @@ namespace Engine{
 		return handler->CreateDirectory(handlerPath);
 	}
 
-	ResultPair<FileSystem::Result, IntrusivePtr<File>> FileSystem::OpenFile(const String& path, OpenMode mode) {
+	FileSystem::ResultFile FileSystem::OpenFile(const String& path, OpenMode mode) {
 		auto data = GetSplitData(path);
-		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return ResultFile(Result::InvalidProtocol, IntrusivePtr<File>(nullptr)));
+		ERR_ASSERT(IsProtocolValid(data.result), u8"Invalid path protocol!", return ResultFile(Result::InvalidProtocol, IntrusivePtr<FileStream>(nullptr)));
 
 		FileProtocol* handler = GetProtocolHandler(data.result);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
