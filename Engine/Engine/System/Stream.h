@@ -40,15 +40,15 @@ namespace Engine {
 
 
 		/// @brief Write some bytes, byte by byte.
-		virtual ResultCode WriteBytes(const byte * valuePtr, int64 length) = 0;
+		ResultCode WriteBytes(const byte* valuePtr, int32 length);
 		/// @brief Write some bytes, do conversions of endianness.
-		virtual ResultCode WriteBytesEndian(const byte * valuePtr, int64 length) = 0;
+		ResultCode WriteBytesEndian(const byte* valuePtr, int32 length);
 		/// @brief Read some bytes, byte by byte.
 		/// @return number of bytes read.
-		virtual int64 ReadBytes(int64 length, List<byte>&result) = 0;
+		int32 ReadBytes(int32 length, List<byte>& result);
 		/// @brief Read some bytes, do conversions of endianness.
 		/// @return number of bytes read.
-		virtual int64 ReadBytesEndian(int64 length, List<byte>&result) = 0;
+		int32 ReadBytesEndian(int32 length, List<byte>& result);
 
 
 		ResultCode WriteByte(byte value);
@@ -62,8 +62,14 @@ namespace Engine {
 		ResultCode WriteUInt64(uint64 value);
 		ResultCode WriteFloat(float value);
 		ResultCode WriteDouble(double value);
-		ResultCode WriteString(const String& value);
-		ResultCode WriteStringLine(const String& value);
+		/// @brief Write a String using C# BinaryWriter/Reader method:\n
+		/// Starting with a 7-bit encoded integer as the length information,\n
+		/// followed by the actual string data encoded in UTF-8.
+		//ResultCode WriteString(const String& value);
+
+		ResultCode WriteText(const String& value);
+		ResultCode WriteTextLine(const String& value);
+
 		byte ReadByte();
 		sbyte ReadSByte();
 		int16 ReadInt16();
@@ -74,10 +80,22 @@ namespace Engine {
 		uint64 ReadUInt64();
 		float ReadFloat();
 		double ReadDouble();
-		String ReadStringLine();
-		String ReadAllString();
+		/// @brief Read a String using C# BinaryWriter/Reader method:\n
+		/// Starting with a 7-bit encoded integer as the length information,\n
+		/// followed by the actual string data encoded in UTF-8.
+		//String ReadString();
+
+		String ReadTextLine();
+		String ReadAllText();
+
+	protected:
+		/// @brief Implement this. No need to do the safe check.
+		virtual ResultCode WriteBytesUnchecked(const byte* valuePtr, int32 length) = 0;
+		/// @brief Implement this. No need to do the safe check.
+		virtual int32 ReadBytesUnchecked(int32 length, List<byte>& result) = 0;
 
 	private:
 		Endianness currentEndianness = Endianness::Little;
+		List<byte> readCache;
 	};
 }

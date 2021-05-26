@@ -10,6 +10,9 @@ namespace Engine {
 		REFLECTION_CLASS(::Engine::FileStream, ::Engine::Stream) {
 			REFLECTION_CLASS_INSTANTIABLE(false);
 		}
+
+	public:
+		bool CanRandomAccess() const override;
 	};
 
 }

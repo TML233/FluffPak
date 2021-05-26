@@ -182,29 +182,14 @@ namespace Engine {
 		return length;
 	}
 
-	ResultCode FileStreamNative::WriteBytes(const byte* valuePtr, int64 length) {
-		ERR_ASSERT(IsValid(), u8"Attempted to operate an invalid FileStream!", return ResultCode::InvalidStream);
-		ERR_ASSERT(CanWrite(), u8"This FileStream cannot write.", return ResultCode::NoPermission);
-
+	ResultCode FileStreamNative::WriteBytesUnchecked(const byte* valuePtr, int32 length) {
 		fwrite(valuePtr, sizeof(byte), length, file);
 		return ResultCode::OK;
 	}
-	ResultCode FileStreamNative::WriteBytesEndian(const byte* valuePtr, int64 length) {
-		ERR_ASSERT(IsValid(), u8"Attempted to operate an invalid FileStream!", return ResultCode::InvalidStream);
-		ERR_ASSERT(CanWrite(), u8"This FileStream cannot write.", return ResultCode::NoPermission);
 
-		if (Stream::LocalEndianness == GetCurrentEndianness()) {
-			return WriteBytes(valuePtr, length);
-		}
-
-		for (int64 i = length - 1; i >= 0; i += 1) {
-			fwrite(valuePtr + i, sizeof(byte), 1, file);
-		}
-		return ResultCode::OK;
-	}
-
-	int64 FileStreamNative::ReadBytes(int64 length, List<byte>& result) {
-
+	int32 FileStreamNative::ReadBytesUnchecked(int32 length, List<byte>& result) {
+		int32 read = (int32)fread(result.GetRawElementPtr() + result.GetCount() - length, sizeof(byte), length, file);
+		return read;
 	}
 #pragma endregion
 

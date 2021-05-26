@@ -73,7 +73,7 @@ namespace Engine {
 		// Match and iterate all matches
 		while (iter != end) {
 			const auto& matches = *iter;
-			for (sizeint i = 0; i < matches.size(); ++i) {
+			for (int32 i = 0; i < matches.size(); ++i) {
 				const auto& match = matches[i];
 				results.Add(MatchRange(match.first - contentSv.begin(), match.second - contentSv.begin()));
 			}

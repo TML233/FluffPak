@@ -43,11 +43,9 @@ namespace Engine {
 		int64 GetPosition() const override;
 		int64 GetLength() const override;
 
-		ResultCode WriteBytes(const byte* valuePtr, int64 length) override;
-		ResultCode WriteBytesEndian(const byte* valuePtr, int64 length) override;
-		int64 ReadBytes(int64 length, List<byte>& result) override;
-		int64 ReadBytesEndian(int64 length, List<byte>& result) override;
-
+	protected:
+		ResultCode WriteBytesUnchecked(const byte* valuePtr, int32 length) override;
+		int32 ReadBytesUnchecked(int32 length, List<byte>& result) override;
 
 	private:
 		std::FILE* file;
