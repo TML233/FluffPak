@@ -49,7 +49,7 @@ namespace Engine {
 		if (IsFileExists(path)) {
 			return ResultCode::AlreadyExists;
 		}
-		FILE* f = fopen((char*)path.ToIndividual().GetRawArray(), "wb");
+		FILE* f = std::fopen((char*)path.ToIndividual().GetRawArray(), "wb");
 		ERR_ASSERT(f != nullptr, u8"Failed to create file!", return ResultCode::UnknownError);
 
 		fclose(f);
