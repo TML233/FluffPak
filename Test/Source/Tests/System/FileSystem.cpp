@@ -6,10 +6,17 @@ using namespace Engine;
 TEST_SUITE("File System") {
 	TEST_CASE("Native") {
 		FileSystem fs;
-		auto r=fs.OpenFile(STRL("test.txt"), FileStream::OpenMode::WriteTruncate);
-		CHECK(r.result == ResultCode::OK);
-		auto file = r.value;
-		file->WriteInt32(3);
-		file->Close();
+		String path = STRL("file://NativeFileTest.txt");
+		{
+			auto r = fs.OpenFile(path, FileStream::OpenMode::WriteTruncate);
+			CHECK(r.result == ResultCode::OK);
+
+			auto file = r.value;
+			CHECK(file->CanWrite());
+			CHECK(!file->CanRead());
+			file->WriteText(STRL("我是伞兵！！"));
+			file->Close();
+		}
+		CHECK(fs.IsFileExists(path));
 	}
 }
