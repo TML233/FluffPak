@@ -192,8 +192,8 @@ namespace Engine {
 						// Connect prev and next if it has a prev linked entry.
 						entries[prev].next = entries[i].next;
 					} else {
-						// Set bucket entry target to -1 if it is the first entry of the bucket.
-						buckets[bucket] = -1;
+						// Set bucket entry target to next if it is the first entry of the bucket.
+						buckets[bucket] = entries[i].next;
 					}
 					// Destruct this entry
 					Memory::Destruct(entries + i);
