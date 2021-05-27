@@ -2,6 +2,7 @@
 #include "Engine/System/String.h"
 #include "Engine/System/Object/Object.h"
 #include "Engine/System/Collection/Dictionary.h"
+#include "Engine/System/File/FileProtocol.h"
 
 
 namespace Engine {
@@ -13,47 +14,12 @@ namespace Engine {
 		FileSystem();
 
 #pragma region Protocols
-		enum class Protocol {
-			/// @brief Invalid protocol
-			Null,
-			/// @brief Files on the local machine filesystem.
-			Native,
-			/// @brief Files in the resource directory.
-			Resource,
-			/// @brief Files in the user presistent data directory.
-			Persistent,
-			/// @brief End of the protocol enum.
-			End,
-		};
-		static bool IsProtocolValid(Protocol protocol);
 		/// @brief Get the protocol enum item by its name.
 		/// @return Protocol::Null when not found. Use IsProtocolValid to check.
-		Protocol GetProtocol(const String& name) const;
+		FileProtocol::Protocol GetProtocol(const String& name) const;
 		/// @brief Get a protocol handler.
 		/// @return nullptr when not found.
-		FileProtocol* GetProtocolHandler(Protocol protocol) const;
-#pragma endregion
-
-#pragma region Open modes
-		enum class OpenMode :byte {
-			/// @brief Read-only.
-			ReadOnly,
-			/// @brief Write-only, clears the file.
-			WriteTruncate,
-			/// @brief Write-only, append to the file.
-			WriteAppend,
-			/// @brief Read-write, clears the file.
-			ReadWriteTruncate,
-			/// @brief Read-write, append to the file.
-			ReadWriteAppend
-		};
-
-		static bool IsOpenModeValid(OpenMode mode);
-		static bool IsOpenModeReadOnly(OpenMode mode);
-		static bool IsOpenModeRead(OpenMode mode);
-		static bool IsOpenModeWrite(OpenMode mode);
-		static bool IsOpenModeTruncate(OpenMode mode);
-		static bool IsOpenModeAppend(OpenMode mode);
+		FileProtocol* GetProtocolHandler(FileProtocol::Protocol protocol) const;
 #pragma endregion
 
 #pragma region File operations
@@ -69,7 +35,7 @@ namespace Engine {
 
 		/// @brief Open the file at the given path with the given mode.\n
 		/// If the mode is read-only, and the file doesn't exists, the operation will fail.
-		ResultPair<IntrusivePtr<FileStream>> OpenFile(const String& path, OpenMode mode);
+		ResultPair<IntrusivePtr<FileStream>> OpenFile(const String& path, FileStream::OpenMode mode);
 
 		/// @brief Delete a file.
 		ResultCode RemoveFile(const String& path);
@@ -83,17 +49,17 @@ namespace Engine {
 #pragma endregion
 
 	private:
-		void AddProtocol(const String& name, Protocol protocol);
-		void AddProtocolHandler(Protocol protocol, UniquePtr<FileProtocol>&& handler);
+		void AddProtocol(const String& name, FileProtocol::Protocol protocol);
+		void AddProtocolHandler(FileProtocol::Protocol protocol, UniquePtr<FileProtocol>&& handler);
 
 		struct SplitData {
-			SplitData(Protocol protocol, int32 index) :protocol(protocol), index(index) {}
-			Protocol protocol;
+			SplitData(FileProtocol::Protocol protocol, int32 index) :protocol(protocol), index(index) {}
+			FileProtocol::Protocol protocol;
 			int32 index;
 		};
 		SplitData GetSplitData(const String& path) const;
 
-		Dictionary<String, Protocol> protocols{};
-		Dictionary<Protocol, SharedPtr<FileProtocol>> protocolHandlers{};
+		Dictionary<String, FileProtocol::Protocol> protocols{};
+		Dictionary<FileProtocol::Protocol, SharedPtr<FileProtocol>> protocolHandlers{};
 	};
 }

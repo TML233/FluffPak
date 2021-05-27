@@ -15,7 +15,7 @@ namespace Engine {
 		ResultCode CreateFile(const String& path) override;
 		ResultCode CreateDirectory(const String& path) override;
 
-		ResultPair<IntrusivePtr<FileStream>> OpenFile(const String& path, FileSystem::OpenMode mode) override;
+		ResultPair<IntrusivePtr<FileStream>> OpenFile(const String& path, FileStream::OpenMode mode) override;
 
 		ResultCode RemoveFile(const String& path) override;
 		ResultCode RemoveDirectory(const String& path) override;
@@ -31,7 +31,7 @@ namespace Engine {
 		REFLECTION_CLASS(::Engine::FileStreamNative, ::Engine::FileStream) {}
 
 	public:
-		FileStreamNative(std::FILE* file, FileSystem::OpenMode openMode);
+		FileStreamNative(std::FILE* file, FileStream::OpenMode openMode);
 		~FileStreamNative();
 
 		void Close() override;

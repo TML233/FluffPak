@@ -108,6 +108,11 @@ namespace Engine {
 	ResultCode Stream::WriteDouble(double value) {
 		return WriteBytesEndian((byte*)&value, sizeof(double));
 	}
+	// TODO: Implement this.
+	ResultCode Stream::WriteString(const String& value) {
+		FATAL_CRASH(u8"Not implemented.");
+		return ResultCode::NotSupported;
+	}
 	ResultCode Stream::WriteText(const String& value) {
 		return WriteBytes((byte*)value.GetStartPtr(), value.GetCount());
 	}
@@ -118,33 +123,79 @@ namespace Engine {
 	}
 
 	byte Stream::ReadByte() {
-
+		readCache.Clear();
+		int32 read = ReadBytes(sizeof(byte), readCache);
+		ERR_ASSERT(read == sizeof(byte), u8"Cannot read a byte.", return 0);
+		return *((byte*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
 	}
 	sbyte Stream::ReadSByte() {
-
+		readCache.Clear();
+		int32 read = ReadBytes(sizeof(sbyte), readCache);
+		ERR_ASSERT(read == sizeof(sbyte), u8"Cannot read a sbyte.", return 0);
+		return *((sbyte*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
 	}
 	int16 Stream::ReadInt16() {
-
+		readCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(int16), readCache);
+		ERR_ASSERT(read == sizeof(int16), u8"Cannot read a int16.", return 0);
+		return *((int16*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
 	}
 	uint16 Stream::ReadUInt16() {
-
+		readCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(uint16), readCache);
+		ERR_ASSERT(read == sizeof(uint16), u8"Cannot read a uint16.", return 0);
+		return *((uint16*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
 	}
 	int32 Stream::ReadInt32() {
-
+		readCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(int32), readCache);
+		ERR_ASSERT(read == sizeof(int32), u8"Cannot read a int32.", return 0);
+		return *((int32*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
 	}
 	uint32 Stream::ReadUInt32() {
-
+		readCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(uint32), readCache);
+		ERR_ASSERT(read == sizeof(uint32), u8"Cannot read a uint32.", return 0);
+		return *((uint32*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
 	}
 	int64 Stream::ReadInt64() {
-
+		readCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(int64), readCache);
+		ERR_ASSERT(read == sizeof(int64), u8"Cannot read a int64.", return 0);
+		return *((int64*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
 	}
 	uint64 Stream::ReadUInt64() {
-
+		readCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(uint64), readCache);
+		ERR_ASSERT(read == sizeof(uint64), u8"Cannot read a uint64.", return 0);
+		return *((uint64*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
 	}
 	float Stream::ReadFloat() {
-
+		readCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(float), readCache);
+		ERR_ASSERT(read == sizeof(float), u8"Cannot read a float.", return 0);
+		return *((float*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
 	}
 	double Stream::ReadDouble() {
+		readCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(double), readCache);
+		ERR_ASSERT(read == sizeof(double), u8"Cannot read a double.", return 0);
+		return *((double*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
+	}
+	// TODO: Implement this.
+	String Stream::ReadString() {
+		FATAL_CRASH(u8"Not implemented.");
+		return String::GetEmpty();
+	}
 
+	// TODO: Implement this.
+	String Stream::ReadTextLine() {
+		FATAL_CRASH(u8"Not implemented.");
+		return String::GetEmpty();
+	}
+	// TODO: Implement this.
+	String Stream::ReadAllText() {
+		FATAL_CRASH(u8"Not implemented.");
+		return String::GetEmpty();
 	}
 }

@@ -18,12 +18,12 @@ namespace Engine {
 		virtual ~Stream() = default;
 
 		/// @brief Get current endianness.\n
-		/// This only indicates that how this File instance deal with data.\n
-		/// Does not check whether the original file is small-endian or big-endian. (And there's no way.)
+		/// This only indicates that how this Stream deal with data.\n
+		/// Does not check whether the original stream is small-endian or big-endian. (And there's no way.)\n
 		/// Default endianness will always be small-endian,
 		Endianness GetCurrentEndianness() const;
 		/// @brief Set current endianness.\n
-		/// This affects how this File instance deal with data.
+		/// This affects how this Stream deal with data.\n
 		/// Default endianness will always be small-endian.
 		void SetCurrentEndianness(Endianness endian);
 
@@ -63,9 +63,8 @@ namespace Engine {
 		ResultCode WriteFloat(float value);
 		ResultCode WriteDouble(double value);
 		/// @brief Write a String using C# BinaryWriter/Reader method:\n
-		/// Starting with a 7-bit encoded integer as the length information,\n
-		/// followed by the actual string data encoded in UTF-8.
-		//ResultCode WriteString(const String& value);
+		/// Starting with a 7-bit encoded integer as the length information, followed by the actual string data encoded in UTF-8.
+		ResultCode WriteString(const String& value);
 
 		ResultCode WriteText(const String& value);
 		ResultCode WriteTextLine(const String& value);
@@ -81,9 +80,8 @@ namespace Engine {
 		float ReadFloat();
 		double ReadDouble();
 		/// @brief Read a String using C# BinaryWriter/Reader method:\n
-		/// Starting with a 7-bit encoded integer as the length information,\n
-		/// followed by the actual string data encoded in UTF-8.
-		//String ReadString();
+		/// Starting with a 7-bit encoded integer as the length information, followed by the actual string data encoded in UTF-8.
+		String ReadString();
 
 		String ReadTextLine();
 		String ReadAllText();

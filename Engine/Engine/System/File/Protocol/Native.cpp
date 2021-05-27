@@ -62,10 +62,10 @@ namespace Engine {
 		return GetResult(err);
 	}
 
-	ResultPair<IntrusivePtr<FileStream>> FileProtocolNative::OpenFile(const String& path, FileSystem::OpenMode mode) {
-		ERR_ASSERT(FileSystem::IsOpenModeValid(mode), u8"mode is invalid!", return ResultPair<IntrusivePtr<FileStream>>(ResultCode::InvalidArgument, IntrusivePtr<FileStream>(nullptr)));
+	ResultPair<IntrusivePtr<FileStream>> FileProtocolNative::OpenFile(const String& path, FileStream::OpenMode mode) {
+		ERR_ASSERT(FileStream::IsOpenModeValid(mode), u8"mode is invalid!", return ResultPair<IntrusivePtr<FileStream>>(ResultCode::InvalidArgument, IntrusivePtr<FileStream>(nullptr)));
 		// make sure the file exists when read-only.
-		if (FileSystem::IsOpenModeReadOnly(mode)) {
+		if (FileStream::IsOpenModeReadOnly(mode)) {
 			ERR_ASSERT(
 				IsFileExists(path), u8"Attemped to open a non-existing file in read-only mode!",
 				return ResultPair<IntrusivePtr<FileStream>>(ResultCode::NotFound, IntrusivePtr<FileStream>(nullptr));
@@ -129,9 +129,9 @@ namespace Engine {
 #pragma endregion
 
 #pragma region File
-	FileStreamNative::FileStreamNative(std::FILE* file, FileSystem::OpenMode openMode) :file(file),
-		canRead(FileSystem::IsOpenModeRead(openMode)),
-		canWrite(FileSystem::IsOpenModeWrite(openMode)) {}
+	FileStreamNative::FileStreamNative(std::FILE* file, OpenMode openMode) :file(file),
+		canRead(IsOpenModeRead(openMode)),
+		canWrite(IsOpenModeWrite(openMode)) {}
 
 	FileStreamNative::~FileStreamNative() {
 		Close();
