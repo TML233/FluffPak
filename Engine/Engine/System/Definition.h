@@ -33,12 +33,24 @@ namespace Engine {
 	/// @brief Represents a local machine sized integer which can hold the memory size.
 	using sizeint = std::size_t;
 
+	enum class ResultCode {
+		OK,
+		UnknownError,
+		InvalidArgument,
+		NotSupported,
+		NoPermission,
+		NotFound,
+		AlreadyExists,
+		InvalidStream,
+		OutOfMemory,
+	};
+
 	/// @brief A helper struct for storing result code and result value together.\n
 	/// Only used for small values. Big values still remains being returned via the parameter.
-	template<typename TResult,typename TValue>
+	template<typename T>
 	struct ResultPair {
-		ResultPair(TResult result, TValue value) :result(result), value(value) {}
-		TResult result;
-		TValue value;
+		ResultPair(ResultCode result, T value) :result(result), value(value) {}
+		ResultCode result;
+		T value;
 	};
 }

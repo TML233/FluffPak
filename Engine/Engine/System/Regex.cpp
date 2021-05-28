@@ -7,7 +7,7 @@ namespace Engine {
 		return (from >= 0 && to >= from);
 	}
 
-	Regex::Result Regex::CreateRegex(const String& pattern, std::regex& result) {
+	ResultCode Regex::CreateRegex(const String& pattern, std::regex& result) {
 		std::string_view svp = pattern.GetStringView();
 		std::regex rp;
 		try {
@@ -32,33 +32,33 @@ namespace Engine {
 				case REGEX_ERROR(error_range):
 				case REGEX_ERROR(error_badrepeat):
 					ERR_MSG(u8"Invalid regex expression.");
-					return Result::ExpressionError;
+					return ResultCode::InvalidArgument;
 
 				case REGEX_ERROR(error_space):
 				case REGEX_ERROR(error_stack):
 					ERR_MSG(u8"Out of memory.");
-					return Result::OutOfMemory;
+					return ResultCode::OutOfMemory;
 
 				case REGEX_ERROR(error_complexity):
 					ERR_MSG(u8"Regex expression too complex.");
-					return Result::ExpressionTooComplex;
+					return ResultCode::NotSupported;
 
 				default:
 					ERR_MSG(String::Format(u8"Unknown error code {0} when constructing regex expression.", (int32)err.code()).GetRawArray());
-					return Result::UnknownError;
+					return ResultCode::OutOfMemory;
 			}
 #undef REGEX_ERROR
 		}
 
 		result = rp;
-		return Result::OK;
+		return ResultCode::OK;
 	}
 
-	Regex::Result Regex::Match(const String& content, const String& pattern, List<Regex::MatchRange>& results) {
+	ResultCode Regex::Match(const String& content, const String& pattern, List<Regex::MatchRange>& results) {
 		// Construct regex expression
 		std::regex expression;
-		Regex::Result expressionResult = CreateRegex(pattern, expression);
-		ERR_ASSERT(expressionResult == Result::OK, u8"Failed to construct regex expression.", return expressionResult);
+		ResultCode expressionResult = CreateRegex(pattern, expression);
+		ERR_ASSERT(expressionResult == ResultCode::OK, u8"Failed to construct regex expression.", return expressionResult);
 
 		// Get ready for matching
 		std::string_view contentSv = content.GetStringView();
@@ -73,13 +73,13 @@ namespace Engine {
 		// Match and iterate all matches
 		while (iter != end) {
 			const auto& matches = *iter;
-			for (sizeint i = 0; i < matches.size(); ++i) {
+			for (int32 i = 0; i < matches.size(); ++i) {
 				const auto& match = matches[i];
 				results.Add(MatchRange(match.first - contentSv.begin(), match.second - contentSv.begin()));
 			}
 			++iter;
 		}
 
-		return Result::OK;
+		return ResultCode::OK;
 	}
 }

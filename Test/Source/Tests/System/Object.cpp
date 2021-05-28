@@ -5,13 +5,13 @@ using namespace Engine;
 
 class SignalTest :public ManualObject {
 	REFLECTION_CLASS(::SignalTest, ::Engine::ManualObject) {
-		REFLECTION_SIGNAL(STRL("TestSignal"), { SIGARG(STRL("test"), Variant::Type::Int64) });
+		REFLECTION_SIGNAL(STRL("TestSignal"), { SIGARG(STRL("value"), Variant::Type::Int64) });
 	}
 };
 
 class SignalHandler :public ManualObject {
 	REFLECTION_CLASS(::SignalHandler, ::Engine::ManualObject) {
-		REFLECTION_METHOD(STRL("OnTestSignal"), SignalHandler::OnTestSignal, { STRL("v") }, {});
+		REFLECTION_METHOD(STRL("OnTestSignal"), SignalHandler::OnTestSignal, { STRL("value") }, {});
 	}
 public:
 	void OnTestSignal(int32 v) {
@@ -48,6 +48,10 @@ TEST_CASE("Object") {
 	CHECK(hd3->value == 3);
 
 	CHECK(sig->DisconnectSignal(signame, Invokable(hd2.GetRaw(), recvname)));
+
+	CHECK(sig->IsSignalConnected(signame, Invokable(hd1.GetRaw(), recvname)));
+	CHECK(!sig->IsSignalConnected(signame, Invokable(hd2.GetRaw(), recvname)));
+	CHECK(sig->IsSignalConnected(signame, Invokable(hd3.GetRaw(), recvname)));
 
 	v = -1;
 	CHECK(sig->EmitSignal(signame, (const Variant**)args, 1));

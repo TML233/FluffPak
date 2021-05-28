@@ -81,6 +81,18 @@ namespace Engine{
 			}
 			this->capacity = capacity;
 		}
+		static inline constexpr int32 DefaultCapacity = 4;
+		static inline constexpr int32 CapacityMultiplier = 2;
+		void RequireCapacity(int32 capacity) {
+			if (capacity <= this->capacity) {
+				return;
+			}
+			int32 result = (this->capacity == 0 ? DefaultCapacity : this->capacity);
+			while (result < capacity) {
+				result *= CapacityMultiplier;
+			}
+			SetCapacity(result);
+		}
 		int32 GetCount() const {
 			return count;
 		}
@@ -142,8 +154,12 @@ namespace Engine{
 			}
 			count = 0;
 		}
-		static inline constexpr int32 DefaultCapacity = 4;
-		static inline constexpr int32 CapacityMultiplier = 2;
+		/// @brief Get the raw element pointer for high performance operation, if you know what you are doing.\n
+		/// Only read or write existing elements. Do not insert or remove.
+		/// The element pointer can vary after an insert or remove operation!
+		T* GetRawElementPtr() const {
+			return elements;
+		}
 		
 		Iterator begin() const {
 			return Iterator(elements);
@@ -156,7 +172,7 @@ namespace Engine{
 			capacity = obj.capacity;
 			count = obj.count;
 			elements = (T*)Memory::Allocate(sizeof(T) * count);
-			for (sizeint i = 0; i < count; i += 1) {
+			for (int32 i = 0; i < count; i += 1) {
 				Memory::Construct(elements + i, *(obj.elements + i));
 			}
 		}
@@ -168,16 +184,6 @@ namespace Engine{
 				Memory::Destruct(elements + i);
 			}
 			Memory::Deallocate(elements);
-		}
-		void RequireCapacity(int32 capacity) {
-			if (capacity <= this->capacity) {
-				return;
-			}
-			int32 result = (this->capacity == 0 ? DefaultCapacity : this->capacity);
-			while (result < capacity) {
-				result *= CapacityMultiplier;
-			}
-			SetCapacity(result);
 		}
 		T* elements = nullptr;
 		int32 capacity = 0;
