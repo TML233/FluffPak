@@ -195,7 +195,7 @@ namespace Engine {
 	}
 	
 	String Stream::ReadAllText() {
-		FATAL_ASSERT(CanRandomAccess(), u8"Stream must be capable with random accessing!", return String::GetEmpty());
+		ERR_ASSERT(CanRandomAccess(), u8"Stream must be capable with random accessing!", return String::GetEmpty());
 
 		SetPosition(0);
 		int32 length = GetLength();
