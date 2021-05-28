@@ -2,7 +2,7 @@
 #include "Engine/Application/Engine.h"
 #include "Engine/Application/Node/NodeTree.h"
 #include "Engine/System/Object/Variant.h"
-#include "Engine/Application/Node/TestNode.h"
+#include "Application/TestNode.h"
 
 using namespace Engine;
 //using var = Variant;

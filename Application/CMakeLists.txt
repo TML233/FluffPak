@@ -5,10 +5,13 @@ add_executable(Application)
 target_link_libraries(Application PRIVATE Engine)
 
 set(HeaderFile
-
+	"${CMAKE_CURRENT_LIST_DIR}/Application/GLShader.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Application/TestNode.h"
 )
 set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Application/Main.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Application/GLShader.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Application/TestNode.cpp"
 )
 
 if(WIN32)
@@ -26,6 +29,7 @@ if(MSVC)
 	)
 endif()
 
+target_include_directories(Engine PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
 
 target_sources(Application PRIVATE
 	"${HeaderFile}" "${SourceFile}"

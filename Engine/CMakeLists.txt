@@ -59,7 +59,6 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodePath.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node2D.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/TestNode.h"
 )
 set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Object/Object.cpp"
@@ -99,7 +98,6 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodePath.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/Node2D.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/TestNode.cpp"
 )
 set(InterfaceFile
 )
@@ -107,7 +105,7 @@ set(IncludeDir
 	"${CMAKE_CURRENT_LIST_DIR}"
 )
 set(LinkLibrary
-	fmt glad
+	fmt glad stb_image
 )
 
 # Add platform-depended header/source files.
