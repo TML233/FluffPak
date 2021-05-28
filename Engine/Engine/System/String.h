@@ -12,7 +12,7 @@
 /// This prevents allocating heap memory for constant strings.
 #define STRING_LITERAL(text)																											\
 ([](){																																	\
-	static const u8char content[]=u8##text;																									\
+	static const ::Engine::u8char content[]=u8##text;																									\
 	static const ::Engine::String::ContentData data(content, sizeof(u8##text));																\
 	return ::Engine::String(::Engine::IntrusivePtr<::Engine::String::ContentData>(const_cast<::Engine::String::ContentData*>(&data)));	\
 })()
