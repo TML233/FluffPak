@@ -24,6 +24,9 @@ namespace Engine::PlatformSpecific::Windows {
 	class Window final:public ::Engine::Window {
 		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::Window, ::Engine::Window) {
 			REFLECTION_SIGNAL(STRL("KeyDown"), { SIGARG(STRL("keyCode"),Variant::Type::Int64) });
+			REFLECTION_SIGNAL(STRL("PrepareRender"), {});
+			REFLECTION_SIGNAL(STRL("Render"), {});
+			REFLECTION_SIGNAL(STRL("CleanupRender"), {});
 		}
 
 	public:
@@ -62,6 +65,7 @@ namespace Engine::PlatformSpecific::Windows {
 		HGLRC InitRender(HWND hWnd);
 		void PrepareRender();
 		void DoRender();
+		void CleanupRender();
 		void UninitRender(HWND hWnd,HGLRC hGLRC);
 
 		HWND GetHWnd() const;

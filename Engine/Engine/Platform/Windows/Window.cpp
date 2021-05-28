@@ -153,6 +153,7 @@ namespace Engine::PlatformSpecific::Windows {
 			return;
 		}
 
+		CleanupRender();
 		UninitRender(hWnd, (HGLRC)renderContext);
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWDestroy>();
@@ -800,12 +801,14 @@ namespace Engine::PlatformSpecific::Windows {
 		return hGLRC;
 	}
 	void Window::PrepareRender() {
-
+		EmitSignal(STRL("PrepareRender"), nullptr, 0);
 	}
 	void Window::DoRender() {
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		EmitSignal(STRL("Render"), nullptr, 0);
 		SwapBuffers(GetDC(hWnd));
+	}
+	void Window::CleanupRender() {
+		EmitSignal(STRL("CleanupRender"), nullptr, 0);
 	}
 	void Window::UninitRender(HWND hWnd,HGLRC hGLRC) {
 		wglMakeCurrent(GetDC(hWnd), NULL);
