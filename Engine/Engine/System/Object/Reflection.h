@@ -110,7 +110,7 @@ private:																								\
 #define REFLECTION_METHOD(name,func,argNames,defaultArgs)							\
 c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(				\
 	name,																			\
-	ReflectionMethodBindHelper::Create(&func),										\
+	::Engine::ReflectionMethodBindHelper::Create(&func),										\
 	std::initializer_list<::Engine::String> argNames,								\
 	std::initializer_list<::Engine::Variant> defaultArgs							\
 ))
@@ -118,7 +118,7 @@ c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(				\
 #define REFLECTION_STATIC_METHOD(name,func,argNames,defaultArgs)					\
 c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(				\
 	name,																			\
-	ReflectionMethodBindHelper::Create(func),										\
+	::Engine::ReflectionMethodBindHelper::Create(func),										\
 	std::initializer_list<::Engine::String> argNames,								\
 	std::initializer_list<::Engine::Variant> defaultArgs							\
 ))
