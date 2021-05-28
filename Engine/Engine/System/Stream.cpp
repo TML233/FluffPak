@@ -193,9 +193,19 @@ namespace Engine {
 		FATAL_CRASH(u8"Not implemented.");
 		return String::GetEmpty();
 	}
-	// TODO: Implement this.
+	
 	String Stream::ReadAllText() {
-		FATAL_CRASH(u8"Not implemented.");
-		return String::GetEmpty();
+		FATAL_ASSERT(CanRandomAccess(), u8"Stream must be capable with random accessing!", return String::GetEmpty());
+
+		SetPosition(0);
+		int32 length = GetLength();
+		
+		readCache.Clear();
+		readCache.RequireCapacity(GetLength() + 1);
+
+		int32 read=ReadBytes(length, readCache);
+		ERR_ASSERT(read == length, u8"Error when read bytes!", return String::GetEmpty());
+
+		return String((u8char*)readCache.GetRawElementPtr(), length);
 	}
 }
