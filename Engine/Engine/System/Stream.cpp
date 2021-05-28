@@ -201,7 +201,7 @@ namespace Engine {
 		int32 length = GetLength();
 		
 		readCache.Clear();
-		readCache.RequireCapacity(GetLength() + 1);
+		readCache.RequireCapacity(length + 1);
 
 		int32 read=ReadBytes(length, readCache);
 		ERR_ASSERT(read == length, u8"Error when read bytes!", return String::GetEmpty());
