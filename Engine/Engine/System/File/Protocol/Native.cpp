@@ -176,7 +176,7 @@ namespace Engine {
 		int seeked = std::fseek(file, 0, SEEK_END);
 		ERR_ASSERT(seeked == 0, u8"Failed to seek to the end.", return -1);
 
-		int64 length = (int64)std::ftell(file) + 1;
+		int64 length = (int64)std::ftell(file);
 		std::fseek(file, origPos, SEEK_SET);
 
 		return length;
