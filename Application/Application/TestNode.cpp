@@ -44,6 +44,19 @@ using namespace Engine;
 
 	void TestNode::OnKeyDown(int32 keyCode) {
 		INFO_MSG(String::Format(u8"Key {0} down!", keyCode).GetRawArray());
+
+		if (keyCode == 38) {
+			factor += 0.1;
+			if (factor > 1) {
+				factor = 1;
+			}
+		}
+		if (keyCode == 40) {
+			factor -= 0.1;
+			if (factor < 0) {
+				factor = 0;
+			}
+		}
 	}
 
 	void TestNode::OnPrepareRender() {
@@ -96,7 +109,7 @@ using namespace Engine;
 		int widthContainer;
 		int heightContainer;
 		int channelsContainer;
-		unsigned char* imgContainer = stbi_load("../../../../Asset/Sandbox/Texture/container.png", &widthContainer, &heightContainer, &channelsContainer, 0);
+		unsigned char* imgContainer = stbi_load("Texture/container.png", &widthContainer, &heightContainer, &channelsContainer, 0);
 
 		glGenTextures(1, &texContainer);
 		glBindTexture(GL_TEXTURE_2D, texContainer);
@@ -117,7 +130,7 @@ using namespace Engine;
 		int widthFace;
 		int heightFace;
 		int channelsFace;
-		unsigned char* imgFace = stbi_load("face.png", &widthFace, &heightFace, &channelsFace, 0);
+		unsigned char* imgFace = stbi_load("Texture/face.png", &widthFace, &heightFace, &channelsFace, 0);
 
 		glGenTextures(1, &texFace);
 		glBindTexture(GL_TEXTURE_2D, texFace);
@@ -136,7 +149,7 @@ using namespace Engine;
 
 #pragma endregion
 		
-		shader.Open(STRL("file://../../../../Asset/Sandbox/Shader/vertex.glsl"), STRL("file://../../../../Asset/Sandbox/Shader/fragment.glsl"));
+		shader.Open(STRL("file://Shader/vertex.glsl"), STRL("file://Shader/fragment.glsl"));
 
 		glBindVertexArray(0);
 

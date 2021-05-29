@@ -144,7 +144,7 @@ namespace Engine::PlatformSpecific::Windows {
 		hWnd = result->rHWnd;
 		//renderContext = result->rHGLRC;
 		renderContext = InitRender(hWnd);
-		PrepareRender();
+
 		return true;
 	}
 
@@ -201,6 +201,10 @@ namespace Engine::PlatformSpecific::Windows {
 				}
 				break;
 			}
+
+			case WM_PAINT:
+			case WM_ERASEBKGND:
+				return 0;
 		}
 		return DefWindowProcW(hWnd, message, wParam, lParam);
 	}
@@ -801,13 +805,19 @@ namespace Engine::PlatformSpecific::Windows {
 		return hGLRC;
 	}
 	void Window::PrepareRender() {
+		INFO_MSG(u8"Preparing render.");
 		EmitSignal(STRL("PrepareRender"), nullptr, 0);
 	}
 	void Window::DoRender() {
+		if (!prepared) {
+			PrepareRender();
+			prepared = true;
+		}
 		EmitSignal(STRL("Render"), nullptr, 0);
 		SwapBuffers(GetDC(hWnd));
 	}
 	void Window::CleanupRender() {
+		INFO_MSG(u8"Cleaning up render.");
 		EmitSignal(STRL("CleanupRender"), nullptr, 0);
 	}
 	void Window::UninitRender(HWND hWnd,HGLRC hGLRC) {

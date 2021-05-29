@@ -15,11 +15,12 @@ namespace Engine {
 		nw->SetTitle(STRING_LITERAL("Rabbik Engine"));
 		nw->SetSize(Vector2(640, 480));
 		nw->SetVisible(true);
+		INFO_MSG(u8"Window created.");
 
 		GetRoot()->SystemAssignTree(this);
 		running = true;
 
-		INFO_MSG(root->GetTreeStructureFormated().GetRawArray());
+		//INFO_MSG(root->GetTreeStructureFormated().GetRawArray());
 	}
 
 	void NodeTree::OnUpdate(const Time& time) {

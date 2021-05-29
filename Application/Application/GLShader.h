@@ -12,5 +12,10 @@ public:
 
 private:
 	::Engine::uint32 id = 0;
-	::Engine::ResultCode OpenOne(const ::Engine::String& path, ::Engine::uint32& result);
+
+	enum class Type {
+		Vertex,
+		Fragment
+	};
+	::Engine::ResultCode OpenOne(const ::Engine::String& path, Type type,::Engine::uint32& result);
 };

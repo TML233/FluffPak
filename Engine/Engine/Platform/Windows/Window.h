@@ -96,5 +96,6 @@ namespace Engine::PlatformSpecific::Windows {
 
 	private:
 		HWND hWnd = NULL;
+		bool prepared = false;
 	};
 }

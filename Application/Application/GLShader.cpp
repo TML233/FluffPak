@@ -10,14 +10,14 @@ GLShader::~GLShader() {
 
 ResultCode GLShader::Open(const String& vertexPath, const String& fragmentPath) {
 	uint32 vertexShader = 0;
-	auto vertexR = OpenOne(vertexPath, vertexShader);
+	auto vertexR = OpenOne(vertexPath, Type::Vertex,vertexShader);
 	if (vertexR != ResultCode::OK) {
 		ERR_MSG(u8"Vertex shader failed!");
 		return ResultCode::InvalidArgument;
 	}
 
 	uint32 fragmentShader = 0;
-	auto fragmentR = OpenOne(vertexPath, fragmentShader);
+	auto fragmentR = OpenOne(fragmentPath, Type::Fragment,fragmentShader);
 	if (fragmentR != ResultCode::OK) {
 		ERR_MSG(u8"Fragment shader failed!");
 		glDeleteShader(vertexShader);
@@ -54,7 +54,7 @@ ResultCode GLShader::Open(const String& vertexPath, const String& fragmentPath) 
 	return id;
 }
 
-ResultCode GLShader::OpenOne(const String& path, uint32& result) {
+ResultCode GLShader::OpenOne(const String& path, Type type,uint32& result) {
 	// Read file
 	auto fs = ENGINEINST->GetFileSystem();
 	::Engine::String code;
@@ -65,7 +65,7 @@ ResultCode GLShader::OpenOne(const String& path, uint32& result) {
 	}
 
 	// Compile shader
-	int32 shader = glCreateShader(GL_VERTEX_SHADER);
+	int32 shader = glCreateShader(type==Type::Vertex?GL_VERTEX_SHADER:GL_FRAGMENT_SHADER);
 	const GLchar* codep = (const GLchar*)code.GetRawArray();
 	glShaderSource(shader, 1, &codep, nullptr);
 	glCompileShader(shader);
