@@ -3,6 +3,7 @@ project("Application" LANGUAGES CXX)
 
 add_executable(Application)
 target_link_libraries(Application PRIVATE Engine)
+target_link_libraries(Application PRIVATE glm)
 
 set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Application/GLShader.h"
