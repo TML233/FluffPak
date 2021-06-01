@@ -32,13 +32,29 @@ namespace Sandbox {
 		double next = 1;
 		bool border = true;
 		GLShader shader;
-		::Engine::int32 facLocation = 0;
-		::Engine::int32 transformLocation = 0;
+		::Engine::int32 uniformFactor = 0;
+		::Engine::int32 uniformTransformModel = 0;
+		::Engine::int32 uniformTransformView = 0;
+		::Engine::int32 uniformTransformProjection = 0;
 		float factor = 0;
 		::Engine::uint32 vao = 0;
 		::Engine::uint32 texContainer = 0;
 		::Engine::uint32 texFace = 0;
-		glm::mat4 transform;
-		glm::mat4 transform2;
+		glm::mat4 transformModel = glm::mat4(1);
+		glm::mat4 transformView = glm::mat4(1);
+		glm::mat4 transformProjection = glm::mat4(1);
+
+		glm::vec3 positions[10] = {
+			glm::vec3(0.0f,  0.0f,  0.0f),
+			glm::vec3(2.0f,  5.0f, -15.0f),
+			glm::vec3(-1.5f, -2.2f, -2.5f),
+			glm::vec3(-3.8f, -2.0f, -12.3f),
+			glm::vec3(2.4f, -0.4f, -3.5f),
+			glm::vec3(-1.7f,  3.0f, -7.5f),
+			glm::vec3(1.3f, -2.0f, -2.5f),
+			glm::vec3(1.5f,  2.0f, -2.5f),
+			glm::vec3(1.5f,  0.2f, -1.5f),
+			glm::vec3(-1.3f,  1.0f, -1.5f)
+		};
 	};
 }

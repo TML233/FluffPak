@@ -1,16 +1,18 @@
 #version 330 core
 
-layout(location = 0) in vec3 inPos;
-layout(location = 1) in vec3 inColor;
-layout(location = 2) in vec2 inCoord;
+layout(location = 0) in vec3 rawPos;
+//layout(location = 1) in vec3 rawColor;
+layout(location = 1) in vec2 rawTexCoord;
 
-out vec3 ourColor;
-out vec2 texCoord;
+//out vec3 vertexColor;
+out vec2 vertexTexCoord;
 
-uniform mat4 transform;
+uniform mat4 transformModel;
+uniform mat4 transformView;
+uniform mat4 transformProjection;
 
 void main() {
-	gl_Position = transform * vec4(inPos, 1.0f);
-	ourColor = inColor;
-	texCoord = inCoord;
+	gl_Position = transformProjection * transformView * transformModel * vec4(rawPos, 1.0f);
+	//vertexColor = rawColor;
+	vertexTexCoord = rawTexCoord;
 }

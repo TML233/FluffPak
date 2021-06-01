@@ -31,13 +31,17 @@ namespace Sandbox {
 	}
 	void TestNode::OnUpdate(float delta) {
 		double elapsed = ::Engine::Engine::GetInstance()->GetTime().GetTotal();
-		transform = glm::mat4(1);
-		transform = glm::translate(transform, glm::vec3(0.4f, -0.4f, 0));
-		transform = glm::rotate(transform, (float)elapsed, glm::vec3(0, 0, 1));
 
-		transform2 = glm::mat4(1);
-		transform2 = glm::translate(transform2, glm::vec3(-0.4f, 0.4f, 0));
-		transform2 = glm::scale(transform2, glm::vec3(1.5f * Math::Sin(elapsed), 1.2f, 1));
+		//transformModel = glm::mat4(1);
+		//transformModel = glm::translate(transformModel, glm::vec3(0.4f, -0.4f, 0));
+		//transformModel = glm::rotate(transformModel, glm::radians((float)elapsed*30), glm::vec3(1.0f, 0.8f, 0.6f));
+
+		transformView = glm::mat4(1);
+		transformView = glm::translate(transformView, glm::vec3(0, 0, -3.5f));
+		//transformView = glm::rotate(transformView, glm::radians((float)elapsed * 20), glm::vec3(0.0f, 1.0f, 0));
+
+		transformProjection = glm::mat4(1);
+		transformProjection = glm::perspective(glm::radians(45.0f), 640 / 480.0f, 0.1f, 100.0f);
 
 		if (elapsed > next) {
 			//INFO_MSG(String::Format(u8"{0}: {1} seconds elapsed!.", GetName(),elapsed).GetRawArray());
@@ -78,11 +82,48 @@ namespace Sandbox {
 #pragma region Vertex buffer object
 		float zoom = 0.f;
 		float vertices[] = {
-			//Pos               Color             TexCoord
-			-0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f + zoom, 1.0f - zoom,//¨I
-			 0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f - zoom, 1.0f - zoom,//¨J
-			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f + zoom, 0.0f + zoom,//¨L
-			 0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f - zoom, 0.0f + zoom//¨K
+			//Pos                 TexCoord
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 		};
 
 		unsigned int vbo;
@@ -93,8 +134,14 @@ namespace Sandbox {
 
 #pragma region Element buffer object
 		unsigned int order[] = {
-			0,1,3,
-			0,2,3
+			0,1,3,	0,2,3,
+			4,5,7,	4,6,7,
+			
+			4,0,2,	4,6,2,
+			5,1,3,	5,7,3,
+
+			4,5,1,	4,0,1,
+			6,7,3,	6,2,3
 		};
 		unsigned int ebo;
 		glGenBuffers(1, &ebo);
@@ -103,12 +150,10 @@ namespace Sandbox {
 #pragma endregion
 
 #pragma region Vertex attribute
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-		glEnableVertexAttribArray(2);
 #pragma endregion
 
 #pragma region Texture
@@ -165,18 +210,20 @@ namespace Sandbox {
 		glUseProgram(shader.GetId());
 		glUniform1i(glGetUniformLocation(shader.GetId(), "mTex1"), 0);
 		glUniform1i(glGetUniformLocation(shader.GetId(), "mTex2"), 1);
-		facLocation = glGetUniformLocation(shader.GetId(), "factor");
-		transformLocation = glGetUniformLocation(shader.GetId(), "transform");
+		uniformFactor = glGetUniformLocation(shader.GetId(), "factor");
+		uniformTransformModel = glGetUniformLocation(shader.GetId(), "transformModel");
+		uniformTransformView = glGetUniformLocation(shader.GetId(), "transformView");
+		uniformTransformProjection = glGetUniformLocation(shader.GetId(), "transformProjection");
 
-		transform = glm::mat4(1);
+		glEnable(GL_DEPTH_TEST);
 	}
 	void TestNode::OnRender() {
 		//Clear screen
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glUseProgram(shader.GetId());
-		glUniform1f(facLocation, factor);
+		glUniform1f(uniformFactor, factor);
 
 		glBindVertexArray(vao);
 
@@ -185,10 +232,17 @@ namespace Sandbox {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texFace);
 
-		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform2));
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glUniformMatrix4fv(uniformTransformView, 1, GL_FALSE, glm::value_ptr(transformView));
+		glUniformMatrix4fv(uniformTransformProjection, 1, GL_FALSE, glm::value_ptr(transformProjection));
+
+		double elapsed = ::Engine::Engine::GetInstance()->GetTime().GetTotal();
+		for (int32 i = 0; i < 10; i += 1) {
+			transformModel = glm::mat4(1);
+			transformModel = glm::translate(transformModel, positions[i]);
+			transformModel = glm::rotate(transformModel, glm::radians((float)elapsed * 30+i*62.6516f), glm::vec3(1.0f, 0.8f, 0.6f));
+			glUniformMatrix4fv(uniformTransformModel, 1, GL_FALSE, glm::value_ptr(transformModel));
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 		glBindVertexArray(0);
 	}
 	void TestNode::OnCleanupRender() {
