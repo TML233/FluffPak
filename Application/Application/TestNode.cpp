@@ -11,12 +11,13 @@
 
 using namespace Engine;
 
+namespace Sandbox {
 	TestNode::TestNode() {
 		Node* node = MEMNEW(Node());
 		AddChild(node);
 	}
 	void TestNode::OnEnteredTree() {
-		INFO_MSG(String::Format(u8"{0}: Entered tree.",GetName()).GetRawArray());
+		INFO_MSG(String::Format(u8"{0}: Entered tree.", GetName()).GetRawArray());
 	}
 	void TestNode::OnReady() {
 		INFO_MSG(String::Format(u8"{0}: Ready.", GetName()).GetRawArray());
@@ -30,6 +31,14 @@ using namespace Engine;
 	}
 	void TestNode::OnUpdate(float delta) {
 		double elapsed = ::Engine::Engine::GetInstance()->GetTime().GetTotal();
+		transform = glm::mat4(1);
+		transform = glm::translate(transform, glm::vec3(0.4f, -0.4f, 0));
+		transform = glm::rotate(transform, (float)elapsed, glm::vec3(0, 0, 1));
+
+		transform2 = glm::mat4(1);
+		transform2 = glm::translate(transform2, glm::vec3(-0.4f, 0.4f, 0));
+		transform2 = glm::scale(transform2, glm::vec3(1.5f * Math::Sin(elapsed), 1.2f, 1));
+
 		if (elapsed > next) {
 			//INFO_MSG(String::Format(u8"{0}: {1} seconds elapsed!.", GetName(),elapsed).GetRawArray());
 			next += 1;
@@ -148,7 +157,7 @@ using namespace Engine;
 		INFO_MSG(u8"Face image loaded!");
 
 #pragma endregion
-		
+
 		shader.Open(STRL("file://Shader/vertex.glsl"), STRL("file://Shader/fragment.glsl"));
 
 		glBindVertexArray(0);
@@ -157,6 +166,9 @@ using namespace Engine;
 		glUniform1i(glGetUniformLocation(shader.GetId(), "mTex1"), 0);
 		glUniform1i(glGetUniformLocation(shader.GetId(), "mTex2"), 1);
 		facLocation = glGetUniformLocation(shader.GetId(), "factor");
+		transformLocation = glGetUniformLocation(shader.GetId(), "transform");
+
+		transform = glm::mat4(1);
 	}
 	void TestNode::OnRender() {
 		//Clear screen
@@ -165,15 +177,21 @@ using namespace Engine;
 
 		glUseProgram(shader.GetId());
 		glUniform1f(facLocation, factor);
+
 		glBindVertexArray(vao);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texContainer);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texFace);
+
+		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform2));
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 	}
 	void TestNode::OnCleanupRender() {
 
 	}
+}
