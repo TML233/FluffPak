@@ -24,7 +24,7 @@ namespace Engine {
 	}
 
 	void Node2D::UpdateLocalTransform() const {
-		Transform2 t;
+		TransformMatrix t;
 		t.Rotate(rotation);
 		t.Scale(scale);
 		t.Translate(position);

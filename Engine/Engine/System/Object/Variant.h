@@ -3,7 +3,7 @@
 #include "Engine/System/Definition.h"
 #include "Engine/System/String.h"
 #include "Engine/System/Object/InstanceId.h"
-#include "Engine/System/Math/Vector2.h"
+#include "Engine/System/Math/Vector.h"
 #include <type_traits>
 
 namespace Engine {

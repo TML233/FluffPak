@@ -37,9 +37,9 @@ set(HeaderFile
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Math.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Random.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Vector2.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Rect2.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Transform2.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Vector.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/TransformMatrix.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Quaternion.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/Iterator.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/HashHelper.h"
@@ -85,9 +85,9 @@ set(SourceFile
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Math.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Random.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Vector2.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Rect2.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Transform2.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Vector.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/TransformMatrix.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Quaternion.cpp"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/HashHelper.cpp"
 

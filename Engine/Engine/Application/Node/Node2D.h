@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Engine/Application/Node/Node.h"
-#include "Engine/System/Math/Vector2.h"
-#include "Engine/System/Math/Transform2.h"
+#include "Engine/System/Math/Vector.h"
+#include "Engine/System/Math/TransformMatrix.h"
 
 namespace Engine {
 	class Node2D :public Node {
@@ -30,8 +30,8 @@ namespace Engine {
 		Vector2 scale = Vector2(1, 1);
 		float rotation = 0;
 
-		mutable Transform2 localTransform;
-		mutable Transform2 globalTransform;
+		mutable TransformMatrix localTransform;
+		mutable TransformMatrix globalTransform;
 		mutable bool localTransformDirty = true;
 		mutable bool globalTransformDirty = true;
 	};
