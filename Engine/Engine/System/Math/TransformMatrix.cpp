@@ -24,6 +24,10 @@ namespace Engine {
 		);
 	}
 
+	const float* TransformMatrix::GetRaw() const {
+		return (float*)matrix;
+	}
+
 	TransformMatrix TransformMatrix::Translate(const Vector3& value) {
 		TransformMatrix m;
 		m.matrix[0][3] = value.x;

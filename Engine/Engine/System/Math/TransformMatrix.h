@@ -13,6 +13,7 @@ namespace Engine {
 		};
 		TransformMatrix operator*(const TransformMatrix& child) const;
 		Vector3 operator*(const Vector3& child) const;
+		const float* GetRaw() const;
 
 		static TransformMatrix Translate(const Vector3& value);
 		static TransformMatrix Scale(const Vector3& value);
