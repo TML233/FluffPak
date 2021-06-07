@@ -79,12 +79,12 @@ namespace Engine{
 		float y = angle.y / 2.0f;
 		float r = angle.z / 2.0f;
 
-		float sinp = sin(p);
-		float siny = sin(y);
-		float sinr = sin(r);
-		float cosp = cos(p);
-		float cosy = cos(y);
-		float cosr = cos(r);
+		float sinp = Math::Sin(p);
+		float siny = Math::Sin(y);
+		float sinr = Math::Sin(r);
+		float cosp = Math::Cos(p);
+		float cosy = Math::Cos(y);
+		float cosr = Math::Cos(r);
 
 		Quaternion q(
 			sinr * cosp * cosy - cosr * sinp * siny,
