@@ -110,24 +110,16 @@ namespace Engine{
 		float wz = w * z;
 
 		m.matrix[0][0] = 1 - 2 * (y2 + z2);
-		m.matrix[0][1] = 2 * (xy - wz);
-		m.matrix[0][2] = 2 * (xz + wy);
-		m.matrix[0][3] = 0;
+		m.matrix[0][1] = 2 * (xy + wz);
+		m.matrix[0][2] = 2 * (xz - wy);
 
-		m.matrix[1][0] = 2 * (xy + wz);
+		m.matrix[1][0] = 2 * (xy - wz);
 		m.matrix[1][1] = 1 - 2 * (x2 + z2);
-		m.matrix[1][2] = 2 * (yz - wx);
-		m.matrix[1][3] = 0;
+		m.matrix[1][2] = 2 * (yz + wx);
 
-		m.matrix[2][0] = 2 * (xz - wy);
-		m.matrix[2][1] = 2 * (yz + wx);
+		m.matrix[2][0] = 2 * (xz + wy);
+		m.matrix[2][1] = 2 * (yz - wx);
 		m.matrix[2][2] = 1 - 2 * (x2 + y2);
-		m.matrix[2][3] = 0;
-
-		m.matrix[3][0] = 0;
-		m.matrix[3][1] = 0;
-		m.matrix[3][2] = 0;
-		m.matrix[3][3] = 1;
 
 		return m;
 	}
