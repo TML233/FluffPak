@@ -30,9 +30,9 @@ namespace Engine {
 
 	TransformMatrix TransformMatrix::Translate(const Vector3& value) {
 		TransformMatrix m;
-		m.matrix[0][3] = value.x;
-		m.matrix[1][3] = value.y;
-		m.matrix[2][3] = value.z;
+		m.matrix[3][0] = value.x;
+		m.matrix[3][1] = value.y;
+		m.matrix[3][2] = value.z;
 		return m;
 	}
 	TransformMatrix TransformMatrix::Scale(const Vector3& value) {
