@@ -105,7 +105,7 @@ namespace Engine {
 #pragma endregion
 
 #pragma region Vector3
-	Vector3::Vector3(float x, float y, float z) :x(x), y(x), z(z) {}
+	Vector3::Vector3(float x, float y, float z) :x(x), y(y), z(z) {}
 	Vector3::Vector3(const Vector2& vec2, float z) : x(vec2.x), y(vec2.y), z(z) {}
 
 	float Vector3::GetLengthSquared() const {
