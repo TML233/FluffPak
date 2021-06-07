@@ -40,6 +40,7 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Vector.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/TransformMatrix.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Quaternion.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Color.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/Iterator.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/HashHelper.h"
@@ -88,6 +89,7 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Vector.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/TransformMatrix.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Quaternion.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Color.cpp"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/HashHelper.cpp"
 
