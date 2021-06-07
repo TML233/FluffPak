@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Application/Node/Node.h"
 #include "GLShader.h"
+#include "Engine/System/Math/TransformMatrix.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -40,21 +41,22 @@ namespace Sandbox {
 		::Engine::uint32 vao = 0;
 		::Engine::uint32 texContainer = 0;
 		::Engine::uint32 texFace = 0;
-		glm::mat4 transformModel = glm::mat4(1);
-		glm::mat4 transformView = glm::mat4(1);
-		glm::mat4 transformProjection = glm::mat4(1);
 
-		glm::vec3 positions[10] = {
-			glm::vec3(0.0f,  0.0f,  0.0f),
-			glm::vec3(2.0f,  5.0f, -15.0f),
-			glm::vec3(-1.5f, -2.2f, -2.5f),
-			glm::vec3(-3.8f, -2.0f, -12.3f),
-			glm::vec3(2.4f, -0.4f, -3.5f),
-			glm::vec3(-1.7f,  3.0f, -7.5f),
-			glm::vec3(1.3f, -2.0f, -2.5f),
-			glm::vec3(1.5f,  2.0f, -2.5f),
-			glm::vec3(1.5f,  0.2f, -1.5f),
-			glm::vec3(-1.3f,  1.0f, -1.5f)
+		::Engine::TransformMatrix transformModel;
+		::Engine::TransformMatrix transformView;
+		::Engine::TransformMatrix transformProjection;
+
+		::Engine::Vector3 positions[10] = {
+			::Engine::Vector3(0.0f,  0.0f,  0.0f),
+			::Engine::Vector3(2.0f,  5.0f, -15.0f),
+			::Engine::Vector3(-1.5f, -2.2f, -2.5f),
+			::Engine::Vector3(-3.8f, -2.0f, -12.3f),
+			::Engine::Vector3(2.4f, -0.4f, -3.5f),
+			::Engine::Vector3(-1.7f,  3.0f, -7.5f),
+			::Engine::Vector3(1.3f, -2.0f, -2.5f),
+			::Engine::Vector3(1.5f,  2.0f, -2.5f),
+			::Engine::Vector3(1.5f,  0.2f, -1.5f),
+			::Engine::Vector3(-1.3f,  1.0f, -1.5f)
 		};
 	};
 }

@@ -35,13 +35,10 @@ namespace Sandbox {
 		//transformModel = glm::mat4(1);
 		//transformModel = glm::translate(transformModel, glm::vec3(0.4f, -0.4f, 0));
 		//transformModel = glm::rotate(transformModel, glm::radians((float)elapsed*30), glm::vec3(1.0f, 0.8f, 0.6f));
-
-		transformView = glm::mat4(1);
-		transformView = glm::translate(transformView, glm::vec3(0, 0, -3.5f));
+		transformView = TransformMatrix::Translate(Vector3(0, 0, -3.5f));
 		//transformView = glm::rotate(transformView, glm::radians((float)elapsed * 20), glm::vec3(0.0f, 1.0f, 0));
 
-		transformProjection = glm::mat4(1);
-		transformProjection = glm::perspective(glm::radians(45.0f), 640 / 480.0f, 0.1f, 100.0f);
+		transformProjection = TransformMatrix::Perspective(45 * Math::Deg2Rad, 640 / 480.0f, 0.1f, 100.0f);
 
 		if (elapsed > next) {
 			//INFO_MSG(String::Format(u8"{0}: {1} seconds elapsed!.", GetName(),elapsed).GetRawArray());
@@ -232,15 +229,15 @@ namespace Sandbox {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texFace);
 
-		glUniformMatrix4fv(uniformTransformView, 1, GL_FALSE, glm::value_ptr(transformView));
-		glUniformMatrix4fv(uniformTransformProjection, 1, GL_FALSE, glm::value_ptr(transformProjection));
+		glUniformMatrix4fv(uniformTransformView, 1, GL_FALSE, transformView.GetRaw());
+		glUniformMatrix4fv(uniformTransformProjection, 1, GL_FALSE, transformProjection.GetRaw());
 
 		double elapsed = ::Engine::Engine::GetInstance()->GetTime().GetTotal();
 		for (int32 i = 0; i < 10; i += 1) {
-			transformModel = glm::mat4(1);
-			transformModel = glm::translate(transformModel, positions[i]);
-			transformModel = glm::rotate(transformModel, glm::radians((float)elapsed * 30+i*62.6516f), glm::vec3(1.0f, 0.8f, 0.6f));
-			glUniformMatrix4fv(uniformTransformModel, 1, GL_FALSE, glm::value_ptr(transformModel));
+			transformModel = TransformMatrix();
+			transformModel = TransformMatrix::Rotate(Vector3(1.0f, 0.8f, 0.6f), ((float)elapsed * 30 + i * 62.6516f) * Math::Deg2Rad);
+			transformModel = TransformMatrix::Translate(positions[i]) * transformModel;
+			glUniformMatrix4fv(uniformTransformModel, 1, GL_FALSE, transformModel.GetRaw());
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		glBindVertexArray(0);
