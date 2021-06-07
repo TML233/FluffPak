@@ -5,11 +5,11 @@ namespace Engine {
 	TransformMatrix TransformMatrix::operator*(const TransformMatrix& child) const {
 		TransformMatrix result = *this;
 
-		for (byte i = 0; i < 4; i += 1) {
-			for (byte j = 0; j < 4; j += 1) {
+		for (int32 i = 0; i < 4; i += 1) {
+			for (int32 j = 0; j < 4; j += 1) {
 				float value = 0;
-				for (byte k = 0; k < 4; k += 1) {
-					value += matrix[i][k] * child.matrix[k][j];
+				for (int32 k = 0; k < 4; k += 1) {
+					value += child.matrix[i][k] * matrix[k][j];
 				}
 				result.matrix[i][j] = value;
 			}
