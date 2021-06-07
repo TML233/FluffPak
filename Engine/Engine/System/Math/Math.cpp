@@ -2,9 +2,14 @@
 #include "Engine/System/Math/Math.h"
 
 namespace Engine {
-	const float Math::PI = 3.14159265358f;
-	const float Math::Deg2Rad = Math::PI / 180;
-	const float Math::Rad2Deg = 180 / Math::PI;
+	const float Math::Infinity = INFINITY;
+
+	bool Math::IsNaN(float value) {
+		return std::isnan(value);
+	}
+	bool Math::IsInfinity(float value) {
+		return std::isinf(value);
+	}
 
 	float Math::Clamp(float value, float min, float max) {
 		if (value < min) {
@@ -20,29 +25,29 @@ namespace Engine {
 	}
 
 	float Math::Tan(float value) {
-		return tanf(value);
+		return std::tanf(value);
 	}
 	float Math::Cot(float value) {
-		return 1 / tanf(value);
+		return 1 / std::tanf(value);
 	}
 	float Math::Sin(float value) {
-		return sinf(value);
+		return std::sinf(value);
 	}
 	float Math::Cos(float value) {
-		return cosf(value);
+		return std::cosf(value);
 	}
 
 	float Math::ArcTan(float value) {
-		return atanf(value);
+		return std::atanf(value);
 	}
 	float Math::ArcCot(float value) {
-		return 1 / atanf(value);
+		return 1 / std::atanf(value);
 	}
 	float Math::ArcSin(float value) {
-		return asinf(value);
+		return std::asinf(value);
 	}
 	float Math::ArcCos(float value) {
-		return acosf(value);
+		return std::acosf(value);
 	}
 
 	float Math::Sign(float value) {
@@ -59,19 +64,19 @@ namespace Engine {
 	}
 
 	float Math::Round(float value) {
-		return roundf(value);
+		return std::roundf(value);
 	}
 	float Math::Floor(float value) {
-		return floorf(value);
+		return std::floorf(value);
 	}
 	float Math::Ceil(float value) {
-		return ceilf(value);
+		return std::ceilf(value);
 	}
 
 	float Math::Pow(float base, float power) {
-		return powf(base, power);
+		return std::powf(base, power);
 	}
 	float Math::Sqrt(float value) {
-		return sqrtf(value);
+		return std::sqrtf(value);
 	}
 }

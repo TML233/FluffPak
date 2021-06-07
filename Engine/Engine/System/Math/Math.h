@@ -7,9 +7,13 @@ namespace Engine {
 	public:
 		STATIC_CLASS(Math);
 
-		static const float PI;
-		static const float Deg2Rad;
-		static const float Rad2Deg;
+		static inline constexpr float PI = (float)3.14159265358f;
+		static inline constexpr float Deg2Rad = PI / 180;
+		static inline constexpr float Rad2Deg = 180 / PI;
+		static const float Infinity;
+
+		static bool IsNaN(float value);
+		static bool IsInfinity(float value);
 
 		static float Clamp(float value, float min = 0.0f, float max = 1.0f);
 		static float Lerp(float a, float b, float time);
