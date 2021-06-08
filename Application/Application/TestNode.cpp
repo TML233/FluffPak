@@ -32,21 +32,17 @@ namespace Sandbox {
 	void TestNode::OnUpdate(float delta) {
 		double elapsed = ::Engine::Engine::GetInstance()->GetTime().GetTotal();
 
-		//transformModel = glm::mat4(1);
-		//transformModel = glm::translate(transformModel, glm::vec3(0.4f, -0.4f, 0));
-		//transformModel = glm::rotate(transformModel, glm::radians((float)elapsed*30), glm::vec3(1.0f, 0.8f, 0.6f));
-		transformView = TransformMatrix::Translate(Vector3(0, 0, -3.5f));
-		//transformView = glm::rotate(transformView, glm::radians((float)elapsed * 20), glm::vec3(0.0f, 1.0f, 0));
+		transformView = TransformMatrix::LookAt(Vector3(0, 0, 3.5f), Vector3(0, 0, 0));
 
 		transformProjection = TransformMatrix::Perspective(45 * Math::Deg2Rad, 640 / 480.0f, 0.1f, 100.0f);
 
-		if (elapsed > next) {
+		/*if (elapsed > next) {
 			//INFO_MSG(String::Format(u8"{0}: {1} seconds elapsed!.", GetName(),elapsed).GetRawArray());
 			next += 1;
 			border = !border;
 
 			//ENGINEINST->GetWindowManager()->Get(1)->SetBorder(border);
-		}
+		}*/
 	}
 	void TestNode::OnExitingTree() {
 		INFO_MSG(String::Format(u8"{0}: Exiting tree.", GetName()).GetRawArray());
