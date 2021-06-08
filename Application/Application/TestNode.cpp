@@ -32,9 +32,9 @@ namespace Sandbox {
 	void TestNode::OnUpdate(float delta) {
 		double elapsed = ::Engine::Engine::GetInstance()->GetTime().GetTotal();
 
-		transformView = TransformMatrix::LookAt(Vector3(0, 0, 3.5f), Vector3(0, 0, 0));
+		transformView = TransformMatrix::LookAt(Vector3(Math::Sin(elapsed)*5, 0, Math::Cos(elapsed)*5), Vector3(0, 0, 0));
 
-		transformProjection = TransformMatrix::Perspective(45 * Math::Deg2Rad, 640 / 480.0f, 0.1f, 100.0f);
+		transformProjection = TransformMatrix::Perspective((45+ Math::Sin(elapsed+Math::PI)*10) * Math::Deg2Rad, 640 / 480.0f, 0.1f, 100.0f);
 
 		/*if (elapsed > next) {
 			//INFO_MSG(String::Format(u8"{0}: {1} seconds elapsed!.", GetName(),elapsed).GetRawArray());
