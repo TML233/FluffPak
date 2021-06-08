@@ -57,7 +57,7 @@ namespace Engine {
 		return m;
 	}
 	TransformMatrix TransformMatrix::Perspective(float fov, float aspect, float near, float far) {
-		float tanfov = Math::Tan(fov / 2);
+		const float tanfov = Math::Tan(fov / 2);
 		TransformMatrix m;
 		m.matrix[0][0] = 1 / (aspect * tanfov);
 		m.matrix[1][1] = 1 / tanfov;
@@ -67,5 +67,27 @@ namespace Engine {
 		m.matrix[3][3] = 0;
 
 		return m;
+	}
+	TransformMatrix TransformMatrix::LookAt(const Vector3& position, const Vector3& target) {
+		static const Vector3 up = Vector3(0, 1, 0);
+
+		const Vector3 f = (target - position).GetNormalized();
+		const Vector3 s = Vector3::Cross(f, up).GetNormalized();
+		const Vector3 u = Vector3::Cross(s, f);
+
+		TransformMatrix result;
+		result.matrix[0][0] = s.x;
+		result.matrix[1][0] = s.y;
+		result.matrix[2][0] = s.z;
+		result.matrix[0][1] = u.x;
+		result.matrix[1][1] = u.y;
+		result.matrix[2][1] = u.z;
+		result.matrix[0][2] = -f.x;
+		result.matrix[1][2] = -f.y;
+		result.matrix[2][2] = -f.z;
+		result.matrix[3][0] = -Vector3::Dot(s, position);
+		result.matrix[3][1] = -Vector3::Dot(u, position);
+		result.matrix[3][2] = Vector3::Dot(f, position);
+		return result;
 	}
 }
