@@ -12,6 +12,8 @@ namespace Engine::PlatformSpecific::Windows {
 	public:
 		void Update() override;
 
+		bool updating = false;
+
 	private:
 		class _Initializer final {
 		public:

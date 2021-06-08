@@ -35,17 +35,29 @@ namespace Engine::PlatformSpecific::Windows {
 		UnregisterClassW(Window::GlobalWindowClassName, NULL);
 	}
 
+	struct _NWWUpdate {
+		bool* updating;
+	};
+
 	void WindowManager::Update() {
-		auto func = [](Job* job) {
-			MSG msg = {};
-			if (PeekMessageW(&msg, NULL, NULL, NULL, PM_REMOVE)) {
-				if (msg.message != WM_QUIT) {
-					TranslateMessage(&msg);
-					DispatchMessageW(&msg);
+		if (!updating) {
+			updating = true;
+
+			auto func = [](Job* job) {
+				MSG msg = {};
+				if (PeekMessageW(&msg, NULL, NULL, NULL, PM_REMOVE)) {
+					if (msg.message != WM_QUIT) {
+						TranslateMessage(&msg);
+						DispatchMessageW(&msg);
+					}
 				}
-			}
-		};
-		ENGINEINST->GetJobSystem()->AddJob(func, nullptr, 0, Job::Preference::Window);
+
+				auto data = job->GetDataAs<_NWWUpdate>();
+				*(data->updating) = false;
+			};
+			_NWWUpdate data = { &updating };
+			ENGINEINST->GetJobSystem()->AddJob(func, &data, sizeof(data), Job::Preference::Window);
+		}
 	}
 
 	Window* Window::GetFromHWnd(HWND hWnd) {
