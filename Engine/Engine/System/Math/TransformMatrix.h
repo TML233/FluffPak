@@ -20,5 +20,6 @@ namespace Engine {
 		static TransformMatrix Rotate(const Vector3& axis, float angle);
 		static TransformMatrix Ortho(float left, float right, float bottom, float top, float near, float far);
 		static TransformMatrix Perspective(float fov, float aspect, float near, float far);
+		static TransformMatrix LookAt(const Vector3& position, const Vector3& target);
 	};
 }
