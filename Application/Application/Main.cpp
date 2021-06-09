@@ -24,7 +24,7 @@ namespace Sandbox {
 
 		engine->SetAppLoop(UniquePtr<AppLoop>(tree.Release()));
 		engine->Run();
-
+		
 		return 0;
 	}
 }
