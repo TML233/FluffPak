@@ -18,9 +18,7 @@ namespace Engine {
 		float GetRotation() const;
 		void SetRotation(float rotation);
 
-		Vector2 GetGlobalPosition() const;
-		Vector2 GetGlobalScale() const;
-		float GetGlobalRotation() const;
+
 		
 		void UpdateLocalTransform() const;
 		void UpdateGlobalTransform() const;

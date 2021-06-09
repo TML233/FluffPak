@@ -26,7 +26,7 @@ namespace Engine {
 	void Node2D::UpdateLocalTransform() const {
 		TransformMatrix t;
 		t = TransformMatrix::Rotate(Vector3(0, 0, 1), rotation) * t;
-		t = TransformMatrix::Scale(scale) * t;
+		t = TransformMatrix::Scale(Vector3(scale,1)) * t;
 		t = TransformMatrix::Translate(position) * t;
 		localTransform = t;
 
