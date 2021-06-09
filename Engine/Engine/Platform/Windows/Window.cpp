@@ -813,6 +813,7 @@ namespace Engine::PlatformSpecific::Windows {
 		glViewport(0, 0, DefaultSizeX, DefaultSizeY);
 
 		INFO_MSG(String::Format(STRL("OpenGL Device: {0}"), glGetString(GL_RENDERER)).GetRawArray());
+		INFO_MSG(String::Format(STRL("OpenGL Version: {0}"), glGetString(GL_VERSION)).GetRawArray());
 
 		return hGLRC;
 	}
