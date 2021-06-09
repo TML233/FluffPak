@@ -20,7 +20,7 @@ namespace Application {
 		::Engine::Engine::
 			GetInstance()->
 			GetWindowManager()->
-			Get(1)->
+			Get(0)->
 			ConnectSignal(STRL("KeyDown"), Invokable(this, STRL("OnKeyDown")));
 	}
 	void TestNode::OnUpdate(float delta) {

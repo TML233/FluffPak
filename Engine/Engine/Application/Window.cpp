@@ -3,7 +3,7 @@
 
 namespace Engine {
 	//Window::~Window() {}
-	uint64 Window::GetId() const {
+	Window::ID Window::GetId() const {
 		return id;
 	}
 	WindowManager* Window::GetManager() const {
@@ -15,7 +15,7 @@ namespace Engine {
 	Window* WindowManager::Create() {
 		SharedPtr<Window> window = SharedPtr<PLATFORM_SPECIFIC_CLASS_WINDOW>::Create();
 
-		window->id = idCounter.FetchAdd(1);
+		window->id = idCounter.Add(1);
 		window->manager = this;
 
 		{
