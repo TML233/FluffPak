@@ -2,7 +2,7 @@
 #include "Engine/Application/Engine.h"
 #include "Engine/Application/Node/NodeTree.h"
 #include "Engine/System/Object/Variant.h"
-#include "Engine/Application/Node/TestNode.h"
+#include "TestNode.h"
 
 using namespace Engine;
 //using var = Variant;
@@ -13,7 +13,7 @@ int main() {
 	UniquePtr<App> engine = UniquePtr<App>::Create();
 	UniquePtr<NodeTree> tree{ MEMNEW(NodeTree()) };
 
-	tree->GetRoot()->AddChild(MEMNEW(TestNode()));
+	tree->GetRoot()->AddChild(MEMNEW(Application::TestNode()));
 	tree->GetRoot()->AddChild(MEMNEW(Node()));
 	tree->GetRoot()->GetChildByIndex(0)->AddChild(MEMNEW(Node()));
 	tree->GetRoot()->GetChildByIndex(0)->AddChild(MEMNEW(Node()),1);

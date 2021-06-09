@@ -1,11 +1,12 @@
-#include "Engine/Application/Node/TestNode.h"
+#include "TestNode.h"
 #include "Engine/Application/Engine.h"
 #include "Engine/System/Math/Math.h"
 #include "Engine/Application/Node/NodeTree.h"
 #include "Engine/Application/Window.h"
 #include "Engine/System/Thread/JobSystem.h"
 
-namespace Engine {
+using namespace Engine;
+namespace Application {
 	TestNode::TestNode() {
 		Node* node = MEMNEW(Node());
 		AddChild(node);

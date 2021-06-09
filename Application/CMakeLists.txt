@@ -5,10 +5,11 @@ add_executable(Application)
 target_link_libraries(Application PRIVATE Engine)
 
 set(HeaderFile
-
+	"${CMAKE_CURRENT_LIST_DIR}/Application/TestNode.h"
 )
 set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Application/Main.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Application/TestNode.cpp"
 )
 
 if(WIN32)
