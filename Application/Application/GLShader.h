@@ -3,9 +3,9 @@
 #include "Engine/System/File/FileSystem.h"
 #include "glad/glad.h"
 
-namespace Sandbox {
+namespace Application {
 	class GLShader final :public ::Engine::ReferencedObject {
-		REFLECTION_CLASS(::GLShader, ::Engine::ReferencedObject) {}
+		REFLECTION_CLASS(::Application::GLShader, ::Engine::ReferencedObject) {}
 	public:
 		~GLShader();
 		::Engine::ResultCode Open(const ::Engine::String& vertexPath, const ::Engine::String& fragmentPath);

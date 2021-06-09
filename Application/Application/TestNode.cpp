@@ -11,7 +11,7 @@
 
 using namespace Engine;
 
-namespace Sandbox {
+namespace Application {
 	TestNode::TestNode() {
 		Node* node = MEMNEW(Node());
 		AddChild(node);

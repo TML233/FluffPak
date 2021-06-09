@@ -7,9 +7,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-namespace Sandbox {
+namespace Application {
 	class TestNode :public ::Engine::Node {
-		REFLECTION_CLASS(::Sandbox::TestNode, ::Engine::Node) {
+		REFLECTION_CLASS(::Application::TestNode, ::Engine::Node) {
 			REFLECTION_METHOD(STRL("OnKeyDown"), TestNode::OnKeyDown, { STRL("keyCode") }, {});
 			REFLECTION_METHOD(STRL("OnPrepareRender"), TestNode::OnPrepareRender, {}, {});
 			REFLECTION_METHOD(STRL("OnRender"), TestNode::OnRender, {}, {});

@@ -2,7 +2,7 @@
 
 using namespace Engine;
 
-namespace Sandbox {
+namespace Application {
 	GLShader::~GLShader() {
 		if (id != 0) {
 			glDeleteProgram(id);

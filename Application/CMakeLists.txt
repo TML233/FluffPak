@@ -30,7 +30,7 @@ if(MSVC)
 	)
 endif()
 
-target_include_directories(Engine PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
+target_include_directories(Application PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
 
 target_sources(Application PRIVATE
 	"${HeaderFile}" "${SourceFile}"

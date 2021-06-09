@@ -7,7 +7,7 @@
 using namespace Engine;
 //using var = Variant;
 
-namespace Sandbox {
+namespace Application {
 	int Run() {
 		using App = ::Engine::Engine;
 
@@ -30,5 +30,5 @@ namespace Sandbox {
 }
 
 int main() {
-	return Sandbox::Run();
+	return Application::Run();
 }
