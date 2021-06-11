@@ -32,12 +32,22 @@ namespace Engine {
 	AppLoop* Engine::GetAppLoop() const {
 		return appLoop.GetRaw();
 	}
-	int32 Engine::GetTargetFps() const {
+	float Engine::GetTargetFps() const {
 		return targetFps;
 	}
-	void Engine::SetTargetFps(int32 targetFps) {
+	void Engine::SetTargetFps(float targetFps) {
 		this->targetFps = targetFps;
 	}
+	float Engine::GetFps() const {
+		return fps;
+	}
+	float Engine::GetFpsUpdateFrequency() const {
+		return fpsUpdateFrequency;
+	}
+	void Engine::SetFpsUpdateFrequency(float frequency) {
+		fpsUpdateFrequency = frequency;
+	}
+
 	Time& Engine::GetTime() {
 		return time;
 	}
@@ -76,14 +86,15 @@ namespace Engine {
 
 #pragma region Loop
 		// Process other things...
-
 		using Clock = std::chrono::steady_clock;
 		using TimePoint = Clock::time_point;
 		using Duration = std::chrono::duration<double>;
 
-		TimePoint lastTime = Clock::now();
-		TimePoint lastUpdate = Clock::now() - std::chrono::microseconds(static_cast<int64>(1.0/GetTargetFps()*1000000));
+		TimePoint lastUpdate = Clock::now() - std::chrono::duration_cast<Clock::duration>(Duration(1.0 / GetTargetFps()));;;
 		TimePoint nextUpdate = Clock::now();
+
+		TimePoint lastFpsCheck = Clock::now();
+		int32 updateTimes = 0;
 
 		while (appLoop->IsRunning()) {
 			TimePoint now = Clock::now();
@@ -92,24 +103,29 @@ namespace Engine {
 				windowManager->Update();
 
 				time.unscaledDelta = std::chrono::duration_cast<Duration>(now - lastUpdate).count();
-				
 				time.unscaledTotal += time.GetUnscaledDelta();
 				time.total += time.GetDelta();
-
 				time.totalFrames += 1;
-
-				//INFO_MSG(ObjectUtil::ToString(time.GetTotal()).GetRawArray());
-
 				appLoop->OnUpdate(time);
-				appLoop->OnPhysicsUpdate(time);
+
+#pragma region FPS Count
+				updateTimes += 1;
+				Duration fpsCheckDuration = now-lastFpsCheck;
+				if (fpsCheckDuration >= Duration(fpsUpdateFrequency)) {
+					fps = updateTimes / fpsCheckDuration.count();
+					updateTimes = 0;
+					lastFpsCheck = now;
+				}
+#pragma endregion
 
 				lastUpdate = now;
-				nextUpdate += std::chrono::microseconds(static_cast<int64>(1.0 / GetTargetFps() * 1000000));
+				do {
+					nextUpdate += std::chrono::duration_cast<Clock::duration>(Duration(1.0 / GetTargetFps()));
+				} while (nextUpdate < lastUpdate);
+
 				now = Clock::now();
 				std::this_thread::sleep_for(nextUpdate - now - Duration(0.005));
 			}
-
-			lastTime = now;
 		}
 #pragma endregion
 

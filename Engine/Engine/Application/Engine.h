@@ -31,9 +31,13 @@ namespace Engine {
 
 		/// @brief Controls the update frequency. -1 means no limit.
 		/// @note Physics update frequency is controlled by Time::PhysicsDelta.
-		void SetTargetFps(int32 targetFps);
+		void SetTargetFps(float targetFps);
 		/// @brief Get the FPS limit.
-		int32 GetTargetFps() const;
+		float GetTargetFps() const;
+
+		float GetFps() const;
+		float GetFpsUpdateFrequency() const;
+		void SetFpsUpdateFrequency(float frequency);
 
 		WindowManager* GetWindowManager() const;
 		FileSystem* GetFileSystem() const;
@@ -48,6 +52,8 @@ namespace Engine {
 		UniquePtr<FileSystem> fileSystem;
 		UniquePtr<JobSystem> jobSystem;
 
-		int32 targetFps = 60;
+		float targetFps = 60;
+		float fps = 0;
+		float fpsUpdateFrequency = 1;
 	};
 }
