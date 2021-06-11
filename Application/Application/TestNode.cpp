@@ -37,13 +37,13 @@ namespace Application {
 
 		transformProjection = TransformMatrix::Perspective((45+ Math::Sin(elapsed+Math::PI)*10) * Math::Deg2Rad, 640 / 480.0f, 0.1f, 100.0f);
 
-		/*if (elapsed > next) {
-			//INFO_MSG(String::Format(u8"{0}: {1} seconds elapsed!.", GetName(),elapsed).GetRawArray());
+		if (elapsed > next) {
+			INFO_MSG(String::Format(STRL("FPS: {0}"), ENGINEINST->GetFps()).GetRawArray());
 			next += 1;
 			border = !border;
 
 			//ENGINEINST->GetWindowManager()->Get(1)->SetBorder(border);
-		}*/
+		}
 	}
 	void TestNode::OnExitingTree() {
 		INFO_MSG(String::Format(u8"{0}: Exiting tree.", GetName()).GetRawArray());
