@@ -22,7 +22,8 @@ namespace Application {
 	void TestNode::OnReady() {
 		INFO_MSG(String::Format(u8"{0}: Ready.", GetName()).GetRawArray());
 
-		auto wnd = ::Engine::Engine::GetInstance()->GetWindowManager()->Get(1);
+
+		auto wnd = ::Engine::Engine::GetInstance()->GetWindowManager()->Get(0);
 
 		wnd->ConnectSignal(STRL("KeyDown"), Invokable(this, STRL("OnKeyDown")));
 		wnd->ConnectSignal(STRL("PrepareRender"), Invokable(this, STRL("OnPrepareRender")));

@@ -18,8 +18,8 @@ namespace Engine{
 		}
 
 	public:
-		using ID = uint64;
-		static inline constexpr ID NullId = 0;
+		using ID = int32;
+		static inline constexpr ID NullId = -1;
 
 		/// @brief Deinitialize the native window here.\n
 		/// The dtor ensures that the deinitialization is definitely executed.
@@ -65,7 +65,7 @@ namespace Engine{
 		void* renderContext = nullptr;
 
 	private:
-		ID id = -1;
+		ID id = NullId;
 		WindowManager* manager = nullptr;
 		friend class WindowManager;
 	};
@@ -98,7 +98,7 @@ namespace Engine{
 		virtual void Update() = 0;
 
 	private:
-		AtomicValue<Window::ID> idCounter{ 1 };
+		AtomicValue<Window::ID> idCounter{ Window::NullId };
 		Dictionary<Window::ID, SharedPtr<Window>> windows;
 		mutable Mutex windowsMutex;
 	};
