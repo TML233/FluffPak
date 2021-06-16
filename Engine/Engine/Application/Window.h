@@ -21,6 +21,9 @@ namespace Engine{
 		using ID = int32;
 		static inline constexpr ID NullId = -1;
 
+		/// @brief Initialize the native window here.\n
+		/// The manager will use IsValid() to check if it succeeded.
+		Window() = default;
 		/// @brief Deinitialize the native window here.\n
 		/// The dtor ensures that the deinitialization is definitely executed.
 		virtual ~Window() = default;

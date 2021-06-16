@@ -16,16 +16,16 @@ namespace Engine::PlatformSpecific::Linux {
 		gtk_main_iteration_do(false);
 	}
 
-	bool Window::Initialize() {
+	Window::Window() {
 		window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
 		g_object_set_data(G_OBJECT(window), "WindowPtr", this);
 		g_signal_connect(window, "delete-event",G_CALLBACK(OnGtkCloseWindow), NULL);
-		
-		return true;
 	}
 	Window::~Window() {
-		
+		if (IsValid) {
+			gtk_widget_destroy(window);
+		}
 	}
 	WindowManager* Window::GetDetailedManager() const{
 		return (WindowManager*)GetManager();

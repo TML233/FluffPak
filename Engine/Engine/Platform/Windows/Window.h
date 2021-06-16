@@ -32,6 +32,7 @@ namespace Engine::PlatformSpecific::Windows {
 		}
 
 	public:
+		Window();
 		~Window();
 
 		bool IsValid() const override;
@@ -91,10 +92,7 @@ namespace Engine::PlatformSpecific::Windows {
 		static DWORD GetExStyle(HWND hWnd);
 		static bool HasStyleFlag(HWND hWnd, DWORD style);
 		static bool SetStyleFlag(HWND hWnd, DWORD style,bool enabled);
-		
 
-	protected:
-		bool Initialize() override;
 
 	private:
 		HWND hWnd = NULL;

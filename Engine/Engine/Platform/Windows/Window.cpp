@@ -119,7 +119,7 @@ namespace Engine::PlatformSpecific::Windows {
 	};
 
 
-	bool Window::Initialize() {
+	Window::Window() {
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWInit>();
 
@@ -151,14 +151,12 @@ namespace Engine::PlatformSpecific::Windows {
 		js->WaitJob(job);
 
 		auto result = job->GetDataAs<_NWWInit>();
-		ERR_ASSERT(result->result, u8"Window creation routine failed!", return false);
+		ERR_ASSERT(result->result, u8"Window creation routine failed!", return);
 
 		hWnd = result->rHWnd;
 		//renderContext = result->rHGLRC;
 		hDC = GetDC(hWnd);
 		renderContext = InitRender(hWnd);
-
-		return true;
 	}
 
 	Window::~Window() {

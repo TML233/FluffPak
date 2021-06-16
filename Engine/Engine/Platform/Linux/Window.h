@@ -59,9 +59,6 @@ namespace Engine::PlatformSpecific::Linux{
 
 		void OnCallbackClose();
 		static gboolean OnGtkCloseWindow(GtkWidget* widget,GdkEvent* event,gpointer data);
-
-	protected:
-		bool Initialize() override;
 		
 	private:
 		GtkWidget* window;
