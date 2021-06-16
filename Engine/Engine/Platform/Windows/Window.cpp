@@ -155,6 +155,7 @@ namespace Engine::PlatformSpecific::Windows {
 
 		hWnd = result->rHWnd;
 		//renderContext = result->rHGLRC;
+		hDC = GetDC(hWnd);
 		renderContext = InitRender(hWnd);
 
 		return true;
@@ -827,7 +828,7 @@ namespace Engine::PlatformSpecific::Windows {
 			prepared = true;
 		}
 		EmitSignal(STRL("Render"), nullptr, 0);
-		SwapBuffers(GetDC(hWnd));
+		SwapBuffers(hDC);
 	}
 	void Window::CleanupRender() {
 		INFO_MSG(u8"Cleaning up render.");
