@@ -64,7 +64,6 @@ namespace Engine{
 		virtual void OnRender() = 0;
 
 	protected:
-		virtual bool Initialize() = 0;
 		void* renderContext = nullptr;
 
 	private:
