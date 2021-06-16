@@ -119,6 +119,8 @@ if(WIN32)
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.h"
 
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Window.h"
+
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/WGL.h"
 	)
 	list(APPEND SourceFile
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.cpp"
