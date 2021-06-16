@@ -103,7 +103,7 @@ namespace Engine::PlatformSpecific::Windows {
 	};
 
 
-	bool Window::Initialize() {
+	Window::Window() {
 		auto func = [](Job* job) {
 			auto data = job->GetDataAs<_NWWInit>();
 
@@ -128,9 +128,8 @@ namespace Engine::PlatformSpecific::Windows {
 		js->WaitJob(job);
 
 		HWND w = job->GetDataAs<_NWWInit>()->result;
-		ERR_ASSERT(IsWindow(w), u8"CreateWindowW failed to create a window!", return false);
+		ERR_ASSERT(IsWindow(w), u8"CreateWindowW failed to create a window!", return);
 		hWnd = w;
-		return true;
 	}
 
 	Window::~Window() {

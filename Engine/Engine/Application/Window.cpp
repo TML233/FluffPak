@@ -23,8 +23,7 @@ namespace Engine {
 			windows.Add(window->id, window);
 		}
 
-		bool succeeded = window->Initialize();
-		if (!succeeded) {
+		if (!window->IsValid()) {
 			ERR_MSG(u8"Failed to initialize a Window!");
 			Destroy(window->GetId());
 			return nullptr;
