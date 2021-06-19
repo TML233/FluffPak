@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Application/Window.h"
 #include "Engine/Platform/Windows/BetterWindows.h"
+#include "Engine/Platform/Windows/WGL.h"
 
 #define PLATFORM_SPECIFIC_CLASS_WINDOWMANAGER ::Engine::PlatformSpecific::Windows::WindowManager
 #define PLATFORM_SPECIFIC_CLASS_WINDOW ::Engine::PlatformSpecific::Windows::Window
@@ -65,7 +66,6 @@ namespace Engine::PlatformSpecific::Windows {
 
 		void OnRender() override;
 
-		HGLRC InitRender(HWND hWnd);
 		void PrepareRender();
 		void DoRender();
 		void CleanupRender();
@@ -86,6 +86,9 @@ namespace Engine::PlatformSpecific::Windows {
 		static inline constexpr int32 DefaultSizeX = 640;
 		static inline constexpr int32 DefaultSizeY = 480;
 
+		static inline constexpr const WCHAR* DummyWindowClassName = L"DummyWindowClass";
+		static LRESULT CALLBACK DummyWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 		static Window* GetFromHWnd(HWND hWnd);
 
 		static DWORD GetStyle(HWND hWnd);
@@ -93,6 +96,8 @@ namespace Engine::PlatformSpecific::Windows {
 		static bool HasStyleFlag(HWND hWnd, DWORD style);
 		static bool SetStyleFlag(HWND hWnd, DWORD style,bool enabled);
 
+		static PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;
+		static PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
 
 	private:
 		HWND hWnd = NULL;

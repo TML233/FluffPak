@@ -14,21 +14,61 @@ namespace Engine::PlatformSpecific::Windows {
 
 		SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
 
-		// Register basic window class
-		WNDCLASSW wc = {};
-		wc.lpszClassName = Window::GlobalWindowClassName;
-		wc.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-		wc.cbClsExtra = NULL;
-		wc.cbWndExtra = NULL;
-		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);
-		wc.hIcon = LoadIconW(NULL, IDI_APPLICATION);
-		wc.hbrBackground = (HBRUSH)(GetStockObject(GRAY_BRUSH));
-		wc.lpszMenuName = NULL;
-		wc.hInstance = NULL;
-		wc.lpfnWndProc = Window::WndProc;
 
-		bool succeeded = RegisterClassW(&wc);
-		FATAL_ASSERT(succeeded, u8"RegisterClassW failed to register window class!");
+		{
+			// Register dummy window class
+			WNDCLASSW wc = {};
+			wc.lpszClassName = Window::DummyWindowClassName;
+			wc.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+			wc.cbClsExtra = NULL;
+			wc.cbWndExtra = NULL;
+			wc.hCursor = LoadCursorW(NULL, IDC_ARROW);
+			wc.hIcon = LoadIconW(NULL, IDI_APPLICATION);
+			wc.hbrBackground = (HBRUSH)(GetStockObject(GRAY_BRUSH));
+			wc.lpszMenuName = NULL;
+			wc.hInstance = NULL;
+			wc.lpfnWndProc = Window::DummyWndProc;
+
+			bool succeeded = RegisterClassW(&wc);
+			FATAL_ASSERT(succeeded, u8"RegisterClassW failed to register dummy window class!");
+
+			HWND dwnd = CreateWindowW(Window::DummyWindowClassName, L"Dummy", WS_OVERLAPPEDWINDOW, 100, 100, 100, 100, NULL, NULL, NULL, NULL);
+			FATAL_ASSERT(IsWindow(dwnd), u8"Failed to create dummy window!");
+			HDC ddc = GetDC(dwnd);
+			PIXELFORMATDESCRIPTOR pfd = {};
+			bool spf=SetPixelFormat(ddc, 1, &pfd);
+			FATAL_ASSERT(spf, u8"Failed to set dummy window pixel format!");
+			HGLRC drc = wglCreateContext(ddc);
+			FATAL_ASSERT(drc, u8"Failed to create dummy context!");
+			bool mc=wglMakeCurrent(ddc, drc);
+			FATAL_ASSERT(mc, u8"Failed to make current!");
+
+			Window::wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
+			Window::wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
+			FATAL_ASSERT(Window::wglChoosePixelFormatARB && Window::wglCreateContextAttribsARB, u8"Failed to get functions!");
+
+			wglMakeCurrent(NULL, NULL);
+			wglDeleteContext(drc);
+			DestroyWindow(dwnd);
+		}
+
+		{
+			// Register basic window class
+			WNDCLASSW wc = {};
+			wc.lpszClassName = Window::GlobalWindowClassName;
+			wc.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+			wc.cbClsExtra = NULL;
+			wc.cbWndExtra = NULL;
+			wc.hCursor = LoadCursorW(NULL, IDC_ARROW);
+			wc.hIcon = LoadIconW(NULL, IDI_APPLICATION);
+			wc.hbrBackground = (HBRUSH)(GetStockObject(GRAY_BRUSH));
+			wc.lpszMenuName = NULL;
+			wc.hInstance = NULL;
+			wc.lpfnWndProc = Window::WndProc;
+
+			bool succeeded = RegisterClassW(&wc);
+			FATAL_ASSERT(succeeded, u8"RegisterClassW failed to register window class!");
+		}
 	}
 
 	WindowManager::_Initializer::~_Initializer() {
@@ -75,7 +115,8 @@ namespace Engine::PlatformSpecific::Windows {
 		return wp;
 	}
 
-
+	PFNWGLCHOOSEPIXELFORMATARBPROC Window::wglChoosePixelFormatARB = nullptr;
+	PFNWGLCREATECONTEXTATTRIBSARBPROC Window::wglCreateContextAttribsARB = nullptr;
 
 
 	struct _NWWInit {
@@ -154,9 +195,47 @@ namespace Engine::PlatformSpecific::Windows {
 		ERR_ASSERT(result->result, u8"Window creation routine failed!", return);
 
 		hWnd = result->rHWnd;
-		//renderContext = result->rHGLRC;
+
 		hDC = GetDC(hWnd);
-		renderContext = InitRender(hWnd);
+
+		// Set pixel format
+		PIXELFORMATDESCRIPTOR pfd = {
+			sizeof(PIXELFORMATDESCRIPTOR),1,
+			PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,    // Flags
+			PFD_TYPE_RGBA,        // The kind of framebuffer. RGBA or palette.
+			32,                   // Colordepth of the framebuffer.
+			0, 0, 0, 0, 0, 0,0,0,0,0, 0, 0, 0,
+			24,                   // Number of bits for the depthbuffer
+			8,                    // Number of bits for the stencilbuffer
+			0,                    // Number of Aux buffers in the framebuffer.
+			PFD_MAIN_PLANE,
+			0,0, 0, 0
+		};
+		int pixelFormat = ChoosePixelFormat(hDC, &pfd);
+		SetPixelFormat(hDC, pixelFormat, &pfd);
+
+		const int contextAttribs[] = {
+			WGL_CONTEXT_MAJOR_VERSION_ARB,3,
+			WGL_CONTEXT_MINOR_VERSION_ARB,3,
+			WGL_CONTEXT_PROFILE_MASK_ARB,WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+			0,0
+		};
+		// Create context
+		HGLRC hGLRC = wglCreateContextAttribsARB(hDC, NULL, NULL);
+		bool succeeded = wglMakeCurrent(hDC, hGLRC);
+		FATAL_ASSERT(succeeded, u8"wglMakeCurrent failed!");
+
+
+		// Init glad
+		succeeded = gladLoadGL();
+		FATAL_ASSERT(succeeded, u8"Failed to initialize GLAD!");
+
+		glViewport(0, 0, DefaultSizeX, DefaultSizeY);
+
+		INFO_MSG(String::Format(STRL("OpenGL Device: {0}"), glGetString(GL_RENDERER)).GetRawArray());
+		INFO_MSG(String::Format(STRL("OpenGL Version: {0}"), glGetString(GL_VERSION)).GetRawArray());
+
+		renderContext = hGLRC;
 	}
 
 	Window::~Window() {
@@ -216,6 +295,15 @@ namespace Engine::PlatformSpecific::Windows {
 			case WM_PAINT:
 			case WM_ERASEBKGND:
 				return 0;
+		}
+		return DefWindowProcW(hWnd, message, wParam, lParam);
+	}
+
+	LRESULT CALLBACK Window::DummyWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+		switch (message) {
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			return 0;
 		}
 		return DefWindowProcW(hWnd, message, wParam, lParam);
 	}
@@ -778,43 +866,6 @@ namespace Engine::PlatformSpecific::Windows {
 		auto job=js->AddJob(func, &data, sizeof(data), Job::Preference::Window);
 		//js->WaitJob(job);*/
 		DoRender();
-	}
-
-	HGLRC Window::InitRender(HWND hWnd) {
-		auto hDC = GetDC(hWnd);
-
-		// Set pixel format
-		PIXELFORMATDESCRIPTOR pfd = {
-			sizeof(PIXELFORMATDESCRIPTOR),1,
-			PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,    // Flags
-			PFD_TYPE_RGBA,        // The kind of framebuffer. RGBA or palette.
-			32,                   // Colordepth of the framebuffer.
-			0, 0, 0, 0, 0, 0,0,0,0,0, 0, 0, 0,
-			24,                   // Number of bits for the depthbuffer
-			8,                    // Number of bits for the stencilbuffer
-			0,                    // Number of Aux buffers in the framebuffer.
-			PFD_MAIN_PLANE,
-			0,0, 0, 0
-		};
-		int pixelFormat = ChoosePixelFormat(hDC, &pfd);
-		SetPixelFormat(hDC, pixelFormat, &pfd);
-
-		// Create context
-		HGLRC hGLRC = wglCreateContext(hDC);
-		bool succeeded = wglMakeCurrent(hDC, hGLRC);
-		FATAL_ASSERT(succeeded, u8"wglMakeCurrent failed!");
-
-
-		// Init glad
-		succeeded = gladLoadGL();
-		FATAL_ASSERT(succeeded, u8"Failed to initialize GLAD!");
-
-		glViewport(0, 0, DefaultSizeX, DefaultSizeY);
-
-		INFO_MSG(String::Format(STRL("OpenGL Device: {0}"), glGetString(GL_RENDERER)).GetRawArray());
-		INFO_MSG(String::Format(STRL("OpenGL Version: {0}"), glGetString(GL_VERSION)).GetRawArray());
-
-		return hGLRC;
 	}
 	void Window::PrepareRender() {
 		INFO_MSG(u8"Preparing render.");
