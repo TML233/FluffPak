@@ -5,7 +5,7 @@
 #define ENGINEINST ::Engine::Engine::GetInstance()
 
 namespace Engine {
-	class WindowManager;
+	class WindowSystem;
 	class FileSystem;
 	class JobSystem;
 	class AppLoop;
@@ -39,7 +39,7 @@ namespace Engine {
 		float GetFpsUpdateFrequency() const;
 		void SetFpsUpdateFrequency(float frequency);
 
-		WindowManager* GetWindowManager() const;
+		WindowSystem* GetWindowSystem() const;
 		FileSystem* GetFileSystem() const;
 		JobSystem* GetJobSystem() const;
 
@@ -48,7 +48,7 @@ namespace Engine {
 
 		UniquePtr<AppLoop> appLoop{};
 		Time time{};
-		UniquePtr<WindowManager> windowManager;
+		UniquePtr<WindowSystem> windowSystem;
 		UniquePtr<FileSystem> fileSystem;
 		UniquePtr<JobSystem> jobSystem;
 

@@ -15,7 +15,7 @@ namespace Engine {
 	Engine::Engine() {
 		instance = this;
 
-		windowManager.Reset(MEMNEW(PLATFORM_SPECIFIC_CLASS_WINDOWMANAGER));
+		windowSystem.Reset(MEMNEW(PLATFORM_SPECIFIC_CLASS_WINDOWMANAGER));
 		
 		fileSystem.Reset(MEMNEW(FileSystem()));
 
@@ -51,8 +51,8 @@ namespace Engine {
 	Time& Engine::GetTime() {
 		return time;
 	}
-	WindowManager* Engine::GetWindowManager() const {
-		return windowManager.GetRaw();
+	WindowSystem* Engine::GetWindowSystem() const {
+		return windowSystem.GetRaw();
 	}
 	FileSystem* Engine::GetFileSystem() const {
 		return fileSystem.GetRaw();
@@ -100,7 +100,7 @@ namespace Engine {
 			TimePoint now = Clock::now();
 
 			if (now >= nextUpdate) {
-				windowManager->Update();
+				windowSystem->Update();
 
 				time.unscaledDelta = std::chrono::duration_cast<Duration>(now - lastUpdate).count();
 				time.unscaledTotal += time.GetUnscaledDelta();

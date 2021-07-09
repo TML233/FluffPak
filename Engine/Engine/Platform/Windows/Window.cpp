@@ -5,9 +5,9 @@
 #include "Engine/System/Thread/JobSystem.h"
 
 namespace Engine::PlatformSpecific::Windows {
-	typename WindowManager::_Initializer WindowManager::_initializer{};
+	typename WindowSystem::_Initializer WindowSystem::_initializer{};
 
-	WindowManager::_Initializer::_Initializer() {
+	WindowSystem::_Initializer::_Initializer() {
 		// Make console support UTF-8
 		SetConsoleOutputCP(65001);
 
@@ -30,11 +30,11 @@ namespace Engine::PlatformSpecific::Windows {
 		FATAL_ASSERT(succeeded, u8"RegisterClassW failed to register window class!");
 	}
 
-	WindowManager::_Initializer::~_Initializer() {
+	WindowSystem::_Initializer::~_Initializer() {
 		UnregisterClassW(Window::GlobalWindowClassName, NULL);
 	}
 
-	void WindowManager::Update() {
+	void WindowSystem::Update() {
 		auto func = [](Job* job) {
 			MSG msg = {};
 			if (PeekMessageW(&msg, NULL, NULL, NULL, PM_REMOVE)) {

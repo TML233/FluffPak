@@ -1,18 +1,18 @@
 #include "Engine/Platform/Linux/Window.h"
 
 namespace Engine::PlatformSpecific::Linux {
-	typename WindowManager::_Initializer WindowManager::_initializer{};
+	typename WindowSystem::_Initializer WindowSystem::_initializer{};
 
-	WindowManager::_Initializer::_Initializer() {
+	WindowSystem::_Initializer::_Initializer() {
 		bool inited = gtk_init_check(0, NULL);
 		FATAL_ASSERT(inited, u8"Cannot initialize window framework!");
 	}
 
-	WindowManager::_Initializer::~_Initializer() {
+	WindowSystem::_Initializer::~_Initializer() {
 		
 	}
 
-	void WindowManager::Update(){
+	void WindowSystem::Update(){
 		gtk_main_iteration_do(false);
 	}
 
@@ -27,8 +27,8 @@ namespace Engine::PlatformSpecific::Linux {
 			gtk_widget_destroy(window);
 		}
 	}
-	WindowManager* Window::GetDetailedManager() const{
-		return (WindowManager*)GetManager();
+	WindowSystem* Window::GetDetailedManager() const{
+		return (WindowSystem*)GetManager();
 	}
 	
 	bool Window::IsValid() const {

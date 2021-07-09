@@ -6,13 +6,13 @@ namespace Engine {
 	Window::ID Window::GetId() const {
 		return id;
 	}
-	WindowManager* Window::GetManager() const {
+	WindowSystem* Window::GetManager() const {
 		return manager;
 	}
 
-	WindowManager::~WindowManager() {}
+	WindowSystem::~WindowSystem() {}
 
-	Window* WindowManager::Create() {
+	Window* WindowSystem::Create() {
 		SharedPtr<Window> window = SharedPtr<PLATFORM_SPECIFIC_CLASS_WINDOW>::Create();
 
 		window->id = idCounter.Add(1);
@@ -31,11 +31,11 @@ namespace Engine {
 			return window.GetRaw();
 		}
 	}
-	bool WindowManager::IsExists(Window::ID id) const {
+	bool WindowSystem::IsExists(Window::ID id) const {
 		auto lock = SimpleLock<Mutex>(windowsMutex);
 		return windows.ContainsKey(id);
 	}
-	bool WindowManager::Destroy(Window::ID id) {
+	bool WindowSystem::Destroy(Window::ID id) {
 		ERR_ASSERT(IsExists(id), u8"Specified window id not found!", return false);
 
 		{
@@ -44,7 +44,7 @@ namespace Engine {
 		}
 		return true;
 	}
-	Window* WindowManager::Get(Window::ID id) const {
+	Window* WindowSystem::Get(Window::ID id) const {
 		SharedPtr<Window> ptr;
 		{
 			auto lock = SimpleLock<Mutex>(windowsMutex);
@@ -52,10 +52,10 @@ namespace Engine {
 		}
 		return ptr.GetRaw();
 	}
-	int32 WindowManager::GetCount() const {
+	int32 WindowSystem::GetCount() const {
 		return windows.GetCount();
 	}
-	void WindowManager::Clear() {
+	void WindowSystem::Clear() {
 		auto lock = SimpleLock<Mutex>(windowsMutex);
 		windows.Clear();
 	}

@@ -2,14 +2,14 @@
 #include "Engine/Application/Window.h"
 #include <gtk/gtk.h>
 
-#define PLATFORM_SPECIFIC_CLASS_WINDOWMANAGER ::Engine::PlatformSpecific::Linux::WindowManager
+#define PLATFORM_SPECIFIC_CLASS_WINDOWMANAGER ::Engine::PlatformSpecific::Linux::WindowSystem
 #define PLATFORM_SPECIFIC_CLASS_WINDOW ::Engine::PlatformSpecific::Linux::Window
 
 namespace Engine::PlatformSpecific::Linux{
 	class Window;
 
-	class WindowManager final :public ::Engine::WindowManager {
-		REFLECTION_CLASS(::Engine::PlatformSpecific::Linux::WindowManager, ::Engine::WindowManager) {}
+	class WindowSystem final :public ::Engine::WindowSystem {
+		REFLECTION_CLASS(::Engine::PlatformSpecific::Linux::WindowSystem, ::Engine::WindowSystem) {}
 
 	public:
 		void Update() override;
@@ -26,7 +26,7 @@ namespace Engine::PlatformSpecific::Linux{
 	public:
 		~Window();
 
-		WindowManager* GetDetailedManager() const;
+		WindowSystem* GetDetailedManager() const;
 		
 		bool IsValid() const override;
 

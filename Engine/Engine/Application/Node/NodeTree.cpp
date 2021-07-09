@@ -10,7 +10,7 @@ namespace Engine {
 
 	void NodeTree::OnStart() {
 		// Create the first window.
-		WindowManager* nwm = ::Engine::Engine::GetInstance()->GetWindowManager();
+		WindowSystem* nwm = ::Engine::Engine::GetInstance()->GetWindowSystem();
 		Window* nw = nwm->Create();
 		nw->SetTitle(STRING_LITERAL("Rabbik Engine"));
 		nw->SetSize(Vector2(640, 480));
@@ -25,14 +25,14 @@ namespace Engine {
 	void NodeTree::OnUpdate(const Time& time) {
 		GetRoot()->SystemUpdate(time.GetDelta());
 
-		if (stopWhenNoWindow && ::Engine::Engine::GetInstance()->GetWindowManager()->GetCount() <= 0) {
+		if (stopWhenNoWindow && ::Engine::Engine::GetInstance()->GetWindowSystem()->GetCount() <= 0) {
 			running = false;
 		}
 	}
 	void NodeTree::OnPhysicsUpdate(const Time& time) {
 		GetRoot()->SystemPhysicsUpdate(time.GetDelta());
 
-		if (stopWhenNoWindow && ::Engine::Engine::GetInstance()->GetWindowManager()->GetCount() <= 0) {
+		if (stopWhenNoWindow && ::Engine::Engine::GetInstance()->GetWindowSystem()->GetCount() <= 0) {
 			running = false;
 		}
 	}

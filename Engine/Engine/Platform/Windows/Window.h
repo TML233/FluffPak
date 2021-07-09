@@ -2,12 +2,12 @@
 #include "Engine/Application/Window.h"
 #include "Engine/Platform/Windows/BetterWindows.h"
 
-#define PLATFORM_SPECIFIC_CLASS_WINDOWMANAGER ::Engine::PlatformSpecific::Windows::WindowManager
+#define PLATFORM_SPECIFIC_CLASS_WINDOWMANAGER ::Engine::PlatformSpecific::Windows::WindowSystem
 #define PLATFORM_SPECIFIC_CLASS_WINDOW ::Engine::PlatformSpecific::Windows::Window
 
 namespace Engine::PlatformSpecific::Windows {
-	class WindowManager final :public ::Engine::WindowManager {
-		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::WindowManager, ::Engine::WindowManager) {}
+	class WindowSystem final :public ::Engine::WindowSystem {
+		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::WindowSystem, ::Engine::WindowSystem) {}
 
 	public:
 		void Update() override;

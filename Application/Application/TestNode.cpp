@@ -19,7 +19,7 @@ namespace Application {
 
 		::Engine::Engine::
 			GetInstance()->
-			GetWindowManager()->
+			GetWindowSystem()->
 			Get(0)->
 			ConnectSignal(STRL("KeyDown"), Invokable(this, STRL("OnKeyDown")));
 	}
@@ -30,7 +30,7 @@ namespace Application {
 			next += 1;
 			border = !border;
 
-			//ENGINEINST->GetWindowManager()->Get(1)->SetBorder(border);
+			//ENGINEINST->GetWindowSystem()->Get(1)->SetBorder(border);
 		}
 	}
 	void TestNode::OnExitingTree() {

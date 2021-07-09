@@ -9,7 +9,7 @@
 #include "Engine/System/Thread/ThreadUtil.h"
 
 namespace Engine{
-	class WindowManager;
+	class WindowSystem;
 
 	/// @brief A native window of the platform.
 	class Window: public ManualObject {
@@ -57,22 +57,22 @@ namespace Engine{
 		virtual bool SetResizable(bool resizable) = 0;
 
 		ID GetId() const;
-		WindowManager* GetManager() const;
+		WindowSystem* GetManager() const;
 
 	private:
 		ID id = NullId;
-		WindowManager* manager = nullptr;
-		friend class WindowManager;
+		WindowSystem* manager = nullptr;
+		friend class WindowSystem;
 	};
 
 	/// @brief Controls the native window of the platform.
-	class WindowManager :public ManualObject {
-		REFLECTION_CLASS(::Engine::WindowManager, ::Engine::ManualObject) {
+	class WindowSystem :public ManualObject {
+		REFLECTION_CLASS(::Engine::WindowSystem, ::Engine::ManualObject) {
 			REFLECTION_CLASS_INSTANTIABLE(false);
 		}
 
 	public:
-		virtual ~WindowManager();
+		virtual ~WindowSystem();
 		/// @brief Create a native window with default style, and hidden.
 		/// @return nullptr when failed.
 		Window* Create();
