@@ -154,7 +154,7 @@ namespace Engine::PlatformSpecific::Windows {
 			{
 				Window* nw = Window::GetFromHWnd(hWnd);
 				if (nw != nullptr) {
-					nw->GetManager()->Destroy(nw->GetId());
+					nw->GetManager()->DestroyWindow(nw->GetId());
 				} else {
 					ERR_MSG(u8"User data in hWnd is not a Window ptr! This shouldn't happen!");
 					DestroyWindow(hWnd);

@@ -10,6 +10,12 @@
 
 namespace Engine{
 	class WindowSystem;
+	struct MonitorInfo {
+		String name;
+		Vector2 position;
+		Vector2 size;
+		float dpi;
+	};
 
 	/// @brief A native window of the platform.
 	class Window: public ManualObject {
@@ -75,18 +81,18 @@ namespace Engine{
 		virtual ~WindowSystem();
 		/// @brief Create a native window with default style, and hidden.
 		/// @return nullptr when failed.
-		Window* Create();
+		Window* CreateWindow();
 		/// @brief Get a native window by ID.
 		/// @return nullptr when not found.
-		Window* Get(Window::ID id) const;
+		Window* GetWindow(Window::ID id) const;
 		/// @brief Get the count of current existing native windows.
-		int32 GetCount() const;
+		int32 GetWindowCount() const;
 		/// @brief Check if the native window exists.
-		bool IsExists(Window::ID id) const;
+		bool IsWindowExists(Window::ID id) const;
 		/// @brief Destroy a native window.
-		bool Destroy(Window::ID id);
+		bool DestroyWindow(Window::ID id);
 		/// @brief Destroy all native windows.
-		void Clear();
+		void DestroyAllWindows();
 
 		virtual void Update() = 0;
 
