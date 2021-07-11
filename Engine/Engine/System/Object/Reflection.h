@@ -224,13 +224,6 @@ namespace Engine {
 			std::initializer_list<String> argumentNames, std::initializer_list<Variant> defaultArguments
 		);
 
-		enum class InvokeResult {
-			OK,
-			InvalidMethod,
-			InvalidObject,
-			TooFewArguments,
-			TooManyArguments,
-		};
 		String GetName() const;
 		bool IsConst() const;
 		bool IsStatic() const;
@@ -243,7 +236,7 @@ namespace Engine {
 		List<String>& GetArgumentNameList();
 		List<Variant>& GetDefaultArgumentList();
 
-		InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, Variant& returnValue) const;
+		ResultCode Invoke(Object* target, const Variant** arguments, int32 argumentCount, Variant& returnValue) const;
 
 	private:
 		friend class ReflectionClass;
@@ -265,7 +258,7 @@ namespace Engine {
 		virtual int32 GetArgumentCount() const = 0;
 		//virtual Variant::Type GetArgumentType(int32 index) const = 0;
 
-		virtual ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments,Variant& result) const = 0;
+		virtual ResultCode Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments,Variant& result) const = 0;
 	};
 
 	/// @internal
@@ -290,11 +283,11 @@ namespace Engine {
 		}
 
 		template<sizeint...Index>
-		ReflectionMethod::InvokeResult InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
+		ResultCode InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
 			result = (*method)(Variant::CastToNative<TArgs>::Cast(*(arguments[Index]))...);
-			return ReflectionMethod::InvokeResult::OK;
+			return ResultCode::OK;
 		}
-		ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments,Variant& result) const override {
+		ResultCode Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments,Variant& result) const override {
 			const Variant* args[sizeof...(TArgs) == 0 ? 1 : sizeof...(TArgs)] = { nullptr };
 			for (int32 i = 0; i < GetArgumentCount(); i += 1) {
 				if (i < argumentCount) {
@@ -329,12 +322,12 @@ namespace Engine {
 		}
 
 		template<sizeint...Index>
-		ReflectionMethod::InvokeResult InternalInvoke(Object* target, const Variant** arguments, Variant& result,std::index_sequence<Index...>) const {
+		ResultCode InternalInvoke(Object* target, const Variant** arguments, Variant& result,std::index_sequence<Index...>) const {
 			(*method)(Variant::CastToNative<TArgs>::Cast(*(arguments[Index]))...);
 			result = Variant();
-			return ReflectionMethod::InvokeResult::OK;
+			return ResultCode::OK;
 		}
-		ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments,Variant& result) const override {
+		ResultCode Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments,Variant& result) const override {
 			const Variant* args[sizeof...(TArgs) == 0 ? 1 : sizeof...(TArgs)] = { nullptr };
 			for (int32 i = 0; i < GetArgumentCount(); i += 1) {
 				if (i < argumentCount) {
@@ -369,11 +362,11 @@ namespace Engine {
 		}
 
 		template<sizeint...Index>
-		ReflectionMethod::InvokeResult InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
+		ResultCode InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
 			result = (((TClass*)target)->*method)(Variant::CastToNative<TArgs>::Cast(*(arguments[Index]))...);
-			return ReflectionMethod::InvokeResult::OK;
+			return ResultCode::OK;
 		}
-		ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments, Variant& result) const override {
+		ResultCode Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments, Variant& result) const override {
 			const Variant* args[sizeof...(TArgs) == 0 ? 1 : sizeof...(TArgs)] = { nullptr };
 			for (int32 i = 0; i < GetArgumentCount(); i += 1) {
 				if (i < argumentCount) {
@@ -408,11 +401,11 @@ namespace Engine {
 		}
 
 		template<sizeint...Index>
-		ReflectionMethod::InvokeResult InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
+		ResultCode InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
 			result = (((TClass*)target)->*method)(Variant::CastToNative<TArgs>::Cast(*(arguments[Index]))...);
-			return ReflectionMethod::InvokeResult::OK;
+			return ResultCode::OK;
 		}
-		ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments, Variant& result) const override {
+		ResultCode Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments, Variant& result) const override {
 			const Variant* args[sizeof...(TArgs) == 0 ? 1 : sizeof...(TArgs)] = { nullptr };
 			for (int32 i = 0; i < GetArgumentCount(); i += 1) {
 				if (i < argumentCount) {
@@ -447,12 +440,12 @@ namespace Engine {
 		}
 
 		template<sizeint...Index>
-		ReflectionMethod::InvokeResult InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
+		ResultCode InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
 			(((TClass*)target)->*method)(Variant::CastToNative<TArgs>::Cast(*(arguments[Index]))...);
 			result = Variant();
-			return ReflectionMethod::InvokeResult::OK;
+			return ResultCode::OK;
 		}
-		ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments, Variant& result) const override {
+		ResultCode Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments, Variant& result) const override {
 			const Variant* args[sizeof...(TArgs) == 0 ? 1 : sizeof...(TArgs)] = { nullptr };
 			for (int32 i = 0; i < GetArgumentCount(); i += 1) {
 				if (i < argumentCount) {
@@ -487,12 +480,12 @@ namespace Engine {
 		}
 
 		template<sizeint...Index>
-		ReflectionMethod::InvokeResult InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
+		ResultCode InternalInvoke(Object* target, const Variant** arguments, Variant& result, std::index_sequence<Index...>) const {
 			(((TClass*)target)->*method)(Variant::CastToNative<TArgs>::Cast(*(arguments[Index]))...);
 			result = Variant();
-			return ReflectionMethod::InvokeResult::OK;
+			return ResultCode::OK;
 		}
-		ReflectionMethod::InvokeResult Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments, Variant& result) const override {
+		ResultCode Invoke(Object* target, const Variant** arguments, int32 argumentCount, const List<Variant>& defaultArguments, Variant& result) const override {
 			const Variant* args[sizeof...(TArgs) == 0 ? 1 : sizeof...(TArgs)] = { nullptr };
 			for (int32 i = 0; i < GetArgumentCount(); i += 1) {
 				if (i < argumentCount) {
@@ -616,11 +609,6 @@ namespace Engine {
 			String name;
 			Variant::Type type;
 			String detailedClass;
-		};
-		enum class ConnectResult {
-			OK,
-			InvalidSignal,
-			InvalidObject
 		};
 		enum class ConnectFlag {
 			Null=0b0000,

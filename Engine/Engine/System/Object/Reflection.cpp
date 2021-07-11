@@ -159,14 +159,14 @@ namespace Engine{
 		return defaultArguments;
 	}
 
-	ReflectionMethod::InvokeResult ReflectionMethod::Invoke(Object* target, const Variant** arguments, int32 argumentCount, Variant& returnValue) const {
-		ERR_ASSERT(IsStatic() || target != nullptr, u8"target cannot be nullptr for a non-static method.", return InvokeResult::InvalidObject);
+	ResultCode ReflectionMethod::Invoke(Object* target, const Variant** arguments, int32 argumentCount, Variant& returnValue) const {
+		ERR_ASSERT(IsStatic() || target != nullptr, u8"target cannot be nullptr for a non-static method.", return ResultCode::InvalidObject);
 		
 		int32 methodArgCount = GetArgumentCount();
-		ERR_ASSERT(argumentCount <= methodArgCount, u8"Too many arguments.", return InvokeResult::TooManyArguments);
+		ERR_ASSERT(argumentCount <= methodArgCount, u8"Too many arguments.", return ResultCode::TooManyArguments);
 
 		int32 leastCount = GetArgumentCount() - defaultArguments.GetCount();
-		ERR_ASSERT(argumentCount >= leastCount, u8"Not enough arguments.", return InvokeResult::TooFewArguments);
+		ERR_ASSERT(argumentCount >= leastCount, u8"Not enough arguments.", return ResultCode::TooFewArguments);
 
 		return bind->Invoke(target, arguments, argumentCount, defaultArguments, returnValue);
 	}
@@ -200,7 +200,7 @@ namespace Engine{
 		Variant returnValue;
 		auto result = getter->Invoke(obj, nullptr, 0, returnValue);
 		
-		ERR_ASSERT(result == ReflectionMethod::InvokeResult::OK, u8"Failed to invoke getter.", return Variant());
+		ERR_ASSERT(result == ResultCode::OK, u8"Failed to invoke getter.", return Variant());
 		return returnValue;
 	}
 	void ReflectionProperty::Set(Object* obj,const Variant& value) {
@@ -210,7 +210,7 @@ namespace Engine{
 		Variant returnValue;
 		auto result = setter->Invoke(obj, (const Variant**)args, 1, returnValue);
 
-		ERR_ASSERT(result == ReflectionMethod::InvokeResult::OK, u8"Failed to invoke setter.", return);
+		ERR_ASSERT(result == ResultCode::OK, u8"Failed to invoke setter.", return);
 	}
 
 	ReflectionMethod* ReflectionProperty::GetGetter() const {

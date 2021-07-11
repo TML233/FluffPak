@@ -46,14 +46,20 @@ namespace Engine{
 
 		InstanceId GetInstanceId() const;
 
-		bool HasSignal(const String& name) const;
-		bool HasMethod(const String& name) const;
-		ReflectionMethod::InvokeResult InvokeMethod(const String& name, const Variant** arguments, int32 argumentCount, Variant& result);
+#pragma region Reflection
+		bool HasProperty(const String& name) const;
+		Variant GetPropertyValue(const String& name) const;
+		bool SetPropertyValue(const String& name, const Variant& value);
 
+		bool HasMethod(const String& name) const;
+		ResultCode InvokeMethod(const String& name, const Variant** arguments, int32 argumentCount, Variant& result);
+		 
+		bool HasSignal(const String& name) const;
 		bool IsSignalConnected(const String& signal, const Invokable& invokable) const;
-		ReflectionSignal::ConnectResult ConnectSignal(const String& signal, const Invokable& invokable, ReflectionSignal::ConnectFlag flag=ReflectionSignal::ConnectFlag::Null);
+		ResultCode ConnectSignal(const String& signal, const Invokable& invokable, ReflectionSignal::ConnectFlag flag=ReflectionSignal::ConnectFlag::Null);
 		bool DisconnectSignal(const String& signal, const Invokable& invokable);
 		bool EmitSignal(const String& signal,const Variant** arguments,int32 argumentCount);
+#pragma endregion
 
 	protected:
 		static Dictionary<InstanceId, Object*> objectLookup;

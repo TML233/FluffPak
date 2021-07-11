@@ -36,7 +36,10 @@ namespace Engine {
 	enum class ResultCode {
 		OK,
 		UnknownError,
+		InvalidObject,
 		InvalidArgument,
+		TooFewArguments,
+		TooManyArguments,
 		NotSupported,
 		NoPermission,
 		NotFound,

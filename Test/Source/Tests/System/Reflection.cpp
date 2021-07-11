@@ -44,8 +44,8 @@ TEST_SUITE("Reflection") {
 		Variant* args[] = { &a,&b };
 		List<Variant> defaultArgs{};
 		Variant returnValue;
-		ReflectionMethod::InvokeResult result = foo->Invoke(nullptr, (const Variant**)args, 2, defaultArgs, returnValue);
-		CHECK(result == ReflectionMethod::InvokeResult::OK);
+		ResultCode result = foo->Invoke(nullptr, (const Variant**)args, 2, defaultArgs, returnValue);
+		CHECK(result == ResultCode::OK);
 		CHECK(returnValue.AsInt64() == 7);
 	}
 
@@ -101,7 +101,7 @@ TEST_SUITE("Reflection") {
 
 			Variant returnValue = 0;
 			auto result = mSetStatic->Invoke(nullptr, (const Variant**)args, 1, returnValue);
-			CHECK(result == ReflectionMethod::InvokeResult::OK);
+			CHECK(result == ResultCode::OK);
 			CHECK(returnValue.GetType() == Variant::Type::Null);
 
 			CHECK(Bar::staticValue == 3);
@@ -114,7 +114,7 @@ TEST_SUITE("Reflection") {
 
 			Variant returnValue = 0;
 			auto result = mSetStatic->Invoke(nullptr, (const Variant**)args, 0, returnValue);
-			CHECK(result == ReflectionMethod::InvokeResult::OK);
+			CHECK(result == ResultCode::OK);
 			CHECK(returnValue.GetType() == Variant::Type::Null);
 
 			CHECK(Bar::staticValue == 114514);
@@ -127,7 +127,7 @@ TEST_SUITE("Reflection") {
 		{
 			Variant returnValue = 0;
 			auto result = mGetStatic->Invoke(nullptr, nullptr, 0, returnValue);
-			CHECK(result == ReflectionMethod::InvokeResult::OK);
+			CHECK(result == ResultCode::OK);
 			CHECK(returnValue.AsInt64() == 114514);
 		}
 #pragma endregion
@@ -143,7 +143,7 @@ TEST_SUITE("Reflection") {
 
 			auto result = mSet->Invoke(&obj, (const Variant**)args, 1, returnValue);
 
-			CHECK(result == ReflectionMethod::InvokeResult::OK);
+			CHECK(result == ResultCode::OK);
 			CHECK(returnValue.GetType() == Variant::Type::Null);
 		}
 #pragma endregion
@@ -153,7 +153,7 @@ TEST_SUITE("Reflection") {
 		{
 			Variant returnValue = 0;
 			auto result = mGet->Invoke(&obj, nullptr, 0, returnValue);
-			CHECK(result == ReflectionMethod::InvokeResult::OK);
+			CHECK(result == ResultCode::OK);
 			CHECK(returnValue.AsString() == STRING_LITERAL("MUR"));
 		}
 #pragma endregion

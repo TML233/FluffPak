@@ -26,11 +26,11 @@ TEST_CASE("Object") {
 	UniquePtr<SignalTest> sig = UniquePtr<SignalTest>::Create();
 
 	UniquePtr<SignalHandler> hd1 = UniquePtr<SignalHandler>::Create();
-	CHECK(sig->ConnectSignal(signame, Invokable(hd1.GetRaw(), recvname)) == ReflectionSignal::ConnectResult::OK);
+	CHECK(sig->ConnectSignal(signame, Invokable(hd1.GetRaw(), recvname)) == ResultCode::OK);
 	UniquePtr<SignalHandler> hd2 = UniquePtr<SignalHandler>::Create();
-	CHECK(sig->ConnectSignal(signame, Invokable(hd2.GetRaw(), recvname)) == ReflectionSignal::ConnectResult::OK);
+	CHECK(sig->ConnectSignal(signame, Invokable(hd2.GetRaw(), recvname)) == ResultCode::OK);
 	UniquePtr<SignalHandler> hd3 = UniquePtr<SignalHandler>::Create();
-	CHECK(sig->ConnectSignal(signame, Invokable(hd3.GetRaw(), recvname)) == ReflectionSignal::ConnectResult::OK);
+	CHECK(sig->ConnectSignal(signame, Invokable(hd3.GetRaw(), recvname)) == ResultCode::OK);
 
 	CHECK(sig->IsSignalConnected(signame, Invokable(hd1.GetRaw(), recvname)));
 	CHECK(sig->IsSignalConnected(signame, Invokable(hd2.GetRaw(), recvname)));

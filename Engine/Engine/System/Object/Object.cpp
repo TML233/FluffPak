@@ -47,9 +47,9 @@ namespace Engine {
 	bool Object::HasMethod(const String& name) const {
 		return Reflection::GetClass(GetReflectionClassName())->HasMethod(name);
 	}
-	ReflectionMethod::InvokeResult Object::InvokeMethod(const String& name, const Variant** arguments, int32 argumentCount, Variant& result) {
+	ResultCode Object::InvokeMethod(const String& name, const Variant** arguments, int32 argumentCount, Variant& result) {
 		ReflectionMethod* method = Reflection::GetClass(GetReflectionClassName())->GetMethod(name);
-		ERR_ASSERT(method != nullptr, String::Format(STRING_LITERAL("Method {0}::{1} not found!"), GetReflectionClassName(), name).GetRawArray(), return ReflectionMethod::InvokeResult::InvalidMethod);
+		ERR_ASSERT(method != nullptr, String::Format(STRING_LITERAL("Method {0}::{1} not found!"), GetReflectionClassName(), name).GetRawArray(), return ResultCode::NotFound);
 		return method->Invoke(this, arguments, argumentCount, result);
 	}
 
@@ -62,7 +62,7 @@ namespace Engine {
 		return group->connections.DoRead()->ContainsKey(invokable);
 	}
 
-	ReflectionSignal::ConnectResult Object::ConnectSignal(const String& signal, const Invokable& invokable, ReflectionSignal::ConnectFlag flag) {
+	ResultCode Object::ConnectSignal(const String& signal, const Invokable& invokable, ReflectionSignal::ConnectFlag flag) {
 		SharedPtr<SignalConnectionGroup> group;
 		bool found = signalConnections.TryGet(signal, group);
 		// Not found, try to add.
@@ -71,15 +71,15 @@ namespace Engine {
 				group = SharedPtr<SignalConnectionGroup>::Create();
 				signalConnections.Add(signal, group);
 			} else {
-				ERR_ASSERT(group != nullptr, String::Format(STRING_LITERAL("Signal {0}::{1} doesn't exist."), GetReflectionClassName(), signal).GetRawArray(), return ReflectionSignal::ConnectResult::InvalidSignal);
+				ERR_ASSERT(group != nullptr, String::Format(STRING_LITERAL("Signal {0}::{1} doesn't exist."), GetReflectionClassName(), signal).GetRawArray(), return ResultCode::NotFound);
 			}
 		}
 
-		ERR_ASSERT(IsInstanceValid(invokable.instanceId), u8"Cannot connect to a non-existing object!", return ReflectionSignal::ConnectResult::InvalidObject);
+		ERR_ASSERT(IsInstanceValid(invokable.instanceId), u8"Cannot connect to a non-existing object!", return ResultCode::InvalidObject);
 
 		group->connections.DoWrite()->Add(invokable, flag);
 
-		return ReflectionSignal::ConnectResult::OK;
+		return ResultCode::OK;
 	}
 
 	bool Object::DisconnectSignal(const String& signal, const Invokable& invokable) {
