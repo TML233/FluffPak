@@ -48,8 +48,10 @@ namespace Engine{
 
 #pragma region Reflection
 		bool HasProperty(const String& name) const;
-		Variant GetPropertyValue(const String& name) const;
-		bool SetPropertyValue(const String& name, const Variant& value);
+		bool CanPropertySet(const String& name) const;
+		bool CanPropertyGet(const String& name) const;
+		ResultCode GetPropertyValue(const String& name, Variant& result) const;
+		ResultCode SetPropertyValue(const String& name, const Variant& value);
 
 		bool HasMethod(const String& name) const;
 		ResultCode InvokeMethod(const String& name, const Variant** arguments, int32 argumentCount, Variant& result);

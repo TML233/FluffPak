@@ -194,23 +194,22 @@ namespace Engine{
 	bool ReflectionProperty::CanSet() const {
 		return setter != nullptr;
 	}
-	Variant ReflectionProperty::Get(Object* obj) const {
-		ERR_ASSERT(CanGet(), u8"The property cannot get.", return Variant());
+	ResultCode ReflectionProperty::Get(const Object* obj,Variant& result) const {
+		ERR_ASSERT(CanGet(), u8"The property cannot get.", return ResultCode::NotSupported);
 		
-		Variant returnValue;
-		auto result = getter->Invoke(obj, nullptr, 0, returnValue);
+		auto invokeResult = getter->Invoke(const_cast<Object*>(obj), nullptr, 0, result);
 		
-		ERR_ASSERT(result == ResultCode::OK, u8"Failed to invoke getter.", return Variant());
-		return returnValue;
+		ERR_ASSERT(invokeResult == ResultCode::OK, u8"Failed to invoke getter.", return invokeResult);
+		return ResultCode::OK;
 	}
-	void ReflectionProperty::Set(Object* obj,const Variant& value) {
-		ERR_ASSERT(CanSet(), u8"The property cannot set.", return);
+	ResultCode ReflectionProperty::Set(Object* obj,const Variant& value) {
+		ERR_ASSERT(CanSet(), u8"The property cannot set.", return ResultCode::NotSupported);
 
 		const Variant* args[1] = { &value };
 		Variant returnValue;
 		auto result = setter->Invoke(obj, (const Variant**)args, 1, returnValue);
 
-		ERR_ASSERT(result == ResultCode::OK, u8"Failed to invoke setter.", return);
+		ERR_ASSERT(result == ResultCode::OK, u8"Failed to invoke setter.", return result);
 	}
 
 	ReflectionMethod* ReflectionProperty::GetGetter() const {

@@ -171,6 +171,8 @@ TEST_SUITE("Reflection") {
 		prop->Set(&obj, value);
 		
 		CHECK(obj.value == value);
-		CHECK(prop->Get(&obj).AsString() == value);
+		Variant r;
+		CHECK(prop->Get(&obj, r)==ResultCode::OK);
+		CHECK(r.AsString() == value);
 	}
 }

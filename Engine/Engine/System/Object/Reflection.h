@@ -579,8 +579,8 @@ namespace Engine {
 
 		bool CanGet() const;
 		bool CanSet() const;
-		Variant Get(Object* obj) const;
-		void Set(Object* obj, const Variant& value);
+		ResultCode Get(const Object* obj, Variant& result) const;
+		ResultCode Set(Object* obj, const Variant& value);
 
 		ReflectionMethod* GetGetter() const;
 		void SetGetter(ReflectionMethod* method);

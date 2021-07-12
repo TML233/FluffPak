@@ -41,9 +41,34 @@ namespace Engine {
 		return obj;
 	}
 
-	bool Object::HasSignal(const String& name) const {
-		return Reflection::GetClass(GetReflectionClassName())->HasSignal(name);
+	bool Object::HasProperty(const String& name) const {
+		return Reflection::GetClass(GetReflectionClassName())->HasProperty(name);
 	}
+	bool Object::CanPropertyGet(const String& name) const {
+		ReflectionProperty* prop = Reflection::GetClass(GetReflectionClassName())->GetProperty(name);
+		if (prop == nullptr) {
+			return false;
+		}
+		return prop->CanGet();
+	}
+	bool Object::CanPropertySet(const String& name) const {
+		ReflectionProperty* prop = Reflection::GetClass(GetReflectionClassName())->GetProperty(name);
+		if (prop == nullptr) {
+			return false;
+		}
+		return prop->CanSet();
+	}
+	ResultCode Object::GetPropertyValue(const String& name, Variant& result) const {
+		ReflectionProperty* prop = Reflection::GetClass(GetReflectionClassName())->GetProperty(name);
+		ERR_ASSERT(prop != nullptr, String::Format(STRL("Property \"{0}\" not found!"), name).GetRawArray(), return ResultCode::NotFound);
+		return prop->Get(this, result);
+	}
+	ResultCode Object::SetPropertyValue(const String& name,const Variant& value) {
+		ReflectionProperty* prop = Reflection::GetClass(GetReflectionClassName())->GetProperty(name);
+		ERR_ASSERT(prop != nullptr, String::Format(STRL("Property \"{0}\" not found!"), name).GetRawArray(), return ResultCode::NotFound);
+		return prop->Set(this, value);
+	}
+
 	bool Object::HasMethod(const String& name) const {
 		return Reflection::GetClass(GetReflectionClassName())->HasMethod(name);
 	}
@@ -53,6 +78,9 @@ namespace Engine {
 		return method->Invoke(this, arguments, argumentCount, result);
 	}
 
+	bool Object::HasSignal(const String& name) const {
+		return Reflection::GetClass(GetReflectionClassName())->HasSignal(name);
+	}
 	bool Object::IsSignalConnected(const String& signal, const Invokable& invokable) const {
 		SharedPtr<SignalConnectionGroup> group;
 		bool found = signalConnections.TryGet(signal, group);
@@ -61,7 +89,6 @@ namespace Engine {
 		}
 		return group->connections.DoRead()->ContainsKey(invokable);
 	}
-
 	ResultCode Object::ConnectSignal(const String& signal, const Invokable& invokable, ReflectionSignal::ConnectFlag flag) {
 		SharedPtr<SignalConnectionGroup> group;
 		bool found = signalConnections.TryGet(signal, group);
@@ -81,7 +108,6 @@ namespace Engine {
 
 		return ResultCode::OK;
 	}
-
 	bool Object::DisconnectSignal(const String& signal, const Invokable& invokable) {
 		SharedPtr<SignalConnectionGroup> group;
 		bool found = signalConnections.TryGet(signal, group);
@@ -91,7 +117,6 @@ namespace Engine {
 
 		return group->connections.DoWrite()->Remove(invokable);
 	}
-
 	bool Object::EmitSignal(const String& signal,const Variant** arguments,int32 argumentCount) {
 		SharedPtr<SignalConnectionGroup> group;
 		bool found = signalConnections.TryGet(signal, group);
@@ -128,7 +153,6 @@ namespace Engine {
 
 		return true;
 	}
-
 
 #pragma endregion
 
