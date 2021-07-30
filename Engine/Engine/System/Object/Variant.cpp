@@ -137,6 +137,11 @@ namespace Engine {
 	Variant::Variant(Object* value) {
 		ConstructObject(ObjectData(value, (value != nullptr ? value->GetInstanceId() : InstanceId())));
 	}
+
+	template<ConceptIsEnum T>
+	Variant::Variant(T value) {
+		ConstructInt64((int64)value);
+	}
 #pragma endregion
 
 #pragma region AsType

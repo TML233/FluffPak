@@ -10,6 +10,13 @@ namespace Engine {
 	class Object;
 	class ReferencedObject;
 
+	template<typename T>
+	concept ConceptIsObject = std::is_base_of_v<Object, T>;
+	template<typename T>
+	concept ConceptIsReferencedObject = std::is_base_of_v<ReferencedObject, T>;
+	template<typename T>
+	concept ConceptIsEnum = std::is_enum_v<T>;
+
 	class Variant final {
 	public:
 		// !! AddTypeHint 0.0: To add a new type, search for "AddTypeHint" for the guide.
@@ -37,9 +44,9 @@ namespace Engine {
 
 		static String GetTypeName(Type type);
 
-		template<typename T, typename = void>
+		template<typename T>
 		struct GetTypeFromNative;
-		template<typename T, typename = void>
+		template<typename T>
 		struct CastToNative;
 #pragma endregion
 
@@ -101,6 +108,10 @@ namespace Engine {
 		Variant(const Vector2& value);
 		Variant(const u8char* value);
 		Variant(Object* value);
+
+		template<ConceptIsEnum T>
+		Variant(T value);
+
 #pragma endregion
 
 #pragma region AsType
@@ -268,18 +279,30 @@ namespace Engine {
 	struct Variant::GetTypeFromNative<Vector2> {
 		static const Type type = Type::Vector2;
 	};
-	template<typename T>
-	struct Variant::GetTypeFromNative<T*, typename std::enable_if_t<std::is_base_of_v<Object, T>>> {
+
+	template<ConceptIsObject T>
+	struct Variant::GetTypeFromNative<T*> {
 		static const Type type = Type::Object;
 	};
-	template<typename T>
-	struct Variant::GetTypeFromNative<const T*, typename std::enable_if_t<std::is_base_of_v<Object, T>>> {
+	template<ConceptIsObject T>
+	struct Variant::GetTypeFromNative<const T*> {
 		static const Type type = Type::Object;
 	};
-	template<typename T>
-	struct Variant::GetTypeFromNative<IntrusivePtr<T>, typename std::enable_if_t<std::is_base_of_v<ReferencedObject, T>>> {
+
+	template<ConceptIsReferencedObject T>
+	struct Variant::GetTypeFromNative<IntrusivePtr<T>> {
 		static const Type type = Type::Object;
 	};
+	template<ConceptIsReferencedObject T>
+	struct Variant::GetTypeFromNative<const IntrusivePtr<T>> {
+		static const Type type = Type::Object;
+	};
+
+	template<ConceptIsEnum T>
+	struct Variant::GetTypeFromNative<T> {
+		static const Type type = Type::Int64;
+	};
+
 #pragma endregion
 
 #pragma region CastToNative
@@ -363,22 +386,41 @@ namespace Engine {
 			return obj.AsVector2();
 		}
 	};
-	template<typename T>
-	struct Variant::CastToNative<T*, typename std::enable_if_t<std::is_base_of_v<Object, T>>> {
+	template<ConceptIsObject T>
+	struct Variant::CastToNative<T*> {
 		static T* Cast(const Variant& obj) {
 			return (T*)obj.AsObject();
 		}
 	};
-	template<typename T>
-	struct Variant::CastToNative<const T*, typename std::enable_if_t<std::is_base_of_v<Object, T>>> {
+	template<ConceptIsObject T>
+	struct Variant::CastToNative<const T*> {
 		static const T* Cast(const Variant& obj) {
 			return (const T*)obj.AsObject();
 		}
 	};
-	template<typename T>
-	struct Variant::CastToNative<IntrusivePtr<T>, typename std::enable_if_t<std::is_base_of_v<ReferencedObject, T>>> {
+	template<ConceptIsReferencedObject T>
+	struct Variant::CastToNative<IntrusivePtr<T>> {
 		static IntrusivePtr<T> Cast(const Variant& obj) {
 			return IntrusivePtr<T>((T*)obj.AsObject());
+		}
+	};
+	template<ConceptIsReferencedObject T>
+	struct Variant::CastToNative<const IntrusivePtr<T>> {
+		static const IntrusivePtr<T> Cast(const Variant& obj) {
+			return IntrusivePtr<T>((T*)obj.AsObject());
+		}
+	};
+	template<ConceptIsReferencedObject T>
+	struct Variant::CastToNative<const IntrusivePtr<T>&> {
+		static const IntrusivePtr<T> Cast(const Variant& obj) {
+			return IntrusivePtr<T>((T*)obj.AsObject());
+		}
+	};
+
+	template<ConceptIsEnum T>
+	struct Variant::CastToNative<T> {
+		static T Cast(const Variant& obj) {
+			return (T)obj.AsInt64();
 		}
 	};
 #pragma endregion
