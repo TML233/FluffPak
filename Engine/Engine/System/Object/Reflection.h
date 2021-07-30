@@ -107,10 +107,12 @@ private:																								\
 
 #define REFLECTION_CLASS_INSTANTIABLE(instantiable) c->SetInstantiable(instantiable)
 
+#define ARGLIST(...) {__VA_ARGS__}
+
 #define REFLECTION_METHOD(name,func,argNames,defaultArgs)							\
 c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(				\
 	name,																			\
-	::Engine::ReflectionMethodBindHelper::Create(&func),										\
+	::Engine::ReflectionMethodBindHelper::Create(&func),							\
 	std::initializer_list<::Engine::String> argNames,								\
 	std::initializer_list<::Engine::Variant> defaultArgs							\
 ))
@@ -118,7 +120,7 @@ c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(				\
 #define REFLECTION_STATIC_METHOD(name,func,argNames,defaultArgs)					\
 c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(				\
 	name,																			\
-	::Engine::ReflectionMethodBindHelper::Create(func),										\
+	::Engine::ReflectionMethodBindHelper::Create(func),								\
 	std::initializer_list<::Engine::String> argNames,								\
 	std::initializer_list<::Engine::Variant> defaultArgs							\
 ))
