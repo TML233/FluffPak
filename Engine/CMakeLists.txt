@@ -56,7 +56,8 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Time.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/AppLoop.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Window.h"
-	
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Rendering/Renderer.h"
+
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Resource/Resource.h"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Node/NodeTree.h"
@@ -100,6 +101,7 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Time.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/AppLoop.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Window.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Rendering/Renderer.cpp"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Resource/Resource.cpp"
 
