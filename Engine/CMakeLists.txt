@@ -28,6 +28,7 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Concept.h"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileStream.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileProtocol.h"

@@ -44,8 +44,4 @@ namespace Engine {
 		friend class FileSystem;
 		FileSystem* owner = nullptr;
 	};
-	template<>
-	inline int32 ObjectUtil::GetHashCode<FileProtocol::Protocol>(const FileProtocol::Protocol& obj) {
-		return (int32)obj;
-	}
 }

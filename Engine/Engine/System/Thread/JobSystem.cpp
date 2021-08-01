@@ -3,11 +3,6 @@
 
 namespace Engine {
 #pragma region JobWorker
-	template<>
-	int32 ObjectUtil::GetHashCode<>(const Job::Preference& obj) {
-		return (int32)obj;
-	}
-
 	JobWorker::JobWorker(JobSystem* manager, int32 id) :manager(manager), id(id) {}
 
 	void JobWorker::Start() {

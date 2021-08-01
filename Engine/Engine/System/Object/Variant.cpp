@@ -138,7 +138,7 @@ namespace Engine {
 		ConstructObject(ObjectData(value, (value != nullptr ? value->GetInstanceId() : InstanceId())));
 	}
 
-	template<ConceptIsEnum T>
+	template<Concept::IsEnum T>
 	Variant::Variant(T value) {
 		ConstructInt64((int64)value);
 	}

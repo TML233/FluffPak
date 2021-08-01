@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/System/Definition.h"
 #include "Engine/System/String.h"
+#include "Engine/System/Concept.h"
 
 namespace Engine{
 	class ObjectUtil final {
@@ -29,6 +30,10 @@ namespace Engine{
 		template<typename T>
 		static int32 GetHashCode(const T& obj) {
 			return obj.GetHashCode();
+		}
+		template<Concept::IsEnum T>
+		static int32 GetHashCode(T obj) {
+			return (int32)obj;
 		}
 		static int32 GetHashCode(bool obj);
 		static int32 GetHashCode(byte obj);

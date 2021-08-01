@@ -4,18 +4,11 @@
 #include "Engine/System/String.h"
 #include "Engine/System/Object/InstanceId.h"
 #include "Engine/System/Math/Vector.h"
+#include "Engine/System/Concept.h"
 #include <type_traits>
 
 namespace Engine {
 	class Object;
-	class ReferencedObject;
-
-	template<typename T>
-	concept ConceptIsObject = std::is_base_of_v<Object, T>;
-	template<typename T>
-	concept ConceptIsReferencedObject = std::is_base_of_v<ReferencedObject, T>;
-	template<typename T>
-	concept ConceptIsEnum = std::is_enum_v<T>;
 
 	class Variant final {
 	public:
@@ -109,7 +102,7 @@ namespace Engine {
 		Variant(const u8char* value);
 		Variant(Object* value);
 
-		template<ConceptIsEnum T>
+		template<Concept::IsEnum T>
 		Variant(T value);
 
 #pragma endregion
@@ -280,25 +273,25 @@ namespace Engine {
 		static const Type type = Type::Vector2;
 	};
 
-	template<ConceptIsObject T>
+	template<Concept::IsObject T>
 	struct Variant::GetTypeFromNative<T*> {
 		static const Type type = Type::Object;
 	};
-	template<ConceptIsObject T>
+	template<Concept::IsObject T>
 	struct Variant::GetTypeFromNative<const T*> {
 		static const Type type = Type::Object;
 	};
 
-	template<ConceptIsReferencedObject T>
+	template<Concept::IsReferencedObject T>
 	struct Variant::GetTypeFromNative<IntrusivePtr<T>> {
 		static const Type type = Type::Object;
 	};
-	template<ConceptIsReferencedObject T>
+	template<Concept::IsReferencedObject T>
 	struct Variant::GetTypeFromNative<const IntrusivePtr<T>> {
 		static const Type type = Type::Object;
 	};
 
-	template<ConceptIsEnum T>
+	template<Concept::IsEnum T>
 	struct Variant::GetTypeFromNative<T> {
 		static const Type type = Type::Int64;
 	};
@@ -386,38 +379,38 @@ namespace Engine {
 			return obj.AsVector2();
 		}
 	};
-	template<ConceptIsObject T>
+	template<Concept::IsObject T>
 	struct Variant::CastToNative<T*> {
 		static T* Cast(const Variant& obj) {
 			return (T*)obj.AsObject();
 		}
 	};
-	template<ConceptIsObject T>
+	template<Concept::IsObject T>
 	struct Variant::CastToNative<const T*> {
 		static const T* Cast(const Variant& obj) {
 			return (const T*)obj.AsObject();
 		}
 	};
-	template<ConceptIsReferencedObject T>
+	template<Concept::IsReferencedObject T>
 	struct Variant::CastToNative<IntrusivePtr<T>> {
 		static IntrusivePtr<T> Cast(const Variant& obj) {
 			return IntrusivePtr<T>((T*)obj.AsObject());
 		}
 	};
-	template<ConceptIsReferencedObject T>
+	template<Concept::IsReferencedObject T>
 	struct Variant::CastToNative<const IntrusivePtr<T>> {
 		static const IntrusivePtr<T> Cast(const Variant& obj) {
 			return IntrusivePtr<T>((T*)obj.AsObject());
 		}
 	};
-	template<ConceptIsReferencedObject T>
+	template<Concept::IsReferencedObject T>
 	struct Variant::CastToNative<const IntrusivePtr<T>&> {
 		static const IntrusivePtr<T> Cast(const Variant& obj) {
 			return IntrusivePtr<T>((T*)obj.AsObject());
 		}
 	};
 
-	template<ConceptIsEnum T>
+	template<Concept::IsEnum T>
 	struct Variant::CastToNative<T> {
 		static T Cast(const Variant& obj) {
 			return (T)obj.AsInt64();
