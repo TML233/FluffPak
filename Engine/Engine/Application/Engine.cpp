@@ -5,6 +5,7 @@
 #include "Engine/System/File/FileSystem.h"
 #include "Engine/System/Thread/JobSystem.h"
 #include "Engine/Application/AppLoop.h"
+#include "Engine/Application/Rendering/Renderer.h"
 
 namespace Engine {
 	Engine* Engine::instance = nullptr;
@@ -15,11 +16,29 @@ namespace Engine {
 	Engine::Engine() {
 		instance = this;
 
-		windowSystem.Reset(MEMNEW(PLATFORM_SPECIFIC_CLASS_WINDOWMANAGER));
-		
+#pragma region Info messages
+		INFO_MSG(u8"Rabbik Engine Development");
+		INFO_MSG(u8"Under MIT public license. TML 2020-2021");
+#if defined(_MSC_VER)
+		INFO_MSG(String::Format(STRING_LITERAL("Compiled by Microsoft Visual C++ {0}"), _MSC_VER).GetRawArray());
+#elif defined(__GNUC__)
+		INFO_MSG(String::Format(STRING_LITERAL("Compiled by GNU C++ {0}.{1}.{2}"), __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__).GetRawArray());
+#endif
+#pragma endregion
+		INFO_MSG(u8"===== Initializing =====");
+		INFO_MSG(u8"==> File System");
 		fileSystem.Reset(MEMNEW(FileSystem()));
 
+		INFO_MSG(u8"==> Job System");
 		jobSystem.Reset(MEMNEW(JobSystem()));
+
+		INFO_MSG(u8"==> Window System");
+		windowSystem.Reset(MEMNEW(PLATFORM_SPECIFIC_CLASS_WINDOWMANAGER));
+
+		INFO_MSG(u8"==> Renderer");
+		renderer.Reset(MEMNEW(Renderer()));
+
+		INFO_MSG(u8"===== Ready =====");
 	}
 	Engine::~Engine() {
 		if (instance == this) {
@@ -60,18 +79,12 @@ namespace Engine {
 	JobSystem* Engine::GetJobSystem() const {
 		return jobSystem.GetRaw();
 	}
+	Renderer* Engine::GetRenderer() const {
+		return renderer.GetRaw();
+	}
 
 	void Engine::Run() {
-#pragma region Info messages
-		INFO_MSG(u8"Rabbik Engine Development");
-		INFO_MSG(u8"Under MIT public license. TML 2020-2021");
-#if defined(_MSC_VER)
-		INFO_MSG(String::Format(STRING_LITERAL("Compiled by Microsoft Visual C++ {0}"), _MSC_VER).GetRawArray());
-#elif defined(__GNUC__)
-		INFO_MSG(String::Format(STRING_LITERAL("Compiled by GNU C++ {0}.{1}.{2}"), __GNUC__,__GNUC_MINOR__,__GNUC_PATCHLEVEL__).GetRawArray());
-#endif
-#pragma endregion
-
+		INFO_MSG(u8"===== Starting =====");
 #pragma region Start
 		if (appLoop == nullptr) {
 			FATAL_MSG(u8"No AppLoop has been assigned.");
@@ -107,6 +120,7 @@ namespace Engine {
 				time.total += time.GetDelta();
 				time.totalFrames += 1;
 				appLoop->OnUpdate(time);
+				appLoop->OnRender();
 
 #pragma region FPS Count
 				updateTimes += 1;

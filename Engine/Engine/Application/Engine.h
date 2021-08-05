@@ -9,6 +9,7 @@ namespace Engine {
 	class FileSystem;
 	class JobSystem;
 	class AppLoop;
+	class Renderer;
 
 	/// @brief The engine application manager. Contains every information necessary for a application to run.
 	class Engine final{
@@ -42,6 +43,7 @@ namespace Engine {
 		WindowSystem* GetWindowSystem() const;
 		FileSystem* GetFileSystem() const;
 		JobSystem* GetJobSystem() const;
+		Renderer* GetRenderer() const;
 
 	private:
 		static Engine* instance;
@@ -51,6 +53,7 @@ namespace Engine {
 		UniquePtr<WindowSystem> windowSystem;
 		UniquePtr<FileSystem> fileSystem;
 		UniquePtr<JobSystem> jobSystem;
+		UniquePtr<Renderer> renderer;
 
 		float targetFps = 60;
 		float fps = 0;

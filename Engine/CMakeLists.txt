@@ -127,7 +127,10 @@ if(WIN32)
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/BetterWindows.h"
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.h"
 
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NoWindowsCrapStart.h"
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/NoWindowsCrapEnd.h"
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Window.h"
+		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/Direct3D11.h"
 	)
 	list(APPEND SourceFile
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Windows/UnicodeHelper.cpp"
@@ -142,8 +145,9 @@ if(WIN32)
 	list(APPEND IncludeDir
 	)
 	list(APPEND LinkLibrary
-		Shcore
+		Shcore d3d11 dxgi dxguid D3DCompiler winmm
 	)
+	target_compile_definitions(Engine PUBLIC UNICODE _UNICODE)
 elseif(UNIX AND "${CMAKE_SYSTEM}" MATCHES "Linux")
 	list(APPEND HeaderFile
 		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/Window.h"

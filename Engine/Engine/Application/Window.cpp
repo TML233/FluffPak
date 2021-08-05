@@ -1,6 +1,7 @@
 #include "Engine/Application/Window.h"
 #include "Engine/Platform/Window.h"
-
+#include "Engine/Application/Engine.h"
+#include "Engine/Application/Rendering/Renderer.h"
 namespace Engine {
 	//Window::~Window() {}
 	Window::ID Window::GetId() const {
@@ -27,9 +28,14 @@ namespace Engine {
 			ERR_MSG(u8"Failed to initialize a Window!");
 			DestroyWindow(window->GetId());
 			return nullptr;
-		} else {
-			return window.GetRaw();
 		}
+		bool registered = ENGINEINST->GetRenderer()->RegisterWindow(window.GetRaw());
+		if (!registered) {
+			ERR_MSG(u8"Failed to register the window to the renderer!");
+			DestroyWindow(window->GetId());
+			return nullptr;
+		}
+		return window.GetRaw();
 	}
 	bool WindowSystem::IsWindowExists(Window::ID id) const {
 		auto lock = SimpleLock<Mutex>(windowsMutex);
@@ -38,6 +44,7 @@ namespace Engine {
 	bool WindowSystem::DestroyWindow(Window::ID id) {
 		ERR_ASSERT(IsWindowExists(id), u8"Specified window id not found!", return false);
 
+		ENGINEINST->GetRenderer()->UnregisterWindow(id);
 		{
 			auto lock = SimpleLock<Mutex>(windowsMutex);
 			windows.Remove(id);

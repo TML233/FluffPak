@@ -18,6 +18,8 @@ namespace Engine {
 		virtual void OnUpdate(const Time& time) = 0;
 		/// @brief Called every physics update.
 		virtual void OnPhysicsUpdate(const Time& time) = 0;
+
+		virtual void OnRender() = 0;
 		
 		//virtual void Input(const InputEvent& event)=0;
 

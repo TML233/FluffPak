@@ -16,6 +16,7 @@ namespace Engine{
 		void OnStart() override;
 		void OnUpdate(const Time& time) override;
 		void OnPhysicsUpdate(const Time& time) override;
+		void OnRender() override;
 
 		void OnStop() override;
 		bool IsRunning() const override;

@@ -1,6 +1,7 @@
 #include "Engine/Application/Node/NodeTree.h"
 #include "Engine/Application/Engine.h"
 #include "Engine/Application/Window.h"
+#include "Engine/Application/Rendering/Renderer.h"
 
 namespace Engine {
 	NodeTree::NodeTree() {
@@ -35,6 +36,10 @@ namespace Engine {
 		if (stopWhenNoWindow && ::Engine::Engine::GetInstance()->GetWindowSystem()->GetWindowCount() <= 0) {
 			running = false;
 		}
+	}
+	void NodeTree::OnRender() {
+		auto renderer = ENGINEINST->GetRenderer();
+		renderer->Render();
 	}
 	void NodeTree::OnStop() {
 		root.Reset();
