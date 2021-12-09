@@ -210,6 +210,7 @@ namespace Engine{
 		auto result = setter->Invoke(obj, (const Variant**)args, 1, returnValue);
 
 		ERR_ASSERT(result == ResultCode::OK, u8"Failed to invoke setter.", return result);
+		return ResultCode::OK;
 	}
 
 	ReflectionMethod* ReflectionProperty::GetGetter() const {

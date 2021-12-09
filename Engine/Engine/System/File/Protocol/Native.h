@@ -15,7 +15,7 @@ namespace Engine {
 		ResultCode CreateFile(const String& path) override;
 		ResultCode CreateDirectory(const String& path) override;
 
-		ResultPair<IntrusivePtr<FileStream>> OpenFile(const String& path, FileStream::OpenMode mode) override;
+		ResultCode OpenFile(const String& path, FileStream::OpenMode mode, IntrusivePtr<FileStream>& result) override;
 
 		ResultCode RemoveFile(const String& path) override;
 		ResultCode RemoveDirectory(const String& path) override;

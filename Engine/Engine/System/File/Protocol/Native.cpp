@@ -62,13 +62,13 @@ namespace Engine {
 		return GetResult(err);
 	}
 
-	ResultPair<IntrusivePtr<FileStream>> FileProtocolNative::OpenFile(const String& path, FileStream::OpenMode mode) {
-		ERR_ASSERT(FileStream::IsOpenModeValid(mode), u8"mode is invalid!", return ResultPair<IntrusivePtr<FileStream>>(ResultCode::InvalidArgument, IntrusivePtr<FileStream>(nullptr)));
+	ResultCode FileProtocolNative::OpenFile(const String& path, FileStream::OpenMode mode, IntrusivePtr<FileStream>& result) {
+		ERR_ASSERT(FileStream::IsOpenModeValid(mode), u8"mode is invalid!", return ResultCode::InvalidArgument);
 		// make sure the file exists when read-only.
 		if (FileStream::IsOpenModeReadOnly(mode)) {
 			ERR_ASSERT(
 				IsFileExists(path), u8"Attemped to open a non-existing file in read-only mode!",
-				return ResultPair<IntrusivePtr<FileStream>>(ResultCode::NotFound, IntrusivePtr<FileStream>(nullptr));
+				return ResultCode::NotFound
 			);
 		}
 		static const char* modes[] = { // See FileSystem::OpenMode, must be matched
@@ -80,11 +80,11 @@ namespace Engine {
 		};
 		FILE* file = std::fopen((char*)path.ToIndividual().GetRawArray(), modes[(byte)mode]);
 		ERR_ASSERT(file != nullptr, u8"Failed to open the file!",
-			return ResultPair<IntrusivePtr<FileStream>>(ResultCode::UnknownError, IntrusivePtr<FileStream>(nullptr))
+			return ResultCode::UnknownError
 		);
 
-		auto fileStream = IntrusivePtr<FileStreamNative>::Create(file, mode);
-		return ResultPair<IntrusivePtr<FileStream>>(ResultCode::OK, fileStream);
+		result = IntrusivePtr<FileStreamNative>::Create(file, mode);
+		return ResultCode::OK;
 	}
 
 	ResultCode FileProtocolNative::RemoveFile(const String& path) {

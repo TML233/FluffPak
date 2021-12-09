@@ -8,10 +8,10 @@ TEST_SUITE("File System") {
 		FileSystem fs;
 		String path = STRL("file://NativeFileTest.txt");
 		{
-			auto r = fs.OpenFile(path, FileStream::OpenMode::WriteTruncate);
-			CHECK(r.result == ResultCode::OK);
+			IntrusivePtr<FileStream> file;
+			auto result = fs.OpenFile(path, FileStream::OpenMode::WriteTruncate, file);
+			CHECK(result == ResultCode::OK);
 
-			auto file = r.value;
 			CHECK(file->CanWrite());
 			CHECK(!file->CanRead());
 			file->WriteText(STRL("我是伞兵！！"));

@@ -35,7 +35,7 @@ namespace Engine {
 
 		/// @brief Open the file at the given path with the given mode.\n
 		/// If the mode is read-only, and the file doesn't exists, the operation will fail.
-		ResultPair<IntrusivePtr<FileStream>> OpenFile(const String& path, FileStream::OpenMode mode);
+		ResultCode OpenFile(const String& path, FileStream::OpenMode mode, IntrusivePtr<FileStream>& result);
 
 		/// @brief Delete a file.
 		ResultCode RemoveFile(const String& path);
