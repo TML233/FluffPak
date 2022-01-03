@@ -146,10 +146,10 @@ if(WIN32)
 	)
 elseif(UNIX AND "${CMAKE_SYSTEM}" MATCHES "Linux")
 	list(APPEND HeaderFile
-		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/Window.h"
+		#"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/Window.h"
 	)
 	list(APPEND SourceFile
-		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/Window.cpp"
+		#"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/Window.cpp"
 	)
 	list(APPEND InterfaceFile
 	)
@@ -166,7 +166,7 @@ endif()
 
 if(MSVC)
 	target_compile_options(Engine PUBLIC /utf-8)
-	target_compile_options(Engine PUBLIC /std:c++latest)
+	target_compile_options(Engine PUBLIC /std:c++20)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
 	target_compile_options(Engine PUBLIC -std=c++20)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "MSVC")
