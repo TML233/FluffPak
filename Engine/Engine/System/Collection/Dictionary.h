@@ -356,7 +356,7 @@ namespace Engine {
 			return (int32)(hash % capacity);
 		}
 
-		void CheckSyncState() const {
+		inline void CheckSyncState() const {
 			// Stop immediately if buckets and entries are not in sync (this should never happen, but just in case)
 			ERR_ASSERT((buckets == nullptr && entries == nullptr) || (buckets != nullptr && entries != nullptr),
 				u8"buckets and entries are out of sync!",
