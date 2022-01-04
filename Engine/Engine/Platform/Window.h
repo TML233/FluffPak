@@ -1,8 +1,6 @@
 #pragma once
-#include "Engine/Platform/Definition.h"
+#include "Engine/System/Environment.h"
 
-#if CURRENT_PLATFORM_WINDOWS
+#if CURRENT_PLATFORM_TYPE_WINDOWS
 #	include "Engine/Platform/Windows/Window.h"
-#elif CURRENT_PLATFORM_LINUX
-//#   include "Engine/Platform/Linux/Window.h"
 #endif
