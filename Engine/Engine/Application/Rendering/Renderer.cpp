@@ -90,7 +90,7 @@ namespace Engine {
 		auto win = (PlatformSpecific::Window*)window;
 		auto data = SharedPtr<WindowData>::Create();
 
-		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = { 0 };
+		DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 		Vector2 size = win->GetSize();
 		swapChainDesc.Width = (uint32)size.x;
 		swapChainDesc.Height = (uint32)size.y;
@@ -102,7 +102,7 @@ namespace Engine {
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		swapChainDesc.Flags = 0;
 
-		DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullscreenDesc;
+		DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullscreenDesc{};
 		fullscreenDesc.RefreshRate.Numerator = 60;
 		fullscreenDesc.RefreshRate.Denominator = 1;
 		fullscreenDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
@@ -121,7 +121,7 @@ namespace Engine {
 		hr = d3dDevice1->CreateRenderTargetView(renderTargetTexture.Get(), nullptr, data->d3dRenderTargetView.GetAddressOf());
 		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to create ID3D11RenderTargetView", return false);
 
-		D3D11_TEXTURE2D_DESC depthStencilTextureDesc;
+		D3D11_TEXTURE2D_DESC depthStencilTextureDesc{};
 		depthStencilTextureDesc.Width = (int32)size.x;
 		depthStencilTextureDesc.Height = (int32)size.y;
 		depthStencilTextureDesc.MipLevels = 1;
@@ -144,7 +144,7 @@ namespace Engine {
 		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to OMSetRenderTargets", return false);
 		windowData.Add(win->GetId(), data);
 
-		D3D11_VIEWPORT viewport;
+		D3D11_VIEWPORT viewport{};
 		viewport.TopLeftX = 0;
 		viewport.TopLeftY = 0;
 		viewport.Width = size.x;
