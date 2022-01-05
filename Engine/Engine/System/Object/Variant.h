@@ -125,42 +125,6 @@ namespace Engine {
 		Variant(const Variant& obj);
 		Variant& operator=(const Variant& obj);
 
-#pragma region Operators
-		bool operator==(const Variant& obj) const;
-		bool operator!=(const Variant& obj) const;
-		bool operator>(const Variant& obj) const;
-		bool operator>=(const Variant& obj) const;
-		bool operator<(const Variant& obj) const;
-		bool operator<=(const Variant& obj) const;
-
-		Variant operator+(const Variant& obj) const;
-		Variant operator-(const Variant& obj) const;
-		Variant operator*(const Variant& obj) const;
-		Variant operator/(const Variant& obj) const;
-		Variant operator%(const Variant& obj) const;
-		Variant operator+() const;
-		Variant operator-() const;
-		
-		Variant operator&&(const Variant& obj) const;
-		Variant operator||(const Variant& obj) const;
-		Variant operator!() const;
-
-		Variant operator&(const Variant& obj) const;
-		Variant operator|(const Variant& obj) const;
-		Variant operator^(const Variant& obj) const;
-		Variant operator~() const;
-		Variant operator<<(const Variant& obj) const;
-		Variant operator>>(const Variant& obj) const;
-#pragma endregion
-
-		// Indicates that if a and b can evaluate with type formatting.
-		static bool CanEvaluateDirectly(Operator op, Type a, Type b);
-		// Indicates that if a and b can evaluate without any type formatting.
-		static bool CanEvaluate(Operator op, Type a, Type b);
-		// Evaluate operand a and b with operator. A type formatting will be done if needed.
-		static Variant EvaluateDirectly(Operator op, const Variant& a, const Variant& b);
-		// Evaluate operand a and b with operator directly, without type formatting.
-		static Variant Evaluate(Operator op, const Variant& a, const Variant& b);
 	private:
 		struct ObjectData {
 			ObjectData(Object* ptr, const InstanceId& id);
@@ -200,17 +164,12 @@ namespace Engine {
 		void AssignValue(const Variant& obj);
 
 
-		typedef Variant(*Evaluator)(const Variant& a, const Variant& b);
-		// [typeA][typeB][op]
-		static Evaluator evaluatorTable[(sizeint)Type::End][(sizeint)Type::End][(sizeint)Operator::End];
-
 		typedef Variant(*Convertor)(const Variant& value);
 		static Convertor implicitConverterTable[(sizeint)Type::End][(sizeint)Type::End];
 		
 		class Initializer final {
 		public:
 			Initializer();
-			static void InitEvaluatorTable();
 			static void InitImplicitConversionTable();
 		};
 		inline static Initializer _initializer{};

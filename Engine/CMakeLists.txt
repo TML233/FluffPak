@@ -24,6 +24,7 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/Atomic.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/JobSystem.h"
 
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Environment.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Stream.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.h"
@@ -49,8 +50,6 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/Dictionary.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Collection/Deque.h"
 
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Definition.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Platform.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Window.h"
 
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/Application/Engine.h"
@@ -79,6 +78,7 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/ThreadUtil.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Thread/JobSystem.cpp"
 
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Environment.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Stream.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/String.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Debug.cpp"
@@ -150,10 +150,10 @@ if(WIN32)
 	target_compile_definitions(Engine PUBLIC UNICODE _UNICODE)
 elseif(UNIX AND "${CMAKE_SYSTEM}" MATCHES "Linux")
 	list(APPEND HeaderFile
-		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/Window.h"
+		#"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/Window.h"
 	)
 	list(APPEND SourceFile
-		"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/Window.cpp"
+		#"${CMAKE_CURRENT_LIST_DIR}/Engine/Platform/Linux/Window.cpp"
 	)
 	list(APPEND InterfaceFile
 	)
@@ -170,9 +170,9 @@ endif()
 
 if(MSVC)
 	target_compile_options(Engine PUBLIC /utf-8)
-	target_compile_options(Engine PUBLIC /std:c++latest)
+	target_compile_options(Engine PUBLIC /std:c++20)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-	target_compile_options(Engine PUBLIC -std=c++2a)
+	target_compile_options(Engine PUBLIC -std=c++20)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "MSVC")
 	target_compile_options(Engine PUBLIC -Wno-switch)
 endif()

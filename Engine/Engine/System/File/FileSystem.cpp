@@ -97,15 +97,15 @@ namespace Engine {
 		return handler->CreateDirectory(handlerPath);
 	}
 
-	ResultPair<IntrusivePtr<FileStream>> FileSystem::OpenFile(const String& path, FileStream::OpenMode mode) {
+	ResultCode FileSystem::OpenFile(const String& path, FileStream::OpenMode mode, IntrusivePtr<FileStream>& result) {
 		auto data = GetSplitData(path);
-		ERR_ASSERT(FileProtocol::IsProtocolValid(data.protocol), u8"Invalid path protocol!", return ResultPair<IntrusivePtr<FileStream>>(ResultCode::InvalidArgument, IntrusivePtr<FileStream>(nullptr)));
+		ERR_ASSERT(FileProtocol::IsProtocolValid(data.protocol), u8"Invalid path protocol!", return ResultCode::InvalidArgument);
 
 		FileProtocol* handler = GetProtocolHandler(data.protocol);
 		FATAL_ASSERT(handler != nullptr, u8"Protocol handler not found!");
 
 		String handlerPath = path.Substring(data.index, path.GetCount() - data.index);
-		return handler->OpenFile(handlerPath, mode);
+		return handler->OpenFile(handlerPath, mode, result);
 	}
 
 	ResultCode FileSystem::RemoveFile(const String& path) {

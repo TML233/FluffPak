@@ -47,13 +47,4 @@ namespace Engine {
 		InvalidStream,
 		OutOfMemory,
 	};
-
-	/// @brief A helper struct for storing result code and result value together.\n
-	/// Only used for small values. Big values still remains being returned via the parameter.
-	template<typename T>
-	struct ResultPair {
-		ResultPair(ResultCode result, T value) :result(result), value(value) {}
-		ResultCode result;
-		T value;
-	};
 }

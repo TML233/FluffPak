@@ -32,7 +32,7 @@ namespace Engine {
 		virtual ResultCode CreateFile(const String& path) = 0;
 		virtual ResultCode CreateDirectory(const String& path) = 0;
 
-		virtual ResultPair<IntrusivePtr<FileStream>> OpenFile(const String& path, FileStream::OpenMode mode) = 0;
+		virtual ResultCode OpenFile(const String& path, FileStream::OpenMode mode, IntrusivePtr<FileStream>& result) = 0;
 
 		virtual ResultCode RemoveFile(const String& path) = 0;
 		virtual ResultCode RemoveDirectory(const String& path) = 0;
