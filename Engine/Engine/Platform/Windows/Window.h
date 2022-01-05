@@ -10,15 +10,9 @@ namespace Engine::PlatformSpecific::Windows {
 		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::WindowSystem, ::Engine::WindowSystem) {}
 
 	public:
+		WindowSystem();
+		~WindowSystem();
 		void Update() override;
-
-	private:
-		class _Initializer final {
-		public:
-			_Initializer();
-			~_Initializer();
-		};
-		static _Initializer _initializer;
 	};
 
 	class Window final:public ::Engine::Window {

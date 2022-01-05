@@ -155,7 +155,7 @@ namespace Engine {
 
 		return true;
 	}
-	bool Renderer::UnregisterWindow(Window::ID window) {
+	bool Renderer::UnregisterWindow(WindowID window) {
 		return windowData.Remove(window);
 	}
 	void Renderer::Render() {

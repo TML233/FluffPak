@@ -4,7 +4,7 @@
 #include "Engine/Application/Rendering/Renderer.h"
 namespace Engine {
 	//Window::~Window() {}
-	Window::ID Window::GetId() const {
+	WindowID Window::GetId() const {
 		return id;
 	}
 	WindowSystem* Window::GetManager() const {
@@ -37,11 +37,11 @@ namespace Engine {
 		}
 		return window.GetRaw();
 	}
-	bool WindowSystem::IsWindowExists(Window::ID id) const {
+	bool WindowSystem::IsWindowExists(WindowID id) const {
 		auto lock = SimpleLock<Mutex>(windowsMutex);
 		return windows.ContainsKey(id);
 	}
-	bool WindowSystem::DestroyWindow(Window::ID id) {
+	bool WindowSystem::DestroyWindow(WindowID id) {
 		ERR_ASSERT(IsWindowExists(id), u8"Specified window id not found!", return false);
 
 		ENGINEINST->GetRenderer()->UnregisterWindow(id);
@@ -51,7 +51,7 @@ namespace Engine {
 		}
 		return true;
 	}
-	Window* WindowSystem::GetWindow(Window::ID id) const {
+	Window* WindowSystem::GetWindow(WindowID id) const {
 		SharedPtr<Window> ptr;
 		{
 			auto lock = SimpleLock<Mutex>(windowsMutex);

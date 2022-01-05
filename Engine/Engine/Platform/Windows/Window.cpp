@@ -5,9 +5,7 @@
 #include "Engine/System/Thread/JobSystem.h"
 
 namespace Engine::PlatformSpecific::Windows {
-	typename WindowSystem::_Initializer WindowSystem::_initializer{};
-
-	WindowSystem::_Initializer::_Initializer() {
+	WindowSystem::WindowSystem() {
 		// Make console support UTF-8
 		SetConsoleOutputCP(65001);
 
@@ -39,7 +37,7 @@ namespace Engine::PlatformSpecific::Windows {
 		FATAL_ASSERT(succeeded, u8"RegisterClassW failed to register window class!");
 	}
 
-	WindowSystem::_Initializer::~_Initializer() {
+	WindowSystem::~WindowSystem() {
 		UnregisterClassW(Window::GlobalWindowClassName, NULL);
 	}
 

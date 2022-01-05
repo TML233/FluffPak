@@ -12,7 +12,7 @@ namespace Engine {
 		~Renderer() = default;
 		bool IsValid() const;
 		bool RegisterWindow(Window* window);
-		bool UnregisterWindow(Window::ID window);
+		bool UnregisterWindow(WindowID window);
 		void Render();
 
 	private:
