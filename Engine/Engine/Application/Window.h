@@ -22,6 +22,14 @@ namespace Engine{
 	class Window: public ManualObject {
 		REFLECTION_CLASS(::Engine::Window, ::Engine::ManualObject) {
 			REFLECTION_CLASS_INSTANTIABLE(false);
+			
+			REFLECTION_SIGNAL(STRL("OnUserResizing"), ARGLIST(
+				SIGARG(STRL("edge"), Variant::Type::Vector2),
+				SIGARG(STRL("size"), Variant::Type::Vector2)
+			));
+			REFLECTION_SIGNAL(STRL("OnResized"), ARGLIST(
+				SIGARG(STRL("size"), Variant::Type::Vector2)
+			));
 		}
 
 	public:
