@@ -293,6 +293,9 @@ namespace Engine {
 	std::string_view String::GetStringView() const {
 		return std::string_view(reinterpret_cast<const char*>(GetStartPtr()), GetCount());
 	}
+	std::u8string_view String::GetU8StringView() const {
+		return std::u8string_view(GetStartPtr(), GetCount());
+	}
 
 	String::SearcherSunday String::searcher{};
 }
