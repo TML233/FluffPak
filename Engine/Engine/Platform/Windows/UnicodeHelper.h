@@ -4,7 +4,7 @@
 #include "Engine/System/String.h"
 #include "Engine/System/Memory/UniquePtr.h"
 
-namespace Engine::PlatformSpecific::Windows {
+namespace Engine::PlatformSpecific {
 	class UnicodeHelper final {
 	public:
 		static bool UTF8ToUnicode(const String& string, UniquePtr<WCHAR[]>& result);

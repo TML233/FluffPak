@@ -75,7 +75,7 @@ namespace Engine {
 		DXGI_ADAPTER_DESC2 adapterDesc;
 		dxgiAdapter2->GetDesc2(&adapterDesc);
 		String description;
-		PlatformSpecific::Windows::UnicodeHelper::UnicodeToUTF8(adapterDesc.Description, description);
+		PlatformSpecific::UnicodeHelper::UnicodeToUTF8(adapterDesc.Description, description);
 		INFO_MSG(String::Format(
 			STRL("Renderer: Direct3D 11\nDriver: {0} - {1}\nFeature Level: {2}"),
 			driverTypeNames.Get(requiredDriverTypes[driverType]),
@@ -87,7 +87,7 @@ namespace Engine {
 		return valid;
 	}
 	bool Renderer::RegisterWindow(Window* window) {
-		auto win = (PlatformSpecific::Windows::Window*)window;
+		auto win = (PlatformSpecific::Window*)window;
 		auto data = SharedPtr<WindowData>::Create();
 
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = { 0 };

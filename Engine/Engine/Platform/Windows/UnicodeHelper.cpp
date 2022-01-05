@@ -1,7 +1,7 @@
 #include "Engine/Platform/Windows/UnicodeHelper.h"
 
 using namespace Engine;
-namespace Engine::PlatformSpecific::Windows {
+namespace Engine::PlatformSpecific {
 	bool UnicodeHelper::UTF8ToUnicode(const String& string,UniquePtr<WCHAR[]>& result) {
 		int32 len = MultiByteToWideChar(CP_UTF8, NULL, reinterpret_cast<const char*>(string.GetRawArray()), -1, NULL, 0);
 		ERR_ASSERT(len > 0, u8"MultiByteToWideChar failed to calculate required WCHAR[] length!", return false);

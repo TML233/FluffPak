@@ -4,7 +4,7 @@
 #include "Engine/Application/Engine.h"
 #include "Engine/System/Thread/JobSystem.h"
 
-namespace Engine::PlatformSpecific::Windows {
+namespace Engine::PlatformSpecific {
 	WindowSystem::WindowSystem() {
 		// Make console support UTF-8
 		SetConsoleOutputCP(65001);
