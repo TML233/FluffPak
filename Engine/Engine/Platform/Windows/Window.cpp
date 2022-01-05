@@ -11,7 +11,16 @@ namespace Engine::PlatformSpecific::Windows {
 		// Make console support UTF-8
 		SetConsoleOutputCP(65001);
 
-		SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+		bool dpiAwareness = SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+		if (!dpiAwareness) {
+			WARN_MSG(u8"Cannot enable DPI Awareness mode: Per-Monitor V2. Falling back to Per-Monitor.");
+			dpiAwareness = SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
+			if (!dpiAwareness) {
+				WARN_MSG(u8"Cannot enable DPI Awareness mode: Per-Monitor. Falling back to System. The DPI scaling will be fixed to the scaling of your primary display.");
+				dpiAwareness = SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
+				FATAL_ASSERT(dpiAwareness, u8"Failed to set a appropriate DPI Awareness mode.");
+			}
+		}
 
 		// Register basic window class
 		WNDCLASSW wc = {};

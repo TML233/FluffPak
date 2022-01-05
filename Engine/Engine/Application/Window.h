@@ -10,6 +10,7 @@
 
 namespace Engine{
 	class WindowSystem;
+	using WindowID = int32;
 	struct MonitorInfo {
 		String name;
 		Vector2 position;
@@ -24,8 +25,7 @@ namespace Engine{
 		}
 
 	public:
-		using ID = int32;
-		static inline constexpr ID NullId = -1;
+		static inline constexpr WindowID NullId = -1;
 
 		/// @brief Initialize the native window here.\n
 		/// The manager will use IsValid() to check if it succeeded.
@@ -62,11 +62,11 @@ namespace Engine{
 		virtual bool IsResizable() const = 0;
 		virtual bool SetResizable(bool resizable) = 0;
 
-		ID GetId() const;
+		WindowID GetId() const;
 		WindowSystem* GetManager() const;
 
 	private:
-		ID id = NullId;
+		WindowID id = NullId;
 		WindowSystem* manager = nullptr;
 		friend class WindowSystem;
 	};
@@ -84,21 +84,21 @@ namespace Engine{
 		Window* CreateWindow();
 		/// @brief Get a native window by ID.
 		/// @return nullptr when not found.
-		Window* GetWindow(Window::ID id) const;
+		Window* GetWindow(WindowID id) const;
 		/// @brief Get the count of current existing native windows.
 		int32 GetWindowCount() const;
 		/// @brief Check if the native window exists.
-		bool IsWindowExists(Window::ID id) const;
+		bool IsWindowExists(WindowID id) const;
 		/// @brief Destroy a native window.
-		bool DestroyWindow(Window::ID id);
+		bool DestroyWindow(WindowID id);
 		/// @brief Destroy all native windows.
 		void DestroyAllWindows();
 
 		virtual void Update() = 0;
 
 	private:
-		AtomicValue<Window::ID> idCounter{ Window::NullId };
-		Dictionary<Window::ID, SharedPtr<Window>> windows;
+		AtomicValue<WindowID> idCounter{ Window::NullId };
+		Dictionary<WindowID, SharedPtr<Window>> windows;
 		mutable Mutex windowsMutex;
 	};
 }
