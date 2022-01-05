@@ -144,6 +144,7 @@ namespace Engine {
 		bool operator!=(const String& obj) const;
 
 		std::string_view GetStringView() const;
+		std::u8string_view GetU8StringView() const;
 #pragma endregion
 
 #pragma region Format

@@ -20,7 +20,7 @@ namespace Engine {
 
 	bool FileProtocolNative::IsFileExists(const String& path) const {
 		std::error_code err;
-		auto st = fs::status(fs::u8path(path.GetStringView()), err);
+		auto st = fs::status(fs::path(path.GetU8StringView()), err);
 		if (!fs::status_known(st)) {
 			return false;
 		}
@@ -37,7 +37,7 @@ namespace Engine {
 
 	bool FileProtocolNative::IsDirectoryExists(const String& path) const {
 		std::error_code err;
-		auto st = fs::status(fs::u8path(path.GetStringView()), err);
+		auto st = fs::status(fs::path(path.GetU8StringView()), err);
 		if (!fs::status_known(st)) {
 			return false;
 		}
@@ -58,7 +58,7 @@ namespace Engine {
 
 	ResultCode FileProtocolNative::CreateDirectory(const String& path) {
 		std::error_code err;
-		fs::create_directories(fs::u8path(path.GetStringView()), err);
+		fs::create_directories(fs::path(path.GetU8StringView()), err);
 		return GetResult(err);
 	}
 
@@ -89,13 +89,13 @@ namespace Engine {
 
 	ResultCode FileProtocolNative::RemoveFile(const String& path) {
 		std::error_code err;
-		fs::remove(fs::u8path(path.GetStringView()), err);
+		fs::remove(fs::path(path.GetU8StringView()), err);
 		return GetResult(err);
 	}
 
 	ResultCode FileProtocolNative::RemoveDirectory(const String& path) {
 		std::error_code err;
-		fs::remove_all(fs::u8path(path.GetStringView()), err);
+		fs::remove_all(fs::path(path.GetU8StringView()), err);
 		return GetResult(err);
 	}
 
@@ -104,7 +104,7 @@ namespace Engine {
 			return ResultCode::NotFound;
 		}
 
-		auto iter = fs::directory_iterator(fs::u8path(path.GetStringView()));
+		auto iter = fs::directory_iterator(fs::path(path.GetU8StringView()));
 		for (const auto& one : iter) {
 			if (!one.is_directory()) {
 				result.Add(one.path().u8string());
@@ -118,7 +118,7 @@ namespace Engine {
 			return ResultCode::NotFound;
 		}
 
-		auto iter = fs::directory_iterator(fs::u8path(path.GetStringView()));
+		auto iter = fs::directory_iterator(fs::path(path.GetU8StringView()));
 		for (const auto& one : iter) {
 			if (one.is_directory()) {
 				result.Add(one.path().u8string());
