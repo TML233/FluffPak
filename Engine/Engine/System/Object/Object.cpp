@@ -89,7 +89,7 @@ namespace Engine {
 		}
 		return group->connections.DoRead()->ContainsKey(invokable);
 	}
-	ResultCode Object::ConnectSignal(const String& signal, const Invokable& invokable, ReflectionSignal::ConnectFlag flag) {
+	ResultCode Object::ConnectSignal(const String& signal, const Invokable& invokable, const Variant** extraArguments,int32 extraArgumentCount, ReflectionSignal::ConnectFlag flag) {
 		SharedPtr<SignalConnectionGroup> group;
 		bool found = signalConnections.TryGet(signal, group);
 		// Not found, try to add.
@@ -104,7 +104,12 @@ namespace Engine {
 
 		ERR_ASSERT(IsInstanceValid(invokable.instanceId), u8"Cannot connect to a non-existing object!", return ResultCode::InvalidObject);
 
-		group->connections.DoWrite()->Add(invokable, flag);
+		auto data = SharedPtr<SignalConnection>::Create();
+		data->flag = flag;
+		for (int32 i = 0; i < extraArgumentCount; i += 1) {
+			data->extraArguments.Add(*(extraArguments[i]));
+		}
+		group->connections.DoWrite()->Add(invokable, data);
 
 		return ResultCode::OK;
 	}
@@ -131,9 +136,6 @@ namespace Engine {
 		// Iterate the dictionary.
 		for (const auto& entry : *(cow.DoRead())) {
 			const Invokable& invokable = entry.key;
-			ReflectionSignal::ConnectFlag flag = entry.value;
-			
-
 			Object* target = Object::GetInstance(invokable.instanceId);
 
 			// Disconnect the connection if the object doesn't exists anymore.
@@ -147,8 +149,24 @@ namespace Engine {
 				continue;
 			}
 
-			Variant temp;
-			target->InvokeMethod(invokable.methodName, arguments, argumentCount, temp);
+			//ReflectionSignal::ConnectFlag flag = entry.value->flag;
+			const auto& extraArgs = entry.value->extraArguments;
+			Variant tempReturn;
+			int32 extraArgCount = extraArgs.GetCount();
+			if(extraArgCount == 0){
+				// Directly invoke when no extra arguments.
+				target->InvokeMethod(invokable.methodName, arguments, argumentCount, tempReturn);
+			} else {
+				int32 newArgCount = argumentCount + extraArgCount;
+				auto newArgs = UniquePtr<const Variant* []>::Create(newArgCount);
+				for (int i = 0; i < argumentCount; i += 1) {
+					newArgs.GetRaw()[i] = arguments[i];
+				}
+				for (int i = 0; i < extraArgCount; i += 1) {
+					newArgs.GetRaw()[argumentCount + i] = extraArgs.GetRawElementPtr() + i;
+				}
+				target->InvokeMethod(invokable.methodName, newArgs.GetRaw(), newArgCount, tempReturn);
+			}
 		}
 
 		return true;

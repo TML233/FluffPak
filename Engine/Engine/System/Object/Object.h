@@ -58,7 +58,13 @@ namespace Engine{
 		 
 		bool HasSignal(const String& name) const;
 		bool IsSignalConnected(const String& signal, const Invokable& invokable) const;
-		ResultCode ConnectSignal(const String& signal, const Invokable& invokable, ReflectionSignal::ConnectFlag flag = ReflectionSignal::ConnectFlag::Null);
+		ResultCode ConnectSignal(
+			const String& signal,
+			const Invokable& invokable,
+			const Variant** extraArguments = nullptr,
+			int32 extraArgumentCount = 0,
+			ReflectionSignal::ConnectFlag flag = ReflectionSignal::ConnectFlag::Null
+		);
 		bool DisconnectSignal(const String& signal, const Invokable& invokable);
 		bool EmitSignal(const String& signal,const Variant** arguments,int32 argumentCount);
 #pragma endregion
@@ -68,8 +74,12 @@ namespace Engine{
 		InstanceId instanceId;
 
 	private:
+		struct SignalConnection {
+			ReflectionSignal::ConnectFlag flag;
+			List<Variant> extraArguments;
+		};
 		struct SignalConnectionGroup {
-			using ConnectionsType = CopyOnWrite<Dictionary<Invokable, ReflectionSignal::ConnectFlag>>;
+			using ConnectionsType = CopyOnWrite<Dictionary<Invokable, SharedPtr<SignalConnection>>>;
 			ConnectionsType connections = ConnectionsType::Create();
 		};
 		Dictionary<String, SharedPtr<SignalConnectionGroup>> signalConnections;
