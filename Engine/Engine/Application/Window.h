@@ -22,11 +22,7 @@ namespace Engine{
 	class Window: public ManualObject {
 		REFLECTION_CLASS(::Engine::Window, ::Engine::ManualObject) {
 			REFLECTION_CLASS_INSTANTIABLE(false);
-			
-			REFLECTION_SIGNAL(STRL("OnUserResizing"), ARGLIST(
-				SIGARG(STRL("edge"), Variant::Type::Vector2),
-				SIGARG(STRL("size"), Variant::Type::Vector2)
-			));
+
 			REFLECTION_SIGNAL(STRL("OnResized"), ARGLIST(
 				SIGARG(STRL("size"), Variant::Type::Vector2)
 			));
@@ -46,9 +42,14 @@ namespace Engine{
 
 		virtual String GetTitle() const = 0;
 		virtual bool SetTitle(const String& title) = 0;
+		
+		/// @brief Get the position based on the content area, (e.g. the client area on Windows).
 		virtual Vector2 GetPosition() const = 0;
+		/// @brief Set the position based on the content area, (e.g. the client area on Windows).
 		virtual bool SetPosition(const Vector2& position) = 0;
+		/// @brief Get the size based on the content area, (e.g. the client area on Windows).
 		virtual Vector2 GetSize() const = 0;
+		/// @brief Set the size based on the content area, (e.g. the client area on Windows).
 		virtual bool SetSize(const Vector2& size) = 0;
 
 		virtual bool IsVisible() const = 0;
@@ -86,7 +87,8 @@ namespace Engine{
 		}
 
 	public:
-		virtual ~WindowSystem();
+		WindowSystem() = default;
+		virtual ~WindowSystem() = default;
 		/// @brief Create a native window with default style, and hidden.
 		/// @return nullptr when failed.
 		Window* CreateWindow();

@@ -90,16 +90,15 @@ namespace Engine::PlatformSpecific {
 				Window* nw = Window::GetFromHWnd(hWnd);
 				if (nw != nullptr) {
 					nw->GetManager()->DestroyWindow(nw->GetId());
-				} else {
-					ERR_MSG(u8"User data in hWnd is not a Window ptr! This shouldn't happen!");
-					DestroyWindow(hWnd);
 				}
-			}
 				return 0;
+			}
 
 			case WM_DESTROY:
+			{
 				PostQuitMessage(0);
 				return 0;
+			}
 
 			case WM_KEYDOWN:
 			{
@@ -111,6 +110,21 @@ namespace Engine::PlatformSpecific {
 				}
 				break;
 			}
+			case WM_SIZE:
+			{
+				Window* nw = Window::GetFromHWnd(hWnd);
+				if (nw != nullptr) {
+					if (wParam != SIZE_MINIMIZED) {
+						if (lParam != nw->lastSize) {
+							nw->lastSize = lParam;
+							Variant argSize = Vector2(LOWORD(lParam), HIWORD(lParam));
+							const Variant* args[] = { &argSize };
+							nw->EmitSignal(STRL("OnResized"), args, 1);
+							//INFO_MSG(String::Format(STRL("RESIZE: {0}"), ObjectUtil::ToString(argSize.AsVector2())).GetRawArray());
+						}
+					}
+				}
+			}
 		}
 		return DefWindowProcW(hWnd, message, wParam, lParam);
 	}
@@ -118,27 +132,11 @@ namespace Engine::PlatformSpecific {
 	bool Window::IsValid() const {
 		return IsWindow(hWnd);
 	}
-	
+
 	String Window::GetTitle() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return String::GetEmpty());
 
-		int len = GetWindowTextLengthW(hWnd);
-		if (len <= 0) {
-			return String::GetEmpty();
-		}
-		len += 1;
-
-		UniquePtr<WCHAR[]> buffer = UniquePtr<WCHAR[]>::Create(len);
-		GetWindowTextW(hWnd, buffer.GetRaw(), len);
-
-		if (buffer == nullptr) {
-			return String::GetEmpty();
-		}
-		String result;
-		bool succeeded = UnicodeHelper::UnicodeToUTF8(buffer.GetRaw(), result);
-		ERR_ASSERT(succeeded, u8"Failed to convert Windows wide string to engine string!", return String::GetEmpty());
-
-		return result;
+		return title;
 	}
 	bool Window::SetTitle(const String& title) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
@@ -150,6 +148,7 @@ namespace Engine::PlatformSpecific {
 		succeeded = SetWindowTextW(hWnd, buffer.GetRaw());
 		ERR_ASSERT(succeeded, u8"SetWindowTextW failed to set window title!", return false);
 
+		this->title = title;
 		return true;
 	}
 
@@ -162,20 +161,20 @@ namespace Engine::PlatformSpecific {
 		return Vector2(pos.x, pos.y);
 	}
 	bool Window::SetPosition(const Vector2& position) {
-		
+
 		RECT rect = {};
 		rect.left = (int)position.x;
 		rect.top = (int)position.y;
 		rect.right = 100;
 		rect.bottom = 100;
-		bool succeeded = AdjustWindowRectEx(&rect, GetStyle(), FALSE,GetExStyle());
+		bool succeeded = AdjustClientToWindow(rect);
 		ERR_ASSERT(succeeded, u8"AdjustWindowRect failed to calculate window rect!", return false);
 
 		succeeded = SetWindowPos(hWnd, NULL, rect.left, rect.top, 0, 0, SWP_NOREPOSITION | SWP_NOSIZE);
 		ERR_ASSERT(succeeded, u8"SetWindowPos failed to set window rect!", return false);
 		return true;
 	}
-	
+
 	Vector2 Window::GetSize() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return Vector2());
 
@@ -192,9 +191,10 @@ namespace Engine::PlatformSpecific {
 		rect.top = 0;
 		rect.right = (int)size.x;
 		rect.bottom = (int)size.y;
-		AdjustWindowRectEx(&rect, GetStyle(), FALSE, GetExStyle());
-		bool succeeded = SetWindowPos(hWnd, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOREPOSITION | SWP_NOMOVE);
+		bool succeeded = AdjustClientToWindow(rect);
+		ERR_ASSERT(succeeded, u8"AdjustClientToWindow failed to calculate window rect!", return false);
 
+		succeeded = SetWindowPos(hWnd, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOREPOSITION | SWP_NOMOVE);
 		ERR_ASSERT(succeeded, u8"SetWindowPos failed to set window rect!", return false);
 		return true;
 	}
@@ -211,7 +211,7 @@ namespace Engine::PlatformSpecific {
 		ShowWindow(hWnd, visible ? SW_SHOW : SW_HIDE);
 		return true;
 	}
-	
+
 	bool Window::IsMinimized() const {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
@@ -222,7 +222,7 @@ namespace Engine::PlatformSpecific {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
 
 		ShowWindow(hWnd, minimized ? SW_MINIMIZE : SW_RESTORE);
-		
+
 		return true;
 	}
 	bool Window::IsMaximized() const {
@@ -233,7 +233,7 @@ namespace Engine::PlatformSpecific {
 	}
 	bool Window::SetMaximized(bool maximized) {
 		ERR_ASSERT(IsValid(), u8"The window is not valid!", return false);
-		
+
 		ShowWindow(hWnd, maximized ? SW_MAXIMIZE : SW_RESTORE);
 		return true;
 	}
@@ -332,7 +332,7 @@ namespace Engine::PlatformSpecific {
 		return GetExStyle(hWnd);
 	}
 
-	bool Window::HasStyleFlag(HWND hWnd,DWORD style) {
+	bool Window::HasStyleFlag(HWND hWnd, DWORD style) {
 		return GetStyle(hWnd) & style;
 	}
 	bool Window::HasStyleFlag(DWORD style) const {

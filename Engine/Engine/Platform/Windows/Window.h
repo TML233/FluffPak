@@ -71,9 +71,13 @@ namespace Engine::PlatformSpecific {
 		static DWORD GetExStyle(HWND hWnd);
 		static bool HasStyleFlag(HWND hWnd, DWORD style);
 		static bool SetStyleFlag(HWND hWnd, DWORD style,bool enabled);
-
+		inline bool AdjustClientToWindow(RECT& rect) {
+			return AdjustWindowRectEx(&rect, GetStyle(), FALSE, GetExStyle());
+		}
 
 	private:
 		HWND hWnd = NULL;
+		String title;
+		LPARAM lastSize = 0;
 	};
 }

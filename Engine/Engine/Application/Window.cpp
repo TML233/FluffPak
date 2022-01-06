@@ -3,15 +3,13 @@
 #include "Engine/Application/Engine.h"
 #include "Engine/Application/Rendering/Renderer.h"
 namespace Engine {
-	//Window::~Window() {}
 	WindowID Window::GetId() const {
 		return id;
 	}
+
 	WindowSystem* Window::GetManager() const {
 		return manager;
 	}
-
-	WindowSystem::~WindowSystem() {}
 
 	Window* WindowSystem::CreateWindow() {
 		SharedPtr<Window> window = SharedPtr<PLATFORM_SPECIFIC_CLASS_WINDOW>::Create();

@@ -103,7 +103,7 @@ namespace Engine {
 		using TimePoint = Clock::time_point;
 		using Duration = std::chrono::duration<double>;
 
-		TimePoint lastUpdate = Clock::now() - std::chrono::duration_cast<Clock::duration>(Duration(1.0 / GetTargetFps()));;;
+		TimePoint lastUpdate = Clock::now() - std::chrono::duration_cast<Clock::duration>(Duration(1.0 / GetTargetFps()));
 		TimePoint nextUpdate = Clock::now();
 
 		TimePoint lastFpsCheck = Clock::now();

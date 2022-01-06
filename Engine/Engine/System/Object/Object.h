@@ -25,7 +25,7 @@ namespace Engine{
 		REFLECTION_ROOTCLASS(::Engine::Object) {
 			REFLECTION_CLASS_INSTANTIABLE(false);
 
-			REFLECTION_METHOD(STRL("ToString"), Object::ToString, {}, {});
+			REFLECTION_METHOD(STRL("ToString"), Object::ToString, ARGLIST(), ARGLIST());
 			
 		}
 
@@ -58,7 +58,7 @@ namespace Engine{
 		 
 		bool HasSignal(const String& name) const;
 		bool IsSignalConnected(const String& signal, const Invokable& invokable) const;
-		ResultCode ConnectSignal(const String& signal, const Invokable& invokable, ReflectionSignal::ConnectFlag flag=ReflectionSignal::ConnectFlag::Null);
+		ResultCode ConnectSignal(const String& signal, const Invokable& invokable, ReflectionSignal::ConnectFlag flag = ReflectionSignal::ConnectFlag::Null);
 		bool DisconnectSignal(const String& signal, const Invokable& invokable);
 		bool EmitSignal(const String& signal,const Variant** arguments,int32 argumentCount);
 #pragma endregion
