@@ -9,9 +9,12 @@ TEST_SUITE("Reflection") {
 		CHECK(Reflection::IsClassExists(u8"::Engine::ReferencedObject"));
 		CHECK(!Reflection::IsClassExists(u8"::Engine::Fucked"));
 
-		const ReflectionClass* cObj = Reflection::GetClass(u8"::Engine::Object");
-		const ReflectionClass* cMan = Reflection::GetClass(u8"::Engine::ManualObject");
-		const ReflectionClass* cRef = Reflection::GetClass(u8"::Engine::ReferencedObject");
+		const ReflectionClass* cObj = nullptr;
+		CHECK(Reflection::TryGetClass(u8"::Engine::Object",cObj));
+		const ReflectionClass* cMan = nullptr;
+		CHECK(Reflection::TryGetClass(u8"::Engine::ManualObject",cMan));
+		const ReflectionClass* cRef = nullptr;
+		CHECK(Reflection::TryGetClass(u8"::Engine::ReferencedObject", cRef));
 		CHECK(!cObj->IsInstantiatable());
 		CHECK(!cMan->IsInstantiatable());
 		CHECK(!cRef->IsInstantiatable());
@@ -91,8 +94,10 @@ TEST_SUITE("Reflection") {
 	int32 Bar::staticValue = 999;
 
 	TEST_CASE("ReflectionMethod") {
-		auto cl = Reflection::GetClass(STRING_LITERAL("::Bar"));
-		auto mSetStatic = cl->GetMethod(STRING_LITERAL("SetStatic"));
+		ReflectionClass* cl = nullptr;
+		CHECK(Reflection::TryGetClass(STRING_LITERAL("::Bar"), cl));
+		ReflectionMethod* mSetStatic = nullptr;
+		CHECK(cl->TryGetMethod(STRING_LITERAL("SetStatic"), mSetStatic));
 
 #pragma region SetStatic full argument
 		{
@@ -121,7 +126,8 @@ TEST_SUITE("Reflection") {
 		}
 #pragma endregion
 
-		auto mGetStatic = cl->GetMethod(STRING_LITERAL("GetStatic"));
+		ReflectionMethod* mGetStatic = nullptr;
+		CHECK(cl->TryGetMethod(STRING_LITERAL("GetStatic"), mGetStatic));
 
 #pragma region GetStatic
 		{
@@ -133,7 +139,8 @@ TEST_SUITE("Reflection") {
 #pragma endregion
 
 		Bar obj;
-		auto mSet = cl->GetMethod(STRING_LITERAL("Set"));
+		ReflectionMethod* mSet = nullptr;
+		CHECK(cl->TryGetMethod(STRING_LITERAL("Set"), mSet));
 
 #pragma region Set
 		{
@@ -148,7 +155,8 @@ TEST_SUITE("Reflection") {
 		}
 #pragma endregion
 		
-		auto mGet = cl->GetMethod(STRING_LITERAL("Get"));
+		ReflectionMethod* mGet = nullptr;
+		CHECK(cl->TryGetMethod(STRING_LITERAL("Get"), mGet));
 #pragma region Get
 		{
 			Variant returnValue = 0;
@@ -160,8 +168,10 @@ TEST_SUITE("Reflection") {
 	}
 
 	TEST_CASE("ReflectionProperty") {
-		auto cl = Reflection::GetClass(STRL("::Bar"));
-		auto prop = cl->GetProperty(STRL("Value"));
+		ReflectionClass* cl = nullptr;
+		CHECK(Reflection::TryGetClass(STRL("::Bar"), cl));
+		ReflectionProperty* prop = nullptr;
+		CHECK(cl->TryGetProperty(STRL("Value"), prop));
 
 		CHECK(prop->GetType() == Variant::Type::String);
 

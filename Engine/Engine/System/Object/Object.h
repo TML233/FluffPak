@@ -75,7 +75,7 @@ namespace Engine{
 
 	private:
 		struct SignalConnection {
-			ReflectionSignal::ConnectFlag flag;
+			ReflectionSignal::ConnectFlag flag = ReflectionSignal::ConnectFlag::Null;
 			List<Variant> extraArguments;
 		};
 		struct SignalConnectionGroup {

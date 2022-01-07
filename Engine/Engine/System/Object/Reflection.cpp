@@ -18,10 +18,23 @@ namespace Engine{
 
 		return (GetData().Add(name, data) ? data.GetRaw() : nullptr);
 	}
-	ReflectionClass* Reflection::GetClass(const String& name) {
-		SharedPtr<ReflectionClass> result;
-		GetData().TryGet(name, result);
-		return result.GetRaw();
+	bool Reflection::TryGetClass(const String& name, ReflectionClass*& result) {
+		SharedPtr<ReflectionClass> intermediate;
+		if (GetData().TryGet(name, intermediate)) {
+			result = intermediate.GetRaw();
+			return true;
+		} else {
+			return false;
+		}
+	}
+	bool Reflection::TryGetClass(const String& name, const ReflectionClass*& result) {
+		SharedPtr<ReflectionClass> intermediate;
+		if (GetData().TryGet(name, intermediate)) {
+			result = intermediate.GetRaw();
+			return true;
+		} else {
+			return false;
+		}
 	}
 #pragma endregion
 
@@ -32,6 +45,8 @@ namespace Engine{
 	String ReflectionClass::GetParentName() const {
 		return parentName;
 	}
+
+
 	bool ReflectionClass::IsChildOf(const ReflectionClass* target) const {
 		if (target == nullptr) {
 			return false;
@@ -41,7 +56,9 @@ namespace Engine{
 			if (current == target) {
 				return true;
 			}
-			current = (Reflection::IsClassExists(current->parentName) ? Reflection::GetClass(current->parentName) : nullptr);
+			if (!Reflection::TryGetClass(current->parentName, current)) {
+				current = nullptr;
+			}
 		} while (current != nullptr);
 		return false;
 	}
@@ -51,6 +68,8 @@ namespace Engine{
 		}
 		return target->IsChildOf(this);
 	}
+	
+	
 	bool ReflectionClass::IsInstantiatable() const {
 		return instantiable;
 	}
@@ -62,19 +81,49 @@ namespace Engine{
 	bool ReflectionClass::HasMethod(const String& name) const {
 		return methods.ContainsKey(name);
 	}
-
-	ReflectionMethod* ReflectionClass::GetMethod(const String& name) const {
-		SharedPtr<ReflectionMethod> result;
-		methods.TryGet(name, result);
-		return result.GetRaw();
+	bool ReflectionClass::HasMethodInTree(const String& name) const {
+		const ReflectionClass* current = this;
+		do {
+			if (current->HasMethod(name)) {
+				return true;
+			}
+			if (!Reflection::TryGetClass(current->parentName, current)) {
+				current = nullptr;
+			}
+		} while (current != nullptr);
+		return false;
 	}
-
+	bool ReflectionClass::TryGetMethod(const String& name, ReflectionMethod*& result) const {
+		SharedPtr<ReflectionMethod> intermediate;
+		if (methods.TryGet(name, intermediate)) {
+			result = intermediate.GetRaw();
+			return true;
+		} else {
+			return false;
+		}
+	}
+	ReflectionMethod* ReflectionClass::GetMethodOrNull(const String& name) const {
+		ReflectionMethod* ptr = nullptr;
+		TryGetMethod(name, ptr);
+		return ptr;
+	}
+	bool ReflectionClass::TryGetMethodInTree(const String& name, ReflectionMethod*& result) const {
+		const ReflectionClass* current = this;
+		do {
+			if (current->TryGetMethod(name, result)) {
+				return true;
+			}
+			if (!Reflection::TryGetClass(current->parentName, current)) {
+				current = nullptr;
+			}
+		} while (current != nullptr);
+		return false;
+	}
 	ReflectionMethod* ReflectionClass::AddMethod(SharedPtr<ReflectionMethod> method) {
 		bool succeeded = methods.Add(method->GetName(), method);
 		FATAL_ASSERT(succeeded, String::Format(STRING_LITERAL("Method {0}::{1} is already registered!"), name, method->GetName()).GetRawArray());
 		return method.GetRaw();
 	}
-
 	bool ReflectionClass::RemoveMethod(const String& name) {
 		return methods.Remove(name);
 	}
@@ -83,19 +132,44 @@ namespace Engine{
 	bool ReflectionClass::HasProperty(const String& name) const {
 		return properties.ContainsKey(name);
 	}
-
-	ReflectionProperty* ReflectionClass::GetProperty(const String& name) const {
-		SharedPtr<ReflectionProperty> result;
-		properties.TryGet(name, result);
-		return result.GetRaw();
+	bool ReflectionClass::HasPropertyInTree(const String& name) const {
+		const ReflectionClass* current = this;
+		do {
+			if (current->HasProperty(name)) {
+				return true;
+			}
+			if (!Reflection::TryGetClass(current->parentName, current)) {
+				current = nullptr;
+			}
+		} while (current != nullptr);
+		return false;
 	}
-
+	bool ReflectionClass::TryGetProperty(const String& name, ReflectionProperty*& result) const {
+		SharedPtr<ReflectionProperty> intermediate;
+		if (properties.TryGet(name, intermediate)) {
+			result = intermediate.GetRaw();
+			return true;
+		} else {
+			return false;
+		}
+	}
+	bool ReflectionClass::TryGetPropertyInTree(const String& name, ReflectionProperty*& result) const {
+		const ReflectionClass* current = this;
+		do {
+			if (current->TryGetProperty(name, result)) {
+				return true;
+			}
+			if (!Reflection::TryGetClass(current->parentName, current)) {
+				current = nullptr;
+			}
+		} while (current != nullptr);
+		return false;
+	}
 	ReflectionProperty* ReflectionClass::AddProperty(SharedPtr<ReflectionProperty> prop) {
 		bool succeeded = properties.Add(prop->GetName(), prop);
 		FATAL_ASSERT(succeeded, String::Format(STRING_LITERAL("Property {0}::{1} is already registered!"), name, prop->GetName()).GetRawArray());
 		return prop.GetRaw();
 	}
-
 	bool ReflectionClass::RemoveProperty(const String& name) {
 		return properties.Remove(name);
 	}
@@ -104,19 +178,44 @@ namespace Engine{
 	bool ReflectionClass::HasSignal(const String& name) const {
 		return signals.ContainsKey(name);
 	}
-
-	ReflectionSignal* ReflectionClass::GetSignal(const String& name) const {
-		SharedPtr<ReflectionSignal> result;
-		signals.TryGet(name, result);
-		return result.GetRaw();
+	bool ReflectionClass::HasSignalInTree(const String& name) const {
+		const ReflectionClass* current = this;
+		do {
+			if (current->HasSignal(name)) {
+				return true;
+			}
+			if (!Reflection::TryGetClass(current->parentName, current)) {
+				current = nullptr;
+			}
+		} while (current != nullptr);
+		return false;
 	}
-
+	bool ReflectionClass::TryGetSignal(const String& name, ReflectionSignal*& result) const {
+		SharedPtr<ReflectionSignal> intermediate;
+		if (signals.TryGet(name, intermediate)) {
+			result = intermediate.GetRaw();
+			return true;
+		} else {
+			return false;
+		}
+	}
+	bool ReflectionClass::TryGetSignalInTree(const String& name, ReflectionSignal*& result) const {
+		const ReflectionClass* current = this;
+		do {
+			if (current->TryGetSignal(name, result)) {
+				return true;
+			}
+			if (!Reflection::TryGetClass(current->parentName, current)) {
+				current = nullptr;
+			}
+		} while (current != nullptr);
+		return false;
+	}
 	ReflectionSignal* ReflectionClass::AddSignal(SharedPtr<ReflectionSignal> signal) {
 		bool succeeded = signals.Add(signal->GetName(), signal);
 		FATAL_ASSERT(succeeded, String::Format(STRING_LITERAL("Signal {0}::{1} is already registered!"), name, signal->GetName()).GetRawArray());
 		return signal.GetRaw();
 	}
-
 	bool ReflectionClass::RemoveSignal(const String& name) {
 		return signals.Remove(name);
 	}

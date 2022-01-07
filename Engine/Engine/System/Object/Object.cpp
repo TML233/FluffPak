@@ -42,44 +42,88 @@ namespace Engine {
 	}
 
 	bool Object::HasProperty(const String& name) const {
-		return Reflection::GetClass(GetReflectionClassName())->HasProperty(name);
+		ReflectionClass* c = nullptr;
+		if (!Reflection::TryGetClass(GetReflectionClassName(), c)) {
+			return false;
+		}
+		return c->HasPropertyInTree(name);
 	}
 	bool Object::CanPropertyGet(const String& name) const {
-		ReflectionProperty* prop = Reflection::GetClass(GetReflectionClassName())->GetProperty(name);
-		if (prop == nullptr) {
+		ReflectionClass* c = nullptr;
+		if (!Reflection::TryGetClass(GetReflectionClassName(), c)) {
+			return false;
+		}
+		ReflectionProperty* prop = nullptr;
+		if (!c->TryGetProperty(name, prop)) {
 			return false;
 		}
 		return prop->CanGet();
 	}
 	bool Object::CanPropertySet(const String& name) const {
-		ReflectionProperty* prop = Reflection::GetClass(GetReflectionClassName())->GetProperty(name);
-		if (prop == nullptr) {
+		ReflectionClass* c = nullptr;
+		if (!Reflection::TryGetClass(GetReflectionClassName(), c)) {
+			return false;
+		}
+		ReflectionProperty* prop = nullptr;
+		if (!c->TryGetProperty(name, prop)) {
 			return false;
 		}
 		return prop->CanSet();
 	}
 	ResultCode Object::GetPropertyValue(const String& name, Variant& result) const {
-		ReflectionProperty* prop = Reflection::GetClass(GetReflectionClassName())->GetProperty(name);
-		ERR_ASSERT(prop != nullptr, String::Format(STRL("Property \"{0}\" not found!"), name).GetRawArray(), return ResultCode::NotFound);
+		ReflectionClass* c = nullptr;
+		if (!Reflection::TryGetClass(GetReflectionClassName(), c)) {
+			ERR_MSG(String::Format(STRL("Class \"{0}\" not found!"), name).GetRawArray());
+			return ResultCode::NotFound;
+		}
+		ReflectionProperty* prop = nullptr;
+		if (!c->TryGetPropertyInTree(name, prop)) {
+			ERR_MSG(String::Format(STRL("Property \"{0}\" not found!"), name).GetRawArray());
+			return ResultCode::NotFound;
+		}
 		return prop->Get(this, result);
 	}
 	ResultCode Object::SetPropertyValue(const String& name,const Variant& value) {
-		ReflectionProperty* prop = Reflection::GetClass(GetReflectionClassName())->GetProperty(name);
-		ERR_ASSERT(prop != nullptr, String::Format(STRL("Property \"{0}\" not found!"), name).GetRawArray(), return ResultCode::NotFound);
+		ReflectionClass* c = nullptr;
+		if (!Reflection::TryGetClass(GetReflectionClassName(), c)) {
+			ERR_MSG(String::Format(STRL("Class \"{0}\" not found!"), name).GetRawArray());
+			return ResultCode::NotFound;
+		}
+		ReflectionProperty* prop = nullptr;
+		if (!c->TryGetPropertyInTree(name, prop)) {
+			ERR_MSG(String::Format(STRL("Property \"{0}\" not found!"), name).GetRawArray());
+			return ResultCode::NotFound;
+		}
 		return prop->Set(this, value);
 	}
 
 	bool Object::HasMethod(const String& name) const {
-		return Reflection::GetClass(GetReflectionClassName())->HasMethod(name);
+		ReflectionClass* c = nullptr;
+		if (!Reflection::TryGetClass(GetReflectionClassName(), c)) {
+			return false;
+		}
+		return c->HasMethodInTree(name);
 	}
 	ResultCode Object::InvokeMethod(const String& name, const Variant** arguments, int32 argumentCount, Variant& result) {
-		ReflectionMethod* method = Reflection::GetClass(GetReflectionClassName())->GetMethod(name);
-		ERR_ASSERT(method != nullptr, String::Format(STRING_LITERAL("Method {0}::{1} not found!"), GetReflectionClassName(), name).GetRawArray(), return ResultCode::NotFound);
+		ReflectionClass* c = nullptr;
+		if (!Reflection::TryGetClass(GetReflectionClassName(), c)) {
+			ERR_MSG(String::Format(STRL("Class \"{0}\" not found!"), name).GetRawArray());
+			return ResultCode::NotFound;
+		}
+		ReflectionMethod* method = nullptr;
+		if (!c->TryGetMethodInTree(name, method)) {
+			ERR_MSG(String::Format(STRING_LITERAL("Method {0}::{1} not found!"), GetReflectionClassName(), name).GetRawArray());
+			return ResultCode::NotFound;
+		}
 		return method->Invoke(this, arguments, argumentCount, result);
 	}
 
 	bool Object::HasSignal(const String& name) const {
-		return Reflection::GetClass(GetReflectionClassName())->HasSignal(name);
+		ReflectionClass* c = nullptr;
+		if (!Reflection::TryGetClass(GetReflectionClassName(), c)) {
+			return false;
+		}
+		return c->HasSignalInTree(name);
 	}
 	bool Object::IsSignalConnected(const String& signal, const Invokable& invokable) const {
 		SharedPtr<SignalConnectionGroup> group;

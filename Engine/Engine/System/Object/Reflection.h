@@ -127,12 +127,12 @@ c->AddMethod(::Engine::SharedPtr<::Engine::ReflectionMethod>::Create(				\
 
 #define REFLECTION_PROPERTY(name,getterName,setterName)								\
 c->AddProperty(::Engine::SharedPtr<::Engine::ReflectionProperty>::Create(			\
-	name,c->GetMethod(getterName),c->GetMethod(setterName)							\
+	name,c->GetMethodOrNull(getterName),c->GetMethodOrNull(setterName)				\
 ))
 
 #define REFLECTION_PROPERTY_HINT(name,getterName,setterName,hint,hintText)			\
 c->AddProperty(::Engine::SharedPtr<::Engine::ReflectionProperty>::Create(			\
-	name,c->GetMethod(getterName),c->GetMethod(setterName),hint,hintText			\
+	name,c->GetMethodOrNull(getterName),c->GetMethodOrNull(setterName),hint,hintText\
 ))
 
 #define SIGARG(name,type) ::Engine::ReflectionSignal::ArgumentInfo(name,type)
@@ -165,11 +165,10 @@ namespace Engine {
 	public:
 		STATIC_CLASS(Reflection);
 
-		static bool IsClassExists(const String& name);
-
-		static ReflectionClass* GetClass(const String& name);
-
 		static ReflectionClass* AddClass(const String& name, const String& parent);
+		static bool IsClassExists(const String& name);
+		static bool TryGetClass(const String& name, ReflectionClass*& result);
+		static bool TryGetClass(const String& name, const ReflectionClass*& result);
 
 	private:
 		using ClassData = Dictionary<String, SharedPtr<ReflectionClass>>;
@@ -188,17 +187,24 @@ namespace Engine {
 		bool IsChildOf(const ReflectionClass* target) const;
 
 		bool HasMethod(const String& name) const;
-		ReflectionMethod* GetMethod(const String& name) const;
+		bool HasMethodInTree(const String& name) const;
+		bool TryGetMethod(const String& name, ReflectionMethod*& result) const;
+		ReflectionMethod* GetMethodOrNull(const String& name) const;
+		bool TryGetMethodInTree(const String& name, ReflectionMethod*& result) const;
 		ReflectionMethod* AddMethod(SharedPtr<ReflectionMethod> method);
 		bool RemoveMethod(const String& name);
 
 		bool HasProperty(const String& name) const;
-		ReflectionProperty* GetProperty(const String& name) const;
+		bool HasPropertyInTree(const String& name) const;
+		bool TryGetProperty(const String& name, ReflectionProperty*& result) const;
+		bool TryGetPropertyInTree(const String& name, ReflectionProperty*& result) const;
 		ReflectionProperty* AddProperty(SharedPtr<ReflectionProperty> prop);
 		bool RemoveProperty(const String& name);
 
 		bool HasSignal(const String& name) const;
-		ReflectionSignal* GetSignal(const String& name) const;
+		bool HasSignalInTree(const String& name) const;
+		bool TryGetSignal(const String& name, ReflectionSignal*& result) const;
+		bool TryGetSignalInTree(const String& name, ReflectionSignal*& result) const;
 		ReflectionSignal* AddSignal(SharedPtr<ReflectionSignal> signal);
 		bool RemoveSignal(const String& name);
 	private:
