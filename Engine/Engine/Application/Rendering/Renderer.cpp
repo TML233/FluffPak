@@ -130,7 +130,6 @@ namespace Engine {
 		return true;
 	}
 	void Renderer::DelegateOnWindowResized(Vector2 size, WindowID windowId) {
-		auto win = ENGINEINST->GetWindowSystem()->GetWindow(windowId);
 		SharedPtr<WindowData> data;
 		if (!windowData.TryGet(windowId, data)) {
 			ERR_MSG(u8"Failed to get WindowData when recreating SwapChain.");
@@ -168,10 +167,7 @@ namespace Engine {
 
 		hr = d3dDevice1->CreateDepthStencilView(data->d3dDepthStencilTexture.Get(), nullptr, data->d3dDepthStencilView.GetAddressOf());
 		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to create ID3D11DepthStencilView", return);
-
-		d3dContext1->OMSetRenderTargets(1, data->d3dRenderTargetView.GetAddressOf(), data->d3dDepthStencilView.Get());
-		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to OMSetRenderTargets", return);
-
+		
 		D3D11_VIEWPORT viewport{};
 		viewport.TopLeftX = 0;
 		viewport.TopLeftY = 0;
@@ -182,18 +178,23 @@ namespace Engine {
 		d3dContext1->RSSetViewports(1, &viewport);
 	}
 	bool Renderer::UnregisterWindow(WindowID window) {
+		SharedPtr<WindowData> data;
+		if (windowData.TryGet(window, data)) {
+			d3dContext1->ClearState();
+		}
 		return windowData.Remove(window);
 	}
 	void Renderer::Render() {
 		for (const auto& data : windowData) {
+			d3dContext1->OMSetRenderTargets(1, data.value->d3dRenderTargetView.GetAddressOf(), data.value->d3dDepthStencilView.Get());
+
 			Color clearColor = Color(0, 0, 1);
 			d3dContext1->ClearRenderTargetView(data.value->d3dRenderTargetView.Get(), (float*)&clearColor);
 			d3dContext1->ClearDepthStencilView(data.value->d3dDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+
 			HRESULT hr;
 			hr = data.value->dxgiSwapChain1->Present(0, 0);
-			if (FAILED(hr)) {
-				ERR_MSG(u8"Failed to IDXGISwapChain::Present");
-			}
+			ERR_ASSERT(SUCCEEDED(hr), u8"Failed to IDXGISwapChain::Present", continue);
 		}
 	}
 }
