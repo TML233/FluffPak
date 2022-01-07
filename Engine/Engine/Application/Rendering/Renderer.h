@@ -7,6 +7,13 @@ namespace Engine {
 	class Window;
 
 	class Renderer:public ManualObject {
+		REFLECTION_CLASS(::Engine::Renderer, ::Engine::ManualObject) {
+			REFLECTION_METHOD(STRL("DelegateOnWindowResized"),
+				Renderer::DelegateOnWindowResized,
+				ARGLIST(STRL("size"), STRL("windowId")), ARGLIST()
+			);
+		}
+
 	public:
 		Renderer();
 		~Renderer() = default;
@@ -14,6 +21,8 @@ namespace Engine {
 		bool RegisterWindow(Window* window);
 		bool UnregisterWindow(WindowID window);
 		void Render();
+		
+		void DelegateOnWindowResized(Vector2 size, WindowID windowId);
 
 	private:
 		bool valid = false;

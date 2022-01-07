@@ -4,6 +4,7 @@
 #include "Engine/Platform//Windows/Window.h"
 #include "Engine/System/Memory/SharedPtr.h"
 #include "Engine/System/Math/Color.h"
+#include "Engine/Application/Engine.h"
 
 namespace Engine {
 	Renderer::Renderer() {
@@ -90,10 +91,16 @@ namespace Engine {
 		auto win = (PlatformSpecific::Window*)window;
 		auto data = SharedPtr<WindowData>::Create();
 
+#pragma region Connect OnResized signal with extra WindowId data.
+		Variant argWindowId = win->GetId();
+		const Variant* extraArgs[] = { &argWindowId };
+		win->ConnectSignal(STRL("OnResized"), Invokable(this, STRL("DelegateOnWindowResized")), extraArgs, 1);
+#pragma endregion
+
+#pragma region SwapChainDesc
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-		Vector2 size = win->GetSize();
-		swapChainDesc.Width = (uint32)size.x;
-		swapChainDesc.Height = (uint32)size.y;
+		swapChainDesc.Width = (UINT)64;
+		swapChainDesc.Height = (UINT)64;
 		swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		swapChainDesc.SampleDesc.Count = 1;
 		swapChainDesc.SampleDesc.Quality = 0;
@@ -101,25 +108,47 @@ namespace Engine {
 		swapChainDesc.BufferCount = 1;
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		swapChainDesc.Flags = 0;
+#pragma endregion
 
+#pragma region FullscreenDesc
 		DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullscreenDesc{};
 		fullscreenDesc.RefreshRate.Numerator = 60;
 		fullscreenDesc.RefreshRate.Denominator = 1;
 		fullscreenDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 		fullscreenDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		fullscreenDesc.Windowed = true;
+#pragma endregion
 
 		HRESULT hr;
 		hr = dxgiFactory2->CreateSwapChainForHwnd(d3dDevice1.Get(), win->GetHWnd(), &swapChainDesc, &fullscreenDesc, nullptr, data->dxgiSwapChain1.GetAddressOf());
 		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to create IDXGISwapChain1", return false);
 
-		dxgiFactory2->MakeWindowAssociation(win->GetHWnd(), DXGI_MWA_NO_ALT_ENTER | DXGI_MWA_NO_WINDOW_CHANGES);
+		hr=dxgiFactory2->MakeWindowAssociation(win->GetHWnd(), DXGI_MWA_NO_ALT_ENTER | DXGI_MWA_NO_WINDOW_CHANGES);
+		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to MakeWindowAssociation", return false);
 
+		windowData.Add(win->GetId(), data);
+		return true;
+	}
+	void Renderer::DelegateOnWindowResized(Vector2 size, WindowID windowId) {
+		auto win = ENGINEINST->GetWindowSystem()->GetWindow(windowId);
+		SharedPtr<WindowData> data;
+		if (!windowData.TryGet(windowId, data)) {
+			ERR_MSG(u8"Failed to get WindowData when recreating SwapChain.");
+			return;
+		}
+
+		data->d3dRenderTargetView.Reset();
+		data->d3dDepthStencilView.Reset();
+		data->d3dDepthStencilTexture.Reset();
+
+		HRESULT hr;
+		hr = data->dxgiSwapChain1->ResizeBuffers(1, (UINT)size.x, (UINT)size.y, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to reset SwapChain buffers", return);
 		ComPtr<ID3D11Texture2D> renderTargetTexture;
 		hr = data->dxgiSwapChain1->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)renderTargetTexture.GetAddressOf());
-		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to get RenderTargetTexture", return false);
+		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to get RenderTargetTexture", return);
 		hr = d3dDevice1->CreateRenderTargetView(renderTargetTexture.Get(), nullptr, data->d3dRenderTargetView.GetAddressOf());
-		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to create ID3D11RenderTargetView", return false);
+		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to create ID3D11RenderTargetView", return);
 
 		D3D11_TEXTURE2D_DESC depthStencilTextureDesc{};
 		depthStencilTextureDesc.Width = (int32)size.x;
@@ -135,14 +164,13 @@ namespace Engine {
 		depthStencilTextureDesc.MiscFlags = 0;
 
 		hr = d3dDevice1->CreateTexture2D(&depthStencilTextureDesc, nullptr, data->d3dDepthStencilTexture.GetAddressOf());
-		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to create ID3D11Texutre2D for DepthStencilView", return false);
+		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to create ID3D11Texutre2D for DepthStencilView", return);
 
 		hr = d3dDevice1->CreateDepthStencilView(data->d3dDepthStencilTexture.Get(), nullptr, data->d3dDepthStencilView.GetAddressOf());
-		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to create ID3D11DepthStencilView", return false);
+		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to create ID3D11DepthStencilView", return);
 
 		d3dContext1->OMSetRenderTargets(1, data->d3dRenderTargetView.GetAddressOf(), data->d3dDepthStencilView.Get());
-		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to OMSetRenderTargets", return false);
-		windowData.Add(win->GetId(), data);
+		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to OMSetRenderTargets", return);
 
 		D3D11_VIEWPORT viewport{};
 		viewport.TopLeftX = 0;
@@ -152,8 +180,6 @@ namespace Engine {
 		viewport.MinDepth = 0;
 		viewport.MaxDepth = 1;
 		d3dContext1->RSSetViewports(1, &viewport);
-
-		return true;
 	}
 	bool Renderer::UnregisterWindow(WindowID window) {
 		return windowData.Remove(window);

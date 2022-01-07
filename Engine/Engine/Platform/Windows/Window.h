@@ -16,7 +16,7 @@ namespace Engine::PlatformSpecific {
 	};
 
 	class Window final:public ::Engine::Window {
-		REFLECTION_CLASS(::Engine::PlatformSpecific::Windows::Window, ::Engine::Window) {
+		REFLECTION_CLASS(::Engine::PlatformSpecific::Window, ::Engine::Window) {
 			REFLECTION_SIGNAL(STRL("KeyDown"), { SIGARG(STRL("keyCode"),Variant::Type::Int64) });
 		}
 
