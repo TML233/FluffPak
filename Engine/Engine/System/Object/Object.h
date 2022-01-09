@@ -74,15 +74,18 @@ namespace Engine{
 		InstanceId instanceId;
 
 	private:
-		struct SignalConnection {
-			ReflectionSignal::ConnectFlag flag = ReflectionSignal::ConnectFlag::Null;
-			List<Variant> extraArguments;
+		struct ExtraData {
+			struct SignalConnection {
+				ReflectionSignal::ConnectFlag flag = ReflectionSignal::ConnectFlag::Null;
+				List<Variant> extraArguments;
+			};
+			struct SignalConnectionGroup {
+				using ConnectionsType = CopyOnWrite<Dictionary<Invokable, SharedPtr<SignalConnection>>>;
+				ConnectionsType connections = ConnectionsType::Create();
+			};
+			Dictionary<String, SharedPtr<SignalConnectionGroup>> signalConnections;
 		};
-		struct SignalConnectionGroup {
-			using ConnectionsType = CopyOnWrite<Dictionary<Invokable, SharedPtr<SignalConnection>>>;
-			ConnectionsType connections = ConnectionsType::Create();
-		};
-		Dictionary<String, SharedPtr<SignalConnectionGroup>> signalConnections;
+		UniquePtr<ExtraData> extraData;
 	};
 
 	// Represents a Object which its memory management is done by the user.

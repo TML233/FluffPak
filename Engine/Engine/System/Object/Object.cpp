@@ -126,21 +126,27 @@ namespace Engine {
 		return c->HasSignalInTree(name);
 	}
 	bool Object::IsSignalConnected(const String& signal, const Invokable& invokable) const {
-		SharedPtr<SignalConnectionGroup> group;
-		bool found = signalConnections.TryGet(signal, group);
+		if (extraData == nullptr) {
+			return false;
+		}
+		SharedPtr<ExtraData::SignalConnectionGroup> group;
+		bool found = extraData->signalConnections.TryGet(signal, group);
 		if (!found) {
 			return false;
 		}
 		return group->connections.DoRead()->ContainsKey(invokable);
 	}
 	ResultCode Object::ConnectSignal(const String& signal, const Invokable& invokable, const Variant** extraArguments,int32 extraArgumentCount, ReflectionSignal::ConnectFlag flag) {
-		SharedPtr<SignalConnectionGroup> group;
-		bool found = signalConnections.TryGet(signal, group);
+		if (extraData == nullptr) {
+			extraData = UniquePtr<ExtraData>::Create();
+		}
+		SharedPtr<ExtraData::SignalConnectionGroup> group;
+		bool found = extraData->signalConnections.TryGet(signal, group);
 		// Not found, try to add.
 		if (!found) {
 			if (HasSignal(signal)) {
-				group = SharedPtr<SignalConnectionGroup>::Create();
-				signalConnections.Add(signal, group);
+				group = SharedPtr<ExtraData::SignalConnectionGroup>::Create();
+				extraData->signalConnections.Add(signal, group);
 			} else {
 				ERR_ASSERT(group != nullptr, String::Format(STRING_LITERAL("Signal {0}::{1} doesn't exist."), GetReflectionClassName(), signal).GetRawArray(), return ResultCode::NotFound);
 			}
@@ -148,7 +154,7 @@ namespace Engine {
 
 		ERR_ASSERT(IsInstanceValid(invokable.instanceId), u8"Cannot connect to a non-existing object!", return ResultCode::InvalidObject);
 
-		auto data = SharedPtr<SignalConnection>::Create();
+		auto data = SharedPtr<ExtraData::SignalConnection>::Create();
 		data->flag = flag;
 		for (int32 i = 0; i < extraArgumentCount; i += 1) {
 			data->extraArguments.Add(*(extraArguments[i]));
@@ -158,24 +164,29 @@ namespace Engine {
 		return ResultCode::OK;
 	}
 	bool Object::DisconnectSignal(const String& signal, const Invokable& invokable) {
-		SharedPtr<SignalConnectionGroup> group;
-		bool found = signalConnections.TryGet(signal, group);
+		if (extraData == nullptr) {
+			return false;
+		}
+		SharedPtr<ExtraData::SignalConnectionGroup> group;
+		bool found = extraData->signalConnections.TryGet(signal, group);
 		if (!found) {
 			return false;
 		}
-
 		return group->connections.DoWrite()->Remove(invokable);
 	}
 	bool Object::EmitSignal(const String& signal,const Variant** arguments,int32 argumentCount) {
-		SharedPtr<SignalConnectionGroup> group;
-		bool found = signalConnections.TryGet(signal, group);
+		if (extraData == nullptr) {
+			return false;
+		}
+		SharedPtr<ExtraData::SignalConnectionGroup> group;
+		bool found = extraData->signalConnections.TryGet(signal, group);
 		if (!found) {
 			return false;
 		}
 
 		// Get the COW Dictionary.
 		// When other connection functions are operating the dictionary, COW will make a new copy.
-		SignalConnectionGroup::ConnectionsType cow = group->connections;
+		ExtraData::SignalConnectionGroup::ConnectionsType cow = group->connections;
 		
 		// Iterate the dictionary.
 		for (const auto& entry : *(cow.DoRead())) {
