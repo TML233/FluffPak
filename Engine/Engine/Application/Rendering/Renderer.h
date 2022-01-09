@@ -10,7 +10,8 @@ namespace Engine {
 		REFLECTION_CLASS(::Engine::Renderer, ::Engine::ManualObject) {
 			REFLECTION_METHOD(STRL("DelegateOnWindowResized"),
 				Renderer::DelegateOnWindowResized,
-				ARGLIST(STRL("size"), STRL("windowId")), ARGLIST()
+				ARGLIST(STRL("size"), STRL("windowId")),
+				ARGLIST()
 			);
 		}
 
@@ -23,6 +24,8 @@ namespace Engine {
 		void Render();
 		
 		void DelegateOnWindowResized(Vector2 size, WindowID windowId);
+
+		HRESULT CreateShaderFromFile(const String& csoFileName, const String& hlslFileName, const char* entryPoint, const char* shaderModel, ComPtr<ID3DBlob>& result);
 
 	private:
 		bool valid = false;
@@ -43,5 +46,21 @@ namespace Engine {
 
 		Dictionary<D3D_FEATURE_LEVEL, String> featureLevelNames;
 		Dictionary<D3D_DRIVER_TYPE, String> driverTypeNames;
+
+		ComPtr<ID3D11VertexShader> d3dVertexShader;
+		ComPtr<ID3D11PixelShader> d3dPixelShader;
+
+		struct VertexPosColor {
+			DirectX::XMFLOAT3 pos;
+			DirectX::XMFLOAT4 color;
+			static const D3D11_INPUT_ELEMENT_DESC InputLayout[2];
+		};
+		ComPtr<ID3D11InputLayout> d3dVertexInputLayout;
+		VertexPosColor vertices[3] = {
+			{DirectX::XMFLOAT3(0.0f,0.5f,0.5f),DirectX::XMFLOAT4(0.0f,1.0f,0.0f,1.0f)},
+			{DirectX::XMFLOAT3(0.5f,-0.5f,0.5f),DirectX::XMFLOAT4(0.0f,0.0f,1.0f,1.0f)},
+			{DirectX::XMFLOAT3(-0.5f,-0.5f,0.5f),DirectX::XMFLOAT4(1.0f,0.0f,0.0f,1.0f)}
+		};
+		ComPtr<ID3D11Buffer> d3dVertexBuffer;
 	};
 }

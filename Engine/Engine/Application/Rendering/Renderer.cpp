@@ -83,6 +83,56 @@ namespace Engine {
 			description,
 			featureLevelNames.Get(featureLevel)
 		).GetRawArray());
+
+
+		ComPtr<ID3DBlob> shaderBlob;
+#pragma region Vertex Shader
+		hr = CreateShaderFromFile(
+			STRL("./Shaders/Triangle_VS.cso"),
+			STRL("./Shaders/Triangle_VS.hlsl"),
+			"VS", "vs_5_0", shaderBlob
+		);
+		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to load vertex shader from file!");
+		
+		hr = d3dDevice1->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), nullptr, d3dVertexShader.GetAddressOf());
+		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create vertex shader!");
+		
+		d3dDevice1->CreateInputLayout(VertexPosColor::InputLayout, 2, shaderBlob->GetBufferPointer(),shaderBlob->GetBufferSize(),d3dVertexInputLayout.GetAddressOf());
+		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create vertex input layout!");
+
+		d3dContext1->IASetInputLayout(d3dVertexInputLayout.Get());
+#pragma endregion
+
+#pragma region Pixel Shader
+		hr = CreateShaderFromFile(
+			STRL("./Shaders/Triangle_PS.cso"),
+			STRL("./Shaders/Triangle_PS.hlsl"),
+			"PS", "ps_5_0", shaderBlob
+		);
+		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to load pixel shader from file!");
+
+		hr = d3dDevice1->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), nullptr, d3dPixelShader.GetAddressOf());
+		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create pixel shader!");
+#pragma endregion
+
+		D3D11_BUFFER_DESC bufferDesc{};
+		bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		bufferDesc.ByteWidth = sizeof(vertices);
+		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bufferDesc.CPUAccessFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA subresData{};
+		subresData.pSysMem = vertices;
+
+		hr = d3dDevice1->CreateBuffer(&bufferDesc, &subresData, d3dVertexBuffer.GetAddressOf());
+		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create vertex buffer!");
+
+		UINT stride = sizeof(VertexPosColor);
+		UINT offset = 0;
+		d3dContext1->IASetVertexBuffers(0, 1, d3dVertexBuffer.GetAddressOf(), &stride, &offset);
+		d3dContext1->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		d3dContext1->VSSetShader(d3dVertexShader.Get(), nullptr, 0);
+		d3dContext1->PSSetShader(d3dPixelShader.Get(), nullptr, 0);
 	}
 	bool Renderer::IsValid() const {
 		return valid;
@@ -184,6 +234,56 @@ namespace Engine {
 		}
 		return windowData.Remove(window);
 	}
+
+	const D3D11_INPUT_ELEMENT_DESC Renderer::VertexPosColor::InputLayout[2] = {
+		{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"COLOR",0,DXGI_FORMAT_R32G32B32A32_FLOAT,0,3 * 4,D3D11_INPUT_PER_VERTEX_DATA,0}
+	};
+	HRESULT Renderer::CreateShaderFromFile(const String& csoFileName, const String& hlslFileName, const char* entryPoint, const char* shaderModel, ComPtr<ID3DBlob>& result) {
+		bool succeeded;
+		UniquePtr<WCHAR[]> csoFileNameW;
+		succeeded = PlatformSpecific::UnicodeHelper::UTF8ToUnicode(csoFileName, csoFileNameW);
+		ERR_ASSERT(succeeded, u8"Failed to convert String to WideString", return E_FAIL);
+		UniquePtr<WCHAR[]> hlslFileNameW;
+		succeeded = PlatformSpecific::UnicodeHelper::UTF8ToUnicode(hlslFileName, hlslFileNameW);
+		ERR_ASSERT(succeeded, u8"Failed to convert String to WideString", return E_FAIL);
+
+		// Return cache if exists.
+		if (SUCCEEDED(D3DReadFileToBlob(csoFileNameW.GetRaw(), result.ReleaseAndGetAddressOf()))) {
+			return S_OK;
+		}
+
+		// Compile shader
+		DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+		shaderFlags |= D3DCOMPILE_DEBUG;
+		shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
+		
+		ComPtr<ID3DBlob> errorBlob;
+		HRESULT hr = D3DCompileFromFile(
+			hlslFileNameW.GetRaw(),
+			nullptr,
+			D3D_COMPILE_STANDARD_FILE_INCLUDE,
+			entryPoint,
+			shaderModel,
+			shaderFlags, 0, result.ReleaseAndGetAddressOf(), errorBlob.GetAddressOf()
+		);
+		if (SUCCEEDED(hr)) {
+			// Write cache.
+			hr=D3DWriteBlobToFile(result.Get(), csoFileNameW.GetRaw(), TRUE);
+			if (FAILED(hr)) {
+				ERR_MSG(u8"Failed to write HLSL shader cache!");
+			}
+			return S_OK;
+		}
+
+		const char* errorMsg = "No error message.";
+		if (errorBlob != nullptr) {
+			errorMsg = reinterpret_cast<const char*>(errorBlob->GetBufferPointer());
+		}
+		ERR_MSG(String::Format(STRL("Failed to compile HLSL shader({0}): {1}"), hr, errorMsg).GetRawArray());
+		return hr;
+	}
+	
 	void Renderer::Render() {
 		for (const auto& data : windowData) {
 			d3dContext1->OMSetRenderTargets(1, data.value->d3dRenderTargetView.GetAddressOf(), data.value->d3dDepthStencilView.Get());
@@ -191,6 +291,8 @@ namespace Engine {
 			Color clearColor = Color(0, 0, 1);
 			d3dContext1->ClearRenderTargetView(data.value->d3dRenderTargetView.Get(), (float*)&clearColor);
 			d3dContext1->ClearDepthStencilView(data.value->d3dDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+
+			d3dContext1->Draw(3, 0);
 
 			HRESULT hr;
 			hr = data.value->dxgiSwapChain1->Present(0, 0);
