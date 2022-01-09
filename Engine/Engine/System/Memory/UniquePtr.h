@@ -13,6 +13,7 @@ namespace Engine {
 			return UniquePtr(MEMNEW(T(Memory::Forward<Args>(args)...)));
 		}
 
+		UniquePtr(std::nullptr_t) :ptr(nullptr) {}
 		explicit UniquePtr(T* ptr = nullptr) :ptr(ptr) {}
 		~UniquePtr() {
 			Reset();
@@ -21,6 +22,7 @@ namespace Engine {
 		// No copying
 		UniquePtr(const UniquePtr& obj) = delete;
 		UniquePtr& operator=(const UniquePtr& obj) = delete;
+
 		// Moving
 		UniquePtr(UniquePtr&& obj) {
 			ptr = obj.ptr;
@@ -30,6 +32,7 @@ namespace Engine {
 			if (this == &obj) {
 				return *this;
 			}
+			Reset();
 			ptr = obj.ptr;
 			obj.ptr = nullptr;
 			return *this;
@@ -77,6 +80,7 @@ namespace Engine {
 			return UniquePtr(MEMNEWARR(T, length));
 		}
 
+		UniquePtr(std::nullptr_t) :ptr(nullptr) {}
 		explicit UniquePtr(T* ptr = nullptr) :ptr(ptr) {}
 		~UniquePtr() {
 			Reset();
@@ -85,6 +89,7 @@ namespace Engine {
 		// No copying
 		UniquePtr(const UniquePtr& obj) = delete;
 		UniquePtr& operator=(const UniquePtr& obj) = delete;
+
 		// Moving
 		UniquePtr(UniquePtr&& obj) {
 			ptr = obj.ptr;
@@ -94,6 +99,7 @@ namespace Engine {
 			if (this == &obj) {
 				return *this;
 			}
+			Reset();
 			ptr = obj.ptr;
 			obj.ptr = nullptr;
 			return *this;
