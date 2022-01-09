@@ -18,23 +18,22 @@ namespace Engine {
 		nw->SetVisible(true);
 		nw->SetResizable(true);
 		nw->SetMaximizeButton(true);
-		nw->SetCloseButton(false);
+
 		GetRoot()->SystemAssignTree(this);
-		running = true;
 
 		INFO_MSG(root->GetTreeStructureFormated().GetRawArray());
 	}
 
 	void NodeTree::OnUpdate(const Time& time) {
 		if (stopWhenNoWindow && ENGINEINST->GetWindowSystem()->GetWindowCount() <= 0) {
-			running = false;
+			SetShouldRun(false);
 		} else {
 			GetRoot()->SystemUpdate(time.GetDelta());
 		}
 	}
 	void NodeTree::OnPhysicsUpdate(const Time& time) {
 		if (stopWhenNoWindow && ENGINEINST->GetWindowSystem()->GetWindowCount() <= 0) {
-			running = false;
+			SetShouldRun(false);
 		} else {
 			GetRoot()->SystemPhysicsUpdate(time.GetDelta());
 		}
@@ -46,15 +45,7 @@ namespace Engine {
 	void NodeTree::OnStop() {
 		root.Reset();
 	}
-	bool NodeTree::IsRunning() const {
-		return running;
-	}
-
 	typename NodeTree::RootType* NodeTree::GetRoot() const {
 		return root.GetRaw();
-	}
-
-	void NodeTree::RequestStop() {
-		running = false;
 	}
 }

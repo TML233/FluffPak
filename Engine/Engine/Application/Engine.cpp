@@ -93,6 +93,8 @@ namespace Engine {
 
 		jobSystem->Start();
 		INFO_MSG(u8"Job system started.");
+
+		appLoop->SetShouldRun(true);
 		appLoop->OnStart();
 		INFO_MSG(u8"App loop started.");
 #pragma endregion
@@ -109,7 +111,7 @@ namespace Engine {
 		TimePoint lastFpsCheck = Clock::now();
 		int32 updateTimes = 0;
 
-		while (appLoop->IsRunning()) {
+		while (appLoop->ShouldRun()) {
 			TimePoint now = Clock::now();
 
 			if (now >= nextUpdate) {

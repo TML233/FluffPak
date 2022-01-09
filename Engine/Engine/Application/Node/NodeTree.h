@@ -19,15 +19,10 @@ namespace Engine{
 		void OnRender() override;
 
 		void OnStop() override;
-		bool IsRunning() const override;
 
 		RootType* GetRoot() const;
 
-		void RequestStop();
-
 	private:
-		bool running = false;
-
 		bool stopWhenNoWindow = true;
 
 		UniquePtr<RootType> root = UniquePtr<RootType>::Create();

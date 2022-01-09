@@ -30,6 +30,10 @@ namespace Engine {
 		
 		/// @brief Used to indicate the engine whether to keep running.\n
 		/// If return false, the engine will enter the shutdown state and then call OnStop().
-		virtual bool IsRunning() const = 0;
+		bool ShouldRun() const;
+		void SetShouldRun(bool shouldRun);
+
+	private:
+		bool shouldRun = false;
 	};
 }
