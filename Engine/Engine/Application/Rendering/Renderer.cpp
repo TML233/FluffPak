@@ -28,111 +28,151 @@ namespace Engine {
 		};
 		const sizeint requiredFeatureLevelCount = sizeof(requiredFeatureLevels) / sizeof(D3D_FEATURE_LEVEL);
 
-		const D3D11_CREATE_DEVICE_FLAG deviceFlag = D3D11_CREATE_DEVICE_DEBUG;
-
-		ComPtr<ID3D11Device> d3dDevice0;
-		ComPtr<ID3D11DeviceContext> d3dContext0;
 		D3D_FEATURE_LEVEL featureLevel;
+		sizeint driverType;
+		HRESULT hr;
 
-		HRESULT hr = E_FAIL;
-		sizeint driverType = 0;
-		for (driverType = 0; driverType < requiredDriverTypeCount; driverType += 1) {
-			hr = D3D11CreateDevice(
-				nullptr, // Graphics card
-				requiredDriverTypes[driverType],
-				nullptr, // Software driver
-				deviceFlag,
-				requiredFeatureLevels,
-				requiredFeatureLevelCount,
-				D3D11_SDK_VERSION,
-				d3dDevice0.GetAddressOf(),
-				&featureLevel,
-				d3dContext0.GetAddressOf()
-			);
-			if (SUCCEEDED(hr)) {
-				break;
+		{
+			const D3D11_CREATE_DEVICE_FLAG deviceFlag = D3D11_CREATE_DEVICE_DEBUG;
+
+			ComPtr<ID3D11Device> d3dDevice0;
+			ComPtr<ID3D11DeviceContext> d3dContext0;
+
+			hr = E_FAIL;
+			for (driverType = 0; driverType < requiredDriverTypeCount; driverType += 1) {
+				hr = D3D11CreateDevice(
+					nullptr, // Graphics card
+					requiredDriverTypes[driverType],
+					nullptr, // Software driver
+					deviceFlag,
+					requiredFeatureLevels,
+					requiredFeatureLevelCount,
+					D3D11_SDK_VERSION,
+					d3dDevice0.GetAddressOf(),
+					&featureLevel,
+					d3dContext0.GetAddressOf()
+				);
+				if (SUCCEEDED(hr)) {
+					break;
+				}
 			}
+			FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create ID3D11Device");
+
+			hr = d3dDevice0.As(&d3dDevice);
+			FATAL_ASSERT(d3dDevice != nullptr, u8"Failed to get ID3D11Device1");
+			hr = d3dContext0.As(&d3dContext);
+			FATAL_ASSERT(d3dContext != nullptr, u8"Failed to get ID3D11DeviceContext1");
+
+			hr = d3dDevice0.As(&dxgiDevice);
+			FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to get IDXGIDevice2");
+
+			ComPtr<IDXGIAdapter> dxgiAdapter0;
+			hr = dxgiDevice->GetAdapter(dxgiAdapter0.GetAddressOf());
+			FATAL_ASSERT(dxgiAdapter0 != nullptr, u8"Failed to get IDXGIAdapter");
+			hr = dxgiAdapter0.As(&dxgiAdapter);
+			FATAL_ASSERT(dxgiAdapter != nullptr, u8"Failed to get IDXGIAdapter2");
+
+			hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), (void**)dxgiFactory.GetAddressOf());
+			FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to get IDXGIFactory2");
+
+			valid = true;
 		}
-		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create ID3D11Device");
-		hr = d3dDevice0.As(&d3dDevice1);
-		FATAL_ASSERT(d3dDevice1 != nullptr, u8"Failed to get ID3D11Device1");
-		hr = d3dContext0.As(&d3dContext1);
-		FATAL_ASSERT(d3dContext1 != nullptr, u8"Failed to get ID3D11DeviceContext1");
 
-		hr = d3dDevice0.As(&dxgiDevice2);
-		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to get IDXGIDevice2");
+		{
+			DXGI_ADAPTER_DESC2 adapterDesc;
+			dxgiAdapter->GetDesc2(&adapterDesc);
+			String description;
+			PlatformSpecific::UnicodeHelper::UnicodeToUTF8(adapterDesc.Description, description);
+			INFO_MSG(String::Format(
+				STRL("Renderer: Direct3D 11\nDriver: {0} - {1}\nFeature Level: {2}"),
+				driverTypeNames.Get(requiredDriverTypes[driverType]),
+				description,
+				featureLevelNames.Get(featureLevel)
+			).GetRawArray());
+		}
 
-		ComPtr<IDXGIAdapter> dxgiAdapter0;
-		hr = dxgiDevice2->GetAdapter(dxgiAdapter0.GetAddressOf());
-		FATAL_ASSERT(dxgiAdapter0 != nullptr, u8"Failed to get IDXGIAdapter");
-		hr = dxgiAdapter0.As(&dxgiAdapter2);
-		FATAL_ASSERT(dxgiAdapter2 != nullptr, u8"Failed to get IDXGIAdapter2");
+		// Vertex Shader
+		{
+			ComPtr<ID3DBlob> shaderBlob;
+			hr = CreateShaderFromFile(
+				STRL("./Shaders/Triangle_VS.cso"),
+				STRL("./Shaders/Triangle_VS.hlsl"),
+				"VS", "vs_5_0", shaderBlob
+			);
+			FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to load vertex shader from file!");
 
-		hr = dxgiAdapter2->GetParent(__uuidof(IDXGIFactory2), (void**)dxgiFactory2.GetAddressOf());
-		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to get IDXGIFactory2");
+			hr = d3dDevice->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), nullptr, d3dVertexShader.GetAddressOf());
+			FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create vertex shader!");
 
-		valid = true;
+			d3dDevice->CreateInputLayout(VertexPosColor::InputLayout, 2, shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), d3dVertexInputLayout.GetAddressOf());
+			FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create vertex input layout!");
 
-		DXGI_ADAPTER_DESC2 adapterDesc;
-		dxgiAdapter2->GetDesc2(&adapterDesc);
-		String description;
-		PlatformSpecific::UnicodeHelper::UnicodeToUTF8(adapterDesc.Description, description);
-		INFO_MSG(String::Format(
-			STRL("Renderer: Direct3D 11\nDriver: {0} - {1}\nFeature Level: {2}"),
-			driverTypeNames.Get(requiredDriverTypes[driverType]),
-			description,
-			featureLevelNames.Get(featureLevel)
-		).GetRawArray());
+			d3dContext->IASetInputLayout(d3dVertexInputLayout.Get());
+		}
 
+		// Pixel Shader
+		{
+			ComPtr<ID3DBlob> shaderBlob;
+			hr = CreateShaderFromFile(
+				STRL("./Shaders/Triangle_PS.cso"),
+				STRL("./Shaders/Triangle_PS.hlsl"),
+				"PS", "ps_5_0", shaderBlob
+			);
+			FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to load pixel shader from file!");
 
-		ComPtr<ID3DBlob> shaderBlob;
-#pragma region Vertex Shader
-		hr = CreateShaderFromFile(
-			STRL("./Shaders/Triangle_VS.cso"),
-			STRL("./Shaders/Triangle_VS.hlsl"),
-			"VS", "vs_5_0", shaderBlob
-		);
-		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to load vertex shader from file!");
+			hr = d3dDevice->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), nullptr, d3dPixelShader.GetAddressOf());
+			FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create pixel shader!");
+		}
+
+		// Vertex buffer
+		{
+			D3D11_BUFFER_DESC desc{};
+			desc.Usage = D3D11_USAGE_IMMUTABLE;
+			desc.ByteWidth = sizeof(vertices);
+			desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			desc.CPUAccessFlags = 0;
+
+			D3D11_SUBRESOURCE_DATA init{};
+			init.pSysMem = vertices;
+
+			hr = d3dDevice->CreateBuffer(&desc, &init, d3dVertexBuffer.GetAddressOf());
+			FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create vertex buffer!");
+
+			UINT stride = sizeof(VertexPosColor);
+			UINT offset = 0;
+			d3dContext->IASetVertexBuffers(0, 1, d3dVertexBuffer.GetAddressOf(), &stride, &offset);
+		}
 		
-		hr = d3dDevice1->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), nullptr, d3dVertexShader.GetAddressOf());
-		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create vertex shader!");
-		
-		d3dDevice1->CreateInputLayout(VertexPosColor::InputLayout, 2, shaderBlob->GetBufferPointer(),shaderBlob->GetBufferSize(),d3dVertexInputLayout.GetAddressOf());
-		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create vertex input layout!");
+		// Index buffer
+		{
+			D3D11_BUFFER_DESC desc{};
+			desc.Usage = D3D11_USAGE_IMMUTABLE;
+			desc.ByteWidth = sizeof(indices);
+			desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			desc.CPUAccessFlags = 0;
 
-		d3dContext1->IASetInputLayout(d3dVertexInputLayout.Get());
-#pragma endregion
+			D3D11_SUBRESOURCE_DATA init{};
+			init.pSysMem = indices;
 
-#pragma region Pixel Shader
-		hr = CreateShaderFromFile(
-			STRL("./Shaders/Triangle_PS.cso"),
-			STRL("./Shaders/Triangle_PS.hlsl"),
-			"PS", "ps_5_0", shaderBlob
-		);
-		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to load pixel shader from file!");
+			hr = d3dDevice->CreateBuffer(&desc, &init, d3dIndexBuffer.GetAddressOf());
+			FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create index buffer!");
 
-		hr = d3dDevice1->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), nullptr, d3dPixelShader.GetAddressOf());
-		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create pixel shader!");
-#pragma endregion
+			d3dContext->IASetIndexBuffer(d3dIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+		}
 
-		D3D11_BUFFER_DESC bufferDesc{};
-		bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-		bufferDesc.ByteWidth = sizeof(vertices);
-		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bufferDesc.CPUAccessFlags = 0;
+		// Transform matrices buffer
+		{
+			D3D11_BUFFER_DESC desc{};
+			desc.Usage = D3D11_USAGE_DYNAMIC;
+			desc.ByteWidth = sizeof(TransformMatrices);
+			desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-		D3D11_SUBRESOURCE_DATA subresData{};
-		subresData.pSysMem = vertices;
+			hr = d3dDevice->CreateBuffer(&desc, nullptr, d3dTransformMatricesBuffer.GetAddressOf());
+			FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create transform matrices buffer!");
+		}
 
-		hr = d3dDevice1->CreateBuffer(&bufferDesc, &subresData, d3dVertexBuffer.GetAddressOf());
-		FATAL_ASSERT(SUCCEEDED(hr), u8"Failed to create vertex buffer!");
-
-		UINT stride = sizeof(VertexPosColor);
-		UINT offset = 0;
-		d3dContext1->IASetVertexBuffers(0, 1, d3dVertexBuffer.GetAddressOf(), &stride, &offset);
-		d3dContext1->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		d3dContext1->VSSetShader(d3dVertexShader.Get(), nullptr, 0);
-		d3dContext1->PSSetShader(d3dPixelShader.Get(), nullptr, 0);
+		d3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 	bool Renderer::IsValid() const {
 		return valid;
@@ -170,10 +210,10 @@ namespace Engine {
 #pragma endregion
 
 		HRESULT hr;
-		hr = dxgiFactory2->CreateSwapChainForHwnd(d3dDevice1.Get(), win->GetHWnd(), &swapChainDesc, &fullscreenDesc, nullptr, data->dxgiSwapChain1.GetAddressOf());
+		hr = dxgiFactory->CreateSwapChainForHwnd(d3dDevice.Get(), win->GetHWnd(), &swapChainDesc, &fullscreenDesc, nullptr, data->dxgiSwapChain.GetAddressOf());
 		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to create IDXGISwapChain1", return false);
 
-		hr=dxgiFactory2->MakeWindowAssociation(win->GetHWnd(), DXGI_MWA_NO_ALT_ENTER | DXGI_MWA_NO_WINDOW_CHANGES);
+		hr=dxgiFactory->MakeWindowAssociation(win->GetHWnd(), DXGI_MWA_NO_ALT_ENTER | DXGI_MWA_NO_WINDOW_CHANGES);
 		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to MakeWindowAssociation", return false);
 
 		windowData.Add(win->GetId(), data);
@@ -191,12 +231,12 @@ namespace Engine {
 		data->d3dDepthStencilTexture.Reset();
 
 		HRESULT hr;
-		hr = data->dxgiSwapChain1->ResizeBuffers(1, (UINT)size.x, (UINT)size.y, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+		hr = data->dxgiSwapChain->ResizeBuffers(1, (UINT)size.x, (UINT)size.y, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to reset SwapChain buffers", return);
 		ComPtr<ID3D11Texture2D> renderTargetTexture;
-		hr = data->dxgiSwapChain1->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)renderTargetTexture.GetAddressOf());
+		hr = data->dxgiSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)renderTargetTexture.GetAddressOf());
 		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to get RenderTargetTexture", return);
-		hr = d3dDevice1->CreateRenderTargetView(renderTargetTexture.Get(), nullptr, data->d3dRenderTargetView.GetAddressOf());
+		hr = d3dDevice->CreateRenderTargetView(renderTargetTexture.Get(), nullptr, data->d3dRenderTargetView.GetAddressOf());
 		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to create ID3D11RenderTargetView", return);
 
 		D3D11_TEXTURE2D_DESC depthStencilTextureDesc{};
@@ -212,25 +252,19 @@ namespace Engine {
 		depthStencilTextureDesc.CPUAccessFlags = 0;
 		depthStencilTextureDesc.MiscFlags = 0;
 
-		hr = d3dDevice1->CreateTexture2D(&depthStencilTextureDesc, nullptr, data->d3dDepthStencilTexture.GetAddressOf());
+		hr = d3dDevice->CreateTexture2D(&depthStencilTextureDesc, nullptr, data->d3dDepthStencilTexture.GetAddressOf());
 		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to create ID3D11Texutre2D for DepthStencilView", return);
 
-		hr = d3dDevice1->CreateDepthStencilView(data->d3dDepthStencilTexture.Get(), nullptr, data->d3dDepthStencilView.GetAddressOf());
+		hr = d3dDevice->CreateDepthStencilView(data->d3dDepthStencilTexture.Get(), nullptr, data->d3dDepthStencilView.GetAddressOf());
 		ERR_ASSERT(SUCCEEDED(hr), u8"Failed to create ID3D11DepthStencilView", return);
-		
-		D3D11_VIEWPORT viewport{};
-		viewport.TopLeftX = 0;
-		viewport.TopLeftY = 0;
-		viewport.Width = size.x;
-		viewport.Height = size.y;
-		viewport.MinDepth = 0;
-		viewport.MaxDepth = 1;
-		d3dContext1->RSSetViewports(1, &viewport);
+
+		data->size = size;
+		//INFO_MSG(String::Format(STRL("Updated window size to: {0}"), ObjectUtil::ToString(size)).GetRawArray());
 	}
 	bool Renderer::UnregisterWindow(WindowID window) {
 		SharedPtr<WindowData> data;
 		if (windowData.TryGet(window, data)) {
-			d3dContext1->ClearState();
+			d3dContext->ClearState();
 		}
 		return windowData.Remove(window);
 	}
@@ -285,17 +319,60 @@ namespace Engine {
 	}
 	
 	void Renderer::Render() {
+		double time = ENGINEINST->GetTime().GetTotal();
+
 		for (const auto& data : windowData) {
-			d3dContext1->OMSetRenderTargets(1, data.value->d3dRenderTargetView.GetAddressOf(), data.value->d3dDepthStencilView.Get());
-
-			Color clearColor = Color(0, 0, 1);
-			d3dContext1->ClearRenderTargetView(data.value->d3dRenderTargetView.Get(), (float*)&clearColor);
-			d3dContext1->ClearDepthStencilView(data.value->d3dDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
-
-			d3dContext1->Draw(3, 0);
-
 			HRESULT hr;
-			hr = data.value->dxgiSwapChain1->Present(0, 0);
+
+			d3dContext->OMSetRenderTargets(1, data.value->d3dRenderTargetView.GetAddressOf(), data.value->d3dDepthStencilView.Get());
+			
+			{
+				D3D11_VIEWPORT viewport{};
+				viewport.TopLeftX = 0;
+				viewport.TopLeftY = 0;
+				viewport.Width = data.value->size.x;
+				viewport.Height = data.value->size.y;
+				viewport.MinDepth = 0;
+				viewport.MaxDepth = 1;
+				d3dContext->RSSetViewports(1, &viewport);
+			}
+			{
+				Color clearColor = Color(0, 0, 0);
+				d3dContext->ClearRenderTargetView(data.value->d3dRenderTargetView.Get(), (float*)&clearColor);
+				d3dContext->ClearDepthStencilView(data.value->d3dDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+			}
+			{
+				transform.world = DirectX::XMMatrixTranspose(
+					DirectX::XMMatrixRotationX(time * 1) * DirectX::XMMatrixRotationY(time * 2)
+				);
+				transform.view = DirectX::XMMatrixTranspose(
+					DirectX::XMMatrixLookAtLH(
+						DirectX::XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f),//pos
+						DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),//target
+						DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)//up
+					)
+				);
+				transform.projection = DirectX::XMMatrixTranspose(
+					DirectX::XMMatrixPerspectiveFovLH(
+						Math::PI / 2, data.value->size.x / data.value->size.y, 1, 1000
+					)
+				);
+				
+				D3D11_MAPPED_SUBRESOURCE mapped;
+				hr = d3dContext->Map(d3dTransformMatricesBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+				ERR_ASSERT(SUCCEEDED(hr), u8"Failed to map constant buffer!", continue);
+				memcpy(mapped.pData, &transform, sizeof(TransformMatrices));
+				d3dContext->Unmap(d3dTransformMatricesBuffer.Get(), 0);
+			}
+			{
+				d3dContext->VSSetShader(d3dVertexShader.Get(), nullptr, 0);
+				d3dContext->PSSetShader(d3dPixelShader.Get(), nullptr, 0);
+				d3dContext->VSSetConstantBuffers(0, 1, d3dTransformMatricesBuffer.GetAddressOf());
+			}
+
+			d3dContext->DrawIndexed(36, 0,0);
+
+			hr = data.value->dxgiSwapChain->Present(0, 0);
 			ERR_ASSERT(SUCCEEDED(hr), u8"Failed to IDXGISwapChain::Present", continue);
 		}
 	}
