@@ -21,7 +21,15 @@ namespace Engine {
 			Null,		// Null
 
 			Bool,		// Boolean
+			Byte,
+			SByte,
+			Int16,
+			UInt16,
+			Int32,
+			UInt32,
 			Int64,		// 64-bit Integer
+			UInt64,
+			Float,
 			Double,		// 64-bit Float
 
 			String,		// String
@@ -111,7 +119,15 @@ namespace Engine {
 		// !! AddTypeHint 5.0: Add a AsType function for getting the original value.
 
 		bool AsBool(bool defaultValue=false) const;
+		byte AsByte(byte defaultValue = 0) const;
+		sbyte AsSByte(sbyte defaultValue = 0) const;
+		int16 AsInt16(int16 defaultValue = 0) const;
+		uint16 AsUInt16(uint16 defaultValue = 0) const;
+		int32 AsInt32(int32 defaultValue = 0) const;
+		uint32 AsUInt32(uint32 defaultValue = 0) const;
 		int64 AsInt64(int64 defaultValue = 0) const;
+		uint64 AsUInt64(uint64 defaultValue = 0) const;
+		float AsFloat(float defaultValue = 0) const;
 		double AsDouble(double defaultValue = 0) const;
 		String AsString(String defaultValue = u8"") const;
 		Vector2 AsVector2(const Vector2& defaultValue = Vector2()) const;
@@ -137,7 +153,15 @@ namespace Engine {
 
 		union DataUnion {
 			bool vBool;
+			byte vByte;
+			sbyte vSByte;
+			int16 vInt16;
+			uint16 vUInt16;
+			int32 vInt32;
+			uint32 vUInt32;
 			int64 vInt64;
+			uint64 vUInt64;
+			float vFloat;
 			double vDouble;
 			String vString;
 			Vector2 vVector2;
@@ -151,7 +175,15 @@ namespace Engine {
 		// !! AddTypeHint 3.0: Add a value constructor.
 
 		void ConstructBool(bool value);
+		void ConstructByte(byte value);
+		void ConstructSByte(sbyte value);
+		void ConstructInt16(int16 value);
+		void ConstructUInt16(uint16 value);
+		void ConstructInt32(int32 value);
+		void ConstructUInt32(uint32 value);
 		void ConstructInt64(int64 value);
+		void ConstructUInt64(uint64 value);
+		void ConstructFloat(float value);
 		void ConstructDouble(double value);
 		void ConstructString(const String& value);
 		void ConstructObject(const ObjectData& value);
@@ -185,27 +217,27 @@ namespace Engine {
 	};
 	template<>
 	struct Variant::GetTypeFromNative<byte> {
-		static const Type type = Type::Int64;
+		static const Type type = Type::Byte;
 	};
 	template<>
 	struct Variant::GetTypeFromNative<sbyte> {
-		static const Type type = Type::Int64;
+		static const Type type = Type::SByte;
 	};
 	template<>
 	struct Variant::GetTypeFromNative<int16> {
-		static const Type type = Type::Int64;
+		static const Type type = Type::Int16;
 	};
 	template<>
 	struct Variant::GetTypeFromNative<uint16> {
-		static const Type type = Type::Int64;
+		static const Type type = Type::UInt16;
 	};
 	template<>
 	struct Variant::GetTypeFromNative<int32> {
-		static const Type type = Type::Int64;
+		static const Type type = Type::Int32;
 	};
 	template<>
 	struct Variant::GetTypeFromNative<uint32> {
-		static const Type type = Type::Int64;
+		static const Type type = Type::UInt32;
 	};
 	template<>
 	struct Variant::GetTypeFromNative<int64> {
@@ -213,11 +245,11 @@ namespace Engine {
 	};
 	template<>
 	struct Variant::GetTypeFromNative<uint64> {
-		static const Type type = Type::Int64;
+		static const Type type = Type::UInt64;
 	};
 	template<>
 	struct Variant::GetTypeFromNative<float> {
-		static const Type type = Type::Double;
+		static const Type type = Type::Float;
 	};
 	template<>
 	struct Variant::GetTypeFromNative<double> {
@@ -252,7 +284,7 @@ namespace Engine {
 
 	template<Concept::IsEnum T>
 	struct Variant::GetTypeFromNative<T> {
-		static const Type type = Type::Int64;
+		static const Type type = Type::Int32;
 	};
 
 #pragma endregion
@@ -269,49 +301,49 @@ namespace Engine {
 	template<>
 	struct Variant::CastToNative<byte> {
 		static byte Cast(const Variant& obj) {
-			return (byte)obj.AsInt64();
+			return obj.AsByte();
 		}
 	};
 	template<>
 	struct Variant::CastToNative<sbyte> {
 		static sbyte Cast(const Variant& obj) {
-			return (sbyte)obj.AsInt64();
+			return obj.AsSByte();
 		}
 	};
 	template<>
 	struct Variant::CastToNative<int16> {
 		static int16 Cast(const Variant& obj) {
-			return (int16)obj.AsInt64();
+			return obj.AsInt16();
 		}
 	};
 	template<>
 	struct Variant::CastToNative<uint16> {
 		static uint16 Cast(const Variant& obj) {
-			return (uint16)obj.AsInt64();
+			return obj.AsUInt16();
 		}
 	};
 	template<>
 	struct Variant::CastToNative<int32> {
 		static int32 Cast(const Variant& obj) {
-			return (int32)obj.AsInt64();
+			return obj.AsInt32();
 		}
 	};
 	template<>
 	struct Variant::CastToNative<uint32> {
 		static uint32 Cast(const Variant& obj) {
-			return (uint32)obj.AsInt64();
+			return obj.AsUInt32();
 		}
 	};
 	template<>
 	struct Variant::CastToNative<int64> {
 		static int64 Cast(const Variant& obj) {
-			return (int64)obj.AsInt64();
+			return obj.AsInt64();
 		}
 	};
 	template<>
 	struct Variant::CastToNative<uint64> {
 		static uint64 Cast(const Variant& obj) {
-			return (uint64)obj.AsInt64();
+			return obj.AsUInt64();
 		}
 	};
 	template<>

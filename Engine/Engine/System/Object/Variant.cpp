@@ -10,13 +10,31 @@ namespace Engine {
 
 			case Type::Bool:
 				return STRING_LITERAL("Bool");
+			case Type::Byte:
+				return STRING_LITERAL("Byte");
+			case Type::SByte:
+				return STRING_LITERAL("SByte");
+			case Type::Int16:
+				return STRING_LITERAL("Int16");
+			case Type::UInt16:
+				return STRING_LITERAL("UInt16");
+			case Type::Int32:
+				return STRING_LITERAL("Int32");
+			case Type::UInt32:
+				return STRING_LITERAL("UInt32");
 			case Type::Int64:
 				return STRING_LITERAL("Int64");
+			case Type::UInt64:
+				return STRING_LITERAL("UInt64");
+			case Type::Float:
+				return STRING_LITERAL("Float");
 			case Type::Double:
 				return STRING_LITERAL("Double");
 
 			case Type::String:
 				return STRING_LITERAL("String");
+			case Type::Vector2:
+				return STRING_LITERAL("Vector2");
 
 			case Type::Object:
 				return STRING_LITERAL("Object");
@@ -37,34 +55,31 @@ namespace Engine {
 		ConstructBool(value);
 	}
 	Variant::Variant(byte value) {
-		ConstructInt64(value);
+		ConstructByte(value);
 	}
 	Variant::Variant(sbyte value) {
-		ConstructInt64(value);
+		ConstructSByte(value);
 	}
 	Variant::Variant(int16 value) {
-		ConstructInt64(value);
+		ConstructInt16(value);
 	}
 	Variant::Variant(uint16 value) {
-		ConstructInt64(value);
+		ConstructUInt16(value);
 	}
 	Variant::Variant(int32 value) {
-		ConstructInt64(value);
+		ConstructInt32(value);
 	}
 	Variant::Variant(uint32 value) {
-		ConstructInt64(value);
+		ConstructUInt32(value);
 	}
 	Variant::Variant(int64 value) {
 		ConstructInt64(value);
 	}
 	Variant::Variant(uint64 value) {
-		if (value > 9223372036854775807) {
-			WARN_MSG(u8"Storing a UInt64 value that is too big for Int64! May lose some information.");
-		}
-		ConstructInt64(value);
+		ConstructUInt64(value);
 	}
 	Variant::Variant(float value) {
-		ConstructDouble(value);
+		ConstructFloat(value);
 	}
 	Variant::Variant(double value) {
 		ConstructDouble(value);
@@ -84,7 +99,7 @@ namespace Engine {
 
 	template<Concept::IsEnum T>
 	Variant::Variant(T value) {
-		ConstructInt64((int64)value);
+		ConstructInt32((int32)value);
 	}
 #pragma endregion
 
@@ -95,10 +110,188 @@ namespace Engine {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool;
+			case Type::Byte:
+				return data.vByte != 0;
+			case Type::SByte:
+				return data.vSByte != 0;
+			case Type::Int16:
+				return data.vInt16 != 0;
+			case Type::UInt16:
+				return data.vUInt16 != 0;
+			case Type::Int32:
+				return data.vInt32 != 0;
+			case Type::UInt32:
+				return data.vUInt32 != 0;
 			case Type::Int64:
 				return data.vInt64 != 0;
+			case Type::UInt64:
+				return data.vUInt64 != 0;
+			case Type::Float:
+				return data.vFloat != 0;
 			case Type::Double:
 				return data.vDouble != 0;
+		}
+		return defaultValue;
+	}
+	byte Variant::AsByte(byte defaultValue) const {
+		switch (type) {
+			case Type::Bool:
+				return data.vBool ? 1 : 0;
+			case Type::Byte:
+				return data.vByte;
+			case Type::SByte:
+				return static_cast<byte>(data.vSByte);
+			case Type::Int16:
+				return static_cast<byte>(data.vInt16);
+			case Type::UInt16:
+				return static_cast<byte>(data.vUInt16);
+			case Type::Int32:
+				return static_cast<byte>(data.vInt32);
+			case Type::UInt32:
+				return static_cast<byte>(data.vUInt32);
+			case Type::Int64:
+				return static_cast<byte>(data.vInt64);
+			case Type::UInt64:
+				return static_cast<byte>(data.vUInt64);
+			case Type::Float:
+				return static_cast<byte>(data.vFloat);
+			case Type::Double:
+				return static_cast<byte>(data.vDouble);
+		}
+		return defaultValue;
+	}
+	sbyte Variant::AsSByte(sbyte defaultValue) const {
+		switch (type) {
+			case Type::Bool:
+				return data.vBool ? 1 : 0;
+			case Type::Byte:
+				return static_cast<sbyte>(data.vByte);
+			case Type::SByte:
+				return data.vSByte;
+			case Type::Int16:
+				return static_cast<sbyte>(data.vInt16);
+			case Type::UInt16:
+				return static_cast<sbyte>(data.vUInt16);
+			case Type::Int32:
+				return static_cast<sbyte>(data.vInt32);
+			case Type::UInt32:
+				return static_cast<sbyte>(data.vUInt32);
+			case Type::Int64:
+				return static_cast<sbyte>(data.vInt64);
+			case Type::UInt64:
+				return static_cast<sbyte>(data.vUInt64);
+			case Type::Float:
+				return static_cast<sbyte>(data.vFloat);
+			case Type::Double:
+				return static_cast<sbyte>(data.vDouble);
+		}
+		return defaultValue;
+	}
+	int16 Variant::AsInt16(int16 defaultValue) const {
+		switch (type) {
+			case Type::Bool:
+				return data.vBool ? 1 : 0;
+			case Type::Byte:
+				return data.vByte;
+			case Type::SByte:
+				return data.vSByte;
+			case Type::Int16:
+				return data.vInt16;
+			case Type::UInt16:
+				return static_cast<int16>(data.vUInt16);
+			case Type::Int32:
+				return static_cast<int16>(data.vInt32);
+			case Type::UInt32:
+				return static_cast<int16>(data.vUInt32);
+			case Type::Int64:
+				return static_cast<int16>(data.vInt64);
+			case Type::UInt64:
+				return static_cast<int16>(data.vUInt64);
+			case Type::Float:
+				return static_cast<int16>(data.vFloat);
+			case Type::Double:
+				return static_cast<int16>(data.vDouble);
+		}
+		return defaultValue;
+	}
+	uint16 Variant::AsUInt16(uint16 defaultValue) const {
+		switch (type) {
+			case Type::Bool:
+				return data.vBool ? 1 : 0;
+			case Type::Byte:
+				return data.vByte;
+			case Type::SByte:
+				return data.vSByte;
+			case Type::Int16:
+				return static_cast<uint16>(data.vInt16);
+			case Type::UInt16:
+				return data.vUInt16;
+			case Type::Int32:
+				return static_cast<uint16>(data.vInt32);
+			case Type::UInt32:
+				return static_cast<uint16>(data.vUInt32);
+			case Type::Int64:
+				return static_cast<uint16>(data.vInt64);
+			case Type::UInt64:
+				return static_cast<uint16>(data.vUInt64);
+			case Type::Float:
+				return static_cast<uint16>(data.vFloat);
+			case Type::Double:
+				return static_cast<uint16>(data.vDouble);
+		}
+		return defaultValue;
+	}
+	int32 Variant::AsInt32(int32 defaultValue) const {
+		switch (type) {
+			case Type::Bool:
+				return data.vBool ? 1 : 0;
+			case Type::Byte:
+				return data.vByte;
+			case Type::SByte:
+				return data.vSByte;
+			case Type::Int16:
+				return data.vInt16;
+			case Type::UInt16:
+				return data.vUInt16;
+			case Type::Int32:
+				return data.vInt32;
+			case Type::UInt32:
+				return static_cast<int32>(data.vUInt32);
+			case Type::Int64:
+				return static_cast<int32>(data.vInt64);
+			case Type::UInt64:
+				return static_cast<int32>(data.vUInt64);
+			case Type::Float:
+				return static_cast<int32>(data.vFloat);
+			case Type::Double:
+				return static_cast<int32>(data.vDouble);
+		}
+		return defaultValue;
+	}
+	uint32 Variant::AsUInt32(uint32 defaultValue) const {
+		switch (type) {
+			case Type::Bool:
+				return data.vBool ? 1 : 0;
+			case Type::Byte:
+				return data.vByte;
+			case Type::SByte:
+				return data.vSByte;
+			case Type::Int16:
+				return data.vInt16;
+			case Type::UInt16:
+				return data.vUInt16;
+			case Type::Int32:
+				return static_cast<uint32>(data.vInt32);
+			case Type::UInt32:
+				return data.vUInt32;
+			case Type::Int64:
+				return static_cast<uint32>(data.vInt64);
+			case Type::UInt64:
+				return static_cast<uint32>(data.vUInt64);
+			case Type::Float:
+				return static_cast<uint32>(data.vFloat);
+			case Type::Double:
+				return static_cast<uint32>(data.vDouble);
 		}
 		return defaultValue;
 	}
@@ -106,10 +299,80 @@ namespace Engine {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool ? 1 : 0;
+			case Type::Byte:
+				return data.vByte;
+			case Type::SByte:
+				return data.vSByte;
+			case Type::Int16:
+				return data.vInt16;
+			case Type::UInt16:
+				return data.vUInt16;
+			case Type::Int32:
+				return data.vInt32;
+			case Type::UInt32:
+				return data.vUInt32;
 			case Type::Int64:
 				return data.vInt64;
+			case Type::UInt64:
+				return static_cast<int64>(data.vUInt64);
+			case Type::Float:
+				return static_cast<int64>(data.vFloat);
 			case Type::Double:
 				return static_cast<int64>(data.vDouble);
+		}
+		return defaultValue;
+	}
+	uint64 Variant::AsUInt64(uint64 defaultValue) const {
+		switch (type) {
+			case Type::Bool:
+				return data.vBool ? 1 : 0;
+			case Type::Byte:
+				return data.vByte;
+			case Type::SByte:
+				return data.vSByte;
+			case Type::Int16:
+				return data.vInt16;
+			case Type::UInt16:
+				return data.vUInt16;
+			case Type::Int32:
+				return data.vInt32;
+			case Type::UInt32:
+				return data.vUInt32;
+			case Type::Int64:
+				return static_cast<uint64>(data.vInt64);
+			case Type::UInt64:
+				return data.vUInt64;
+			case Type::Float:
+				return static_cast<uint64>(data.vFloat);
+			case Type::Double:
+				return static_cast<uint64>(data.vDouble);
+		}
+		return defaultValue;
+	}
+	float Variant::AsFloat(float defaultValue) const {
+		switch (type) {
+			case Type::Bool:
+				return data.vBool ? 1 : 0;
+			case Type::Byte:
+				return data.vByte;
+			case Type::SByte:
+				return data.vSByte;
+			case Type::Int16:
+				return data.vInt16;
+			case Type::UInt16:
+				return data.vUInt16;
+			case Type::Int32:
+				return data.vInt32;
+			case Type::UInt32:
+				return data.vUInt32;
+			case Type::Int64:
+				return data.vInt64;
+			case Type::UInt64:
+				return data.vUInt64;
+			case Type::Float:
+				return data.vFloat;
+			case Type::Double:
+				return static_cast<float>(data.vDouble);
 		}
 		return defaultValue;
 	}
@@ -117,8 +380,24 @@ namespace Engine {
 		switch (type) {
 			case Type::Bool:
 				return data.vBool ? 1 : 0;
+			case Type::Byte:
+				return data.vByte;
+			case Type::SByte:
+				return data.vSByte;
+			case Type::Int16:
+				return data.vInt16;
+			case Type::UInt16:
+				return data.vUInt16;
+			case Type::Int32:
+				return data.vInt32;
+			case Type::UInt32:
+				return data.vUInt32;
 			case Type::Int64:
-				return static_cast<double>(data.vInt64);
+				return data.vInt64;
+			case Type::UInt64:
+				return data.vUInt64;
+			case Type::Float:
+				return data.vFloat;
 			case Type::Double:
 				return data.vDouble;
 		}
@@ -131,8 +410,24 @@ namespace Engine {
 				return STRING_LITERAL("[Null]");
 			case Type::Bool:
 				return data.vBool ? STRING_LITERAL("True") : STRING_LITERAL("False");
+			case Type::Byte:
+				return ObjectUtil::ToString(data.vByte);
+			case Type::SByte:
+				return ObjectUtil::ToString(data.vSByte);
+			case Type::Int16:
+				return ObjectUtil::ToString(data.vInt16);
+			case Type::UInt16:
+				return ObjectUtil::ToString(data.vUInt16);
+			case Type::Int32:
+				return ObjectUtil::ToString(data.vInt32);
+			case Type::UInt32:
+				return ObjectUtil::ToString(data.vUInt32);
 			case Type::Int64:
 				return ObjectUtil::ToString(data.vInt64);
+			case Type::UInt64:
+				return ObjectUtil::ToString(data.vUInt64);
+			case Type::Float:
+				return ObjectUtil::ToString(data.vFloat);
 			case Type::Double:
 				return ObjectUtil::ToString(data.vDouble);
 			case Type::String:
@@ -230,8 +525,32 @@ namespace Engine {
 			case Type::Bool:
 				ConstructBool(obj.data.vBool);
 				break;
+			case Type::Byte:
+				ConstructByte(obj.data.vByte);
+				break;
+			case Type::SByte:
+				ConstructSByte(obj.data.vSByte);
+				break;
+			case Type::Int16:
+				ConstructInt16(obj.data.vInt16);
+				break;
+			case Type::UInt16:
+				ConstructUInt16(obj.data.vUInt16);
+				break;
+			case Type::Int32:
+				ConstructInt32(obj.data.vInt32);
+				break;
+			case Type::UInt32:
+				ConstructUInt32(obj.data.vUInt32);
+				break;
 			case Type::Int64:
 				ConstructInt64(obj.data.vInt64);
+				break;
+			case Type::UInt64:
+				ConstructUInt64(obj.data.vUInt64);
+				break;
+			case Type::Float:
+				ConstructFloat(obj.data.vFloat);
 				break;
 			case Type::Double:
 				ConstructDouble(obj.data.vDouble);
@@ -269,9 +588,41 @@ namespace Engine {
 		type = Type::Bool;
 		data.vBool = value;
 	}
+	void Variant::ConstructByte(byte value) {
+		type = Type::Byte;
+		data.vByte = value;
+	}
+	void Variant::ConstructSByte(sbyte value) {
+		type = Type::SByte;
+		data.vSByte = value;
+	}
+	void Variant::ConstructInt16(int16 value) {
+		type = Type::Int16;
+		data.vInt16 = value;
+	}
+	void Variant::ConstructUInt16(uint16 value) {
+		type = Type::UInt16;
+		data.vUInt16 = value;
+	}
+	void Variant::ConstructInt32(int32 value) {
+		type = Type::Int32;
+		data.vInt32 = value;
+	}
+	void Variant::ConstructUInt32(uint32 value) {
+		type = Type::UInt32;
+		data.vUInt32 = value;
+	}
 	void Variant::ConstructInt64(int64 value) {
 		type = Type::Int64;
 		data.vInt64 = value;
+	}
+	void Variant::ConstructUInt64(uint64 value) {
+		type = Type::UInt64;
+		data.vUInt64 = value;
+	}
+	void Variant::ConstructFloat(float value) {
+		type = Type::Float;
+		data.vFloat = value;
 	}
 	void Variant::ConstructDouble(double value) {
 		type = Type::Double;
