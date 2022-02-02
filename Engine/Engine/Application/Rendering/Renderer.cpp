@@ -339,7 +339,7 @@ namespace Engine {
 			{
 				Color clearColor = Color(0, 0, 0);
 				d3dContext->ClearRenderTargetView(data.value->d3dRenderTargetView.Get(), (float*)&clearColor);
-				d3dContext->ClearDepthStencilView(data.value->d3dDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+				d3dContext->ClearDepthStencilView(data.value->d3dDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 			}
 			{
 				transform.world = DirectX::XMMatrixTranspose(
