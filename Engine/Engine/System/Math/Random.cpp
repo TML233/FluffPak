@@ -7,14 +7,12 @@ namespace Engine {
 	Random::Random() {
 		// TODO: Change this to DateTime calls.
 		int32 time = (int32)std::chrono::high_resolution_clock::now().time_since_epoch().count();
-		uint32 seed = 0;
-		std::memcpy(&seed, &time, sizeof(int32));
-		SetSeed(seed);
+		SetSeed(*((uint32*)&time));
 	}
 	Random::Random(uint32 seed) {
 		SetSeed(seed);
 	}
-	int32 Random::Next(int32 min, int32 max) {
+	int32 Random::NextInt(int32 min, int32 max) {
 		ERR_ASSERT(min <= max, u8"min cannot be greater than max.", return max);
 
 		if (min == max) {
