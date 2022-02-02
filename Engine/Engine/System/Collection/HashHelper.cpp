@@ -15,7 +15,7 @@ namespace Engine {
 		if ((value & 1) == 0) {
 			return value == 2;
 		}
-		int32 limit = static_cast<int32>(Math::Sqrt(static_cast<float>(value)));
+		int32 limit = static_cast<int32>(MathF::Sqrt(static_cast<float>(value)));
 		for (int32 divisor = 3; divisor <= limit; divisor += 2) {
 			if ((value % divisor) == 0) {
 				return false;

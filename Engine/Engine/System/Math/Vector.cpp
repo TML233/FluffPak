@@ -8,7 +8,7 @@ namespace Engine {
 	Vector2::Vector2(float x, float y) :x(x), y(y) {}
 
 	float Vector2::GetLength() const {
-		return Math::Sqrt(GetLengthSquared());
+		return MathF::Sqrt(GetLengthSquared());
 	}
 	float Vector2::GetLengthSquared() const {
 		return x * x + y * y;
@@ -97,10 +97,10 @@ namespace Engine {
 		return (a.x * b.y - a.y * b.x);
 	}
 	Vector2 Vector2::Lerp(const Vector2& a, const Vector2& b, float time) {
-		return Vector2(Math::Lerp(a.x, b.x, time), Math::Lerp(a.y, b.y, time));
+		return Vector2(MathF::Lerp(a.x, b.x, time), MathF::Lerp(a.y, b.y, time));
 	}
 	float Vector2::AngleBetween(const Vector2& a, const Vector2& b) {
-		return Math::ArcCos(Vector2::Dot(a.GetNormalized(), b.GetNormalized()));
+		return MathF::ArcCos(Vector2::Dot(a.GetNormalized(), b.GetNormalized()));
 	}
 #pragma endregion
 
@@ -112,7 +112,7 @@ namespace Engine {
 		return x * x + y * y + z * z;
 	}
 	float Vector3::GetLength() const {
-		return Math::Sqrt(GetLengthSquared());
+		return MathF::Sqrt(GetLengthSquared());
 	}
 
 	void Vector3::Normalize() {
@@ -209,10 +209,10 @@ namespace Engine {
 		);
 	}
 	Vector3 Vector3::Lerp(const Vector3& a, const Vector3& b, float time) {
-		return Vector3(Math::Lerp(a.x, b.x, time), Math::Lerp(a.y, b.y, time), Math::Lerp(a.z, b.z, time));
+		return Vector3(MathF::Lerp(a.x, b.x, time), MathF::Lerp(a.y, b.y, time), MathF::Lerp(a.z, b.z, time));
 	}
 	float Vector3::AngleBetween(const Vector3& a, const Vector3& b) {
-		return Math::ArcCos(Vector3::Dot(a.GetNormalized(), b.GetNormalized()));
+		return MathF::ArcCos(Vector3::Dot(a.GetNormalized(), b.GetNormalized()));
 	}
 #pragma endregion
 }

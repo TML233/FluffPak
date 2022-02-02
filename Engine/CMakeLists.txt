@@ -89,7 +89,6 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileSystem.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/Protocol/Native.cpp"
 
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Math.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Random.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Vector.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/TransformMatrix.cpp"

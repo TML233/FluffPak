@@ -354,7 +354,7 @@ namespace Engine {
 				);
 				transform.projection = DirectX::XMMatrixTranspose(
 					DirectX::XMMatrixPerspectiveFovLH(
-						Math::PI / 2, data.value->size.x / data.value->size.y, 1, 1000
+						MathF::PI / 2, data.value->size.x / data.value->size.y, 1, 1000
 					)
 				);
 				

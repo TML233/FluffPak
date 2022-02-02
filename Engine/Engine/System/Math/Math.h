@@ -4,14 +4,14 @@
 #include <cmath>
 
 namespace Engine {
-	class Math final {
+	class MathF final {
 	public:
-		STATIC_CLASS(Math);
+		STATIC_CLASS(MathF);
 
 		static inline constexpr float PI = (float)3.14159265358f;
 		static inline constexpr float Deg2Rad = PI / 180;
 		static inline constexpr float Rad2Deg = 180 / PI;
-		static const float Infinity;
+		static inline constexpr float Infinity = INFINITY;
 
 		static inline bool IsNaN(float value) {
 			return std::isnan(value);
@@ -20,8 +20,18 @@ namespace Engine {
 			return std::isinf(value);
 		}
 
-		static float Clamp(float value, float min = 0.0f, float max = 1.0f);
-		static float Lerp(float a, float b, float time);
+		static inline float Clamp(float value, float min = 0.0f, float max = 1.0f) {
+			if (value < min) {
+				return min;
+			}
+			if (value > max) {
+				return max;
+			}
+			return value;
+		}
+		static inline float Lerp(float a, float b, float time) {
+			return (b - a) * time + a;
+		}
 
 		static inline float Tan(float value) {
 			return std::tanf(value);
@@ -49,8 +59,18 @@ namespace Engine {
 			return std::acosf(value);
 		}
 
-		static float Sign(float value);
-		static float Abs(float value);
+		static inline float Sign(float value) {
+			if (value < 0) {
+				return -1;
+			}
+			if (value > 0) {
+				return 1;
+			}
+			return 0;
+		}
+		static inline float Abs(float value) {
+			return (value < 0 ? -value : value);
+		}
  
 		static inline float Round(float value) {
 			return std::roundf(value);
