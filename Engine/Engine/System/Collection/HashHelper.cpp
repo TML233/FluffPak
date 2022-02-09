@@ -1,5 +1,5 @@
 #include "Engine/System/Collection/HashHelper.h"
-#include "Engine/System/Math/Math.h"
+#include "Engine/System/Math/Mathf.h"
 #include "Engine/System/Debug.h"
 
 namespace Engine {
@@ -15,7 +15,7 @@ namespace Engine {
 		if ((value & 1) == 0) {
 			return value == 2;
 		}
-		int32 limit = static_cast<int32>(MathF::Sqrt(static_cast<float>(value)));
+		int32 limit = static_cast<int32>(Mathf::Sqrt(static_cast<float>(value)));
 		for (int32 divisor = 3; divisor <= limit; divisor += 2) {
 			if ((value % divisor) == 0) {
 				return false;

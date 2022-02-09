@@ -37,7 +37,7 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/Protocol/Native.h"
 	
 	
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Math.h"
+	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Mathf.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Random.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Vector.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/TransformMatrix.h"

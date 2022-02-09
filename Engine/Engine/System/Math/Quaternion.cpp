@@ -7,12 +7,12 @@ namespace Engine{
 		return x * x + y * y + z * z + w * w;
 	}
 	float Quaternion::GetMagnitude() const {
-		return MathF::Sqrt(GetSquaredMagnitude());
+		return Mathf::Sqrt(GetSquaredMagnitude());
 	}
 	void Quaternion::Normalize() {
 		float mag2 = GetSquaredMagnitude();
-		if (mag2 != 0 && MathF::Abs(mag2 - 1) > NormalizeTolerance) {
-			float mag = MathF::Sqrt(mag2);
+		if (mag2 != 0 && Mathf::Abs(mag2 - 1) > NormalizeTolerance) {
+			float mag = Mathf::Sqrt(mag2);
 			w /= mag;
 			x /= mag;
 			y /= mag;
@@ -70,21 +70,21 @@ namespace Engine{
 		angle *= 0.5f;
 
 		Vector3 n = axis.GetNormalized();
-		float sina = MathF::Sin(angle);
+		float sina = Mathf::Sin(angle);
 
-		return Quaternion(n.x * sina, n.y * sina, n.z * sina, MathF::Cos(angle));
+		return Quaternion(n.x * sina, n.y * sina, n.z * sina, Mathf::Cos(angle));
 	}
 	Quaternion Quaternion::FromEuler(const Vector3& angle) {
 		float p = angle.x / 2.0f;
 		float y = angle.y / 2.0f;
 		float r = angle.z / 2.0f;
 
-		float sinp = MathF::Sin(p);
-		float siny = MathF::Sin(y);
-		float sinr = MathF::Sin(r);
-		float cosp = MathF::Cos(p);
-		float cosy = MathF::Cos(y);
-		float cosr = MathF::Cos(r);
+		float sinp = Mathf::Sin(p);
+		float siny = Mathf::Sin(y);
+		float sinr = Mathf::Sin(r);
+		float cosp = Mathf::Cos(p);
+		float cosy = Mathf::Cos(y);
+		float cosr = Mathf::Cos(r);
 
 		Quaternion q(
 			sinr * cosp * cosy - cosr * sinp * siny,

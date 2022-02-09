@@ -13,10 +13,10 @@ namespace Engine {
 	}
 	Color Color::Lerp(const Color& from, const Color& to, float time) {
 		return Color(
-			MathF::Lerp(from.r, to.r, time),
-			MathF::Lerp(from.g, to.g, time),
-			MathF::Lerp(from.b, to.b, time),
-			MathF::Lerp(from.a, to.a, time)
+			Mathf::Lerp(from.r, to.r, time),
+			Mathf::Lerp(from.g, to.g, time),
+			Mathf::Lerp(from.b, to.b, time),
+			Mathf::Lerp(from.a, to.a, time)
 		);
 	}
 

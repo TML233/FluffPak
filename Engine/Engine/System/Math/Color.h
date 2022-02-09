@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/System/Math/Math.h"
+#include "Engine/System/Math/Mathf.h"
 
 namespace Engine {
 	struct Color {

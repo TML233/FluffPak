@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/System/Math/Vector.h"
-#include "Engine/System/Math/Math.h"
+#include "Engine/System/Math/Mathf.h"
 #include "Engine/System/Math/TransformMatrix.h"
 
 namespace Engine {

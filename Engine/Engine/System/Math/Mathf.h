@@ -4,14 +4,15 @@
 #include <cmath>
 
 namespace Engine {
-	class MathF final {
+	class Mathf final {
 	public:
-		STATIC_CLASS(MathF);
+		STATIC_CLASS(Mathf);
 
-		static inline constexpr float PI = (float)3.14159265358f;
-		static inline constexpr float Deg2Rad = PI / 180;
-		static inline constexpr float Rad2Deg = 180 / PI;
+		static inline constexpr float Pi = 3.14159274f;
+		static inline constexpr float Deg2Rad = Pi / 180;
+		static inline constexpr float Rad2Deg = 180 / Pi;
 		static inline constexpr float Infinity = INFINITY;
+		static inline constexpr float NaN = NAN;
 
 		static inline bool IsNaN(float value) {
 			return std::isnan(value);
@@ -36,9 +37,6 @@ namespace Engine {
 		static inline float Tan(float value) {
 			return std::tanf(value);
 		}
-		static inline float Cot(float value) {
-			return 1 / std::tanf(value);
-		}
 		static inline float Sin(float value) {
 			return std::sinf(value);
 		}
@@ -46,16 +44,16 @@ namespace Engine {
 			return std::cosf(value);
 		}
 		
-		static inline float ArcTan(float value) {
+		static inline float Atan(float value) {
 			return std::atanf(value);
 		}
-		static inline float ArcCot(float value) {
-			return 1 / std::atanf(value);
+		static inline float Atan2(float y, float x) {
+			return std::atan2f(y, x);
 		}
-		static inline float ArcSin(float value) {
+		static inline float Asin(float value) {
 			return std::asinf(value);
 		}
-		static inline float ArcCos(float value) {
+		static inline float Acos(float value) {
 			return std::acosf(value);
 		}
 
@@ -82,8 +80,8 @@ namespace Engine {
 			return std::ceilf(value);
 		}
 
-		static inline float Pow(float base, float power) {
-			return std::powf(base, power);
+		static inline float Pow(float baseValue, float power) {
+			return std::powf(baseValue, power);
 		}
 		static inline float Sqrt(float value) {
 			return std::sqrtf(value);

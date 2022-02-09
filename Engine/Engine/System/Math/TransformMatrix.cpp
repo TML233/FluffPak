@@ -57,7 +57,7 @@ namespace Engine {
 		return m;
 	}
 	TransformMatrix TransformMatrix::Perspective(float fov, float aspect, float near, float far) {
-		const float tanfov = MathF::Tan(fov / 2);
+		const float tanfov = Mathf::Tan(fov / 2);
 		TransformMatrix m;
 		m.matrix[0][0] = 1 / (aspect * tanfov);
 		m.matrix[1][1] = 1 / tanfov;
