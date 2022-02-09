@@ -43,16 +43,9 @@ namespace Engine {
 		ResultCode WriteBytes(const byte* valuePtr, int32 length);
 		/// @brief Write some bytes, do conversions of endianness.
 		ResultCode WriteBytesEndian(const byte* valuePtr, int32 length);
-		/// @brief Read some bytes, byte by byte.
-		/// @return number of bytes read.
-		int32 ReadBytes(int32 length, List<byte>& result);
-		/// @brief Read some bytes, do conversions of endianness.
-		/// @return number of bytes read.
-		int32 ReadBytesEndian(int32 length, List<byte>& result);
-
 
 		ResultCode WriteByte(byte value);
-		ResultCode WriteBytes(const List<byte>& value);
+		ResultCode WriteBytes(const List<byte>& value, int32 startIndex=0, int32 length=-1);
 		ResultCode WriteSByte(sbyte value);
 		ResultCode WriteInt16(int16 value);
 		ResultCode WriteUInt16(uint16 value);
@@ -65,35 +58,28 @@ namespace Engine {
 		/// @brief Write a String using C# BinaryWriter/Reader method:\n
 		/// Starting with a 7-bit encoded integer as the length information, followed by the actual string data encoded in UTF-8.
 		ResultCode WriteString(const String& value);
-
 		ResultCode WriteText(const String& value);
 		ResultCode WriteTextLine(const String& value);
+		ResultCode Write7BitEncodedInt(int32 value);
 
-		byte ReadByte();
-		sbyte ReadSByte();
-		int16 ReadInt16();
-		uint16 ReadUInt16();
-		int32 ReadInt32();
-		uint32 ReadUInt32();
-		int64 ReadInt64();
-		uint64 ReadUInt64();
-		float ReadFloat();
-		double ReadDouble();
+
+		ResultCode TryReadBytes(int32 length, int32& readCount, List<byte>& result);
+		ResultCode TryReadBytesEndian(int32 length, int32& readCount, List<byte>& result);
+
+		
 		/// @brief Read a String using C# BinaryWriter/Reader method:\n
 		/// Starting with a 7-bit encoded integer as the length information, followed by the actual string data encoded in UTF-8.
-		String ReadString();
-
-		String ReadTextLine();
-		String ReadAllText();
+		
 
 	protected:
 		/// @brief Implement this. No need to do the safe check.
 		virtual ResultCode WriteBytesUnchecked(const byte* valuePtr, int32 length) = 0;
 		/// @brief Implement this. No need to do the safe check.
-		virtual int32 ReadBytesUnchecked(int32 length, List<byte>& result) = 0;
+		virtual ResultCode TryReadBytesUnchecked(int32 length, int32& readCount, List<byte>& result) = 0;
 
 	private:
+		static void SwapBuffer(byte* ptr, int32 length);
 		Endianness currentEndianness = Endianness::Little;
-		List<byte> readCache;
+		List<byte> rwCache;
 	};
 }

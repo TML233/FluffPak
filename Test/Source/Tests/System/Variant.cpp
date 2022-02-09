@@ -10,7 +10,7 @@ TEST_SUITE("Variant") {
 		CHECK(null.GetType() == Variant::Type::Null);
 
 		Variant a = 1;
-		CHECK(a.GetType() == Variant::Type::Int64);
+		CHECK(a.GetType() == Variant::Type::Int32);
 		CHECK(a.AsInt64() == 1);
 	}
 	TEST_CASE("Vector2") {

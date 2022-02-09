@@ -187,9 +187,9 @@ namespace Engine {
 		return ResultCode::OK;
 	}
 
-	int32 FileStreamNative::ReadBytesUnchecked(int32 length, List<byte>& result) {
-		int32 read = (int32)fread(result.GetRawElementPtr() + result.GetCount() - length, sizeof(byte), length, file);
-		return read;
+	ResultCode FileStreamNative::TryReadBytesUnchecked(int32 length, int32& readCount, List<byte>& result) {
+		readCount = (int32)fread(result.GetRawElementPtr() + result.GetCount() - length, sizeof(byte), length, file);
+		return ResultCode::OK;
 	}
 #pragma endregion
 

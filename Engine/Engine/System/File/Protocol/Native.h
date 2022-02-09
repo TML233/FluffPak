@@ -45,7 +45,7 @@ namespace Engine {
 
 	protected:
 		ResultCode WriteBytesUnchecked(const byte* valuePtr, int32 length) override;
-		int32 ReadBytesUnchecked(int32 length, List<byte>& result) override;
+		ResultCode TryReadBytesUnchecked(int32 length, int32& readCount, List<byte>& result) override;
 
 	private:
 		std::FILE* file;

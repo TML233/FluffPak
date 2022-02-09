@@ -8,6 +8,14 @@ namespace Engine {
 		currentEndianness = endianness;
 	}
 
+	void Stream::SwapBuffer(byte* ptr, int32 length) {
+		for (int i = 0; i < length / 2; i += 1) {
+			byte temp = *(ptr + i);
+			*(ptr + i) = *(ptr + length - 1 - i);
+			*(ptr + length - 1 - i) = temp;
+		}
+	}
+
 	ResultCode Stream::WriteBytes(const byte* valuePtr, int32 length) {
 		ERR_ASSERT(IsValid(), u8"Attempted to operate an invalid FileStream!", return ResultCode::InvalidStream);
 		ERR_ASSERT(CanWrite(), u8"This FileStream cannot write.", return ResultCode::NoPermission);
@@ -29,57 +37,27 @@ namespace Engine {
 			return WriteBytesUnchecked(valuePtr, length);
 		}
 
-		ResultCode r = ResultCode::OK;
-		for (int32 i = length - 1; i >= 0 && r == ResultCode::OK; i -= 1) {
-			r = WriteBytesUnchecked(valuePtr + i, 1);
-		}
-		return r;
-	}
-	int32 Stream::ReadBytes(int32 length, List<byte>& result) {
-		ERR_ASSERT(length >= 0, u8"length must be greater than 0.", return 0);
-		if (length == 0) {
-			return 0;
-		}
-
-		//Prepare result container
-		result.RequireCapacity(result.GetCapacity() + length);
+		rwCache.Clear();
 		for (int32 i = 0; i < length; i += 1) {
-			result.Add(0);
+			rwCache.Add(*(valuePtr + length - 1 - i));
 		}
-
-		int32 read = ReadBytesUnchecked(length, result);
-
-		int32 remove = length - read;
-		for (int32 i = 0; i < remove; i += 1) {
-			result.RemoveAt(result.GetCount() - 1 - i);
-		}
-
-		return read;
+		return WriteBytesUnchecked(rwCache.GetRawElementPtr(), length);
 	}
-	int32 Stream::ReadBytesEndian(int32 length, List<byte>& result) {
-		int32 read = ReadBytes(length, result);
-		if (read <= 0) {
-			return 0;
-		}
-
-		// Swap bytes if needed.
-		if (Stream::LocalEndianness != GetCurrentEndianness()) {
-			auto ptr = result.GetRawElementPtr() + result.GetCount() - read;
-			for (int i = 0; i < read / 2; i += 1) {
-				byte temp = *(ptr + i);
-				*(ptr + i) = *(ptr + read - 1 - i);
-				*(ptr + read - 1 - i) = temp;
-			}
-		}
-
-		return read;
-	}
-
+	
 	ResultCode Stream::WriteByte(byte value) {
 		return WriteBytes(&value, sizeof(byte));
 	}
-	ResultCode Stream::WriteBytes(const List<byte>& value) {
-		return WriteBytes(value.begin().GetPointer(), value.GetCount());
+	ResultCode Stream::WriteBytes(const List<byte>& value,int32 startIndex,int32 length) {
+		int32 count = value.GetCount();
+		ERR_ASSERT(startIndex >= 0 && startIndex < count, u8"startIndex out of bounds!", return ResultCode::InvalidArgument);
+		ERR_ASSERT(length >= -1 && length <= count - startIndex, u8"length out of bounds!", return ResultCode::InvalidArgument);
+		if (count == -1) {
+			length = count - startIndex;
+		}
+		if (length == 0) {
+			return ResultCode::OK;
+		}
+		return WriteBytes(value.GetRawElementPtr() + startIndex, length);
 	}
 	ResultCode Stream::WriteSByte(sbyte value) {
 		return WriteBytes((byte*)&value, sizeof(sbyte));
@@ -108,10 +86,9 @@ namespace Engine {
 	ResultCode Stream::WriteDouble(double value) {
 		return WriteBytesEndian((byte*)&value, sizeof(double));
 	}
-	// TODO: Implement this.
 	ResultCode Stream::WriteString(const String& value) {
-		FATAL_CRASH(u8"Not implemented.");
-		return ResultCode::NotSupported;
+		Write7BitEncodedInt(value.GetCount());
+		return WriteText(value);
 	}
 	ResultCode Stream::WriteText(const String& value) {
 		return WriteBytes((byte*)value.GetStartPtr(), value.GetCount());
@@ -121,66 +98,131 @@ namespace Engine {
 		WriteByte((byte)'\n');
 		return result;
 	}
+	ResultCode Stream::Write7BitEncodedInt(int32 value) {
+		// Implementation from .NET Source
+		// See https://source.dot.net/#System.Private.CoreLib/BinaryWriter.cs,2daa1d14ff1877bd
+		rwCache.Clear();
+		uint32 uValue = (uint32)value;
+		while (uValue > 0x7Fu) {
+			rwCache.Add((byte)(uValue | ~0x7Fu));
+			uValue >>= 7;
+		}
+		rwCache.Add((byte)uValue);
+		return WriteBytes(rwCache);
+	}
+	ResultCode Stream::TryReadBytes(int32 length, int32& readCount, List<byte>& result) {
+		readCount = 0;
+		ERR_ASSERT(length >= 0, u8"length must be greater than 0.", return ResultCode::InvalidArgument);
+		if (length == 0) {
+			return ResultCode::OK;
+		}
 
+		//Prepare result container
+		result.EnsureCapacity(result.GetCapacity() + length);
+		for (int32 i = 0; i < length; i += 1) {
+			result.Add(0);
+		}
+
+		auto resultCode = TryReadBytesUnchecked(length, readCount, result);
+
+		if (resultCode != ResultCode::OK) {
+			ERR_MSG(u8"TryReadBytesUnchecked failed!");
+			readCount = 0;
+		}
+
+		int32 remove = length - readCount;
+		for (int32 i = 0; i < remove; i += 1) {
+			result.RemoveAt(result.GetCount() - 1 - i);
+		}
+
+		return resultCode;
+	}
+	ResultCode Stream::TryReadBytesEndian(int32 length, int32& readCount, List<byte>& result) {
+		auto resultCode = TryReadBytes(length, readCount, result);
+		if (readCount <= 0) {
+			return ResultCode::OK;
+		}
+
+		// Swap bytes if needed.
+		if (Stream::LocalEndianness != GetCurrentEndianness()) {
+			SwapBuffer(result.GetRawElementPtr() + result.GetCount() - readCount, readCount);
+		}
+
+		return ResultCode::OK;
+	}
+
+	/*
+	int32 Stream::ReadBytes(int32 length, List<byte>& result) {
+		int32 readCount = 0;
+		auto resultCode = TryReadBytes(length, readCount, result);
+		ERR_ASSERT(resultCode == ResultCode::OK, u8"TryReadBytesDirectly failed!", return 0);
+		return readCount;
+	}
+	int32 Stream::ReadBytesEndian(int32 length, List<byte>& result) {
+		int32 readCount = 0;
+		auto resultCode = TryReadBytesEndian(length, readCount, result);
+		ERR_ASSERT(resultCode == ResultCode::OK, u8"TryReadBytes failed!", return 0);
+		return readCount;
+	}
 	byte Stream::ReadByte() {
-		readCache.Clear();
-		int32 read = ReadBytes(sizeof(byte), readCache);
+		rwCache.Clear();
+		int32 read = ReadBytes(sizeof(byte), rwCache);
 		ERR_ASSERT(read == sizeof(byte), u8"Cannot read a byte.", return 0);
-		return *((byte*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
+		return *((byte*)(rwCache.GetRawElementPtr() + rwCache.GetCount() - read));
 	}
 	sbyte Stream::ReadSByte() {
-		readCache.Clear();
-		int32 read = ReadBytes(sizeof(sbyte), readCache);
+		rwCache.Clear();
+		int32 read = ReadBytes(sizeof(sbyte), rwCache);
 		ERR_ASSERT(read == sizeof(sbyte), u8"Cannot read a sbyte.", return 0);
-		return *((sbyte*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
+		return *((sbyte*)(rwCache.GetRawElementPtr() + rwCache.GetCount() - read));
 	}
 	int16 Stream::ReadInt16() {
-		readCache.Clear();
-		int32 read = ReadBytesEndian(sizeof(int16), readCache);
+		rwCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(int16), rwCache);
 		ERR_ASSERT(read == sizeof(int16), u8"Cannot read a int16.", return 0);
-		return *((int16*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
+		return *((int16*)(rwCache.GetRawElementPtr() + rwCache.GetCount() - read));
 	}
 	uint16 Stream::ReadUInt16() {
-		readCache.Clear();
-		int32 read = ReadBytesEndian(sizeof(uint16), readCache);
+		rwCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(uint16), rwCache);
 		ERR_ASSERT(read == sizeof(uint16), u8"Cannot read a uint16.", return 0);
-		return *((uint16*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
+		return *((uint16*)(rwCache.GetRawElementPtr() + rwCache.GetCount() - read));
 	}
 	int32 Stream::ReadInt32() {
-		readCache.Clear();
-		int32 read = ReadBytesEndian(sizeof(int32), readCache);
+		rwCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(int32), rwCache);
 		ERR_ASSERT(read == sizeof(int32), u8"Cannot read a int32.", return 0);
-		return *((int32*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
+		return *((int32*)(rwCache.GetRawElementPtr() + rwCache.GetCount() - read));
 	}
 	uint32 Stream::ReadUInt32() {
-		readCache.Clear();
-		int32 read = ReadBytesEndian(sizeof(uint32), readCache);
+		rwCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(uint32), rwCache);
 		ERR_ASSERT(read == sizeof(uint32), u8"Cannot read a uint32.", return 0);
-		return *((uint32*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
+		return *((uint32*)(rwCache.GetRawElementPtr() + rwCache.GetCount() - read));
 	}
 	int64 Stream::ReadInt64() {
-		readCache.Clear();
-		int32 read = ReadBytesEndian(sizeof(int64), readCache);
+		rwCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(int64), rwCache);
 		ERR_ASSERT(read == sizeof(int64), u8"Cannot read a int64.", return 0);
-		return *((int64*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
+		return *((int64*)(rwCache.GetRawElementPtr() + rwCache.GetCount() - read));
 	}
 	uint64 Stream::ReadUInt64() {
-		readCache.Clear();
-		int32 read = ReadBytesEndian(sizeof(uint64), readCache);
+		rwCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(uint64), rwCache);
 		ERR_ASSERT(read == sizeof(uint64), u8"Cannot read a uint64.", return 0);
-		return *((uint64*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
+		return *((uint64*)(rwCache.GetRawElementPtr() + rwCache.GetCount() - read));
 	}
 	float Stream::ReadFloat() {
-		readCache.Clear();
-		int32 read = ReadBytesEndian(sizeof(float), readCache);
+		rwCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(float), rwCache);
 		ERR_ASSERT(read == sizeof(float), u8"Cannot read a float.", return 0);
-		return *((float*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
+		return *((float*)(rwCache.GetRawElementPtr() + rwCache.GetCount() - read));
 	}
 	double Stream::ReadDouble() {
-		readCache.Clear();
-		int32 read = ReadBytesEndian(sizeof(double), readCache);
+		rwCache.Clear();
+		int32 read = ReadBytesEndian(sizeof(double), rwCache);
 		ERR_ASSERT(read == sizeof(double), u8"Cannot read a double.", return 0);
-		return *((double*)(readCache.GetRawElementPtr() + readCache.GetCount() - read));
+		return *((double*)(rwCache.GetRawElementPtr() + rwCache.GetCount() - read));
 	}
 	// TODO: Implement this.
 	String Stream::ReadString() {
@@ -200,12 +242,13 @@ namespace Engine {
 		SetPosition(0);
 		int32 length = GetLength();
 		
-		readCache.Clear();
-		readCache.RequireCapacity(length + 1);
+		rwCache.Clear();
+		rwCache.EnsureCapacity(length + 1);
 
-		int32 read=ReadBytes(length, readCache);
+		int32 read=ReadBytes(length, rwCache);
 		ERR_ASSERT(read == length, u8"Error when read bytes!", return String::GetEmpty());
 
-		return String((u8char*)readCache.GetRawElementPtr(), length);
+		return String((u8char*)rwCache.GetRawElementPtr(), length);
 	}
+	*/
 }

@@ -39,7 +39,7 @@ TEST_SUITE("Reflection") {
 	TEST_CASE("ReflectionMethodBind Static") {
 		auto foo = ReflectionMethodBindHelper::Create(Test::Fuck);
 		CHECK(foo->IsStatic() == true);
-		CHECK(foo->GetReturnType() == Variant::Type::Int64);
+		CHECK(foo->GetReturnType() == Variant::Type::Int32);
 		CHECK(foo->GetArgumentCount() == 2);
 
 		Variant a = 3;

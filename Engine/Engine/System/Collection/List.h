@@ -83,7 +83,7 @@ namespace Engine{
 		}
 		static inline constexpr int32 DefaultCapacity = 4;
 		static inline constexpr int32 CapacityMultiplier = 2;
-		void RequireCapacity(int32 capacity) {
+		void EnsureCapacity(int32 capacity) {
 			if (capacity <= this->capacity) {
 				return;
 			}
@@ -105,7 +105,7 @@ namespace Engine{
 			*(elements + index) = value;
 		}
 		void Add(const T& value) {
-			RequireCapacity(count + 1);
+			EnsureCapacity(count + 1);
 			Memory::Construct(elements + count, value);
 			count += 1;
 		}
@@ -117,7 +117,7 @@ namespace Engine{
 				return;
 			}
 
-			RequireCapacity(count + 1);
+			EnsureCapacity(count + 1);
 			
 			// Move objects.
 			for (int32 i = count; i > index; i -= 1) {
@@ -154,10 +154,17 @@ namespace Engine{
 			}
 			count = 0;
 		}
+
 		/// @brief Get the raw element pointer for high performance operation, if you know what you are doing.\n
 		/// Only read or write existing elements. Do not insert or remove.
 		/// The element pointer can vary after an insert or remove operation!
-		T* GetRawElementPtr() const {
+		T* GetRawElementPtr() {
+			return elements;
+		}
+		/// @brief Get the raw element pointer for high performance operation, if you know what you are doing.\n
+		/// Only read or write existing elements. Do not insert or remove.
+		/// The element pointer can vary after an insert or remove operation!
+		const T* GetRawElementPtr() const {
 			return elements;
 		}
 		
