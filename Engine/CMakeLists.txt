@@ -32,10 +32,8 @@ set(HeaderFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Concept.h"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileStream.h"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileProtocol.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileSystem.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/Protocol/Native.h"
-	
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Mathf.h"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Math/Random.h"
@@ -85,7 +83,6 @@ set(SourceFile
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/Regex.cpp"
 	
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileStream.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileProtocol.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/FileSystem.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Engine/System/File/Protocol/Native.cpp"
 

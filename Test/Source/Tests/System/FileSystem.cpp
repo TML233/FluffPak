@@ -9,7 +9,7 @@ TEST_SUITE("File System") {
 		String path = STRL("file://NativeFileTest.txt");
 		{
 			IntrusivePtr<FileStream> file;
-			auto result = fs.OpenFile(path, FileStream::OpenMode::WriteTruncate, file);
+			auto result = fs.TryOpenFile(path, FileSystem::OpenMode::WriteTruncate, file);
 			CHECK(result == ResultCode::OK);
 
 			CHECK(file->CanWrite());

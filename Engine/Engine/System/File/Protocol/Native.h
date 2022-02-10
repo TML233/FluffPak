@@ -1,6 +1,6 @@
 #pragma once
+#include "Engine/System/File/FileSystem.h"
 #include "Engine/System/File/FileStream.h"
-#include "Engine/System/File/FileProtocol.h"
 #include <cstdio>
 #include <system_error>
 
@@ -15,7 +15,7 @@ namespace Engine {
 		ResultCode CreateFile(const String& path) override;
 		ResultCode CreateDirectory(const String& path) override;
 
-		ResultCode OpenFile(const String& path, FileStream::OpenMode mode, IntrusivePtr<FileStream>& result) override;
+		ResultCode TryOpenFile(const String& path, FileSystem::OpenMode mode, IntrusivePtr<FileStream>& result) override;
 
 		ResultCode RemoveFile(const String& path) override;
 		ResultCode RemoveDirectory(const String& path) override;
@@ -31,7 +31,7 @@ namespace Engine {
 		REFLECTION_CLASS(::Engine::FileStreamNative, ::Engine::FileStream) {}
 
 	public:
-		FileStreamNative(std::FILE* file, FileStream::OpenMode openMode);
+		FileStreamNative(std::FILE* file, FileSystem::OpenMode openMode);
 		~FileStreamNative();
 
 		void Close() override;
