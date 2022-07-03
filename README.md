@@ -1,7 +1,3 @@
-<p align="center">
-<img src="Asset/Rabbik/Logo.png">
-</p>
-
 ## Info
 This is a working personal project. The purpose is to learn, and build a useable, cross-platform 2D game engine.
 Currently not accepting any pull requests.
